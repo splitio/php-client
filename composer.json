@@ -1,0 +1,35 @@
+{
+  "name": "splitio/split-sdk-php",
+  "description": "Split SDK for PHP",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Split",
+      "homepage": "http://split.io"
+    },
+    {
+      "name": "Sebastian Arrubia",
+      "email": "sarrubia@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3",
+    "psr/http-message": "~1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SplitIO\\": "src/SplitIO/"
+    },
+    "files": ["src/functions.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SplitIO\\Test\\": "tests/"
+    },
+    "classmap": ["build/"]
+  }
+}
