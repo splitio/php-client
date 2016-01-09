@@ -14,8 +14,10 @@
     }
   ],
   "require": {
-    "php": ">=5.3",
-    "psr/http-message": "~1.0"
+    "php": ">=5.4.0",
+    "ext-curl": "*",
+    "psr/http-message": "~1.0",
+    "psr/log": "~1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0"
@@ -24,7 +26,7 @@
     "psr-4": {
       "SplitIO\\": "src/SplitIO/"
     },
-    "files": ["src/functions.php"]
+    "files": ["src/functions_include.php"]
   },
   "autoload-dev": {
     "psr-4": {

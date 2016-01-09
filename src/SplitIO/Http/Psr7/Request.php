@@ -1,5 +1,5 @@
 <?php
-namespace SplitIO\Http;
+namespace SplitIO\Http\Psr7;
 
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
