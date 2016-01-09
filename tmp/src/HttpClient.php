@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Http;
 
-class Client implements ClientInterface
+class HttpClient implements ClientInterface
 {
     // Request vars
     private $host;
