@@ -1,188 +1,140 @@
 <?php
 namespace SplitIO\Http\Adapter;
 
-use Psr\Http\Message\RequestInterface;
+use SplitIO\Http\Request;
+use SplitIO\Http\ClientOptions;
+use SplitIO\Http\Response;
+use SplitIO\Http\Method;
+use SplitIO\Http\Exception\HttpServerException;
+use SplitIO\Http\Adapter\Exception\CurlAdapterOtionsException;
 
 class HttpCurlAdapter implements HttpAdapterInterface
 {
     public $handle;
-    public $http_options;
-    public $response_object;
-    public $response_info;
 
-    function __construct() {
-        $this->http_options = array();
-        $this->http_options[CURLOPT_RETURNTRANSFER] = true;
-        $this->http_options[CURLOPT_FOLLOWLOCATION] = true;
+    /** @var array */
+    public $httpOptions = array();
+
+    /** @var \SplitIO\Http\Response */
+    public $responseObject;
+
+    /** @var array */
+    public $responseInfo;
+
+    /**
+     * HttpCurlAdapter Constructor
+     */
+    public function __construct()
+    {
+        $this->httpOptions = array();
+        $this->httpOptions[CURLOPT_RETURNTRANSFER] = true;
+        $this->httpOptions[CURLOPT_FOLLOWLOCATION] = true;
+        $this->httpOptions[CURLOPT_HEADER] = true;
     }
 
-
-    public function doRequest(RequestInterface $request, $options = array())
+    /**
+     * @param RequestInterface $request
+     * @param array $options
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws HttpServerException
+     * @throws HttpServerException404
+     * @throws RestClientException
+     */
+    public function doRequest(Request $request, $options = array())
     {
-        $uri = $request->getUri()->__toString();
+        $uri = $request->getUri();
         $this->handle = curl_init($uri);
 
-        $http_options = $options + $this->http_options;
-
-        if(! curl_setopt_array($this->handle, $http_options)){
-            throw new RestClientException("Error setting cURL request options");
+        switch ($request->getMethod()) {
+            case Method::GET:
+                echo \SplitIO\murmur3();
+                break;
+            case Method::POST:
+                $this->httpOptions[CURLOPT_POST] = true;
+                $this->httpOptions[CURLOPT_POSTFIELDS] = $request->getData();
+                if (is_array($this->httpOptions[CURLOPT_POSTFIELDS])) {
+                    $this->httpOptions[CURLOPT_HTTPHEADER] = array('Content-Type: multipart/form-data');
+                }
+                break;
+            case Method::PUT:
+                $this->httpOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
+                $this->httpOptions[CURLOPT_POSTFIELDS] = $request->getData();
+                break;
+            case Method::DELETE:
+                $this->httpOptions[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+                break;
+            default:
+                break;
         }
 
-        $this->response_object = curl_exec($this->handle);
-        $this->http_parse_message($this->response_object);
+        $this->setOptions($options);
+
+        $response_object = curl_exec($this->handle);
+        $this->responseObject = $this->httpParseMessage($response_object);
 
         curl_close($this->handle);
-        return $this->response_object;
-
+        return $this->responseObject;
     }
 
     /**
-     * Perform a GET call to server
-     *
-     * Additionaly in $response_object and $response_info are the
-     * response from server and the response info as it is returned
-     * by curl_exec() and curl_getinfo() respectively.
-     *
-     * @param string $url The url to make the call to.
-     * @param array $http_options Extra option to pass to curl handle.
-     * @return string The response from curl if any
+     * @param array $options
+     * @throws HttpCurlAdapterOtionsException
      */
-    function get($url, $http_options = array()) {
-        $http_options = $http_options + $this->http_options;
-        $this->handle = curl_init($url);
+    private function setOptions($options = array())
+    {
+        $this->httpOptions[CURLOPT_TIMEOUT] = $options[ClientOptions::TIMEOUT];
 
-        if(! curl_setopt_array($this->handle, $http_options)){
-            throw new RestClientException("Error setting cURL request options");
+        if (!curl_setopt_array($this->handle, $this->httpOptions)) {
+            throw new HttpCurlAdapterOtionsException("Error setting cURL request options");
         }
-
-        $this->response_object = curl_exec($this->handle);
-        $this->http_parse_message($this->response_object);
-
-        curl_close($this->handle);
-        return $this->response_object;
     }
 
     /**
-     * Perform a POST call to the server
-     *
-     * Additionaly in $response_object and $response_info are the
-     * response from server and the response info as it is returned
-     * by curl_exec() and curl_getinfo() respectively.
-     *
-     * @param string $url The url to make the call to.
-     * @param string|array The data to post. Pass an array to make a http form post.
-     * @param array $http_options Extra option to pass to curl handle.
-     * @return string The response from curl if any
+     * @param $res
+     * @return Response
+     * @throws HttpServerException
      */
-    function post($url, $fields = array(), $http_options = array()) {
-        $http_options = $http_options + $this->http_options;
-        $http_options[CURLOPT_POST] = true;
-        $http_options[CURLOPT_POSTFIELDS] = $fields;
-        if(is_array($fields)){
-            $http_options[CURLOPT_HTTPHEADER] =
-                array('Content-Type: multipart/form-data');
-        }
-        $this->handle = curl_init($url);
+    private function httpParseMessage($res) {
 
-        if(! curl_setopt_array($this->handle, $http_options)){
-            throw new RestClientException("Error setting cURL request options.");
-        }
-
-        $this->response_object = curl_exec($this->handle);
-        $this->http_parse_message($this->response_object);
-
-        curl_close($this->handle);
-        return $this->response_object;
-    }
-
-    /**
-     * Perform a PUT call to the server
-     *
-     * Additionaly in $response_object and $response_info are the
-     * response from server and the response info as it is returned
-     * by curl_exec() and curl_getinfo() respectively.
-     *
-     * @param string $url The url to make the call to.
-     * @param string|array The data to post.
-     * @param array $http_options Extra option to pass to curl handle.
-     * @return string The response from curl if any
-     */
-    function put($url, $data = '', $http_options = array()) {
-        $http_options = $http_options + $this->http_options;
-        $http_options[CURLOPT_CUSTOMREQUEST] = 'PUT';
-        $http_options[CURLOPT_POSTFIELDS] = $data;
-        $this->handle = curl_init($url);
-
-        if(! curl_setopt_array($this->handle, $http_options)){
-            throw new RestClientException("Error setting cURL request options.");
-        }
-
-        $this->response_object = curl_exec($this->handle);
-        $this->http_parse_message($this->response_object);
-
-        curl_close($this->handle);
-        return $this->response_object;
-    }
-
-    /**
-     * Perform a DELETE call to server
-     *
-     * Additionaly in $response_object and $response_info are the
-     * response from server and the response info as it is returned
-     * by curl_exec() and curl_getinfo() respectively.
-     *
-     * @param string $url The url to make the call to.
-     * @param array $http_options Extra option to pass to curl handle.
-     * @return string The response from curl if any
-     */
-    function delete($url, $http_options = array()) {
-        $http_options = $http_options + $this->http_options;
-        $http_options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-        $this->handle = curl_init($url);
-
-        if(! curl_setopt_array($this->handle, $http_options)){
-            throw new RestClientException("Error setting cURL request options.");
-        }
-
-        $this->response_object = curl_exec($this->handle);
-        $this->http_parse_message($this->response_object);
-
-        curl_close($this->handle);
-        return $this->response_object;
-    }
-
-    private function http_parse_message($res) {
-
-        if(! $res){
+        if (!$res) {
             throw new HttpServerException(curl_error($this->handle), -1);
         }
 
-        $this->response_info = curl_getinfo($this->handle);
-        $code = $this->response_info['http_code'];
+        $this->responseInfo = curl_getinfo($this->handle);
+        $code = $this->responseInfo['http_code'];
 
-        if($code == 404) {
-            throw new HttpServerException404(curl_error($this->handle));
-        }
+        $headers = $this->getHeadersFromCurlResponse($res, $this->responseInfo['header_size']);
+        $body = substr($res, $this->responseInfo['header_size']);
 
-        if($code >= 400 && $code <=600) {
-            throw new HttpServerException('Server response status was: ' . $code .' with response: [' . $res . ']', $code);
-        }
+        $response = new Response($code, $headers, $body);
 
-        if(!in_array($code, range(200,207))) {
-            throw new HttpServerException('Server response status was: ' . $code .
-                ' with response: [' . $res . ']', $code);
-        }
+        return $response;
     }
-}
 
-class HttpServerException extends \Exception {
-}
+    /**
+     * @param $response
+     * @param $header_size
+     * @return array
+     */
+    private function getHeadersFromCurlResponse($response, $header_size)
+    {
+        $headers = array();
 
-class HttpServerException404 extends \Exception {
-    function __construct($message = 'Not Found') {
-        parent::__construct($message, 404);
+        $headers_text = explode("\r\n\r\n", substr($response, 0, $header_size));
+
+        $last_header_text = $headers_text[count($headers_text)-2];
+
+        foreach (explode("\r\n", $last_header_text) as $i => $line) {
+            if ($i === 0) {
+                $headers['http_code'] = $line;
+            } else {
+                list ($key, $value) = explode(': ', $line);
+
+                $headers[$key] = $value;
+            }
+        }
+
+        return $headers;
     }
-}
 
-class RestClientException extends \Exception {
 }

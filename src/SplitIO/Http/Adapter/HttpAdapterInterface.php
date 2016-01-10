@@ -1,9 +1,9 @@
 <?php
 namespace SplitIO\Http\Adapter;
 
-use Psr\Http\Message\RequestInterface;
+use SplitIO\Http\Request;
 
 interface HttpAdapterInterface
 {
-    public function doRequest(RequestInterface $request, $options = array());
+    public function doRequest(Request $request, $options = array());
 }

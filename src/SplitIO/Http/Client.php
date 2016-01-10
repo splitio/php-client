@@ -1,30 +1,36 @@
 <?php
 namespace SplitIO\Http;
 
-use SplitIO\Http\Adapter\HttpSocketAdapter;
 use SplitIO\Http\Adapter\HttpCurlAdapter;
-use Psr\Http\Message\RequestInterface;
 
-class Client
+class Client implements ClientInterface
 {
     /**
      * Http Adapter
-     * @var null|HttpSocketAdapter
+     * @var null|\SplitIO\Http\Adapter\HttpAdapterInterface
      */
-    protected $adapter=null;
+    protected $adapter = null;
 
-    public function __construct()
+    protected $options = [
+        ClientOptions::TIMEOUT => 30,
+        ClientOptions::ADAPTER => 'SplitIO\Http\Adapter\HttpCurlAdapter'
+    ];
+
+    public function __construct(array $options=[])
     {
-        //$this->adapter = new HttpSocketAdapter();
-        $this->adapter = new HttpCurlAdapter();
+        $this->options = array_merge($this->options, $options);
+
+        if (class_exists($this->options[ClientOptions::ADAPTER]) && is_a( $this->options[ClientOptions::ADAPTER],'\SplitIO\Http\Adapter\HttpAdapterInterface',true)) {
+            $this->adapter = new $this->options[ClientOptions::ADAPTER];
+        } else {
+            $this->adapter = new HttpCurlAdapter();
+        }
     }
 
-    public function send(RequestInterface $request)
+    public function send(Request $request)
     {
-        //$this->adapter->doRequest($request,$this->timeout);
-        return $this->adapter->doRequest($request);
+        return $this->adapter->doRequest($request, $this->options);
     }
-
 
 
 }
