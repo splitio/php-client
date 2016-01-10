@@ -83,6 +83,7 @@ class HttpCurlAdapter implements HttpAdapterInterface
     private function setOptions($options = array())
     {
         $this->httpOptions[CURLOPT_TIMEOUT] = $options[ClientOptions::TIMEOUT];
+        $this->httpOptions[CURLOPT_USERAGENT] = $options[ClientOptions::USERAGENT];
 
         if (!curl_setopt_array($this->handle, $this->httpOptions)) {
             throw new HttpCurlAdapterOtionsException("Error setting cURL request options");
