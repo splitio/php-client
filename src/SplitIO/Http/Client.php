@@ -14,7 +14,7 @@ class Client implements ClientInterface
     protected $options = [
         ClientOptions::TIMEOUT => 30,
         ClientOptions::ADAPTER => 'SplitIO\Http\Adapter\HttpCurlAdapter',
-        ClientOptions::USERAGENT => 'SplitIO-PHP-SDK'
+        ClientOptions::USERAGENT => 'SplitIO-PHP-SDK/1.0'
     ];
 
     public function __construct(array $options=[])
