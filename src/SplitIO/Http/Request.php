@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sarrubia
- * Date: 10/01/16
- * Time: 14:24
- */
-
 namespace SplitIO\Http;
 
 class Request
@@ -18,10 +11,11 @@ class Request
 
     private $uri=null;
 
-    public function __construct(Method $method, $uri)
+    public function __construct(MethodEnum $method, $uri, $headers = array())
     {
         $this->method = $method;
         $this->uri = $uri;
+        $this->headers = $headers;
     }
 
     public function getUri()
@@ -30,7 +24,7 @@ class Request
     }
 
     /**
-     * @return null|Method
+     * @return null|MethodEnum
      */
     public function getMethod()
     {
@@ -51,5 +45,31 @@ class Request
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @param $key
+     * @return null
+     */
+    public function getHeader($key)
+    {
+        return (isset($this->headers[$key])) ? $this->headers[$key] : null;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     */
+    public function setHeader($key, $value)
+    {
+        $this->headers[(string) $key] = (string) $value;
     }
 }

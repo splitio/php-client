@@ -4,7 +4,7 @@ namespace SplitIO\Http\Adapter;
 use SplitIO\Http\Request;
 use SplitIO\Http\ClientOptions;
 use SplitIO\Http\Response;
-use SplitIO\Http\Method;
+use SplitIO\Http\MethodEnum;
 use SplitIO\Http\Exception\HttpServerException;
 use SplitIO\Http\Adapter\Exception\CurlAdapterOtionsException;
 
@@ -35,7 +35,7 @@ class HttpCurlAdapter implements HttpAdapterInterface
     /**
      * @param RequestInterface $request
      * @param array $options
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \SplitIO\Http\Response
      * @throws HttpServerException
      * @throws HttpServerException404
      * @throws RestClientException
@@ -46,34 +46,56 @@ class HttpCurlAdapter implements HttpAdapterInterface
         $this->handle = curl_init($uri);
 
         switch ($request->getMethod()) {
-            case Method::GET:
-                echo \SplitIO\murmur3();
+            case MethodEnum::GET:
                 break;
-            case Method::POST:
+            case MethodEnum::POST:
                 $this->httpOptions[CURLOPT_POST] = true;
                 $this->httpOptions[CURLOPT_POSTFIELDS] = $request->getData();
                 if (is_array($this->httpOptions[CURLOPT_POSTFIELDS])) {
                     $this->httpOptions[CURLOPT_HTTPHEADER] = array('Content-Type: multipart/form-data');
                 }
                 break;
-            case Method::PUT:
+            case MethodEnum::PUT:
                 $this->httpOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
                 $this->httpOptions[CURLOPT_POSTFIELDS] = $request->getData();
                 break;
-            case Method::DELETE:
+            case MethodEnum::DELETE:
                 $this->httpOptions[CURLOPT_CUSTOMREQUEST] = 'DELETE';
                 break;
             default:
                 break;
         }
 
+        $this->setHeaders($request->getHeaders());
         $this->setOptions($options);
+        $this->setOptRequest();
 
         $response_object = curl_exec($this->handle);
         $this->responseObject = $this->httpParseMessage($response_object);
 
         curl_close($this->handle);
         return $this->responseObject;
+    }
+
+    /**
+     * @param array $headers
+     */
+    private function setHeaders(array $headers)
+    {
+        if (!empty($headers)) {
+
+            if (!isset($this->httpOptions[CURLOPT_HTTPHEADER])) {
+                $this->httpOptions[CURLOPT_HTTPHEADER] = array();
+            }
+
+            if (!is_array($this->httpOptions[CURLOPT_HTTPHEADER])) {
+                $this->httpOptions[CURLOPT_HTTPHEADER] = array();
+            }
+
+            foreach ($headers as $k => $v) {
+                $this->httpOptions[CURLOPT_HTTPHEADER][] = $k.':'.$v;
+            }
+        }
     }
 
     /**
@@ -84,7 +106,10 @@ class HttpCurlAdapter implements HttpAdapterInterface
     {
         $this->httpOptions[CURLOPT_TIMEOUT] = $options[ClientOptions::TIMEOUT];
         $this->httpOptions[CURLOPT_USERAGENT] = $options[ClientOptions::USERAGENT];
+    }
 
+    private function setOptRequest()
+    {
         if (!curl_setopt_array($this->handle, $this->httpOptions)) {
             throw new HttpCurlAdapterOtionsException("Error setting cURL request options");
         }

@@ -1,13 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sarrubia
- * Date: 10/01/16
- * Time: 14:25
- */
-
 namespace SplitIO\Http;
-
 
 class MethodEnum extends \SplitIO\Common\Enum
 {

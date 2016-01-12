@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Http;
 
-
 class Response
 {
     private $statusCode = 200;
