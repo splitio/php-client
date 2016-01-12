@@ -9,7 +9,7 @@
 namespace SplitIO\Http;
 
 
-class Method extends \SplitIO\Common\Enum
+class MethodEnum extends \SplitIO\Common\Enum
 {
     const GET = 'GET';
     const POST = 'POST';
