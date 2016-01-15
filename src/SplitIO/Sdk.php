@@ -10,6 +10,6 @@ class Sdk
 
     public static function factory(array $args=[])
     {
-
+        echo "Split SDK";
     }
 }
