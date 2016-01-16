@@ -10,7 +10,7 @@ class Sdk
     /** @var array Arguments for creating clients */
     private $args;
 
-    public static function factory(array $args=[])
+    public static function factory(array $args = [])
     {
         echo "Split SDK";
     }
