@@ -47,3 +47,24 @@ $additional_options = ['log-adapter'=>$psrLogger];
 $splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
 ```
 For further information about Zend-Log module, please go to [Zend/Log](http://framework.zend.com/manual/current/en/modules/zend.log.overview.html) documentation.
+
+Another sample is [Monolog](https://github.com/Seldaek/monolog). Monolog sends your logs to files, sockets, inboxes, 
+databases and various web services. See the complete list of handlers on its [documentation](https://github.com/Seldaek/monolog/blob/master/doc/02-handlers-formatters-processors.md) 
+
+```php
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+/** create a log channel */
+$psrLogger = new Logger('SplitIO');
+$psrLogger->pushHandler(new StreamHandler('path/to/your.log', Logger::WARNING));
+
+/** Optional: You could develop your own adapters for cache, log, etc. */
+$additional_options = ['log-adapter'=>$psrLogger];
+
+/** Create the Split Client instance. */
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
+```
+
+
+## Cache - PSR-6 Cache Interface compatibility
