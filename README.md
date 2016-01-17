@@ -11,7 +11,7 @@ $ composer require splitio/split-sdk-php
 ## Write your code!
 ```php
 /** Optional: You could develop your own adapters for cache, log, etc. */
-$additional_options = ['cache-adapter'=>$myCacheAdapter, 'log-adapter'=>$psrLogger];
+$additional_options = ['cache-adapter'=>$psrCache, 'log-adapter'=>$psrLogger];
 
 /** Create the Split Client instance. */
 $splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
@@ -68,3 +68,88 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
 
 
 ## Cache - PSR-6 Cache Interface compatibility
+
+[PSR-6 Cache Interface](https://github.com/php-fig/cache)
+is a standards recommendation defining a common interface for caching libraries.
+
+Split SDK has its own implementation of PSR-6 standard, the default adapter is the Filesystem Adapter, however Split SDK provides 2 more implementations thought for production environments,
+the first one is a Memcached implementation and the other one is a Redis implementation. See the sample code below in order to know how to set it up.
+### Provided Filesystem Cache Adapter - sample code
+```php
+/**
+* Provided Filesystem Cache Adapter
+* You can set up this cache adapter provided by Split SDK with your custom configurations.
+*/
+$additional_options = ['cache' => [
+                            'name' => 'filesystem',
+                            'options' => [
+                                'path'=> '/your/cache/directory'
+                            ]
+                        ]
+];
+
+/** Create the Split Client instance. */
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
+```
+### Provided Memcached Cache Adapter - sample code
+```php
+/**
+* Provided Memcached Cache Adapter
+* You can set up this cache adapter provided by Split SDK with your custom configurations.
+*/
+$additional_options = ['cache' => [
+                            'name' => 'memcached',
+                            'options' => [
+                                'servers'=>[ //Memcached servers
+                                    ['172.17.0.2',11211],
+                                    ['172.18.0.4',11211]
+                                ]
+                            ]
+                        ]
+];
+
+/** Create the Split Client instance. */
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
+```
+### Provided Redis Cache Adapter - sample code
+```php
+/**
+* Provided Redis Cache Adapter
+* You can set up this cache adapter provided by Split SDK with your custom configurations.
+*/
+$additional_options = ['cache' => [
+                            'name' => 'redis',
+                            'options' => [
+                                'host' => '172.17.0.3',
+                                'port' => 6379
+                            ]
+                        ]
+];
+
+/** Create the Split Client instance. */
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
+```
+### Out of the box Cache Adapters
+Additionally, Split SDK could be integrated with other Cache System that implement the PSR-6.
+For instance, if you already are using Doctrine Cache on your project, you could integrate it through the [php-cache project](https://github.com/php-cache/doctrine-adapter). See the sample code below:
+
+```php
+use Doctrine\Common\Cache\MemcachedCache;
+use Cache\Doctrine\CachePool;
+
+// Create a instance of Doctrine's MemcachedCache
+$memcached = new \Memcached();
+$memcached->addServer('localhost', 11211);
+$doctrineCache = new MemcachedCache();
+$doctrineCache->setMemcached($memcached);
+
+// Wrap Doctrine's cache with the PSR-6 adapter
+$psrPool = new CachePool($doctrineCache);
+
+// Optional: You could develop your own adapters for cache, log, etc.
+$additional_options = ['cache-adapter'=>$psrPool];
+
+// Create the Split Client instance.
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
+```
+
