@@ -17,8 +17,17 @@ class Memcached implements CacheStorageAdapterInterface
     /** Default Memcached port */
     const DEFAULT_PORT = 11211;
 
+    /** Default value time to live */
+    const DEFAULT_VALUE_TTL = 60;
+
     /** @var \Memcached|null  */
     private $client = null;
+
+    /** @var array */
+    private $options = [
+        'servers'   =>[[self::DEFAULT_HOST, self::DEFAULT_PORT]],
+        'ttl'       => self::DEFAULT_VALUE_TTL
+    ];
 
     /**
      * @param array $options
@@ -38,6 +47,8 @@ class Memcached implements CacheStorageAdapterInterface
                 throw new AdapterException("Memcached default server cannot be added");
             }
         }
+
+        $this->options = array_merge($this->options, $options);
     }
 
     /**
@@ -69,7 +80,7 @@ class Memcached implements CacheStorageAdapterInterface
      */
     public function addItem($key, $value, $expiration = null)
     {
-        return $this->client->set($key, $value, $expiration);
+        return $this->save($key, $value, $expiration);
     }
 
     /**
@@ -106,7 +117,13 @@ class Memcached implements CacheStorageAdapterInterface
      */
     public function save($key, $value, $expiration = null)
     {
-        return $this->client->set($key, serialize($value), $expiration);
+        if ($expiration === 0 || $expiration === null) {
+            $expirationToSet = $this->options['ttl'];
+        } else {
+            $expirationToSet = $expiration - time();
+        }
+
+        return $this->client->set($key, serialize($value), $expirationToSet);
     }
 
 
