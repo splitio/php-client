@@ -2,6 +2,8 @@
 namespace SplitIO\Cache;
 
 use Psr\Cache\CacheItemInterface;
+use \DateTime;
+use \DateTimeInterface;
 
 class Item implements CacheItemInterface
 {
@@ -120,9 +122,9 @@ class Item implements CacheItemInterface
      */
     public function expiresAt($expiration)
     {
-        // DateTimeInterface only exists since PHP>=5.5, also accept DateTime
+        // DateTimeInterface has been added for PHP>=5.5, so, also accept DateTime
         if ($expiration instanceof DateTimeInterface || $expiration instanceof DateTime) {
-            // convert datetime to unix timestamp
+            // getting unix timestamp
             $this->expire = (int) $expiration->format('U');
         } else {
             $this->expire = 0;
