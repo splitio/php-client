@@ -4,9 +4,12 @@ namespace SplitIO\Cache;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\CacheItemInterface;
 use SplitIO\Cache\Storage\Adapter\Memcached as MemcachedAdapter;
+use SplitIO\Cache\Storage\Adapter\Redis as RedisAdapter;
+use SplitIO\Cache\Storage\Adapter\Filesystem as FilesystemAdapter;
 
 class Pool implements CacheItemPoolInterface
 {
+    /** Common functions for cache key */
     use CacheKeyTrait;
 
     /** @var null|\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface */
@@ -20,7 +23,26 @@ class Pool implements CacheItemPoolInterface
      */
     public function __construct(array $options = [])
     {
-        $this->adapter = new MemcachedAdapter($options);
+
+        $adapterName = (isset($options['adapter']['name'])) ? $options['adapter']['name'] : 'memcached';
+        $adapterOptions = (isset($options['adapter']['options'])
+                            && is_array($options['adapter']['options'])) ? $options['adapter']['options'] : [];
+
+        switch ($adapterName) {
+            case 'memcached':
+                $this->adapter = new MemcachedAdapter($adapterOptions);
+                break;
+            case 'redis':
+                $this->adapter = new RedisAdapter($adapterOptions);
+                break;
+            case 'filesystem':
+                $this->adapter = new FilesystemAdapter($adapterOptions);
+                break;
+            default:
+                $this->adapter = new FilesystemAdapter($adapterOptions);
+                break;
+
+        }
     }
 
     /**
