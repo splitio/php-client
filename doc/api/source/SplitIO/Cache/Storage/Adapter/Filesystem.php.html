@@ -1,0 +1,207 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+namespace SplitIO\Cache\Storage\Adapter;
+
+use SplitIO\Cache\Storage\Exception\AdapterException;
+use SplitIO\Cache\Item;
+
+/**
+ * Class Filesystem
+ * @package SplitIO\Cache\Storage\Adapter
+ */
+class Filesystem implements CacheStorageAdapterInterface
+{
+
+    /** Default filesystem path */
+    const DEFAULT_PATH = '/tmp';
+
+    /** Default file name prefix */
+    const DEFAULT_FILENAME_PREFIX = 'splitio';
+
+    /** Default file name extension */
+    const DEFAULT_FILENAME_EXTENSION = 'cache';
+
+    /** Default value time to live */
+    const DEFAULT_VALUE_TTL = 60;
+
+    /** @var resource|null  */
+    private $resource = null;
+
+    /** @var array */
+    private $options = [
+        'path'  =&gt; self::DEFAULT_PATH,
+        'ttl'   =&gt; self::DEFAULT_VALUE_TTL
+    ];
+
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options)
+    {
+
+        $this-&gt;options = array_merge($this-&gt;options, $options);
+
+        $this-&gt;options['path'] = (!isset($options['path'])) ? sys_get_temp_dir() : $options['path'];
+
+        if (!is_writable($this-&gt;options['path'])) {
+            throw new AdapterException($this-&gt;options['path'].&quot; is not writable.&quot;);
+        }
+
+        $this-&gt;path = rtrim($this-&gt;options['path'], '/');
+
+    }
+
+    /**
+     * @param string $key
+     * @return \Psr\Cache\CacheItemInterface
+     */
+    public function getItem($key)
+    {
+        $item = new Item($key);
+
+        $file = $this-&gt;getFilePath($key);
+
+        if (file_exists($file)) {
+
+            $data = unserialize(file_get_contents($file));
+            $expiration = (int) $data['expiration'];
+
+            if ($expiration !== 0 &amp;&amp; $expiration &lt; time()) {
+                // expired
+                return $item;
+            }
+
+            $item-&gt;set(unserialize($data['value']));
+        }
+
+        return $item;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @param int|null $expiration
+     * @return bool
+     */
+    public function addItem($key, $value, $expiration = null)
+    {
+        return $this-&gt;save($key, $value, $expiration);
+    }
+
+    /**
+     * @return bool
+     */
+    public function clear()
+    {
+        $files = glob($this-&gt;path.'/'.self::DEFAULT_FILENAME_PREFIX.'.*.'.self::DEFAULT_FILENAME_EXTENSION);
+        $success = true;
+        foreach ($files as $file) {
+            $success &amp;= @unlink($file);
+        }
+        return $success;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function deleteItem($key)
+    {
+        $file = $this-&gt;getFilePath($key);
+
+        if (file_exists($file)) {
+            return @unlink($file);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array $keys
+     * @return bool
+     */
+    public function deleteItems(array $keys)
+    {
+        foreach ($keys as $key) {
+            if (! $this-&gt;deleteItem($key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @param int|null $expiration
+     * @return bool
+     */
+    public function save($key, $value, $expiration = null)
+    {
+        if ($expiration === 0 || $expiration === null) {
+            $expirationToSet = time() + $this-&gt;options['ttl'];
+        } else {
+            $expirationToSet = $expiration;
+        }
+
+        $data = ['expiration' =&gt; $expirationToSet, 'value' =&gt; serialize($value)];
+        $success = file_put_contents($this-&gt;getFilePath($key), serialize($data), \LOCK_EX);
+        return $success !== false;
+
+
+    }
+
+    /**
+     * @param $key
+     * @return string
+     */
+    private function getFilePath($key)
+    {
+        return $this-&gt;options['path'].'/'.self::DEFAULT_FILENAME_PREFIX.'.'.urlencode($key).'.'.self::DEFAULT_FILENAME_EXTENSION;
+    }
+
+}</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

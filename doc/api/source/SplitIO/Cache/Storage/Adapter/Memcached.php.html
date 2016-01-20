@@ -1,0 +1,174 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+namespace SplitIO\Cache\Storage\Adapter;
+
+use SplitIO\Cache\Storage\Exception\AdapterException;
+use SplitIO\Cache\Item;
+
+/**
+ * Class Memcached
+ * @package SplitIO\Cache\Storage\Adapter
+ */
+class Memcached implements CacheStorageAdapterInterface
+{
+
+    /** Default Memcached host */
+    const DEFAULT_HOST = 'localhost';
+
+    /** Default Memcached port */
+    const DEFAULT_PORT = 11211;
+
+    /** Default value time to live */
+    const DEFAULT_VALUE_TTL = 60;
+
+    /** @var \Memcached|null  */
+    private $client = null;
+
+    /** @var array */
+    private $options = [
+        'servers'   =&gt;[[self::DEFAULT_HOST, self::DEFAULT_PORT]],
+        'ttl'       =&gt; self::DEFAULT_VALUE_TTL
+    ];
+
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options)
+    {
+        //List of servers in [] = array(string host, integer port)
+        $servers = (isset($options['servers'])) ? $options['servers'] : null;
+
+        $this-&gt;client = new \Memcached();
+        if (is_array($servers) &amp;&amp; !empty($servers)) {
+            if (! $this-&gt;client-&gt;addServers($servers)) {
+                throw new AdapterException(&quot;Memcached servers cannot be added&quot;);
+            }
+        } else {
+            if (! $this-&gt;client-&gt;addServer(self::DEFAULT_HOST, self::DEFAULT_PORT)) {
+                throw new AdapterException(&quot;Memcached default server cannot be added&quot;);
+            }
+        }
+
+        $this-&gt;options = array_merge($this-&gt;options, $options);
+    }
+
+    /**
+     * @param string $key
+     * @return \Psr\Cache\CacheItemInterface
+     */
+    public function getItem($key)
+    {
+        $item = new Item($key);
+
+        /**
+         * Returns the value stored in the cache or FALSE otherwise.
+         * The Memcached::getResultCode() will return Memcached::RES_NOTFOUND if the key does not exist.
+         */
+        $memcachedItem = $this-&gt;client-&gt;get($key);
+
+        if ($this-&gt;client-&gt;getResultCode() !== \Memcached::RES_NOTFOUND &amp;&amp; is_string($memcachedItem)) {
+            $item-&gt;set(unserialize($memcachedItem));
+        }
+
+        return $item;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @param int|null $expiration
+     * @return bool
+     */
+    public function addItem($key, $value, $expiration = null)
+    {
+        return $this-&gt;save($key, $value, $expiration);
+    }
+
+    /**
+     * @return bool
+     */
+    public function clear()
+    {
+        return $this-&gt;client-&gt;flush();
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function deleteItem($key)
+    {
+        return $this-&gt;client-&gt;delete($key);
+    }
+
+    /**
+     * @param array $keys
+     * @return bool
+     */
+    public function deleteItems(array $keys)
+    {
+        return $this-&gt;client-&gt;deleteMulti($keys);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @param int|null $expiration
+     * @return bool
+     */
+    public function save($key, $value, $expiration = null)
+    {
+        if ($expiration === 0 || $expiration === null) {
+            $expirationToSet = $this-&gt;options['ttl'];
+        } else {
+            $expirationToSet = $expiration - time();
+        }
+
+        return $this-&gt;client-&gt;set($key, serialize($value), $expirationToSet);
+    }
+
+
+}</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

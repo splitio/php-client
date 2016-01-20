@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+namespace SplitIO\Http;
+
+use SplitIO\Http\Adapter\HttpCurlAdapter;
+
+class Client implements ClientInterface
+{
+    /**
+     * Http Adapter
+     * @var null|\SplitIO\Http\Adapter\HttpAdapterInterface
+     */
+    protected $adapter = null;
+
+    protected $options = [
+        ClientOptions::TIMEOUT =&gt; 30,
+        ClientOptions::ADAPTER =&gt; 'SplitIO\Http\Adapter\HttpCurlAdapter',
+        ClientOptions::USERAGENT =&gt; 'SplitIO-PHP-SDK/1.0'
+    ];
+
+    public function __construct(array $options = [])
+    {
+        $this-&gt;options = array_merge($this-&gt;options, $options);
+
+        if (class_exists($this-&gt;options[ClientOptions::ADAPTER]) &amp;&amp;
+            is_a($this-&gt;options[ClientOptions::ADAPTER], '\SplitIO\Http\Adapter\HttpAdapterInterface', true)) {
+
+            $this-&gt;adapter = new $this-&gt;options[ClientOptions::ADAPTER];
+
+        } else {
+
+            $this-&gt;adapter = new HttpCurlAdapter();
+
+        }
+    }
+
+    public function send(Request $request)
+    {
+        return $this-&gt;adapter-&gt;doRequest($request, $this-&gt;options);
+    }
+
+
+}</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

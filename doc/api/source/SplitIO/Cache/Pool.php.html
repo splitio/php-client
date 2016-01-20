@@ -1,0 +1,281 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+namespace SplitIO\Cache;
+
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\CacheItemInterface;
+use SplitIO\Cache\Storage\Adapter\Memcached as MemcachedAdapter;
+use SplitIO\Cache\Storage\Adapter\Redis as RedisAdapter;
+use SplitIO\Cache\Storage\Adapter\Filesystem as FilesystemAdapter;
+
+class Pool implements CacheItemPoolInterface
+{
+    /** Common functions for cache key */
+    use CacheKeyTrait;
+
+    /** @var null|\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface */
+    private $adapter = null;
+
+    /** @var array */
+    private $deferred = [];
+
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options = [])
+    {
+
+        $adapterName = (isset($options['adapter']['name'])) ? $options['adapter']['name'] : 'memcached';
+        $adapterOptions = (isset($options['adapter']['options'])
+                            &amp;&amp; is_array($options['adapter']['options'])) ? $options['adapter']['options'] : [];
+
+        switch ($adapterName) {
+            case 'memcached':
+                $this-&gt;adapter = new MemcachedAdapter($adapterOptions);
+                break;
+            case 'redis':
+                $this-&gt;adapter = new RedisAdapter($adapterOptions);
+                break;
+            case 'filesystem':
+                $this-&gt;adapter = new FilesystemAdapter($adapterOptions);
+                break;
+            default:
+                $this-&gt;adapter = new FilesystemAdapter($adapterOptions);
+                break;
+
+        }
+    }
+
+    /**
+     * Returns a Cache Item representing the specified key.
+     *
+     * This method must always return a CacheItemInterface object, even in case of
+     * a cache miss. It MUST NOT return null.
+     *
+     * @param string $key
+     *   The key for which to return the corresponding Cache Item.
+     *
+     * @throws InvalidArgumentException
+     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
+     *   MUST be thrown.
+     *
+     * @return CacheItemInterface
+     *   The corresponding Cache Item.
+     */
+    public function getItem($key)
+    {
+        $this-&gt;assertValidKey($key);
+        return $this-&gt;adapter-&gt;getItem($key);
+    }
+
+    /**
+     * Returns a traversable set of cache items.
+     *
+     * @param array $keys
+     * An indexed array of keys of items to retrieve.
+     *
+     * @throws InvalidArgumentException
+     *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
+     *   MUST be thrown.
+     *
+     * @return array|\Traversable
+     *   A traversable collection of Cache Items keyed by the cache keys of
+     *   each item. A Cache item will be returned for each key, even if that
+     *   key is not found. However, if no keys are specified then an empty
+     *   traversable MUST be returned instead.
+     */
+    public function getItems(array $keys = array())
+    {
+        $items = array();
+
+        foreach ($keys as $key) {
+            $items[$key] = $this-&gt;getItem($key);
+        }
+
+        return $items;
+    }
+
+    /**
+     * Confirms if the cache contains specified cache item.
+     *
+     * Note: This method MAY avoid retrieving the cached value for performance reasons.
+     * This could result in a race condition with CacheItemInterface::get(). To avoid
+     * such situation use CacheItemInterface::isHit() instead.
+     *
+     * @param string $key
+     *    The key for which to check existence.
+     *
+     * @throws InvalidArgumentException
+     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
+     *   MUST be thrown.
+     *
+     * @return bool
+     *  True if item exists in the cache, false otherwise.
+     */
+    public function hasItem($key)
+    {
+        $this-&gt;assertValidKey($key);
+
+        $item = $this-&gt;getItem($key);
+        return $item-&gt;isHit();
+    }
+
+    /**
+     * Deletes all items in the pool.
+     *
+     * @return bool
+     *   True if the pool was successfully cleared. False if there was an error.
+     */
+    public function clear()
+    {
+        return $this-&gt;adapter-&gt;clear();
+    }
+
+    /**
+     * Removes the item from the pool.
+     *
+     * @param string $key
+     *   The key for which to delete
+     *
+     * @throws InvalidArgumentException
+     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
+     *   MUST be thrown.
+     *
+     * @return bool
+     *   True if the item was successfully removed. False if there was an error.
+     */
+    public function deleteItem($key)
+    {
+        $this-&gt;assertValidKey($key);
+
+        return $this-&gt;adapter-&gt;deleteItem($key);
+    }
+
+    /**
+     * Removes multiple items from the pool.
+     *
+     * @param array $keys
+     *   An array of keys that should be removed from the pool.
+
+     * @throws InvalidArgumentException
+     *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
+     *   MUST be thrown.
+     *
+     * @return bool
+     *   True if the items were successfully removed. False if there was an error.
+     */
+    public function deleteItems(array $keys)
+    {
+        foreach ($keys as $key) {
+            $this-&gt;assertValidKey($key);
+        }
+
+        return $this-&gt;adapter-&gt;deleteItems($keys);
+    }
+
+    /**
+     * Persists a cache item immediately.
+     *
+     * @param CacheItemInterface $item
+     *   The cache item to save.
+     *
+     * @return bool
+     *   True if the item was successfully persisted. False if there was an error.
+     */
+    public function save(CacheItemInterface $item)
+    {
+        $key = $item-&gt;getKey();
+        $value = $item-&gt;get();
+
+        //PSR-6 CacheItemInterface doesn't define a method to get the item expiration value.
+        $expiration = (method_exists($item, 'getExpiration')) ? $item-&gt;getExpiration() : 0;
+
+        if ($this-&gt;adapter-&gt;save($key, $value, $expiration)) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Sets a cache item to be persisted later.
+     *
+     * @param CacheItemInterface $item
+     *   The cache item to save.
+     *
+     * @return bool
+     *   False if the item could not be queued or if a commit was attempted and failed. True otherwise.
+     */
+    public function saveDeferred(CacheItemInterface $item)
+    {
+        $this-&gt;deferred[] = $item;
+        return true;
+    }
+
+    /**
+     * Persists any deferred cache items.
+     *
+     * @return bool
+     *   True if all not-yet-saved items were successfully saved or there were none. False otherwise.
+     */
+    public function commit()
+    {
+        $success = true;
+
+        foreach ($this-&gt;deferred as $item) {
+            if (! $this-&gt;save($item)) {
+                $success = false;
+            }
+        }
+
+        if ($success) {
+            $this-&gt;deferred = [];
+        }
+
+        return $success;
+    }
+}</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

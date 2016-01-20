@@ -1,0 +1,3366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project title="API Documentation" version="2.8.5">
+  <partials/>
+  <file path="SplitIO/Common/Enum.php" generated-path="SplitIO.Common.Enum.html" hash="59eec746611934a1b5b06e9b6edfcb30" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="link" line="0" description="http://github.com/myclabs/php-enum" link="http://github.com/myclabs/php-enum"/>
+      <tag name="license" line="0" description="MIT (see the LICENSE file)" link="http://www.opensource.org/licenses/mit-license.php"/>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="true" namespace="SplitIO\Common" line="18" package="Default">
+      <extends/>
+      <name>Enum</name>
+      <full_name>\SplitIO\Common\Enum</full_name>
+      <docblock line="18">
+        <description>Base Enum class</description>
+        <long-description>Create an enum by implementing this class and adding class constants.</long-description>
+        <tag name="author" line="18" description="Matthieu Napoli" link="mailto:matthieu@mnapoli.fr"/>
+        <tag name="author" line="18" description="Daniel Costa" link="mailto:danielcosta@gmail.com"/>
+        <tag name="author" line="18" description="Mirosław Filip" link="mailto:mirfilip@gmail.com"/>
+        <tag name="package" line="18" description="Default"/>
+      </docblock>
+      <property static="false" visibility="protected" namespace="SplitIO\Common" line="25" package="Default">
+        <name>$value</name>
+        <full_name>\SplitIO\Common\Enum::value</full_name>
+        <default></default>
+        <docblock line="25">
+          <description>Enum value</description>
+          <long-description></long-description>
+          <tag name="var" line="25" description="" type="mixed" variable="">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="true" visibility="protected" namespace="SplitIO\Common" line="32" package="Default">
+        <name>$cache</name>
+        <full_name>\SplitIO\Common\Enum::cache</full_name>
+        <default>array()</default>
+        <docblock line="32">
+          <description>Store existing constants in a static cache per object.</description>
+          <long-description></long-description>
+          <tag name="var" line="32" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Common" line="41" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Common\Enum::__construct()</full_name>
+        <docblock line="41">
+          <description>Creates a new value of some type</description>
+          <long-description></long-description>
+          <tag name="param" line="41" description="" type="mixed" variable="$value">
+            <type>mixed</type>
+          </tag>
+          <tag name="throws" line="41" description="if incompatible type is given." type="\UnexpectedValueException">
+            <type>\UnexpectedValueException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Common" line="53" package="Default">
+        <name>getValue</name>
+        <full_name>\SplitIO\Common\Enum::getValue()</full_name>
+        <docblock line="53">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="53" description="" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Common" line="63" package="Default">
+        <name>getKey</name>
+        <full_name>\SplitIO\Common\Enum::getKey()</full_name>
+        <docblock line="63">
+          <description>Returns the enum key (i.e. the constant name).</description>
+          <long-description></long-description>
+          <tag name="return" line="63" description="" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Common" line="71" package="Default">
+        <name>__toString</name>
+        <full_name>\SplitIO\Common\Enum::__toString()</full_name>
+        <docblock line="71">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="71" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="81" package="Default">
+        <name>keys</name>
+        <full_name>\SplitIO\Common\Enum::keys()</full_name>
+        <docblock line="81">
+          <description>Returns the names (keys) of all constants in the Enum class</description>
+          <long-description></long-description>
+          <tag name="return" line="81" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="91" package="Default">
+        <name>values</name>
+        <full_name>\SplitIO\Common\Enum::values()</full_name>
+        <docblock line="91">
+          <description>Returns instances of the Enum class of all Enum constants</description>
+          <long-description></long-description>
+          <tag name="return" line="91" description="Constant name in key, Enum instance in value" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="107" package="Default">
+        <name>toArray</name>
+        <full_name>\SplitIO\Common\Enum::toArray()</full_name>
+        <docblock line="107">
+          <description>Returns all possible values as an array</description>
+          <long-description></long-description>
+          <tag name="return" line="107" description="Constant name in key, constant value in value" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="125" package="Default">
+        <name>isValid</name>
+        <full_name>\SplitIO\Common\Enum::isValid()</full_name>
+        <docblock line="125">
+          <description>Check if is valid enum value</description>
+          <long-description></long-description>
+          <tag name="param" line="125" description="" type="" variable="$value"/>
+          <tag name="return" line="125" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="137" package="Default">
+        <name>isValidKey</name>
+        <full_name>\SplitIO\Common\Enum::isValidKey()</full_name>
+        <docblock line="137">
+          <description>Check if is valid enum key</description>
+          <long-description></long-description>
+          <tag name="param" line="137" description="" type="" variable="$key"/>
+          <tag name="return" line="137" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="151" package="Default">
+        <name>search</name>
+        <full_name>\SplitIO\Common\Enum::search()</full_name>
+        <docblock line="151">
+          <description>Return key for value</description>
+          <long-description></long-description>
+          <tag name="param" line="151" description="" type="" variable="$value"/>
+          <tag name="return" line="151" description="" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="165" package="Default">
+        <name>__callStatic</name>
+        <full_name>\SplitIO\Common\Enum::__callStatic()</full_name>
+        <docblock line="165">
+          <description>Returns a value when called statically like so: MyEnum::SOME_VALUE() given SOME_VALUE is a class constant</description>
+          <long-description></long-description>
+          <tag name="param" line="165" description="" type="string" variable="$name">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="165" description="" type="array" variable="$arguments">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="165" description="" type="static">
+            <type>static</type>
+          </tag>
+          <tag name="throws" line="165" description="" type="\BadMethodCallException">
+            <type>\BadMethodCallException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$name</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$arguments</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="53" code="PPC:ERR-50008">No summary for method getValue()</error>
+      <error line="71" code="PPC:ERR-50008">No summary for method __toString()</error>
+    </parse_markers>
+    <source>eJydV8Fu2zgQvfsrZgMDkYNEvrtx1q3XCwRbp0C97aUpDFqibW4kUhCpOEaRy/7b/tfOkJQiW1JSV5dY1HBm3pvhG+b692yb9YYXFz24gEki5APgszUmGw2HG2G2xSqMVDpM91HCVnqI1ldcFqk3j7jUvDTf7XahynBFFXnEQ5Vvht5CD1NhrvxLiD5gfvs3BJpzMFsOH2+ns7vFDNYi4QP0POz1JEu5zljEYZElwtx+up+qNFXyXa9M9gPDyDNMBTAzrXGJVqc5Z4YDk0BZwmoPIs0SnnJphNxgNKGdPZrEwOKYVt1CpKQ2TBodel8TVpitymHODO7jBdyxTCUCrlO/MEmlXQnX+U19wx9MCp7AVKE/uI7tW0Qvk03KREKEHtjPRa70f/+yHfwpEpFhAJGv6deh/bCHFTA5i4zPmND3fvSoYpYUei4cJ48sKbhfKT9MHlkOqXjisV8Z2r9ZrgyPDI+hb3chxUceF0blHPiT0JbEiigQEhjgbyMiiFiEpcx4Dmr1D/oL26KzPGf7jujeT985GjvbYNBMx9UYKwiS7xxSUGvQKsV22mcN2BnLWeqAe4jHFmabq52G+y+SP2U2m69kNnuKeGaEkiDWiBXLkGGKq8SFAWyljXjkMjwEVKyw0WFdyMhuXS4tX3kRmcBFH1g7Vzd60HnwW59a8+pGaIws4tJyUDOjxyZqYXfmGpzZdzh3Ls4pTakMIAuGaKIDZ8/GGYSw4WYZsSTh8dK2VDBAvstgz73qp8/OcT2uGqVmVavPJOemyGVbqx1xg+FtssExJd5DPWxXtM/WVL/geuB7CETIQ7tUNiuQogwaTXlKqn/xfVeirndHI81ZHm2Det6Dt2jC3sBT9UYPGbWwZl0JBM7L4FTGrM5CgJzpAXUH9sLh+Sajusq20tdyrB0Cf6YrIBSnC4J1srQWJZ1GvXci0EliiUXYlCPE4lv8JecSllspsb2GBJW71jTEAmZ16RyUgWi1riWvwraGTeDuGOmG1tGzRslFIYQmF8A09KnJxzfew7FKeL/fyOo7eie9cG5KXWk95OWhc7vfYpwozZTWVg89EEZj9aAbTuG3OqpOZk4huCLnmGHXAeMWoXuhwOpv1X1LO+d04LZeVkfbzaWGIvdzvk64y6L2ONLvP1cfpzaqc1qLTc9hhG/OhupW8311gwhK2g6ybxaw3V9XPadbHj3YAaeJbxE7FW2dk26Sts9QH3ylVPIzFTsadO2SIOTSnQxn9VKMqt6XgJO1W2M7wGGZO6C1fPk1YDQsyFujI90JGDehvGsUUmjN8dJgd7jD/IYO2tmHyvHL1eucg8coy0H3WvXckTqwPL2Cldx4VdhtuQR3kr0v/L2HRDxwvAGOYL4nmR6NFp/ms+XX9x+/zFAx7TUNXpaoHdjRtb+dLTdWoU9CdfTJFZIKuino/4uukeKybNw1P7B4zvH6H08RQHV7+xnul1bJFl7QKbPLWhanNFxpQwp42Gzk9XtD7Dyi+jw5sG9VpdqdtR1zcHanSpCp/QzYwrw+rvE2SxHOaSi4sr16e33uPf8PLmpXjg==</source>
+  </file>
+  <file path="SplitIO/Cache/Pool.php" generated-path="SplitIO.Cache.Pool.html" hash="f2796d8202dc30224ef8e0e224230db4" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="CacheItemPoolInterface">\Psr\Cache\CacheItemPoolInterface</namespace-alias>
+    <namespace-alias name="CacheItemInterface">\Psr\Cache\CacheItemInterface</namespace-alias>
+    <namespace-alias name="MemcachedAdapter">\SplitIO\Cache\Storage\Adapter\Memcached</namespace-alias>
+    <namespace-alias name="RedisAdapter">\SplitIO\Cache\Storage\Adapter\Redis</namespace-alias>
+    <namespace-alias name="FilesystemAdapter">\SplitIO\Cache\Storage\Adapter\Filesystem</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Cache" line="10" package="Default">
+      <extends/>
+      <implements>\Psr\Cache\CacheItemPoolInterface</implements>
+      <name>Pool</name>
+      <full_name>\SplitIO\Cache\Pool</full_name>
+      <docblock line="10">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="10" description="Default"/>
+      </docblock>
+      <property static="false" visibility="private" namespace="SplitIO\Cache" line="16" package="Default">
+        <name>$adapter</name>
+        <full_name>\SplitIO\Cache\Pool::adapter</full_name>
+        <default>null</default>
+        <docblock line="16">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="16" description="" type="null|\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface" variable="">
+            <type>null</type>
+            <type>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Cache" line="19" package="Default">
+        <name>$deferred</name>
+        <full_name>\SplitIO\Cache\Pool::deferred</full_name>
+        <default>array()</default>
+        <docblock line="19">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="19" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="24" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Cache\Pool::__construct()</full_name>
+        <docblock line="24">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="24" description="" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="64" package="Default">
+        <name>getItem</name>
+        <full_name>\SplitIO\Cache\Pool::getItem()</full_name>
+        <docblock line="64">
+          <description>Returns a Cache Item representing the specified key.</description>
+          <long-description>This method must always return a CacheItemInterface object, even in case of
+a cache miss. It MUST NOT return null.</long-description>
+          <tag name="param" line="64" description="&lt;p&gt;The key for which to return the corresponding Cache Item.&lt;/p&gt;" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="throws" line="64" description="If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException&#10;  MUST be thrown." type="\SplitIO\Cache\InvalidArgumentException">
+            <type>\SplitIO\Cache\InvalidArgumentException</type>
+          </tag>
+          <tag name="return" line="64" description="The corresponding Cache Item." type="\Psr\Cache\CacheItemInterface">
+            <type>\Psr\Cache\CacheItemInterface</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="86" package="Default">
+        <name>getItems</name>
+        <full_name>\SplitIO\Cache\Pool::getItems()</full_name>
+        <docblock line="86">
+          <description>Returns a traversable set of cache items.</description>
+          <long-description></long-description>
+          <tag name="param" line="86" description="&lt;p&gt;An indexed array of keys of items to retrieve.&lt;/p&gt;" type="array" variable="$keys">
+            <type>array</type>
+          </tag>
+          <tag name="throws" line="86" description="If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException&#10;  MUST be thrown." type="\SplitIO\Cache\InvalidArgumentException">
+            <type>\SplitIO\Cache\InvalidArgumentException</type>
+          </tag>
+          <tag name="return" line="86" description="A traversable collection of Cache Items keyed by the cache keys of&#10;  each item. A Cache item will be returned for each key, even if that&#10;  key is not found. However, if no keys are specified then an empty&#10;  traversable MUST be returned instead." type="array|\Traversable">
+            <type>array</type>
+            <type>\Traversable</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$keys</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="114" package="Default">
+        <name>hasItem</name>
+        <full_name>\SplitIO\Cache\Pool::hasItem()</full_name>
+        <docblock line="114">
+          <description>Confirms if the cache contains specified cache item.</description>
+          <long-description>Note: This method MAY avoid retrieving the cached value for performance reasons.
+This could result in a race condition with CacheItemInterface::get(). To avoid
+such situation use CacheItemInterface::isHit() instead.</long-description>
+          <tag name="param" line="114" description="&lt;p&gt;The key for which to check existence.&lt;/p&gt;" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="throws" line="114" description="If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException&#10;  MUST be thrown." type="\SplitIO\Cache\InvalidArgumentException">
+            <type>\SplitIO\Cache\InvalidArgumentException</type>
+          </tag>
+          <tag name="return" line="114" description="True if item exists in the cache, false otherwise." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="128" package="Default">
+        <name>clear</name>
+        <full_name>\SplitIO\Cache\Pool::clear()</full_name>
+        <docblock line="128">
+          <description>Deletes all items in the pool.</description>
+          <long-description></long-description>
+          <tag name="return" line="128" description="True if the pool was successfully cleared. False if there was an error." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="146" package="Default">
+        <name>deleteItem</name>
+        <full_name>\SplitIO\Cache\Pool::deleteItem()</full_name>
+        <docblock line="146">
+          <description>Removes the item from the pool.</description>
+          <long-description></long-description>
+          <tag name="param" line="146" description="&lt;p&gt;The key for which to delete&lt;/p&gt;" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="throws" line="146" description="If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException&#10;  MUST be thrown." type="\SplitIO\Cache\InvalidArgumentException">
+            <type>\SplitIO\Cache\InvalidArgumentException</type>
+          </tag>
+          <tag name="return" line="146" description="True if the item was successfully removed. False if there was an error." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="166" package="Default">
+        <name>deleteItems</name>
+        <full_name>\SplitIO\Cache\Pool::deleteItems()</full_name>
+        <docblock line="166">
+          <description>Removes multiple items from the pool.</description>
+          <long-description></long-description>
+          <tag name="param" line="166" description="&lt;p&gt;An array of keys that should be removed from the pool.&lt;/p&gt;" type="array" variable="$keys">
+            <type>array</type>
+          </tag>
+          <tag name="throws" line="166" description="If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException&#10;  MUST be thrown." type="\SplitIO\Cache\InvalidArgumentException">
+            <type>\SplitIO\Cache\InvalidArgumentException</type>
+          </tag>
+          <tag name="return" line="166" description="True if the items were successfully removed. False if there was an error." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$keys</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="184" package="Default">
+        <name>save</name>
+        <full_name>\SplitIO\Cache\Pool::save()</full_name>
+        <docblock line="184">
+          <description>Persists a cache item immediately.</description>
+          <long-description></long-description>
+          <tag name="param" line="184" description="&lt;p&gt;The cache item to save.&lt;/p&gt;" type="\Psr\Cache\CacheItemInterface" variable="$item">
+            <type>\Psr\Cache\CacheItemInterface</type>
+          </tag>
+          <tag name="return" line="184" description="True if the item was successfully persisted. False if there was an error." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$item</name>
+          <default></default>
+          <type>\Psr\Cache\CacheItemInterface</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="209" package="Default">
+        <name>saveDeferred</name>
+        <full_name>\SplitIO\Cache\Pool::saveDeferred()</full_name>
+        <docblock line="209">
+          <description>Sets a cache item to be persisted later.</description>
+          <long-description></long-description>
+          <tag name="param" line="209" description="&lt;p&gt;The cache item to save.&lt;/p&gt;" type="\Psr\Cache\CacheItemInterface" variable="$item">
+            <type>\Psr\Cache\CacheItemInterface</type>
+          </tag>
+          <tag name="return" line="209" description="False if the item could not be queued or if a commit was attempted and failed. True otherwise." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$item</name>
+          <default></default>
+          <type>\Psr\Cache\CacheItemInterface</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="221" package="Default">
+        <name>commit</name>
+        <full_name>\SplitIO\Cache\Pool::commit()</full_name>
+        <docblock line="221">
+          <description>Persists any deferred cache items.</description>
+          <long-description></long-description>
+          <tag name="return" line="221" description="True if all not-yet-saved items were successfully saved or there were none. False otherwise." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Cache" line="12" package="SplitIO\Cache">
+        <name>assertValidKey</name>
+        <full_name>\SplitIO\Cache\CacheKeyTrait::assertValidKey()</full_name>
+        <docblock line="12">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <inherited_from>\SplitIO\Cache\CacheKeyTrait</inherited_from>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="10" code="PPC:ERR-50005">No summary for class \SplitIO\Cache\Pool</error>
+      <error line="24" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="16" code="PPC:ERR-50007">No summary for property $adapter</error>
+      <error line="19" code="PPC:ERR-50007">No summary for property $deferred</error>
+    </parse_markers>
+    <source>eJzdWVtPG0cUfudXnEootiMufeoDlKSIJAqqkqBAK1WA0LA+xtPs7mxnZm2sJP8958xlb/YaJyitUj8A3p1z/853zi6/Pi+mxVYuMjSFSBDOi1Ta03dXJyKZ4uHWVmkQzoz23/3PU4vZmVLpaW5RT0josO9U50RL99W5VVrc4dXxWBR07OoNZgnfGIMwUH0JdzdR8B7H0rCw++MrBF/JFM3CkMMsXX+rVGwlqTAGOGiQWZFihrk1sDobWx+3gD77T5/CicoylcOkzBMrVW5gojS4uOADLuDpvjvJDjpVv+PiQgtpyWDU8NtMaMjLNP10tT4GdzVcDNcqj6KhQsuZsAjbwh+AI6e6a05oLRZLMmOcoNZUnSO4vK5F3G8gyUJokQXZbVW4eMPNoKm8TWVSJQNubhI6YnWZ2GFbzJkYOaGP3hB/otdvCat0YiiNQTuMMpeDcHtwfTlgOA+uRyN4DmvuwwEMsoizweGSoXeVN+tshWuD4HDf58kTkObGxfmQnl63qyPkeVUD/pi5tMkUhs0UjeBjy6FEEMwa8R4subttp9LsPmuAA+dLjTjsZGd0uKTnVqP4cLjCuOa+3NRws4kfY3RStfOmlpcI4NvMU8OIMrXf32h1/fOW/9ntzfdoS01AFp5mgCkLNBYaDfGYzO/A0lVTYCInkjqcuGkvyEYVF+QyZGinagxZaSyIdC4WhrSw6qi5xfmgbv/GxO4AzjAHmft6qElUKQITZtRce+QTvPnj/ALevruISpmbun4EmiHaYLe3ydN4B8hHT6tMsvOppIawKuriABNF/GUKlY9Ztk7Fkg071Wpu4DSfiVSOj/VdyXz/8j5BV4ra4unEKWY3okuUplxReiDFO5ECaSiRvl3V0/FhtS4RtwjOj3zJvRDScsbbqXgo3NWsfIeWDw05pkjBXeASGWr7JwdBE8ufrMEZvGuDfPdZS+/hg0C1WsxQG3GbEjDREmwCWiQpMT2oCFOELMTJA8eMvDHe81bh7pIivs+/naqAES0JpY8CgsidcutBaBjwzhOyi/8WJFyIn64u6uTVGo5bOU1UmqKvODldg8Ow85Ss24VvmbirmEbjAiBddunbI7UnVV1gLtOUvfTukBpuRXeYVEQi4BwJWyvj5gldM1FlPt6D12pOR/UOn80VVFmsGYp8o2hzwKywDQZoRhgzVvkiadlAMd4I/mbYwBIxtJ/bo6WG8BCq7je4mCJ3gQ8DCIzT1R3KXsEl37omNaFpVvRKo1+aTebE+7rpROUTqck/OWkUk5YuKygXjWzWndUF1ltl8aBF/m+O/wIxU3IcuyaOj7C7e3Rz3QsiJaUzkSdcBGFohkX1XmOiypTVGJqS3C4CNI+NhBnLFYO2mukKmjs4oAQNR3twobwrUaspKeFG2lI48Wqv7khL81qSfBcQm4yY1TOGTCQfAO8l6aNof9B5cksPMZXMhSYz0nOkj8wxWlXoHZiIlMc5XdFzaXB9W02F+bap0m61B1uk2Re7z0Kh+/rjBaZokXqTSMs3coiwoExslKUqTVEK5tToBMMEjZnQ+rKAJEWiLiK1Vy5f/ixxGR9kAtNa6fW5cxqG3az1jNlwuH/AZmpGIdvI2BOtsv6Yv3bZGruM/g/g3yqsH23dwmqXyscU1mfrkX3Rg4Ou7ocAkREHyyIN+9VGsFixbQHvW+09i2c9mKmjejeNXda6Bn7YjWs9agzMGRLfDTetNaWLnw03kE12+hWbRy/ejLfXi7gzWtDcOBGNvQNkltHzvrCYLj16BriteMB0NN956KlVEh8ZsWKp/8Z+L7zfj6oc+zPsC2Sp/5kGj+Iso4HHhWkUZdvDunmitYHu75+dv9/9ZVXixgpNPrD8ikLm3BlhuaOUkZY6CXhfSO2XKWdsrzbeuHUEQy9/4xeFoXNoBwak62V1bODfa1W+1ndoFTuAnxueU2aHXYC51G27xwgf+E7Th9Go+aawgVNLdV2HY7fF9EH1HLswpQQRJVRQgJQQq/8TwDYx6MX9Os28Ry7+U2JJ/tFwpiMUgsoyaT1SreWnJn4gzomHhUwZ0g7/Gy5z7OSL8DZ4czT7esa3yJfXEbhLy1tdsnXkQdxfvZFe92Zgbbfz5kcJ212g3eWoxr2s7e9SOkPLoxsxOUYy2DB1vg5Ly9x2sEU58dGvIPF2/hyduzx3+Jx756eYbd807lj3XMdsow/qZlnRNq41g1jPKOn8o2CFkjhDgp5Y7M9fALl88lw=</source>
+  </file>
+  <file path="SplitIO/Http/Client.php" generated-path="SplitIO.Http.Client.html" hash="8f00b8ea0497bbe646a84f3a06191329" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="HttpCurlAdapter">\SplitIO\Http\Adapter\HttpCurlAdapter</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Http" line="6" package="Default">
+      <extends/>
+      <implements>\SplitIO\Http\ClientInterface</implements>
+      <name>Client</name>
+      <full_name>\SplitIO\Http\Client</full_name>
+      <docblock line="6">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="6" description="Default"/>
+      </docblock>
+      <property static="false" visibility="protected" namespace="SplitIO\Http" line="12" package="Default">
+        <name>$adapter</name>
+        <full_name>\SplitIO\Http\Client::adapter</full_name>
+        <default>null</default>
+        <docblock line="12">
+          <description>Http Adapter</description>
+          <long-description></long-description>
+          <tag name="var" line="12" description="" type="null|\SplitIO\Http\Adapter\HttpAdapterInterface" variable="">
+            <type>null</type>
+            <type>\SplitIO\Http\Adapter\HttpAdapterInterface</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="protected" namespace="SplitIO\Http" line="14" package="Default">
+        <name>$options</name>
+        <full_name>\SplitIO\Http\Client::options</full_name>
+        <default>array(\SplitIO\Http\ClientOptions::TIMEOUT =&gt; 30, \SplitIO\Http\ClientOptions::ADAPTER =&gt; 'SplitIO\Http\Adapter\HttpCurlAdapter', \SplitIO\Http\ClientOptions::USERAGENT =&gt; 'SplitIO-PHP-SDK/1.0')</default>
+        <docblock line="14">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="20" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Http\Client::__construct()</full_name>
+        <docblock line="20">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="36" package="Default">
+        <name>send</name>
+        <full_name>\SplitIO\Http\Client::send()</full_name>
+        <docblock line="36">
+          <description></description>
+          <long-description></long-description>
+          <tag name="inherited_from" description="\SplitIO\Http\ClientInterface::send()" refers="\SplitIO\Http\ClientInterface::send()" link="/classes/SplitIO.Http.ClientInterface.html#method_send"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$request</name>
+          <default></default>
+          <type>\SplitIO\Http\Request</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="6" code="PPC:ERR-50005">No summary for class \SplitIO\Http\Client</error>
+      <error line="20" code="PPC:ERR-50015">Argument $options is missing from the Docblock of __construct</error>
+      <error line="20" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="36" code="PPC:ERR-50015">Argument $request is missing from the Docblock of send</error>
+      <error line="36" code="PPC:ERR-50008">No summary for method send()</error>
+      <error line="14" code="PPC:ERR-50007">No summary for property $options</error>
+    </parse_markers>
+    <source>eJyNU01vwjAMvfdX+IBoi8pg2o0NNgTVQNMGgnICVGXFjEqhzZJ0H2L894W0fFUgNYcmsf3esx334ZGtmBGRNQpGAoQxo6HsD2Y9Kdm9YSTi3DRrLwiTyPWlk3Ca3VVoQIkQ0KEhRhLCNaO4Vqe9pR+pqKVSMDYGqFWrVPQOFdhRQcaztz19EQ5RQunf7Kp8dj4yp9ia3hmPJQYSF1AiaRw0NaHKNOePmQzjSCj/NKVQK016kHoaDa//6g4mHjRbcFd3rkW1u+2h5452UWaRpplXmSZjd9R+dt+8U67qsDesjrsvtdubuqmR830xyTsNA1gmUbAjAN8PFI3kSSAtwjn5PStybmvQ5iBekqtQVFvHEI3x18g/0Dp3OgcmO9PerXAJln5+H39CIUUONL3cp7kN5fKBQ/MInxTEOmAWnwzTAdUMtG1V9JlgpnUyIfgNxRI4KX8LSNV/UoQ7NwHWaRe3Rvq9+KQCo4U1ws8EhYQSTw/5h+QoEx7llKutRZwBrT3QyRWp0si0je0/N/dD4g==</source>
+  </file>
+  <file path="SplitIO/Common/ErrorHandler.php" generated-path="SplitIO.Common.ErrorHandler.html" hash="6ea02ded9c1ff021be85492f4176564b" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="ErrorException">\ErrorException</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Common" line="6" package="Default">
+      <extends/>
+      <name>ErrorHandler</name>
+      <full_name>\SplitIO\Common\ErrorHandler</full_name>
+      <docblock line="6">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="6" description="Default"/>
+      </docblock>
+      <property static="true" visibility="protected" namespace="SplitIO\Common" line="13" package="Default">
+        <name>$errStack</name>
+        <full_name>\SplitIO\Common\ErrorHandler::errStack</full_name>
+        <default>array()</default>
+        <docblock line="13">
+          <description>Errors stack</description>
+          <long-description></long-description>
+          <tag name="var" line="13" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="18" package="Default">
+        <name>registerShutdown</name>
+        <full_name>\SplitIO\Common\ErrorHandler::registerShutdown()</full_name>
+        <docblock line="18">
+          <description>Register function to catch the PHP Fatal Error.</description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="26" package="Default">
+        <name>shutdown</name>
+        <full_name>\SplitIO\Common\ErrorHandler::shutdown()</full_name>
+        <docblock line="26">
+          <description>Static Method registered to catch Fatal Errors</description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="47" package="Default">
+        <name>start</name>
+        <full_name>\SplitIO\Common\ErrorHandler::start()</full_name>
+        <docblock line="47">
+          <description>Method to start the custom error handler</description>
+          <long-description></long-description>
+          <tag name="param" line="47" description="" type="integer" variable="$errorLevel">
+            <type>integer</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$errorLevel</name>
+          <default>\E_WARNING</default>
+          <type>integer</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="61" package="Default">
+        <name>stop</name>
+        <full_name>\SplitIO\Common\ErrorHandler::stop()</full_name>
+        <docblock line="61">
+          <description>Method to stop the custon error handler</description>
+          <long-description></long-description>
+          <tag name="param" line="61" description="" type="boolean|false" variable="$throw">
+            <type>boolean</type>
+            <type>false</type>
+          </tag>
+          <tag name="return" line="61" description="" type="mixed|null">
+            <type>mixed</type>
+            <type>null</type>
+          </tag>
+          <tag name="throws" line="61" description="" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$throw</name>
+          <default>false</default>
+          <type>boolean|false</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="83" package="Default">
+        <name>addError</name>
+        <full_name>\SplitIO\Common\ErrorHandler::addError()</full_name>
+        <docblock line="83">
+          <description>Method to add the catched error</description>
+          <long-description></long-description>
+          <tag name="param" line="83" description="" type="" variable="$errno"/>
+          <tag name="param" line="83" description="" type="string" variable="$errstr">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="83" description="" type="string" variable="$errfile">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="83" description="" type="integer" variable="$errline">
+            <type>integer</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$errno</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$errstr</name>
+          <default>''</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$errfile</name>
+          <default>''</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$errline</name>
+          <default>0</default>
+          <type>integer</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="6" code="PPC:ERR-50005">No summary for class \SplitIO\Common\ErrorHandler</error>
+    </parse_markers>
+    <source>eJyNVV1P2zAUfc+vuKsqmqJssFc6NKaJDSTGEH3YQ6lS47hNNNeObIeCoP99/kzTNGXNSxrfr3PPPb798rXMy4ihJZElwgTGJS3U9e+H73y55GwURZUkcCkEF5fPmJSqsIeYIind8RViGSUieo0i0M/J8bF9w7EzS5AK4b/h7OIJCUBCoBd/cmLfpeCKYEUy460KDH0ixNgEwjlMpqOd3HBPFoVURMC8YtigAsUBI4VzUDmBu6s7+IEUog7Fp+1q1SPVNXypOoHwKcd5pTK+YvHQer+6WP0Eh1R6jzTExpMFUSlGlJIsteTEw2QQ3AbT4cgmWe/0MXYYfhGV86wuoHmou2l0IQ/pQu5DbyjlQvNp36kBrIGqeOjZNU8xhzj4nZ8DqygdNlI4ElQl2Kg+W2+i++qlJLqAyzDpmc/edOPanxe0aTefW3ZasKbdfG7ZtUglWhBo+Pij3rTRheYXLhTPONzwhZXDfENioM86nhCcc+g5w8zin0HBwAKdWbwz0KRaYA7eqlA5BCCzAGnW2zdhP1o9Tz0poSwcXEnFl24QkPsLFG5IiQRaahDK93hDngg9aPImf9wI0jQ9XKZ/vt3fXt/+bMvBjPqDS3F2Vl+39rSlVonTi4fZqXQYoCyzJA6mSRP2sKmTOme76GQKTmuHcMjLDYXsXQofOadvc0T1AuurXPBVbXcahmXxTLI3U7i2WD/pLIdxzsvYZdc92GLd967enluthkH8dw67SewSTUtdfjd4tBV72KTNI4juR5DWxFvp1jvJ2+COjjzhXTUcV62QfRU2v/zIOuPeE4wWptOLWaZ6r9r4llBMUsZbh1KJgi2sTf/cbzQ7Ys/dNfviEBGFyxM7IEkoqqc8GCR1lcanX5SnXVoLf5tHHRcN84qpLrV9hM/NRdtIw8iq9f8fe3gJnCbQhGxAbvAl0BbkOlr/Ay39c4I=</source>
+  </file>
+  <file path="SplitIO/Cache/Storage/Adapter/Memcached.php" generated-path="SplitIO.Cache.Storage.Adapter.Memcached.html" hash="791646ab24e0c230bc172b79ab8332c1" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="AdapterException">\SplitIO\Cache\Storage\Exception\AdapterException</namespace-alias>
+    <namespace-alias name="Item">\SplitIO\Cache\Item</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Cache\Storage\Adapter" line="11" package="SplitIO\Cache\Storage\Adapter">
+      <extends/>
+      <implements>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface</implements>
+      <name>Memcached</name>
+      <full_name>\SplitIO\Cache\Storage\Adapter\Memcached</full_name>
+      <docblock line="11">
+        <description>Class Memcached</description>
+        <long-description></long-description>
+        <tag name="package" line="11" description="SplitIO\Cache\Storage\Adapter"/>
+      </docblock>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="15" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_HOST</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::DEFAULT_HOST</full_name>
+        <value>'localhost'</value>
+        <docblock line="15">
+          <description>Default Memcached host</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="18" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_PORT</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::DEFAULT_PORT</full_name>
+        <value>11211</value>
+        <docblock line="18">
+          <description>Default Memcached port</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="21" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_VALUE_TTL</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::DEFAULT_VALUE_TTL</full_name>
+        <value>60</value>
+        <docblock line="21">
+          <description>Default value time to live</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <property static="false" visibility="private" namespace="SplitIO\Cache\Storage\Adapter" line="24" package="SplitIO\Cache\Storage\Adapter">
+        <name>$client</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::client</full_name>
+        <default>null</default>
+        <docblock line="24">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="24" description="" type="\Memcached|null" variable="">
+            <type>\Memcached</type>
+            <type>null</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Cache\Storage\Adapter" line="27" package="SplitIO\Cache\Storage\Adapter">
+        <name>$options</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::options</full_name>
+        <default>array('servers' =&gt; array(array(self::DEFAULT_HOST, self::DEFAULT_PORT)), 'ttl' =&gt; self::DEFAULT_VALUE_TTL)</default>
+        <docblock line="27">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="27" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="35" package="SplitIO\Cache\Storage\Adapter">
+        <name>__construct</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::__construct()</full_name>
+        <docblock line="35">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="35" description="" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::__construct()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::__construct()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method___construct"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="58" package="SplitIO\Cache\Storage\Adapter">
+        <name>getItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::getItem()</full_name>
+        <docblock line="58">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="58" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="58" description="" type="\Psr\Cache\CacheItemInterface">
+            <type>\Psr\Cache\CacheItemInterface</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::getItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::getItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_getItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="81" package="SplitIO\Cache\Storage\Adapter">
+        <name>addItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::addItem()</full_name>
+        <docblock line="81">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="81" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="81" description="" type="mixed" variable="$value">
+            <type>mixed</type>
+          </tag>
+          <tag name="param" line="81" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="81" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::addItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::addItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_addItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="89" package="SplitIO\Cache\Storage\Adapter">
+        <name>clear</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::clear()</full_name>
+        <docblock line="89">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="89" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::clear()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::clear()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_clear"/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="98" package="SplitIO\Cache\Storage\Adapter">
+        <name>deleteItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::deleteItem()</full_name>
+        <docblock line="98">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="98" description="" type="" variable="$key"/>
+          <tag name="return" line="98" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_deleteItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="107" package="SplitIO\Cache\Storage\Adapter">
+        <name>deleteItems</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::deleteItems()</full_name>
+        <docblock line="107">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="107" description="" type="array" variable="$keys">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="107" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItems()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItems()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_deleteItems"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$keys</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="118" package="SplitIO\Cache\Storage\Adapter">
+        <name>save</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Memcached::save()</full_name>
+        <docblock line="118">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="118" description="" type="" variable="$key"/>
+          <tag name="param" line="118" description="" type="" variable="$value"/>
+          <tag name="param" line="118" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="118" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::save()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::save()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_save"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="35" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="58" code="PPC:ERR-50008">No summary for method getItem()</error>
+      <error line="81" code="PPC:ERR-50008">No summary for method addItem()</error>
+      <error line="89" code="PPC:ERR-50008">No summary for method clear()</error>
+      <error line="98" code="PPC:ERR-50008">No summary for method deleteItem()</error>
+      <error line="107" code="PPC:ERR-50008">No summary for method deleteItems()</error>
+      <error line="118" code="PPC:ERR-50008">No summary for method save()</error>
+      <error line="24" code="PPC:ERR-50007">No summary for property $client</error>
+      <error line="27" code="PPC:ERR-50007">No summary for property $options</error>
+    </parse_markers>
+    <source>eJy1VttuGkkQfecryhGKBwsv8T7sAwQSy8ZaSyREBucFEGoPBbTSc1F3D3Y29r9vdU/PheGSeKOdhxF0V50+VXWqet5/iNdxLWQBqpj5CKNYcH07nF4xf43TkY4kW+H0csFijbJTqyXqkE3/ycdY8yjMrPOFzh6vW40BwbXOzmpwBleCKQWfMPDN5sIsfSQ63wj3OCOybNX8bW/gQSwwwFArsE7Ox7nchvRaUqy1H7Ua0EMc4BqXLBG6BLKOlDbgxsKPQvpz3b+5vB+M538PR2PowqmIfCaM2WnnGFAcyQNAX4Z3Buji4s+Liz0QGyYSBM0DekUg+Ab3w3y9HNz35+PxgLD+elcC+rhhEqY5k+cwEQIyjFjyDdMIdV9wShX5mu2qN5OSfd9xiWxZFflM7IZ5ThXKDUp1Sr+7vclEoVi22+WcNWF7zYQ/mzULBK3Fqfvd7VWM8yCt+azgmbpbvUgWOMIZQ7fp6CcPgvuwTELfbMJ8bvMoE197224Na/8jZ9ZqDTglPFqCCxJ4CJMZxW/9PALh4cpKpklbGlcobd0bOUQ98+yCx5VC7WWHTfLMzRoN+AB71qFdLo6F02uuzntF7fCxVGmv0ckt+dIcOE+JZiwa8PYtnGAQ69JaoxRx5nmyfdJ5jy0Wo9T+sKN59FpGj5ZWdRp4b4reyJLiszCMNDwgED4u3pT4m+cl//cCKGiWvIao92tK/I0oFq5h02heEcxOPYvGsvWaByhX6G1vNguZpsAvh3rBybL+Db/nOxJ1IkOYflHSTVT7NuO4GIzHumaF2hh7BrXaJ3VOO06NhVFJtjnHlM2dJaMozeimnaJRbSZ4aNdsfiGScHM5GPUhojX5yBX+UQYZk0lei3ab+N2honJcRQv0GvDIaei5qEtmd/3R/PNwfDO8/3xtBGSOI7KwiFCBKR8+UcuXD2oVYQYZzm0ab0V6K9PdlciNRnfNtpiedLulHq5QpH6lLk4r6m0T2FGuLcN5zwyZJCRRcib4P7jj1dknRJcpC/Ef5JXuBPyJili3Ja1s0XRM76E6PsVcMqOpqjgfokgc1SD1VS6vpjunWUZ0t1lVn1lwaR0U2+BhiMPN9assfYFMesc5ZFpYikStvZ819L5O/imNBQrUeLBn9/NJnTIVHyXlrk6yVL/BTXklnNdw/EQNxL3U7TXpc0v/m0aPq+uAQO2UKFvRSHgHz89QXbTO1bYvbMbRCHUxmPIvCvOFNSv1/b7bdB9M6fRz+0XqHZ8e24VSbh6aazcfRjYnjebOcUURay//Ani9roo=</source>
+  </file>
+  <file path="SplitIO/Cache/CacheKeyTrait.php" generated-path="SplitIO.Cache.CacheKeyTrait.html" hash="81607a09b68b2e803a83c0b3d1aac3f7" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="InvalidArgumentException">\SplitIO\Cache\Exception\InvalidArgumentException</namespace-alias>
+    <trait namespace="SplitIO\Cache" line="10" package="SplitIO\Cache">
+      <name>CacheKeyTrait</name>
+      <full_name>\SplitIO\Cache\CacheKeyTrait</full_name>
+      <docblock line="10">
+        <description>Class CacheKeyTrait</description>
+        <long-description></long-description>
+        <tag name="package" line="10" description="SplitIO\Cache"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Cache" line="12" package="SplitIO\Cache">
+        <name>assertValidKey</name>
+        <full_name>\SplitIO\Cache\CacheKeyTrait::assertValidKey()</full_name>
+        <docblock line="12">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </trait>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="12" code="PPC:ERR-50015">Argument $key is missing from the Docblock of assertValidKey</error>
+      <error line="12" code="PPC:ERR-50008">No summary for method assertValidKey()</error>
+    </parse_markers>
+    <source>eJx1j70OwjAMhPc8hUEMbZc+AEiAEANiYAAxdbGKS6O2aZS4BYR4d5KWf4kbMvi+O8eTqc61UFiR1ZgSbHUpebVJFpjmNBaisQTJ1zBZnlPSLGuVrFSLpTzMzbGpSPHLcLk4igREsCjRWuhya7rsDEr245nbVeDxZ51zYsGe+UlcBThpI1tkgqxRqd8CrpoM7/0XHBqMCrqEHdnzXjKDYPA+QNqOfrb3kfCD9+Lc1CdQdIJ/9wXDhwMuD1ltKuRhOH613ET/3u7ccXAE</source>
+  </file>
+  <file path="SplitIO/Http/Exception/HttpServerException.php" generated-path="SplitIO.Http.Exception.HttpServerException.html" hash="fd3a04133acd9f30bf83c202ee9ce0f5" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Http\Exception" line="4" package="Default">
+      <extends>\Exception</extends>
+      <name>HttpServerException</name>
+      <full_name>\SplitIO\Http\Exception\HttpServerException</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Http\Exception\HttpServerException</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I/xKCkpiHGtSE4tKMnMz7Pm4krOSSwuVgAJB6cWlaUWweUUUitKUvNSihUQyrmqubhqAd15IO0=</source>
+  </file>
+  <file path="SplitIO/Cache/Storage/Adapter/Filesystem.php" generated-path="SplitIO.Cache.Storage.Adapter.Filesystem.html" hash="2747784fb7e0f42efbd73e9f0faabda8" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="AdapterException">\SplitIO\Cache\Storage\Exception\AdapterException</namespace-alias>
+    <namespace-alias name="Item">\SplitIO\Cache\Item</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Cache\Storage\Adapter" line="11" package="SplitIO\Cache\Storage\Adapter">
+      <extends/>
+      <implements>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface</implements>
+      <name>Filesystem</name>
+      <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem</full_name>
+      <docblock line="11">
+        <description>Class Filesystem</description>
+        <long-description></long-description>
+        <tag name="package" line="11" description="SplitIO\Cache\Storage\Adapter"/>
+      </docblock>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="15" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_PATH</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::DEFAULT_PATH</full_name>
+        <value>'/tmp'</value>
+        <docblock line="15">
+          <description>Default filesystem path</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="18" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_FILENAME_PREFIX</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::DEFAULT_FILENAME_PREFIX</full_name>
+        <value>'splitio'</value>
+        <docblock line="18">
+          <description>Default file name prefix</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="21" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_FILENAME_EXTENSION</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::DEFAULT_FILENAME_EXTENSION</full_name>
+        <value>'cache'</value>
+        <docblock line="21">
+          <description>Default file name extension</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="24" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_VALUE_TTL</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::DEFAULT_VALUE_TTL</full_name>
+        <value>60</value>
+        <docblock line="24">
+          <description>Default value time to live</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <property static="false" visibility="private" namespace="SplitIO\Cache\Storage\Adapter" line="27" package="SplitIO\Cache\Storage\Adapter">
+        <name>$resource</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::resource</full_name>
+        <default>null</default>
+        <docblock line="27">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="27" description="" type="resource|null" variable="">
+            <type>resource</type>
+            <type>null</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Cache\Storage\Adapter" line="30" package="SplitIO\Cache\Storage\Adapter">
+        <name>$options</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::options</full_name>
+        <default>array('path' =&gt; self::DEFAULT_PATH, 'ttl' =&gt; self::DEFAULT_VALUE_TTL)</default>
+        <docblock line="30">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="30" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="38" package="SplitIO\Cache\Storage\Adapter">
+        <name>__construct</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::__construct()</full_name>
+        <docblock line="38">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="38" description="" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::__construct()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::__construct()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method___construct"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="57" package="SplitIO\Cache\Storage\Adapter">
+        <name>getItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::getItem()</full_name>
+        <docblock line="57">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="57" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="57" description="" type="\Psr\Cache\CacheItemInterface">
+            <type>\Psr\Cache\CacheItemInterface</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::getItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::getItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_getItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="85" package="SplitIO\Cache\Storage\Adapter">
+        <name>addItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::addItem()</full_name>
+        <docblock line="85">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="85" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="85" description="" type="mixed" variable="$value">
+            <type>mixed</type>
+          </tag>
+          <tag name="param" line="85" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="85" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::addItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::addItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_addItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="93" package="SplitIO\Cache\Storage\Adapter">
+        <name>clear</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::clear()</full_name>
+        <docblock line="93">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="93" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::clear()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::clear()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_clear"/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="107" package="SplitIO\Cache\Storage\Adapter">
+        <name>deleteItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::deleteItem()</full_name>
+        <docblock line="107">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="107" description="" type="" variable="$key"/>
+          <tag name="return" line="107" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_deleteItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="122" package="SplitIO\Cache\Storage\Adapter">
+        <name>deleteItems</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::deleteItems()</full_name>
+        <docblock line="122">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="122" description="" type="array" variable="$keys">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="122" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItems()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItems()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_deleteItems"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$keys</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="139" package="SplitIO\Cache\Storage\Adapter">
+        <name>save</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::save()</full_name>
+        <docblock line="139">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="139" description="" type="" variable="$key"/>
+          <tag name="param" line="139" description="" type="" variable="$value"/>
+          <tag name="param" line="139" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="139" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::save()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::save()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_save"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Cache\Storage\Adapter" line="158" package="SplitIO\Cache\Storage\Adapter">
+        <name>getFilePath</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Filesystem::getFilePath()</full_name>
+        <docblock line="158">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="158" description="" type="" variable="$key"/>
+          <tag name="return" line="158" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="38" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="57" code="PPC:ERR-50008">No summary for method getItem()</error>
+      <error line="85" code="PPC:ERR-50008">No summary for method addItem()</error>
+      <error line="93" code="PPC:ERR-50008">No summary for method clear()</error>
+      <error line="107" code="PPC:ERR-50008">No summary for method deleteItem()</error>
+      <error line="122" code="PPC:ERR-50008">No summary for method deleteItems()</error>
+      <error line="139" code="PPC:ERR-50008">No summary for method save()</error>
+      <error line="158" code="PPC:ERR-50008">No summary for method getFilePath()</error>
+      <error line="27" code="PPC:ERR-50007">No summary for property $resource</error>
+      <error line="30" code="PPC:ERR-50007">No summary for property $options</error>
+    </parse_markers>
+    <source>eJy1Vktv2zgQvvtXTAsjlrOu01MPcZ3GSB2sUW8SbNxFgTgQGHlsE6ElgaQcZ5v895LUm5LsLHZXBx04Mx/n8c0MP38J12HLJxsUIfEQbkNG5eR6fkG8Nc5vZcDJCuejBQkl8kGrFYkmnfHOw1DSwE+1s4NBjdVE4kbBnRwft+AYLhgRAi4pQ/EslESfnSt/HhXwfpeU5knLs8yBbkKGG/SlAGOVGCU2E1/9lira1s9WC9SnvICvuCQRk7DMUUIi1xpeq3iBLyR8HV+Ovk9n7s1o9jsMoXMiN2FnUA8COqkQclzSXT3K5WQ6vhr9MXZv/hxfTn5oQKFjpcF+TNxJ9IVK7AHY8Y/Z+Op2cn2lkT2dhzrcLWERgqQKWAbA6BbrYf8aTb+P3dlsqtA+fSwAnW8JB44iiLiHL37EGKQIIadbIhHaqVjZagXbmnBOnitGgWGPUDZ3RqC/ji5KB2B4BgLZ8vS0WJJeriYlU1pVtSwKo3qfOxKbGtpxskk8Sl1IhIl/0QOjHiwj39NCcF2TKB550imbdY1+QjL9teWaig9neWBG390gX6FTFvZylEETwF2cjXsF5LyjQqB02pao24UvoPjsrlC6itShu6Dc6cIp2JqFW+jS4LlPnErywGzXCtg/Mxv9yTUPnsDHJ7BHQANC/z1QAX4gIb2q/16Fm+K9VgI3LTkELjndNGD2VFt20py9NtVX1Yv6K2g/4nMm4Sgj7sP8RvBk2Ji/HlX5yNjHBJVjrexo1LT2WQBUj5ShyU6uVCytafBhGqnC0gPtRsVUUdX10dou7qiQwjGmphqlcrQXRBKFGPkCOSWM/o2xmeaC4qzUAzI1HpRNcRdSTkxUilzUl90Y7q6TS0qcSf0qWr4bDuEjHB2V4D6bWeNUyGPqdAJGExcVUVIck8ayr69W1Frjw5luhmLgifdm2mnq1rKsesk/IlAs2dAdLqBtbrJEKo/xgCwkxKbfQxCwvSwji0VGoF5yT8+qmL7EZmAaXMwvQbbYDNFtjP6tXnoMiRo0dheY9aocXLHgwSk0dV81bb88qq312O/0j/uNOtmuKxS2LSLPQ6GvU9MZc8Ey4Kg6G5zEHSJix2xKZgBHQziPfEb9x6Rdiuyx85sYHeBP3eQ5mNQFMpTYPGP+ixFSTEDiV3PsdvBLwgQeiDzZkcoh8S8SIJwCjp2IvMBaauqr47eiM2suTZad2rrxVA2yyoJqTnLuvY0MydH/Nj/2d37D8LBH+9CM9pcXsA+Nsd1Huc4suEWpG9LsAPit8qLRD7f7AsUAVbIP4xWO6t8PyS4s7S/9PLSx1PMh3hHx2zFbH+awe187XUwjhVFxqTZ0YA+sjaRO5tPri29qgBUayxolZpEmrDvwrqkbK/GqKnMieWMXny5lT/cuD/sZ95bh3elHnKHvBYuYfV1zdmicZ43z+gstvixX</source>
+  </file>
+  <file path="SplitIO/Http/Request.php" generated-path="SplitIO.Http.Request.html" hash="2450d274297a19c9fd82548d8a7062e5" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Http" line="4" package="Default">
+      <extends/>
+      <name>Request</name>
+      <full_name>\SplitIO\Http\Request</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+      <property static="false" visibility="private" namespace="SplitIO\Http" line="6" package="Default">
+        <name>$headers</name>
+        <full_name>\SplitIO\Http\Request::headers</full_name>
+        <default>array()</default>
+        <docblock line="6">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Http" line="8" package="Default">
+        <name>$data</name>
+        <full_name>\SplitIO\Http\Request::data</full_name>
+        <default>null</default>
+        <docblock line="8">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Http" line="10" package="Default">
+        <name>$method</name>
+        <full_name>\SplitIO\Http\Request::method</full_name>
+        <default>null</default>
+        <docblock line="10">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Http" line="12" package="Default">
+        <name>$uri</name>
+        <full_name>\SplitIO\Http\Request::uri</full_name>
+        <default>null</default>
+        <docblock line="12">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="14" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Http\Request::__construct()</full_name>
+        <docblock line="14">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$method</name>
+          <default></default>
+          <type>\SplitIO\Http\MethodEnum</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$uri</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$headers</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="21" package="Default">
+        <name>getUri</name>
+        <full_name>\SplitIO\Http\Request::getUri()</full_name>
+        <docblock line="21">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="29" package="Default">
+        <name>getMethod</name>
+        <full_name>\SplitIO\Http\Request::getMethod()</full_name>
+        <docblock line="29">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="29" description="" type="null|\SplitIO\Http\MethodEnum">
+            <type>null</type>
+            <type>\SplitIO\Http\MethodEnum</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="37" package="Default">
+        <name>setData</name>
+        <full_name>\SplitIO\Http\Request::setData()</full_name>
+        <docblock line="37">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="37" description="" type="string|array" variable="$data">
+            <type>string</type>
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$data</name>
+          <default>''</default>
+          <type>string|array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="45" package="Default">
+        <name>getData</name>
+        <full_name>\SplitIO\Http\Request::getData()</full_name>
+        <docblock line="45">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="45" description="" type="string|array">
+            <type>string</type>
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="53" package="Default">
+        <name>getHeaders</name>
+        <full_name>\SplitIO\Http\Request::getHeaders()</full_name>
+        <docblock line="53">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="53" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="62" package="Default">
+        <name>getHeader</name>
+        <full_name>\SplitIO\Http\Request::getHeader()</full_name>
+        <docblock line="62">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="62" description="" type="" variable="$key"/>
+          <tag name="return" line="62" description="" type="null">
+            <type>null</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="71" package="Default">
+        <name>setHeader</name>
+        <full_name>\SplitIO\Http\Request::setHeader()</full_name>
+        <docblock line="71">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="71" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="71" description="" type="string" variable="$value">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Http\Request</error>
+      <error line="14" code="PPC:ERR-50015">Argument $method is missing from the Docblock of __construct</error>
+      <error line="14" code="PPC:ERR-50015">Argument $uri is missing from the Docblock of __construct</error>
+      <error line="14" code="PPC:ERR-50015">Argument $headers is missing from the Docblock of __construct</error>
+      <error line="14" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="21" code="PPC:ERR-50008">No summary for method getUri()</error>
+      <error line="29" code="PPC:ERR-50008">No summary for method getMethod()</error>
+      <error line="37" code="PPC:ERR-50008">No summary for method setData()</error>
+      <error line="45" code="PPC:ERR-50008">No summary for method getData()</error>
+      <error line="53" code="PPC:ERR-50008">No summary for method getHeaders()</error>
+      <error line="62" code="PPC:ERR-50008">No summary for method getHeader()</error>
+      <error line="71" code="PPC:ERR-50008">No summary for method setHeader()</error>
+      <error line="6" code="PPC:ERR-50007">No summary for property $headers</error>
+      <error line="8" code="PPC:ERR-50007">No summary for property $data</error>
+      <error line="10" code="PPC:ERR-50007">No summary for property $method</error>
+      <error line="12" code="PPC:ERR-50007">No summary for property $uri</error>
+    </parse_markers>
+    <source>eJyNU9FOwjAUfd9X3AcSOoLhXUR80AQfjInGJzWkjMoat1LbWxIi/Ltdu7kNNra+LOk595xzb+9u5jKWgaAp05JGDF5lwvHx+WOBKKdBECVUa3hhP4ZpDH4DsEcqvqPIYBAzumZKwwyoUnRPQltQI6wpUosKkySnUMow3q5bQKP4rHpvVgmP4MuICPlWwHIZbYVGZSIkT07nQZi00By7+nFDvNCp+SayM8CY66vb/yi5wPSUYOUy1H7OoNKjsPOUY3PyDcM3xclpEMXQKFGxq4lMRiPPHMFdzsyGcyhbz+FJm6dndthWm29wllTRFOzUudgc3ED9+1701gzvLYcUmzActrxBjjteV/PVDF2dO/fLffex7OW18AvQYde0JudzHnyzfdOj98tAsvKWGIRr+yqknuY9K/gMQ5hDEwDX+W/aYzfq0evIjiaGdS1MpYVxXtKyNEVG4vVD8GFnUF648iL38Q+zyWPt</source>
+  </file>
+  <file path="SplitIO/Http/Adapter/HttpCurlAdapter.php" generated-path="SplitIO.Http.Adapter.HttpCurlAdapter.html" hash="acf4ad598cdfaefd77e4fe74d9f8de9c" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="Request">\SplitIO\Http\Request</namespace-alias>
+    <namespace-alias name="ClientOptions">\SplitIO\Http\ClientOptions</namespace-alias>
+    <namespace-alias name="Response">\SplitIO\Http\Response</namespace-alias>
+    <namespace-alias name="MethodEnum">\SplitIO\Http\MethodEnum</namespace-alias>
+    <namespace-alias name="HttpServerException">\SplitIO\Http\Exception\HttpServerException</namespace-alias>
+    <namespace-alias name="CurlAdapterOtionsException">\SplitIO\Http\Adapter\Exception\CurlAdapterOtionsException</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Http\Adapter" line="11" package="Default">
+      <extends/>
+      <implements>\SplitIO\Http\Adapter\HttpAdapterInterface</implements>
+      <name>HttpCurlAdapter</name>
+      <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter</full_name>
+      <docblock line="11">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="11" description="Default"/>
+      </docblock>
+      <property static="false" visibility="public" namespace="SplitIO\Http\Adapter" line="13" package="Default">
+        <name>$handle</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::handle</full_name>
+        <default></default>
+        <docblock line="13">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="SplitIO\Http\Adapter" line="16" package="Default">
+        <name>$httpOptions</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::httpOptions</full_name>
+        <default>array()</default>
+        <docblock line="16">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="16" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="SplitIO\Http\Adapter" line="19" package="Default">
+        <name>$responseObject</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::responseObject</full_name>
+        <default></default>
+        <docblock line="19">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="19" description="" type="\SplitIO\Http\Response" variable="">
+            <type>\SplitIO\Http\Response</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="SplitIO\Http\Adapter" line="22" package="Default">
+        <name>$responseInfo</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::responseInfo</full_name>
+        <default></default>
+        <docblock line="22">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="22" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http\Adapter" line="27" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::__construct()</full_name>
+        <docblock line="27">
+          <description>HttpCurlAdapter Constructor</description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http\Adapter" line="43" package="Default">
+        <name>doRequest</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::doRequest()</full_name>
+        <docblock line="43">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="43" description="" type="\SplitIO\Http\Adapter\RequestInterface" variable="$request">
+            <type>\SplitIO\Http\Adapter\RequestInterface</type>
+          </tag>
+          <tag name="param" line="43" description="" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="43" description="" type="\SplitIO\Http\Response">
+            <type>\SplitIO\Http\Response</type>
+          </tag>
+          <tag name="throws" line="43" description="" type="\SplitIO\Http\Exception\HttpServerException">
+            <type>\SplitIO\Http\Exception\HttpServerException</type>
+          </tag>
+          <tag name="throws" line="43" description="" type="\SplitIO\Http\Adapter\HttpServerException404">
+            <type>\SplitIO\Http\Adapter\HttpServerException404</type>
+          </tag>
+          <tag name="throws" line="43" description="" type="\SplitIO\Http\Adapter\RestClientException">
+            <type>\SplitIO\Http\Adapter\RestClientException</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Http\Adapter\HttpAdapterInterface::doRequest()" refers="\SplitIO\Http\Adapter\HttpAdapterInterface::doRequest()" link="/classes/SplitIO.Http.Adapter.HttpAdapterInterface.html#method_doRequest"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$request</name>
+          <default></default>
+          <type>\SplitIO\Http\Adapter\RequestInterface</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Http\Adapter" line="83" package="Default">
+        <name>setHeaders</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::setHeaders()</full_name>
+        <docblock line="83">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="83" description="" type="array" variable="$headers">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$headers</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Http\Adapter" line="105" package="Default">
+        <name>setOptions</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::setOptions()</full_name>
+        <docblock line="105">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="105" description="" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+          <tag name="throws" line="105" description="" type="\SplitIO\Http\Adapter\HttpCurlAdapterOtionsException">
+            <type>\SplitIO\Http\Adapter\HttpCurlAdapterOtionsException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Http\Adapter" line="111" package="Default">
+        <name>setOptRequest</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::setOptRequest()</full_name>
+        <docblock line="111">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Http\Adapter" line="123" package="Default">
+        <name>httpParseMessage</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::httpParseMessage()</full_name>
+        <docblock line="123">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="123" description="" type="" variable="$res"/>
+          <tag name="return" line="123" description="" type="\SplitIO\Http\Response">
+            <type>\SplitIO\Http\Response</type>
+          </tag>
+          <tag name="throws" line="123" description="" type="\SplitIO\Http\Exception\HttpServerException">
+            <type>\SplitIO\Http\Exception\HttpServerException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$res</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Http\Adapter" line="145" package="Default">
+        <name>getHeadersFromCurlResponse</name>
+        <full_name>\SplitIO\Http\Adapter\HttpCurlAdapter::getHeadersFromCurlResponse()</full_name>
+        <docblock line="145">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="145" description="" type="" variable="$response"/>
+          <tag name="param" line="145" description="" type="" variable="$header_size"/>
+          <tag name="return" line="145" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$response</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$header_size</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="11" code="PPC:ERR-50005">No summary for class \SplitIO\Http\Adapter\HttpCurlAdapter</error>
+      <error line="43" code="PPC:ERR-50008">No summary for method doRequest()</error>
+      <error line="83" code="PPC:ERR-50008">No summary for method setHeaders()</error>
+      <error line="105" code="PPC:ERR-50008">No summary for method setOptions()</error>
+      <error line="111" code="PPC:ERR-50008">No summary for method setOptRequest()</error>
+      <error line="123" code="PPC:ERR-50008">No summary for method httpParseMessage()</error>
+      <error line="145" code="PPC:ERR-50008">No summary for method getHeadersFromCurlResponse()</error>
+      <error line="13" code="PPC:ERR-50007">No summary for property $handle</error>
+      <error line="16" code="PPC:ERR-50007">No summary for property $httpOptions</error>
+      <error line="19" code="PPC:ERR-50007">No summary for property $responseObject</error>
+      <error line="22" code="PPC:ERR-50007">No summary for property $responseInfo</error>
+    </parse_markers>
+    <source>eJy9V1tP4zgUfu+v8KJKTVE7sKt5Kgs7qIShUiFsm2ofAFUmdamXNMk4ToEd8d/n2HEudpK2zGo3ErT1ud++4/z+R7SKWgFekzjCHkHTyKd85NxfcR7dny9wxAk7abWS2CBNyLeExPykShn6lATciTgNg7iGPgFLQCE1pGvCV+HCDpJ1DdF+9YhUKn9OCdsQlp/V8CvnS3LDhPnq1JHelcRbno/jGAnJEhui68gna4gnJanjUQD/lpCu1vcWgidKHn3qofYKBwsfApOHR4eH6MsGM4QZw2/o8EhnBW0qR+g0ZbG6puR9beJMVUydO49/E4/vZT0TGQXLsBCQn+iwkoQhsHKWeDxkikXTtkwCTwSC5nMv47S6kiNNj3jafEXj/llD2M1cd8PZZOzcuvOJ7c4mN+7k/GZ6aU8eQBoMkb1EL53x2Plr7AzP3ZFz8yHRK/v8wrT2XknYlwgzvEZqJvLuEHmWJwZfWpJ2mNrKiYzwhAUNRc+5+IqFL2k3GjOwB8vn488mFxjg6ciaiuqLvAhVmJb6zKPs5SEVpa20QcIoUDOR/tkT4TNG63pAzhLwetCJcxpQbgnhbEbEE79Q7q2QpWlLMQQsl6yKx8MwOQXADAZfbXegcYjnkRH8fLJd8NaZ1khuaSIhUO26PQUvR/b4YvpgJu0Cc1zOWvbQJbJoPE/Tv5/qSqr28OzKdW+L2UitdQAnOPRR332LyACtE59TaHh+tAzZur8Ahzs1Dr//XA1mHyvBcDZ1neuJ/efMTmvRAQ2d/7oY+0RyYY9t1/6XwaRKauKp8WBBlhhKs7P331vmSMaEXxG8ICzWRy477FanGESU91YGDk1MGayUJzxfVPNQLrcMDsgr8SwNKKpa9bUoSlZk9BazmFyTOMZPxDKNlB2Q1jw/jEmjOQXbtVZ3LAy1CFZp/nTYZXSDOSlwt5R8XcyEWIEAv5B1xGH+MxYx4Vq9JRONQek2kChNeS1IfBAgjAl5r3VpN3T9r14BdhEsl4zKJcIxaj+j0zPU3vy89TuJIc+fOoPOp/bG9ED/tqt9zHtEaf0333h3Nps5tlt2enPE7ujadmYSozI9d9r7wWCQsex1HZtN7cn5V/tmq8aCSRu/hiBz2KkbIzn+wAeWjL6UKNCr8bXSkrIcKCAvOypiHdiMhUy4xWnwhDyIGSmYRSrUg+7Jvs0hUM28Wn78MtnQH7UYqoGMTF922pwOw6qVorvIg4G3PdT/tbttOZVfabI1AbuJws/mTeGFC1JshrKKu46IcS4YOg/ljZTBQC5VLMBLFq5FfbM0y6z0GrRLkXlM/wH9ZZcew8UbKI+TR3iT+oiG6tIENSLPhTsiml4eQi81VhbNdhnL39F39pjeUOq85JvZg3KMtnfXjozKbz3NSAWSiirpr9Zl4pyTV3EvIK+RD4mxDu7ZfSD+Dnrl9Ctzx4ZFTaOPYz5XVKVVs3LnhUnALe2s2/+t3Fj5otHcAVcqyrtyBVG5gnwaEHPCxOgJ8ukpOq7dUMoLrcWFx0KZsYoQ8aGPqjp8CqBktZ/JGzi4wX4CXhSZ7AxQp6ecO2k1OyDkpWWpoXkLVvpTKcjb8731A1pVhFU=</source>
+  </file>
+  <file path="SplitIO/Cache/Storage/Adapter/Redis.php" generated-path="SplitIO.Cache.Storage.Adapter.Redis.html" hash="9b21406f127c05a29d87942179133760" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="AdapterException">\SplitIO\Cache\Storage\Exception\AdapterException</namespace-alias>
+    <namespace-alias name="Item">\SplitIO\Cache\Item</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Cache\Storage\Adapter" line="11" package="SplitIO\Cache\Storage\Adapter">
+      <extends/>
+      <implements>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface</implements>
+      <name>Redis</name>
+      <full_name>\SplitIO\Cache\Storage\Adapter\Redis</full_name>
+      <docblock line="11">
+        <description>Class Redis</description>
+        <long-description></long-description>
+        <tag name="package" line="11" description="SplitIO\Cache\Storage\Adapter"/>
+      </docblock>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="15" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_HOST</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::DEFAULT_HOST</full_name>
+        <value>'localhost'</value>
+        <docblock line="15">
+          <description>Default Redis host</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="18" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_PORT</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::DEFAULT_PORT</full_name>
+        <value>6379</value>
+        <docblock line="18">
+          <description>Default Redis port</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="21" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_TIMEOUT</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::DEFAULT_TIMEOUT</full_name>
+        <value>0.0</value>
+        <docblock line="21">
+          <description>Default Redis timeout</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Cache\Storage\Adapter" line="24" package="SplitIO\Cache\Storage\Adapter">
+        <name>DEFAULT_VALUE_TTL</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::DEFAULT_VALUE_TTL</full_name>
+        <value>60</value>
+        <docblock line="24">
+          <description>Default value time to live</description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <property static="false" visibility="private" namespace="SplitIO\Cache\Storage\Adapter" line="27" package="SplitIO\Cache\Storage\Adapter">
+        <name>$client</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::client</full_name>
+        <default>null</default>
+        <docblock line="27">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="27" description="" type="\Redis|null" variable="">
+            <type>\Redis</type>
+            <type>null</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Cache\Storage\Adapter" line="30" package="SplitIO\Cache\Storage\Adapter">
+        <name>$options</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::options</full_name>
+        <default>array('host' =&gt; self::DEFAULT_HOST, 'port' =&gt; self::DEFAULT_PORT, 'timeout' =&gt; self::DEFAULT_TIMEOUT, 'ttl' =&gt; self::DEFAULT_VALUE_TTL)</default>
+        <docblock line="30">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="30" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="40" package="SplitIO\Cache\Storage\Adapter">
+        <name>__construct</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::__construct()</full_name>
+        <docblock line="40">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="40" description="" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::__construct()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::__construct()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method___construct"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="63" package="SplitIO\Cache\Storage\Adapter">
+        <name>getItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::getItem()</full_name>
+        <docblock line="63">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="63" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="63" description="" type="\Psr\Cache\CacheItemInterface">
+            <type>\Psr\Cache\CacheItemInterface</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::getItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::getItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_getItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="82" package="SplitIO\Cache\Storage\Adapter">
+        <name>addItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::addItem()</full_name>
+        <docblock line="82">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="82" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="82" description="" type="mixed" variable="$value">
+            <type>mixed</type>
+          </tag>
+          <tag name="param" line="82" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="82" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::addItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::addItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_addItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="90" package="SplitIO\Cache\Storage\Adapter">
+        <name>clear</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::clear()</full_name>
+        <docblock line="90">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="90" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::clear()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::clear()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_clear"/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="99" package="SplitIO\Cache\Storage\Adapter">
+        <name>deleteItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::deleteItem()</full_name>
+        <docblock line="99">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="99" description="" type="" variable="$key"/>
+          <tag name="return" line="99" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItem()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItem()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_deleteItem"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="114" package="SplitIO\Cache\Storage\Adapter">
+        <name>deleteItems</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::deleteItems()</full_name>
+        <docblock line="114">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="114" description="" type="array" variable="$keys">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="114" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItems()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItems()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_deleteItems"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$keys</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="131" package="SplitIO\Cache\Storage\Adapter">
+        <name>save</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\Redis::save()</full_name>
+        <docblock line="131">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="131" description="" type="" variable="$key"/>
+          <tag name="param" line="131" description="" type="" variable="$value"/>
+          <tag name="param" line="131" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="131" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+          <tag name="inherited_from" description="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::save()" refers="\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::save()" link="/classes/SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html#method_save"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="40" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="63" code="PPC:ERR-50008">No summary for method getItem()</error>
+      <error line="82" code="PPC:ERR-50008">No summary for method addItem()</error>
+      <error line="90" code="PPC:ERR-50008">No summary for method clear()</error>
+      <error line="99" code="PPC:ERR-50008">No summary for method deleteItem()</error>
+      <error line="114" code="PPC:ERR-50008">No summary for method deleteItems()</error>
+      <error line="131" code="PPC:ERR-50008">No summary for method save()</error>
+      <error line="27" code="PPC:ERR-50007">No summary for property $client</error>
+      <error line="30" code="PPC:ERR-50007">No summary for property $options</error>
+    </parse_markers>
+    <source>eJzFVm1v2jAQ/p5fcauQCBXdKk3atDLYqq7TkDp1aum+jAq54QCrxolsh9Kt/e+zHScxIaFTp2n5ACT33OO7517C+w/JIgk4WaJMSIRwmTCqhufjExItcHypYkHmOD6ekkSh6AVBKpswp+sIE0VjnqOLB70ar6HCpaZ7tb8fwD6cMCIlXOCUSnP7UYdyqzl3R6ORr4Ko9AS6TBgukSsJ1sHhHXzI9cdM5xj8CgLQlz4bPuGMpEw5gkUslSE11ijm+ubT6efjq7PR5Mv55Qj60GZxRJiBtXtNJEksGki+nV8Ykjev375r9FZ0iXHaQDAafj09vzIchy8PayhWhKVoKUDFwOgK63m+H59dnU5GozMTjU/0cUUEjG0kDzxlDHL/RNAVUQitiFEtsPYz5qonEYLcb7nEtgmk9vlhDeZqWw2z3/0BSGSzoyNf7G4JNYI2QY2kHtSp166DOvF8tGKOdxtdSGTh12WmmbvtUUGWLuU8R2d0AqQ3jEYwS3lkjDCZ2CqINFLhplvH4n8VkdEZhC9wrZBLbZ6wmExxGraFqUu70/GQ5lILEd8BxzuoDl64lzVVQQX6hscKMsa9Tq8gegyKny07Bn0IqZSowjzIH1nNrvX5H6D6EI5qaliyt+xQ1FDa2lYps4dblKbWHmU+KTWseRtUiYvnW9yuOXqeCmpB5cGg7HetbzYZYceD2VJtgvV3zDnqKlslu1n23SLiZxRQolihkBARbsp3g+COaC5iFlE5e7bjJksUcww3jd2yDzOqx6Zm181L+Rxat3hfWASqVHAYf5PCrWn7afZ7uXF3jcUclQGHhrU6CC2qLU78EuRXyc7EMENVqjA3PVHBm3J5Pi/6fZgRJrFaEnvwwcC0Vcq1+pQw+hM910697E4N6/4MMTPLkq5xCi27zSsmylW2mFu4TqggRsFqKW7imO1UnEynhZhdd07XZ3TrvVqNPLlMZklW2EzR3Ep/GmXEkIhwdwx5qWcslYtjxsKnOriudZ+MZIoMFTY3qePZasDMr6kHrc8ADqut5yz6PYG7Wsy27RPZureMPl/+RdIy9Hiek7z8P9nXTNa/m6nd09AwUFYLH6XX0SE8PED1oXWurqgSM4ovUZUlKN93+g/OtScjoFbtD2i80w/s38lw97bbrLxemrjOtaiwd8FbplanTjmyweNvSLCX3w==</source>
+  </file>
+  <file path="SplitIO/Common/Singleton.php" generated-path="SplitIO.Common.Singleton.html" hash="453b658ec4d035ce786f89e9c0185dd1" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Common" line="4" package="Default">
+      <extends/>
+      <name>Singleton</name>
+      <full_name>\SplitIO\Common\Singleton</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+      <property static="true" visibility="private" namespace="SplitIO\Common" line="9" package="Default">
+        <name>$instance</name>
+        <full_name>\SplitIO\Common\Singleton::instance</full_name>
+        <default></default>
+        <docblock line="9">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="9" description="&lt;p&gt;The reference to &lt;em&gt;Singleton&lt;/em&gt; instance of this class&lt;/p&gt;" type="\SplitIO\Common\Singleton" variable="">
+            <type>\SplitIO\Common\Singleton</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Common" line="16" package="Default">
+        <name>getInstance</name>
+        <full_name>\SplitIO\Common\Singleton::getInstance()</full_name>
+        <docblock line="16">
+          <description>Returns the *Singleton* instance of this class.</description>
+          <long-description></long-description>
+          <tag name="return" line="16" description="The *Singleton* instance." type="\SplitIO\Common\Singleton">
+            <type>\SplitIO\Common\Singleton</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="protected" namespace="SplitIO\Common" line="29" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Common\Singleton::__construct()</full_name>
+        <docblock line="29">
+          <description>Protected constructor to prevent creating a new instance of the
+*Singleton* via the `new` operator from outside of this class.</description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Common" line="39" package="Default">
+        <name>__clone</name>
+        <full_name>\SplitIO\Common\Singleton::__clone()</full_name>
+        <docblock line="39">
+          <description>Private clone method to prevent cloning of the instance of the
+*Singleton* instance.</description>
+          <long-description></long-description>
+          <tag name="return" line="39" description="" type="void">
+            <type>void</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Common" line="49" package="Default">
+        <name>__wakeup</name>
+        <full_name>\SplitIO\Common\Singleton::__wakeup()</full_name>
+        <docblock line="49">
+          <description>Private unserialize method to prevent unserializing of the *Singleton*
+instance.</description>
+          <long-description></long-description>
+          <tag name="return" line="49" description="" type="void">
+            <type>void</type>
+          </tag>
+        </docblock>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Common\Singleton</error>
+    </parse_markers>
+    <source>eJytkj9PwzAQxfd8ihsY2gx0b4lAYuoEooxIrXEujYVjW/Y5lUD97jh/m6RB6oCXRPa759+788OjyU2kWIHOMI6wM1LQ9uXjWReFVpso4pI5BzuhjhJJq+gngrBWcVx/IYanktnLObznCBYztKiCHWmI+7MYhHLEqn2dAeXCQe3eOq3qr7GiZIQQhCQ43HUlAWVy8RuSt8oFI7zhkvu2rMe2dfmEfM7nfsznP2XgavEyrziJUHxE2rb6xbIWNo2qlshgobyUkCRJW7he98GWA2W1rgSQgMJTu79Ybnr1Oep/2zBXtY34fNW7V6sJOWEKXAep9Zy0raZlLJaoCLjFYKWOwOrLxz3FzmbYrlKwehSHoD+ANmhZ5ZlZXYD25ET6x0S6uXdEfU/3+x5u1NO5OM2j4VIrhAIp1+koTdivwjT0t6SZDn/6bEot0tl3O6SvaG4k98qhFUyK7zn+y+kgxQC3c/sP6hP7Qm8m2OfoF9GWPrY=</source>
+  </file>
+  <file path="SplitIO/Log/Handler/LogHandlerInterface.php" generated-path="SplitIO.Log.Handler.LogHandlerInterface.html" hash="f6457e48f902f9a367ab9b11491f5be3" package="Default">
+    <docblock line="0">
+      <description>Created by PhpStorm.</description>
+      <long-description>User: sarrubia
+Date: 14/01/16
+Time: 21:44</long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <interface namespace="SplitIO\Log\Handler" line="15" package="SplitIO\Log\Handler">
+      <name>LogHandlerInterface</name>
+      <full_name>\SplitIO\Log\Handler\LogHandlerInterface</full_name>
+      <docblock line="15">
+        <description>Interface LogHandlerInterface</description>
+        <long-description></long-description>
+        <tag name="package" line="15" description="SplitIO\Log\Handler"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Log\Handler" line="17" package="SplitIO\Log\Handler">
+        <name>write</name>
+        <full_name>\SplitIO\Log\Handler\LogHandlerInterface::write()</full_name>
+        <docblock line="17">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$logLevel</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$message</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </interface>
+    <parse_markers>
+      <error line="17" code="PPC:ERR-50015">Argument $logLevel is missing from the Docblock of write</error>
+      <error line="17" code="PPC:ERR-50015">Argument $message is missing from the Docblock of write</error>
+      <error line="17" code="PPC:ERR-50008">No summary for method write()</error>
+    </parse_markers>
+    <source>eJx9jkELgkAUhO/7K97BQ0lkhnTQoKAOCUKBdfOy6lOX1nVZ1yKi/95uVKfo3d43w8wsV7KRxHNdAi5sFFKNJeQ3ODQy1Z1qp5afelQh9FSpIWfUkq3xheAH3sz3/IUlR9YaMvfDIDCvR4igLfaSFgip5EzH+yzp6mxHRclRReTTGQuNqrI2I7/VL7OGtck40/pnzKuJ/U24EzAnh5yzAqpBFJp1Aq6KaRw5vKsTvCCfgGPG9qZlHJHHE8SmVto=</source>
+  </file>
+  <file path="SplitIO/Http/MethodEnum.php" generated-path="SplitIO.Http.MethodEnum.html" hash="9e85deb3f7cecf34b9652dbca1449328" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Http" line="4" package="Default">
+      <extends>\SplitIO\Common\Enum</extends>
+      <name>MethodEnum</name>
+      <full_name>\SplitIO\Http\MethodEnum</full_name>
+      <docblock line="4">
+        <description>Base Enum class</description>
+        <long-description>Create an enum by implementing this class and adding class constants.</long-description>
+        <tag name="package" line="4" description="Default"/>
+        <tag name="inherited_from" description="\SplitIO\Common\Enum" refers="\SplitIO\Common\Enum" link="/classes/SplitIO.Common.Enum.html"/>
+      </docblock>
+      <constant namespace="SplitIO\Http" line="6" package="Default">
+        <name>GET</name>
+        <full_name>\SplitIO\Http\MethodEnum::GET</full_name>
+        <value>'GET'</value>
+        <docblock line="6">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Http" line="7" package="Default">
+        <name>POST</name>
+        <full_name>\SplitIO\Http\MethodEnum::POST</full_name>
+        <value>'POST'</value>
+        <docblock line="7">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Http" line="8" package="Default">
+        <name>PUT</name>
+        <full_name>\SplitIO\Http\MethodEnum::PUT</full_name>
+        <value>'PUT'</value>
+        <docblock line="8">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Http" line="9" package="Default">
+        <name>DELETE</name>
+        <full_name>\SplitIO\Http\MethodEnum::DELETE</full_name>
+        <value>'DELETE'</value>
+        <docblock line="9">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <property static="false" visibility="protected" namespace="SplitIO\Http" line="25" package="Default">
+        <name>$value</name>
+        <full_name>\SplitIO\Common\Enum::value</full_name>
+        <default></default>
+        <docblock line="25">
+          <description>Enum value</description>
+          <long-description></long-description>
+          <tag name="var" line="25" description="" type="mixed" variable="">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="true" visibility="protected" namespace="SplitIO\Http" line="32" package="Default">
+        <name>$cache</name>
+        <full_name>\SplitIO\Common\Enum::cache</full_name>
+        <default>array()</default>
+        <docblock line="32">
+          <description>Store existing constants in a static cache per object.</description>
+          <long-description></long-description>
+          <tag name="var" line="32" description="" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="41" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Common\Enum::__construct()</full_name>
+        <docblock line="41">
+          <description>Creates a new value of some type</description>
+          <long-description></long-description>
+          <tag name="param" line="41" description="" type="mixed" variable="$value">
+            <type>mixed</type>
+          </tag>
+          <tag name="throws" line="41" description="if incompatible type is given." type="\UnexpectedValueException">
+            <type>\UnexpectedValueException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="53" package="Default">
+        <name>getValue</name>
+        <full_name>\SplitIO\Common\Enum::getValue()</full_name>
+        <docblock line="53">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="53" description="" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="63" package="Default">
+        <name>getKey</name>
+        <full_name>\SplitIO\Common\Enum::getKey()</full_name>
+        <docblock line="63">
+          <description>Returns the enum key (i.e. the constant name).</description>
+          <long-description></long-description>
+          <tag name="return" line="63" description="" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="71" package="Default">
+        <name>__toString</name>
+        <full_name>\SplitIO\Common\Enum::__toString()</full_name>
+        <docblock line="71">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="71" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Http" line="81" package="Default">
+        <name>keys</name>
+        <full_name>\SplitIO\Common\Enum::keys()</full_name>
+        <docblock line="81">
+          <description>Returns the names (keys) of all constants in the Enum class</description>
+          <long-description></long-description>
+          <tag name="return" line="81" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Http" line="91" package="Default">
+        <name>values</name>
+        <full_name>\SplitIO\Common\Enum::values()</full_name>
+        <docblock line="91">
+          <description>Returns instances of the Enum class of all Enum constants</description>
+          <long-description></long-description>
+          <tag name="return" line="91" description="Constant name in key, Enum instance in value" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Http" line="107" package="Default">
+        <name>toArray</name>
+        <full_name>\SplitIO\Common\Enum::toArray()</full_name>
+        <docblock line="107">
+          <description>Returns all possible values as an array</description>
+          <long-description></long-description>
+          <tag name="return" line="107" description="Constant name in key, constant value in value" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Http" line="125" package="Default">
+        <name>isValid</name>
+        <full_name>\SplitIO\Common\Enum::isValid()</full_name>
+        <docblock line="125">
+          <description>Check if is valid enum value</description>
+          <long-description></long-description>
+          <tag name="param" line="125" description="" type="" variable="$value"/>
+          <tag name="return" line="125" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Http" line="137" package="Default">
+        <name>isValidKey</name>
+        <full_name>\SplitIO\Common\Enum::isValidKey()</full_name>
+        <docblock line="137">
+          <description>Check if is valid enum key</description>
+          <long-description></long-description>
+          <tag name="param" line="137" description="" type="" variable="$key"/>
+          <tag name="return" line="137" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Http" line="151" package="Default">
+        <name>search</name>
+        <full_name>\SplitIO\Common\Enum::search()</full_name>
+        <docblock line="151">
+          <description>Return key for value</description>
+          <long-description></long-description>
+          <tag name="param" line="151" description="" type="" variable="$value"/>
+          <tag name="return" line="151" description="" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO\Http" line="165" package="Default">
+        <name>__callStatic</name>
+        <full_name>\SplitIO\Common\Enum::__callStatic()</full_name>
+        <docblock line="165">
+          <description>Returns a value when called statically like so: MyEnum::SOME_VALUE() given SOME_VALUE is a class constant</description>
+          <long-description></long-description>
+          <tag name="param" line="165" description="" type="string" variable="$name">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="165" description="" type="array" variable="$arguments">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="165" description="" type="static">
+            <type>static</type>
+          </tag>
+          <tag name="throws" line="165" description="" type="\BadMethodCallException">
+            <type>\BadMethodCallException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$name</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$arguments</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+        <inherited_from>\SplitIO\Common\Enum</inherited_from>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Http\MethodEnum</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I/xKCkpsObiSs5JLC5W8E0tychPcc0rzVVIrShJzUspVoiBKXTOz83Nz4sBSXJVcykAQXJ+XnGJgrtriIKtgjqQUrdGEg7wDwaLg2hUiVCIeCiqsIurj2uIK0gGwgJKctUCAMz1Nb0=</source>
+  </file>
+  <file path="SplitIO/Http/ClientOptions.php" generated-path="SplitIO.Http.ClientOptions.html" hash="98d0fad52c68f80a483219f361e22753" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Http" line="4" package="Default">
+      <extends/>
+      <name>ClientOptions</name>
+      <full_name>\SplitIO\Http\ClientOptions</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+      <constant namespace="SplitIO\Http" line="6" package="Default">
+        <name>TIMEOUT</name>
+        <full_name>\SplitIO\Http\ClientOptions::TIMEOUT</full_name>
+        <value>'timeout'</value>
+        <docblock line="6">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Http" line="7" package="Default">
+        <name>ADAPTER</name>
+        <full_name>\SplitIO\Http\ClientOptions::ADAPTER</full_name>
+        <value>'adapter'</value>
+        <docblock line="7">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO\Http" line="8" package="Default">
+        <name>USERAGENT</name>
+        <full_name>\SplitIO\Http\ClientOptions::USERAGENT</full_name>
+        <value>'useragent'</value>
+        <docblock line="8">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Http\ClientOptions</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I/xKCkpsObiSs5JLC5WcM7JTM0r8S8oyczPK+aq5lIAgmQgs0QhxNPX1T80RMFWQb0kMzc1v7RE3RpJ2tHFMSDENQgknZiSWFCSWoQiHRrsGuTo7uoH1l9anFqUmA60B6ikFgB/vC8o</source>
+  </file>
+  <file path="SplitIO/Http/ClientInterface.php" generated-path="SplitIO.Http.ClientInterface.html" hash="4633385dcf5417e8f8bb0edc5d6c39b3" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <interface namespace="SplitIO\Http" line="4" package="Default">
+      <name>ClientInterface</name>
+      <full_name>\SplitIO\Http\ClientInterface</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="6" package="Default">
+        <name>send</name>
+        <full_name>\SplitIO\Http\ClientInterface::send()</full_name>
+        <docblock line="6">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$request</name>
+          <default></default>
+          <type>\SplitIO\Http\Request</type>
+        </argument>
+      </method>
+    </interface>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50009">No summary for interface ""</error>
+      <error line="6" code="PPC:ERR-50015">Argument $request is missing from the Docblock of send</error>
+      <error line="6" code="PPC:ERR-50008">No summary for method send()</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I/xKCkpsObiyswrSS1KA0k452Sm5pV4wvhc1VwKQFBQmpSTmayQVpqXXJKZn6dQnJqXohGUWliaWlyioFIEYWhac9UCAHxsJHI=</source>
+  </file>
+  <file path="SplitIO/Cache/Storage/Adapter/CacheStorageAdapterInterface.php" generated-path="SplitIO.Cache.Storage.Adapter.CacheStorageAdapterInterface.html" hash="bb727f1d783e32f1860f2555c6d9906c" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <interface namespace="SplitIO\Cache\Storage\Adapter" line="4" package="Default">
+      <name>CacheStorageAdapterInterface</name>
+      <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="7" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::__construct()</full_name>
+        <docblock line="7">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="13" package="Default">
+        <name>getItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::getItem()</full_name>
+        <docblock line="13">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="13" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="13" description="" type="\Psr\Cache\CacheItemInterface">
+            <type>\Psr\Cache\CacheItemInterface</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="21" package="Default">
+        <name>addItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::addItem()</full_name>
+        <docblock line="21">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="21" description="" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="21" description="" type="mixed" variable="$value">
+            <type>mixed</type>
+          </tag>
+          <tag name="param" line="21" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="21" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="26" package="Default">
+        <name>clear</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::clear()</full_name>
+        <docblock line="26">
+          <description></description>
+          <long-description></long-description>
+          <tag name="return" line="26" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="32" package="Default">
+        <name>deleteItem</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItem()</full_name>
+        <docblock line="32">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="32" description="" type="" variable="$key"/>
+          <tag name="return" line="32" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="38" package="Default">
+        <name>deleteItems</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::deleteItems()</full_name>
+        <docblock line="38">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="38" description="" type="array" variable="$keys">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="38" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$keys</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache\Storage\Adapter" line="46" package="Default">
+        <name>save</name>
+        <full_name>\SplitIO\Cache\Storage\Adapter\CacheStorageAdapterInterface::save()</full_name>
+        <docblock line="46">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="46" description="" type="" variable="$key"/>
+          <tag name="param" line="46" description="" type="" variable="$value"/>
+          <tag name="param" line="46" description="" type="integer|null" variable="$expiration">
+            <type>integer</type>
+            <type>null</type>
+          </tag>
+          <tag name="return" line="46" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default>null</default>
+          <type>integer|null</type>
+        </argument>
+      </method>
+    </interface>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50009">No summary for interface ""</error>
+      <error line="7" code="PPC:ERR-50015">Argument $options is missing from the Docblock of __construct</error>
+      <error line="7" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="13" code="PPC:ERR-50008">No summary for method getItem()</error>
+      <error line="21" code="PPC:ERR-50008">No summary for method addItem()</error>
+      <error line="26" code="PPC:ERR-50008">No summary for method clear()</error>
+      <error line="32" code="PPC:ERR-50008">No summary for method deleteItem()</error>
+      <error line="38" code="PPC:ERR-50008">No summary for method deleteItems()</error>
+      <error line="46" code="PPC:ERR-50008">No summary for method save()</error>
+    </parse_markers>
+    <source>eJy1UctqwzAQvOsr9uCDawL5gLS0pSefUsjVEDbyxhGVJaFHSGj777Vs1wnGKc6hOkiHGc3M7jw+m4NhCmtyBjnBxkjh83XxhvxAxcZrixUVryUaT3bFmFDNu4/MltETejz/BdknY9AcE3ZScNgHxb3QCrZbrpXzNnCforV4hkSbiLiHVfdjmWXtCxm8GLRYQ0MXqoLkg84DYskHq6B4d7ZP2t65p/qSoSMvJ4NU5CM5jar3WXdILU5UQnJEGWgENRv6UkFKSOhkhMXoNw6+01r+mQ/Lcsi36H0W14rwBNFkKvtcDy4JbTpWGOYYpp6QvKFYkiRPMxbbd99w3N2xLyYuvdK5bTZR3/8V5/BIc1r7/gEbzwgd</source>
+  </file>
+  <file path="functions_include.php" generated-path="functions_include.html" hash="c759baa49dfaf500a3dfd5079ec56c68" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+    </parse_markers>
+    <source>eJw9jj0LwjAYhPf8inNKuySDo4JLl05CXYUMzRv6QpLGfIAg/nczqMez3QN350vakhBaY9qjrMhkyXEk1I3gWlwr77GAHTiuvlmyCM1XTr4rHKgo0bvh8FMNPbnUMshb8lzn6z203DnKccRLoCfTo3EmGDPNizFQkPor6/+g6q/kSbw/76011w==</source>
+  </file>
+  <file path="SplitIO/Cache/Storage/Exception/AdapterException.php" generated-path="SplitIO.Cache.Storage.Exception.AdapterException.html" hash="5452aef240e10334bbc1f2a7203ae60a" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="Exception">\SplitIO\Exception\Exception</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Cache\Storage\Exception" line="6" package="Default">
+      <extends>\SplitIO\Exception\Exception</extends>
+      <name>AdapterException</name>
+      <full_name>\SplitIO\Cache\Storage\Exception\AdapterException</full_name>
+      <docblock line="6">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="6" description="Default"/>
+        <tag name="inherited_from" description="\SplitIO\Exception\Exception" refers="\SplitIO\Exception\Exception" link="/classes/SplitIO.Exception.Exception.html"/>
+      </docblock>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="6" code="PPC:ERR-50005">No summary for class \SplitIO\Cache\Storage\Exception\AdapterException</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I9xTkzOSI0JLskvSkxPjXGtSE4tKMnMz7Pm4iotTlWIgSmDS6AoSc5JLC5WcExJLChJLYJLKKRWlKTmpRQrwEW4qrlqAfrTL2g=</source>
+  </file>
+  <file path="SplitIO/Http/Response.php" generated-path="SplitIO.Http.Response.html" hash="ed4cdd125656d4594d9ba808844a14f2" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Http" line="4" package="Default">
+      <extends/>
+      <name>Response</name>
+      <full_name>\SplitIO\Http\Response</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+      <property static="false" visibility="private" namespace="SplitIO\Http" line="6" package="Default">
+        <name>$statusCode</name>
+        <full_name>\SplitIO\Http\Response::statusCode</full_name>
+        <default>200</default>
+        <docblock line="6">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Http" line="8" package="Default">
+        <name>$headers</name>
+        <full_name>\SplitIO\Http\Response::headers</full_name>
+        <default>array()</default>
+        <docblock line="8">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Http" line="10" package="Default">
+        <name>$body</name>
+        <full_name>\SplitIO\Http\Response::body</full_name>
+        <default>null</default>
+        <docblock line="10">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="12" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Http\Response::__construct()</full_name>
+        <docblock line="12">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$code</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$headers</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$body</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="22" package="Default">
+        <name>getStatusCode</name>
+        <full_name>\SplitIO\Http\Response::getStatusCode()</full_name>
+        <docblock line="22">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="27" package="Default">
+        <name>isSuccess</name>
+        <full_name>\SplitIO\Http\Response::isSuccess()</full_name>
+        <docblock line="27">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="32" package="Default">
+        <name>getHeaders</name>
+        <full_name>\SplitIO\Http\Response::getHeaders()</full_name>
+        <docblock line="32">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="37" package="Default">
+        <name>getHeader</name>
+        <full_name>\SplitIO\Http\Response::getHeader()</full_name>
+        <docblock line="37">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http" line="42" package="Default">
+        <name>getBody</name>
+        <full_name>\SplitIO\Http\Response::getBody()</full_name>
+        <docblock line="42">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Http\Response</error>
+      <error line="12" code="PPC:ERR-50015">Argument $code is missing from the Docblock of __construct</error>
+      <error line="12" code="PPC:ERR-50015">Argument $headers is missing from the Docblock of __construct</error>
+      <error line="12" code="PPC:ERR-50015">Argument $body is missing from the Docblock of __construct</error>
+      <error line="12" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="22" code="PPC:ERR-50008">No summary for method getStatusCode()</error>
+      <error line="27" code="PPC:ERR-50008">No summary for method isSuccess()</error>
+      <error line="32" code="PPC:ERR-50008">No summary for method getHeaders()</error>
+      <error line="37" code="PPC:ERR-50015">Argument $key is missing from the Docblock of getHeader</error>
+      <error line="37" code="PPC:ERR-50008">No summary for method getHeader()</error>
+      <error line="42" code="PPC:ERR-50008">No summary for method getBody()</error>
+      <error line="6" code="PPC:ERR-50007">No summary for property $statusCode</error>
+      <error line="8" code="PPC:ERR-50007">No summary for property $headers</error>
+      <error line="10" code="PPC:ERR-50007">No summary for property $body</error>
+    </parse_markers>
+    <source>eJyNks1qwzAQhO9+ij2YYEMKoZdC82NoL+mpUB/TEBR5U4u6ttGuCqbk3StbTprEjlNdR/pmZlezqExLLxdfSKWQCHGZKX55fV8yl1PPk5kggjcrFjmh9+OBPaVW34IRfGLBhp6LBGEO95OJfXCmpygS1GRFobWogvDywrZIKqvmJssOktlmSsLO5JJVkcNmI60zayM58KV1GjvWKXy1HjvUvAaFDcclrY/PqaK7xVnWhtQ6ntz5Qx7o3Ttt5MavVff90T+Q46NpcBlLIxudd9NNh5CKYiMlEl3DBd22i2Y1MBr1TGJWaw8QRmAnjPAIO5HRcATbaulmc6PScYL/gQX+J1bXOiki5OAcu6ofrMMQIugTbBX3qYbNn+wSb9Rwe3aY/S9GCPCs</source>
+  </file>
+  <file path="SplitIO/Sdk.php" generated-path="SplitIO.Sdk.html" hash="c52955bca79acb7b6f353a5eafbeb0e3" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO" line="4" package="Default">
+      <extends/>
+      <name>Sdk</name>
+      <full_name>\SplitIO\Sdk</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+      <constant namespace="SplitIO" line="6" package="Default">
+        <name>VERSION</name>
+        <full_name>\SplitIO\Sdk::VERSION</full_name>
+        <value>'0.0.1'</value>
+        <docblock line="6">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <constant namespace="SplitIO" line="8" package="Default">
+        <name>NAME</name>
+        <full_name>\SplitIO\Sdk::NAME</full_name>
+        <value>'Split-SDK-PHP'</value>
+        <docblock line="8">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+      </constant>
+      <property static="false" visibility="private" namespace="SplitIO" line="11" package="Default">
+        <name>$args</name>
+        <full_name>\SplitIO\Sdk::args</full_name>
+        <default></default>
+        <docblock line="11">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="11" description="&lt;p&gt;Arguments for creating clients&lt;/p&gt;" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="SplitIO" line="13" package="Default">
+        <name>factory</name>
+        <full_name>\SplitIO\Sdk::factory()</full_name>
+        <docblock line="13">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$args</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Sdk</error>
+      <error line="13" code="PPC:ERR-50015">Argument $args is missing from the Docblock of factory</error>
+      <error line="13" code="PPC:ERR-50008">No summary for method factory()</error>
+    </parse_markers>
+    <source>eJxFj19rAjEQxN/zKQYpaA/892xLK1SolKp40BfxYbvNnaFnEjY5QYrf3RiVzuPO/IbZpxe/88rSXgdPrFH6xsT5cqIUNxQCyp9f9aeQxM6GiK/ZupwvF3hGdzQYDcbdlPx3F9PP2cXKLf3y7aO/el/dI8OiwOuBBCRCR0ylbvfaxoDKCVg0RWNrcGPysRhmyIs5UNR4IKnDrci3341hhJgIRtVajsZZVMTRybF3rc9A2rLZPmbo+sRFmncOnTwRaWJnkp2TOp0Bf+pORA==</source>
+  </file>
+  <file path="SplitIO/Http/Adapter/Exception/HttpCurlAdapterOtionsException.php" generated-path="SplitIO.Http.Adapter.Exception.HttpCurlAdapterOtionsException.html" hash="d04e860121dc6965722fde183f8e64fa" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Http\Adapter\Exception" line="5" package="Default">
+      <extends>\Exception</extends>
+      <name>HttpCurlAdapterOtionsException</name>
+      <full_name>\SplitIO\Http\Adapter\Exception\HttpCurlAdapterOtionsException</full_name>
+      <docblock line="5">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="5" description="Default"/>
+      </docblock>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="5" code="PPC:ERR-50005">No summary for class \SplitIO\Http\Adapter\Exception\HttpCurlAdapterOtionsException</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I/xKCkpiHFMSSwoSS2Kca1ITi0oyczPs+bi4krOSSwuVgDJO5cW5UCV+INki+HqFFIrSlLzUooVEFq5qrm4agHB0Chw</source>
+  </file>
+  <file path="SplitIO/Exception/Exception.php" generated-path="SplitIO.Exception.Exception.html" hash="f31a6f271700722d7d0822843dcc6856" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Exception" line="4" package="Default">
+      <extends>\LogicException</extends>
+      <name>Exception</name>
+      <full_name>\SplitIO\Exception\Exception</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Exception\Exception</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I9xrUhOLSjJzM+z5uJKzkksLlaAiyikVpSk5qUUK8T45KdnJsPFuaq5uGoBkaQcyA==</source>
+  </file>
+  <file path="SplitIO/Http/Adapter/HttpAdapterInterface.php" generated-path="SplitIO.Http.Adapter.HttpAdapterInterface.html" hash="11f605cc7cdb658f74ed96fbd0d69058" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="Request">\SplitIO\Http\Request</namespace-alias>
+    <interface namespace="SplitIO\Http\Adapter" line="6" package="Default">
+      <name>HttpAdapterInterface</name>
+      <full_name>\SplitIO\Http\Adapter\HttpAdapterInterface</full_name>
+      <docblock line="6">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="6" description="Default"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Http\Adapter" line="13" package="Default">
+        <name>doRequest</name>
+        <full_name>\SplitIO\Http\Adapter\HttpAdapterInterface::doRequest()</full_name>
+        <docblock line="13">
+          <description></description>
+          <long-description></long-description>
+          <tag name="param" line="13" description="" type="\SplitIO\Http\Request" variable="$request">
+            <type>\SplitIO\Http\Request</type>
+          </tag>
+          <tag name="param" line="13" description="" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="13" description="" type="\SplitIO\Http\Response">
+            <type>\SplitIO\Http\Response</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$request</name>
+          <default></default>
+          <type>\SplitIO\Http\Request</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$options</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+    </interface>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="6" code="PPC:ERR-50009">No summary for interface ""</error>
+      <error line="13" code="PPC:ERR-50008">No summary for method doRequest()</error>
+    </parse_markers>
+    <source>eJxdjjEOwjAMRfecwkOHtkLqAQoCNjohwdoltK6I1CYmcQaEuDtpGzrEiy2/7/+9P9KThJYTOpIdwp1Gxc21vTBTe+4lMdpaCO8SdMOXR8cBKR0kw3w7g3jS/JfiIyBUVZZLhxJOJK2cIBpAZtchwdJa+YbMECuj3QYtsrca2uQXR0GEUVUtnfxjVB0MXnezBfQmJuZp8m6LgcOamxdFLb4/FuRcxw==</source>
+  </file>
+  <file path="SplitIO/Cache/Item.php" generated-path="SplitIO.Cache.Item.html" hash="74e87011f05559fbce6c3c143b19b845" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="CacheItemInterface">\Psr\Cache\CacheItemInterface</namespace-alias>
+    <namespace-alias name="DateTime">\DateTime</namespace-alias>
+    <namespace-alias name="DateTimeInterface">\DateTimeInterface</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Cache" line="8" package="Default">
+      <extends/>
+      <implements>\Psr\Cache\CacheItemInterface</implements>
+      <name>Item</name>
+      <full_name>\SplitIO\Cache\Item</full_name>
+      <docblock line="8">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="8" description="Default"/>
+      </docblock>
+      <property static="false" visibility="private" namespace="SplitIO\Cache" line="17" package="Default">
+        <name>$key</name>
+        <full_name>\SplitIO\Cache\Item::key</full_name>
+        <default>null</default>
+        <docblock line="17">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="17" description="" type="string" variable="">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Cache" line="22" package="Default">
+        <name>$value</name>
+        <full_name>\SplitIO\Cache\Item::value</full_name>
+        <default>null</default>
+        <docblock line="22">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="22" description="" type="mixed" variable="">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Cache" line="27" package="Default">
+        <name>$hit</name>
+        <full_name>\SplitIO\Cache\Item::hit</full_name>
+        <default>false</default>
+        <docblock line="27">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="27" description="" type="boolean" variable="">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="private" namespace="SplitIO\Cache" line="32" package="Default">
+        <name>$expire</name>
+        <full_name>\SplitIO\Cache\Item::expire</full_name>
+        <default>0</default>
+        <docblock line="32">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="32" description="" type="integer" variable="">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="34" package="Default">
+        <name>__construct</name>
+        <full_name>\SplitIO\Cache\Item::__construct()</full_name>
+        <docblock line="34">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="49" package="Default">
+        <name>getKey</name>
+        <full_name>\SplitIO\Cache\Item::getKey()</full_name>
+        <docblock line="49">
+          <description>Returns the key for the current cache item.</description>
+          <long-description>The key is loaded by the Implementing Library, but should be available to
+the higher level callers when needed.</long-description>
+          <tag name="return" line="49" description="The key string for this cache item." type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="66" package="Default">
+        <name>get</name>
+        <full_name>\SplitIO\Cache\Item::get()</full_name>
+        <docblock line="66">
+          <description>Retrieves the value of the item from the cache associated with this object's key.</description>
+          <long-description>The value returned must be identical to the value originally stored by set().
+
+If isHit() returns false, this method MUST return null. Note that null
+is a legitimate cached value, so the isHit() method SHOULD be used to
+differentiate between "null value was found" and "no value was found."</long-description>
+          <tag name="return" line="66" description="The value corresponding to this cache item's key, or null if not found." type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="86" package="Default">
+        <name>isHit</name>
+        <full_name>\SplitIO\Cache\Item::isHit()</full_name>
+        <docblock line="86">
+          <description>Confirms if the cache item lookup resulted in a cache hit.</description>
+          <long-description>Note: This method MUST NOT have a race condition between calling isHit()
+and calling get().</long-description>
+          <tag name="return" line="86" description="True if the request resulted in a cache hit. False otherwise." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="104" package="Default">
+        <name>set</name>
+        <full_name>\SplitIO\Cache\Item::set()</full_name>
+        <docblock line="104">
+          <description>Sets the value represented by this cache item.</description>
+          <long-description>The $value argument may be any item that can be serialized by PHP,
+although the method of serialization is left up to the Implementing
+Library.</long-description>
+          <tag name="param" line="104" description="&lt;p&gt;The serializable value to be stored.&lt;/p&gt;" type="mixed" variable="$value">
+            <type>mixed</type>
+          </tag>
+          <tag name="return" line="104" description="The invoked object." type="static">
+            <type>static</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$value</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="123" package="Default">
+        <name>expiresAt</name>
+        <full_name>\SplitIO\Cache\Item::expiresAt()</full_name>
+        <docblock line="123">
+          <description>Sets the expiration time for this cache item.</description>
+          <long-description></long-description>
+          <tag name="param" line="123" description="&lt;p&gt;The point in time after which the item MUST be considered expired.&#10;  If null is passed explicitly, a default value MAY be used. If none is set,&#10;  the value should be stored permanently or for as long as the&#10;  implementation allows.&lt;/p&gt;" type="\DateTimeInterface" variable="$expiration">
+            <type>\DateTimeInterface</type>
+          </tag>
+          <tag name="return" line="123" description="The called object." type="static">
+            <type>static</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$expiration</name>
+          <default></default>
+          <type>\DateTimeInterface</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="149" package="Default">
+        <name>expiresAfter</name>
+        <full_name>\SplitIO\Cache\Item::expiresAfter()</full_name>
+        <docblock line="149">
+          <description>Sets the expiration time for this cache item.</description>
+          <long-description></long-description>
+          <tag name="param" line="149" description="&lt;p&gt;The period of time from the present after which the item MUST be considered&#10;  expired. An integer parameter is understood to be the time in seconds until&#10;  expiration. If null is passed explicitly, a default value MAY be used.&#10;  If none is set, the value should be stored permanently or for as long as the&#10;  implementation allows.&lt;/p&gt;" type="integer|\DateInterval" variable="$time">
+            <type>integer</type>
+            <type>\DateInterval</type>
+          </tag>
+          <tag name="return" line="149" description="The called object." type="static">
+            <type>static</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$time</name>
+          <default></default>
+          <type>integer|\DateInterval</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Cache" line="169" package="Default">
+        <name>getExpiration</name>
+        <full_name>\SplitIO\Cache\Item::getExpiration()</full_name>
+        <docblock line="169">
+          <description>Returns the set expiration time as integer.</description>
+          <long-description></long-description>
+          <tag name="return" line="169" description="" type="integer">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="SplitIO\Cache" line="12" package="SplitIO\Cache">
+        <name>assertValidKey</name>
+        <full_name>\SplitIO\Cache\CacheKeyTrait::assertValidKey()</full_name>
+        <docblock line="12">
+          <description></description>
+          <long-description></long-description>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <inherited_from>\SplitIO\Cache\CacheKeyTrait</inherited_from>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="8" code="PPC:ERR-50005">No summary for class \SplitIO\Cache\Item</error>
+      <error line="34" code="PPC:ERR-50015">Argument $key is missing from the Docblock of __construct</error>
+      <error line="34" code="PPC:ERR-50008">No summary for method __construct()</error>
+      <error line="17" code="PPC:ERR-50007">No summary for property $key</error>
+      <error line="22" code="PPC:ERR-50007">No summary for property $value</error>
+      <error line="27" code="PPC:ERR-50007">No summary for property $hit</error>
+      <error line="32" code="PPC:ERR-50007">No summary for property $expire</error>
+    </parse_markers>
+    <source>eJzVV11v2zYUffevuA0C1MlSpy99WeauQbuhwfoRLOmAAQUKWqIsrpKokZSdrMl/37kkZcuS7XQdMGAB0tQW7+W955z7oR9+rPN6VIlS2lokkq7qQrmL9x9fiiSXZ6NRYyVdWhM+h38vnCwvKidNBoMzf+LjK+HktSr7HzvHRkkhrCU2JlXWhSxl5SwNPY6+jEaEn9PjY3qpy1JXlDVV4pSuLGXaUMIm9Fne0vGpP8lXej+/yNtrI5Q7W3nwf+mYXiyEIeuMqubxq2BaG7VArHQId9OqKYodpqW6kel2y4UoGrnPdqZ1sd00V46mlInCyh22qnLbTeVNrYyE9dNoWTezQiUrqOjTpwSAOdMkbszZHflTX4I3/By6XNknz8GJNO43UagU6IWTZ/1DjPXUYxQe3Q+C/VW6xoAfF5lhnvj/SWMMeI6cKfA8iSat5XW0UJYKLVKZ0uzWm160IgFn9EbNjDC3JzRrHNlcNwXOSRILoQoxKyQ53Tpk21zNc2mokAtZ4O6ikMbSMpcVVVLijn4QL4yPf1Mh+G2DC9/HrBDpMJ3TrSTMpWNU+9jH28bB7VEH5j34GoVsAsJecqQz/4GjoMzoMgDuIwOrOlEQSkpL5fIQtJ79IRP32HJG21gIXkNsMCwb6xhjlTIHABEYd283aq4qQMvoaBN4s9KNj/q+LzKQ+1rhSXRug+RPQlildLlO6e2Hq+sWGC6mCb3TELrLhfOfW2+wECB2rpwquRJ8wmkI6oRsCLG9L/q+ev3+w5tXnAxaRdrRSqqyTLJAGSs8d0sJjRzwfTHNpeCm01TpAYkqxSPdfzA52CGmbs+IWgqmiUZR2FpXKYvKo7qhqUDRCSD2mZPKqNIu3vaQ3gZig/X4UVRYxOWo87ijx9DD2i+jCFsX0UPI4NF06k/vcNQ923W4XdsvdZUpU1q+Zi1hL+tC689NDbe2KVjMqgL54Tl6Z19oLJjvgXNPVO/eX1MuFqgKMjziEgbew9USzh2CqYjwtP6Y8PbRfJuyW6Y7HZ6JNkAo5mLkn41EHe3KgH7mSiCNs2aprNxPbze+QTeJoOc8/rYDfSVdt38YWSMsiL/tuVsbW7dDhFlHwswbbsxUilvfhavbQJcv1kQwsGgFRmGq/BWcX76+PFnBWoCbZp77UCJR6GWtgYiposgzR2A/tp3uPGhdxbEw4KUWRpShAGPQm3W4uotHR0gKt3DUvpXtHg8ILtl0paqF/oxrQnfdzx+3xxDOjmkcQpnGmAdzOOwLmOmdR132HyTebw0BYLRPuW+g9bAcrnRxB/HeNiGpNdYWVrq/Q2QwwPBVSb6eV74wZ74WLQYMj4+w0aywxy8GR+h/lmreU/wZAKpcge4oKJWZQFVFAt+e/952+Ik31RUPAgb9ZO1zLf/1FhHnVy1NKSoIDCMNuDA2gpcSVL/w8K29rBbYgCV6hF7af6Iav5N8nWgCLvYc0lkD3tfP6SkNCcoR9oz7m0h5r+KEUIfPp88mz3hSAsIC81Ikiazdynyz6XcEo7BNiiqRKNXhVXd39MDZ/qhAxOipfrlrKnXjtQKjst44FYW/2nbHUNZR96onz5EWFoHx4w+PO4vrPUnuq1/2Onu6ddj9RwWFRO58UXkQIUncuIJ/VUnoU6E7Bu/tlhcb99fW1tppW2R0ziQ5OYe5j0eyI8SNFQO7stM6jR2R3frLFfcvnp18yKmi59SDMPkXNbtZ953i/R/XLNMz9rxu28oOI64btdLKoV8v6ze+Si5XVTXuaL5zCu91aRovPuuXHThc4J2PUvjwEYDobyxBubf8OEdlP+F8DGWQU8+18xnRd6EUdrhjeX2lv28v8O77LDQ4qHOIK5bPpC+dwSv7cEf/aeXtgWUuZNIGef83BOo6Fw==</source>
+  </file>
+  <file path="SplitIO/Cache/Exception/InvalidArgumentException.php" generated-path="SplitIO.Cache.Exception.InvalidArgumentException.html" hash="1fcca0dceec0b614ebbc2c0cd511881d" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="SplitIO\Cache\Exception" line="4" package="Default">
+      <extends>\InvalidArgumentException</extends>
+      <implements>\Psr\Cache\InvalidArgumentException</implements>
+      <name>InvalidArgumentException</name>
+      <full_name>\SplitIO\Cache\Exception\InvalidArgumentException</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50005">No summary for class \SplitIO\Cache\Exception\InvalidArgumentException</error>
+    </parse_markers>
+    <source>eJyzsS/IKODKS8xNLS5ITE5VCC7IySzx9I9xTkzOSI1xrUhOLSjJzM+z5uJKzkksLlbwzCtLzMlMcSxKL81NzSuBK1BIrShJzUspVojBqSIztyAnFSQEVBRQXAS1ApdyrmquWgAUiDto</source>
+  </file>
+  <file path="SplitIO/Log/Logger.php" generated-path="SplitIO.Log.Logger.html" hash="3f5ba73233b094794920f924020930b5" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="LoggerInterface">\Psr\Log\LoggerInterface</namespace-alias>
+    <namespace-alias name="LogHandlerInterface">\SplitIO\Log\Handler\LogHandlerInterface</namespace-alias>
+    <namespace-alias name="Syslog">\SplitIO\Log\Handler\Syslog</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Log" line="13" package="SplitIO\Log">
+      <extends/>
+      <implements>\Psr\Log\LoggerInterface</implements>
+      <name>Logger</name>
+      <full_name>\SplitIO\Log\Logger</full_name>
+      <docblock line="13">
+        <description>Class Logger
+Implement PSR-3 interface</description>
+        <long-description></long-description>
+        <tag name="package" line="13" description="SplitIO\Log"/>
+      </docblock>
+      <property static="false" visibility="protected" namespace="SplitIO\Log" line="18" package="SplitIO\Log">
+        <name>$handler</name>
+        <full_name>\SplitIO\Log\Logger::handler</full_name>
+        <default>null</default>
+        <docblock line="18">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="18" description="" type="null|\SplitIO\Log\Handler\LogHandlerInterface" variable="">
+            <type>null</type>
+            <type>\SplitIO\Log\Handler\LogHandlerInterface</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Log" line="27" package="SplitIO\Log">
+        <name>__construct</name>
+        <full_name>\SplitIO\Log\Logger::__construct()</full_name>
+        <docblock line="27">
+          <description>Logger constructor</description>
+          <long-description></long-description>
+          <tag name="param" line="27" description="" type="\SplitIO\Log\Handler\LogHandlerInterface|null" variable="$handler">
+            <type>\SplitIO\Log\Handler\LogHandlerInterface</type>
+            <type>null</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$handler</name>
+          <default>null</default>
+          <type>\SplitIO\Log\Handler\LogHandlerInterface|null</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Log" line="48" package="SplitIO\Log">
+        <name>log</name>
+        <full_name>\SplitIO\Log\Logger::log()</full_name>
+        <docblock line="48">
+          <description>Log method</description>
+          <long-description></long-description>
+          <tag name="param" line="48" description="" type="mixed" variable="$level">
+            <type>mixed</type>
+          </tag>
+          <tag name="param" line="48" description="" type="string" variable="$message">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="48" description="" type="array" variable="$context">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="48" description="" type="null">
+            <type>null</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$level</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$message</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$context</name>
+          <default>array()</default>
+          <type>array</type>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="18" code="PPC:ERR-50007">No summary for property $handler</error>
+    </parse_markers>
+    <source>eJyFU8tOwzAQvPsrFimHtGrVA8dSQOJCJSQqCrdKlUm3iYXjWLbTh2j/HdtJ3CZEsFIe3p2dHU+cuweZSSJojlrSBGEpOTPz19VLkU4JKTXCQiu3cleKai4Mqq1FTn1xdYVfPVOx4ejR9WsH3QdeHjX3sybDIYEhPHGqNVTD3HqeS445CgOL5dv4FlhD6YqPVvMXTVvMNj8hyRULsIaiyQRZ5JuADT/ahWXcUQWi5PzUs4saNPFPqQqDicENRFmFm7k+u5OaEj6ce170u6LMNI3et7arvn7pbMTU+pNCaKPKxBQqyJRU0Rx6NJ6ciCCprbj85CyBbSkSwwoB63VgjnuYAgnMvCMDT1I55oJtIQ6Qm1kNsoCAcBGZjOnx/YWqaZlecGdAbk35r1PgHqrjEg+uu0l173EPcjRZsakzHfNydnAfj+MOeadkTWEihcj+Fdoer06VKkWPEFnzDB5MKCo0pRLehT9td/qrqaMwYdQhtbv1iXjQdb3tyvh+r5jBX3zWn8qU8w9XTSkA</source>
+  </file>
+  <file path="SplitIO/Log/Handler/Syslog.php" generated-path="SplitIO.Log.Handler.Syslog.html" hash="3d8e67f1c4fa3aec88fcbb9b2a76c457" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="Sdk">\SplitIO\Sdk</namespace-alias>
+    <namespace-alias name="LogLevel">\Psr\Log\LogLevel</namespace-alias>
+    <class final="false" abstract="false" namespace="SplitIO\Log\Handler" line="12" package="SplitIO\Log\Handler">
+      <extends/>
+      <name>Syslog</name>
+      <full_name>\SplitIO\Log\Handler\Syslog</full_name>
+      <docblock line="12">
+        <description>Class Syslog
+Logger Handler to write on system log service</description>
+        <long-description></long-description>
+        <tag name="package" line="12" description="SplitIO\Log\Handler"/>
+      </docblock>
+      <property static="false" visibility="protected" namespace="SplitIO\Log\Handler" line="15" package="SplitIO\Log\Handler">
+        <name>$logLevels</name>
+        <full_name>\SplitIO\Log\Handler\Syslog::logLevels</full_name>
+        <default>array(\Psr\Log\LogLevel::DEBUG =&gt; LOG_DEBUG, \Psr\Log\LogLevel::INFO =&gt; LOG_INFO, \Psr\Log\LogLevel::NOTICE =&gt; LOG_NOTICE, \Psr\Log\LogLevel::WARNING =&gt; LOG_WARNING, \Psr\Log\LogLevel::ERROR =&gt; LOG_ERR, \Psr\Log\LogLevel::CRITICAL =&gt; LOG_CRIT, \Psr\Log\LogLevel::ALERT =&gt; LOG_ALERT, \Psr\Log\LogLevel::EMERGENCY =&gt; LOG_EMERG)</default>
+        <docblock line="15">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="15" description="&lt;p&gt;Mapping from PSR log levels to syslog levels&lt;/p&gt;" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="SplitIO\Log\Handler" line="31" package="SplitIO\Log\Handler">
+        <name>write</name>
+        <full_name>\SplitIO\Log\Handler\Syslog::write()</full_name>
+        <docblock line="31">
+          <description>Write on system log service</description>
+          <long-description></long-description>
+          <tag name="param" line="31" description="" type="" variable="$logLevel"/>
+          <tag name="param" line="31" description="" type="" variable="$message"/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$logLevel</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$message</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+    </parse_markers>
+    <source>eJx9kt1uozAQhe95irlIVRKx6n1/smUTNotEIIJWVdVWlZc4qVUCyONkFXX77js2BNDKqqVccPydmXHmXH+v32qnZDuONcs5ZHUhVJg8R9X2+Rcr1wWXV46zx/4mW79fGWGF0mD0i/iBF8RdTCYOTGBWMETIjlhUW/1NxJZLaOuBquCPFIpDVQIeUfEdEAjI5UHkXBtuaZZ3trWOQ/cXTj7s8OEAHeoNtwcmgUnJjrBkdS3KLWxktYNVlpoWhZ4T9QBorCeBKuoStawUzxVfw6hoH4Vw0xR0DaHP6b2Xl/Pgx/3CaDdTiJLFqxE8CxnGPxMYklqwgXFyF86CAdgINvTBT+MwXvRoK9jYIE2TdNifBBs3S0Nq50cdpwUb6EdBejcsaARr62WQLoJ49ti11kJDjikz7e4a5wQevkpGg1A6JNv1O/pfpywjhaeV29Xufxcih82+zJWg6iaAblfC61xjg390D6lqXhLlUuxpO/4y8Jr/JYkz+NtsaB5E/mP7sQrnDXCfBenpefqMXtsGFCispSjVxj2/PsMpnOG5B7ZJBm6xAVcgcuWO1JvAb9Mun0+d82U8HsytTxPyryxePxe1O/k+gShuL9aF1+7sR86LCrl2tNd09fkPq0U/1w==</source>
+  </file>
+  <file path="SplitIO/functions.php" generated-path="SplitIO.functions.html" hash="d584396fa0c9323c3053ce98b3e44f29" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <function namespace="SplitIO" line="4" package="Default">
+      <name>murmur3</name>
+      <full_name>\SplitIO\murmur3()</full_name>
+      <docblock line="4">
+        <description></description>
+        <long-description></long-description>
+        <tag name="package" line="4" description="Default"/>
+      </docblock>
+    </function>
+    <function namespace="SplitIO" line="14" package="Default">
+      <name>isValidCacheKey</name>
+      <full_name>\SplitIO\isValidCacheKey()</full_name>
+      <docblock line="14">
+        <description>Validate PSR-6 cache key</description>
+        <long-description></long-description>
+        <tag name="package" line="14" description="Default"/>
+        <tag name="param" line="14" description="" type="" variable="$key"/>
+        <tag name="return" line="14" description="" type="boolean">
+          <type>boolean</type>
+        </tag>
+      </docblock>
+      <argument line="0" by_reference="false">
+        <name>$key</name>
+        <default></default>
+        <type/>
+      </argument>
+    </function>
+    <function namespace="SplitIO" line="43" package="Default">
+      <name>isSerializable</name>
+      <full_name>\SplitIO\isSerializable()</full_name>
+      <docblock line="43">
+        <description>Checks if the provided value is serializable</description>
+        <long-description></long-description>
+        <tag name="package" line="43" description="Default"/>
+        <tag name="param" line="43" description="" type="" variable="$value"/>
+        <tag name="return" line="43" description="" type="boolean">
+          <type>boolean</type>
+        </tag>
+      </docblock>
+      <argument line="0" by_reference="false">
+        <name>$value</name>
+        <default></default>
+        <type/>
+      </argument>
+    </function>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+      <error line="4" code="PPC:ERR-50011">No summary for function \SplitIO\murmur3()</error>
+    </parse_markers>
+    <source>eJyNUttq20AQfddXTIWwJdeKkhYXB9e9YCgNeUip2z40BLFeja2tVxd2Vy5Oyb9ndLM3JtAIsTCXM3POzLz/WKalk7MMdck4wrKUwlzdzBxnXeXciCKHrFL0v/UD558D9Ck0lcrBbf3hV6ZTd+Y8OE40Gjkwgl9MioQZhG/L7+E74IynCFvc17FPJVMsA683u1qropBkR8emQjdlFjX4Gvd+jegJRFFtwRwEL/Kd7/788SWcumNwr5Y34XQ6uQwvyGoQswYg1uBnqzhBg9zEmPMiEfmmqTmGYQMfjsGoCgN4NZ/3rgDafpboNZMa26IkuK+tjZKYtxzhA7yZTF4EjaJGI/CUhsINKg3rQgGrh3XWZHgKSaYb3X4Of7Pw/jy8jM/uXkc07kPvUuEmzpjhqU/ZrWx6Gw/qAOak58KmYxPusm7P71rhthAb87yMVspJvJ7iE5VPccczWaTIt7qmY+g+SlXsRIIJ7JiskNYPGpWg8dyzlUT7dJqE/x3P0gL7LaS/nlq/0LFCXVSKH6Iv2pjXReaWTI8pRQ562b4v1u2n8cV/mdxSO14pLXbUj7xjOHD1PZSYYW4CqDSCP+h6nK6MKBerP3S/FmAwgA2amEumteWuL3ghC10pHJ5u8ajg2UU+9NS7tC6d9vYITm8yIQ==</source>
+  </file>
+  <package name="Default" full_name="Default"/>
+  <package name="SplitIO" full_name="SplitIO">
+    <package name="Cache" full_name="SplitIO\Cache">
+      <package name="Storage" full_name="SplitIO\Cache\Storage">
+        <package name="Adapter" full_name="SplitIO\Cache\Storage\Adapter"/>
+      </package>
+    </package>
+    <package name="Log" full_name="SplitIO\Log">
+      <package name="Handler" full_name="SplitIO\Log\Handler"/>
+    </package>
+  </package>
+  <package name="global" full_name="global"/>
+  <namespace name="SplitIO" full_name="SplitIO">
+    <namespace name="Cache" full_name="SplitIO\Cache">
+      <namespace name="Exception" full_name="SplitIO\Cache\Exception"/>
+      <namespace name="Storage" full_name="SplitIO\Cache\Storage">
+        <namespace name="Adapter" full_name="SplitIO\Cache\Storage\Adapter"/>
+        <namespace name="Exception" full_name="SplitIO\Cache\Storage\Exception"/>
+      </namespace>
+    </namespace>
+    <namespace name="Common" full_name="SplitIO\Common"/>
+    <namespace name="Exception" full_name="SplitIO\Exception"/>
+    <namespace name="Http" full_name="SplitIO\Http">
+      <namespace name="Adapter" full_name="SplitIO\Http\Adapter">
+        <namespace name="Exception" full_name="SplitIO\Http\Adapter\Exception"/>
+      </namespace>
+      <namespace name="Exception" full_name="SplitIO\Http\Exception"/>
+    </namespace>
+    <namespace name="Log" full_name="SplitIO\Log">
+      <namespace name="Handler" full_name="SplitIO\Log\Handler"/>
+    </namespace>
+  </namespace>
+  <deprecated count="0"/>
+</project>
