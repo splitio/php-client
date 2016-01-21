@@ -42,16 +42,18 @@ class Condition
 
     public function __construct(array $condition)
     {
+        \SplitIO\Common\Di::getInstance()->getLogger()->debug(print_r($condition, true));
+
         $this->combiner = new AndCombiner();
 
-        if (isset($condition['partitions'])) {
+        if (isset($condition['partitions']) && is_array($condition['partitions'])) {
             $this->partitions = array();
             foreach ($condition['partitions'] as $partition) {
                 $this->partitions[] = new Partition($partition);
             }
         }
 
-        if (isset($condition['matcherGroup']['matchers'])) {
+        if (isset($condition['matcherGroup']['matchers']) && is_array($condition['matcherGroup']['matchers'])) {
             $this->matcherGroup = [ 'matchers'=>[] ];
 
             foreach ($condition['matcherGroup']['matchers'] as $matcher) {

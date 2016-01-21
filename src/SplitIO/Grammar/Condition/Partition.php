@@ -17,6 +17,8 @@ class Partition
 
     public function __construct(array $partition)
     {
+        \SplitIO\Common\Di::getInstance()->getLogger()->debug(print_r($partition, true));
+
         $this->treatment = (isset($partition['treatment']) && !empty($partition['treatment']))
             ? new TreatmentEnum($partition['treatment'])
             : new TreatmentEnum(TreatmentEnum::OFF);

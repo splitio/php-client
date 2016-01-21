@@ -61,6 +61,8 @@ class Split
 
     public function __construct(array $split)
     {
+        \SplitIO\Common\Di::getInstance()->getLogger()->debug(print_r($split, true));
+
         $this->orgId = $split['orgId'];
         $this->environment = $split['environment'];
         $this->name = $split['name'];
@@ -70,9 +72,9 @@ class Split
         $this->status = $split['status'];
         $this->killed = $split['killed'];
 
-        if (isset($split['conditions'])) {
+        if (isset($split['conditions']) && is_array($split['conditions'])) {
             $this->conditions = array();
-            foreach ($conditions as $condition) {
+            foreach ($split['conditions'] as $condition) {
                 $this->conditions[] = new Condition($condition);
             }
         }
