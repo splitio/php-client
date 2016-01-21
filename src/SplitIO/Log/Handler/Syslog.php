@@ -9,7 +9,7 @@ use Psr\Log\LogLevel;
  * Logger Handler to write on system log service
  * @package SplitIO\Log\Handler
  */
-class Syslog
+class Syslog implements LogHandlerInterface
 {
     /** @var array Mapping from PSR log levels to syslog levels */
     protected $logLevels = array(
