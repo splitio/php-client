@@ -1,7 +1,8 @@
 <?php
 namespace SplitIO\Grammar;
 
-use SplitIO\Grammar\Condition\Combiner\AndCombiner;
+use SplitIO\Common\Di;
+//use SplitIO\Grammar\Condition\Combiner\AndCombiner;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Partition;
 
@@ -38,13 +39,15 @@ class Condition
 
     private $partitions = null;
 
-    private $combiner = null;
+    //On the next versions the condition will support Combiners: AND, OR, NOT
+    //private $combiner = null;
 
     public function __construct(array $condition)
     {
-        \SplitIO\Common\Di::getInstance()->getLogger()->debug(print_r($condition, true));
+        Di::getInstance()->getLogger()->debug(print_r($condition, true));
 
-        $this->combiner = new AndCombiner();
+        //On the next versions the condition will support Combiners: AND, OR, NOT
+        //$this->combiner = new AndCombiner();
 
         if (isset($condition['partitions']) && is_array($condition['partitions'])) {
             $this->partitions = array();
@@ -54,12 +57,26 @@ class Condition
         }
 
         if (isset($condition['matcherGroup']['matchers']) && is_array($condition['matcherGroup']['matchers'])) {
-            $this->matcherGroup = [ 'matchers'=>[] ];
+
+            $this->matcherGroup = [];
 
             foreach ($condition['matcherGroup']['matchers'] as $matcher) {
-                $this->matcherGroup['matchers'] = Matcher::factory($matcher);
+                $this->matcherGroup[] = Matcher::factory($matcher);
+            }
+        }
+    }
+
+    public function match($userId)
+    {
+        $eval = [];
+        foreach ($this->matcherGroup as $matcher) {
+
+            if ($matcher instanceof \SplitIO\Grammar\Condition\Matcher\AbstractMatcher) {
+                $eval[] = $matcher->evaluate($userId);
             }
         }
 
+        //On the next versions the condition will support Combiners: AND, OR, NOT
+        return (isset($eval[0])) ? $eval[0] : false;
     }
 }

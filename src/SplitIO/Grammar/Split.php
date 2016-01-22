@@ -78,6 +78,13 @@ class Split
                 $this->conditions[] = new Condition($condition);
             }
         }
+    }
 
+    /**
+     * @return array|null
+     */
+    public function getConditions()
+    {
+        return $this->conditions;
     }
 }

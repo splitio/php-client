@@ -2,6 +2,7 @@
 namespace SplitIO\Grammar\Condition\Matcher;
 
 
+use SplitIO\Common\Di;
 use SplitIO\Grammar\Condition\Matcher;
 
 class Whitelist extends AbstractMatcher
@@ -13,5 +14,23 @@ class Whitelist extends AbstractMatcher
         parent::__construct(Matcher::WHITELIST, $negate);
 
         $this->whitelistMatcherData = $data;
+    }
+
+    protected function _eval($userId)
+    {
+        foreach ($this->whitelistMatcherData as $whiteListedUser) {
+
+            Di::getInstance()->getLogger()->info("Comparing: WHITELIST - $userId - $whiteListedUser");
+
+            if ($userId == $whiteListedUser) {
+
+                Di::getInstance()->getLogger()->info("User found: $userId");
+
+                return true;
+            }
+
+        }
+
+        return false;
     }
 }
