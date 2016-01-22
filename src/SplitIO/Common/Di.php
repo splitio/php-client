@@ -3,6 +3,7 @@ namespace SplitIO\Common;
 
 use Psr\Log\LoggerInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use SplitIO\Client;
 
 /**
  * Class Di
@@ -13,6 +14,8 @@ class Di
     const KEY_LOG = 'SPLIT-LOGGER';
 
     const KEY_CACHE = 'SPLIT-CACHE';
+
+    const KEY_SPLIT_CLIENT = 'SPLIT-CLIENT';
 
     /**
      * @var Singleton The reference to *Singleton* instance of this class
@@ -112,4 +115,18 @@ class Di
     {
         return (isset($this->container[self::KEY_CACHE])) ? $this->container[self::KEY_CACHE] : null;
     }
+
+    public function setSplitClient(Client $client)
+    {
+        $this->container[self::KEY_SPLIT_CLIENT] = $client;
+    }
+
+    /**
+     * @return null|\SplitIO\Client
+     */
+    public function getSplitClient()
+    {
+        return (isset($this->container[self::KEY_SPLIT_CLIENT])) ? $this->container[self::KEY_SPLIT_CLIENT] : null;
+    }
+
 }
