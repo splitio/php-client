@@ -3,6 +3,7 @@ namespace SplitIO\Cache\Storage\Adapter;
 
 use SplitIO\Cache\Storage\Exception\AdapterException;
 use SplitIO\Cache\Item;
+use SplitIO\Common\Di;
 
 /**
  * Class Filesystem
@@ -59,6 +60,7 @@ class Filesystem implements CacheStorageAdapterInterface
         $item = new Item($key);
 
         $file = $this->getFilePath($key);
+        Di::getInstance()->getLogger()->debug("Cache file: $file");
 
         if (file_exists($file)) {
 
