@@ -1,0 +1,172 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+
+//FOREGROUND COLORS
+define("SPLIT_FG_BLACK", '0;30');
+define("SPLIT_FG_DARK_GRAY", '1;30');
+define("SPLIT_FG_BLUE", '0;34');
+define("SPLIT_FG_LIGHT_BLUE", '1;34');
+define("SPLIT_FG_GREEN", '0;32');
+define("SPLIT_FG_LIGHT_GREEN", '1;32');
+define("SPLIT_FG_CYAN", '0;36');
+define("SPLIT_FG_RED", '0;31');
+define("SPLIT_FG_PURPLE", '0;35');
+define("SPLIT_FG_BROWN", '0;33');
+define("SPLIT_FG_YELLOW", '1;33');
+define("SPLIT_FG_LIGHT_GRAY", '0;37');
+define("SPLIT_FG_WHITE", '1;37');
+//BACKGROUND COLORS
+define("SPLIT_BG_BLACK", '40');
+define("SPLIT_BG_RED", '41');
+define("SPLIT_BG_GREEN", '42');
+define("SPLIT_BG_YELLOW", '43');
+define("SPLIT_BG_BLUE", '44');
+define("SPLIT_BG_MAGENTA", '45');
+define("SPLIT_BG_CYAN", '46');
+define("SPLIT_BG_LIGHT_GRAY", '47');
+
+use SplitIO\Common\Di;
+use SplitIO\Grammar\Split;
+use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
+use SplitIO\Log\Logger;
+use SplitIO\Log\Handler\Stdout;
+use SplitIO\Client;
+use SplitIO\Engine;
+use SplitIO\Cache\Pool;
+
+bootstrap(is_array($argv) ? $argv : array());
+
+function bootstrap($options)
+{
+    $help = in_array('--help', $options);
+
+    /*foreach ($options as $k => $v) {
+        echo $k." ---> ".$v.PHP_EOL;
+    }*/
+
+    if ($help) {
+        displayHelp();
+        exit(0);
+    }
+
+    startSplitService();
+}
+
+
+/**
+ * displays the help
+ */
+function displayHelp()
+{
+
+    $logo = <<<EOF
+
+      _____       ___ __
+     / ___/____  / (_) /_
+     \__ \/ __ \/ / / __/
+    ___/ / /_/ / / / /_
+   /____/ .___/_/_/\__/
+       /_/
+EOF;
+    $slogan = " Rolling out easy!";
+
+    out($logo.$slogan, SPLIT_FG_LIGHT_BLUE);
+
+    $hlp = <<<EOF
+
+Usage:
+    splitio [OPTION]
+
+Options:
+    --help                     this help
+    --version                  SDK version
+    --api-key="..."            your environment API key
+
+    Log:
+    --logger="syslog|stdlog"    the log adapter
+    --logger-php-file="..."     your custom implementation of PSR-3 Logger interface
+
+    Cache:
+    --cache                     the cache adapter
+    --cache-php-file="..."      your custom implementation of cache definition PSR-6
+
+EOF;
+
+    out($hlp);
+}
+
+
+function startSplitService()
+{
+    $di = Di::getInstance();
+
+//Setting the log adapter
+    $stdoutAdapter = new Stdout();
+    $di->setLogger(new Logger($stdoutAdapter, \Psr\Log\LogLevel::INFO));
+
+//Setting Cache.
+    $adapter_config = [
+        'name' => 'filesystem',
+        'options' => [
+            'path'=> '/home/sarrubia/cache'
+        ]
+    ];
+
+    $di->setCache(new Pool([ 'adapter' => $adapter_config ]));
+
+
+//Setting the Split Client to connect Split servers
+//@TODO fetch API-KEY from args
+    $di->setSplitClient(new Client('o95pp36b7lvdce2e98ei2ipbh6'));
+
+    $splitChanges = json_decode(file_get_contents('./tmp/splitChanges.json'), true);
+
+    $splits = $splitChanges['splits'];
+
+//Creating Split Grammar structures
+    $splitList = array();
+    foreach ($splits as $split) {
+        $splitList[] = new Split($split);
+    }
+
+
+    $cache = Di::getInstance()->getCache();
+
+//Generating cache data.
+    foreach ($splitList as $_split) {
+
+        $users = $_split->getInvolvedUsers();
+        $featureName = $_split->getName();
+        foreach ($users as $user) {
+            $key = \SplitIO\generateCacheKey($user, $featureName);
+            $cacheItem = $cache->getItem($key);
+
+            if (Engine::isOn($user, $_split)) {
+                $cacheItem->set(TreatmentEnum::ON);
+                $cacheItem->expiresAfter(300);
+                $cache->save($cacheItem);
+            }
+        }
+    }
+}
+
+function out($str, $fg=null, $bg=null)
+{
+    $outString = "";
+
+    if ($fg !== null) {
+        $outString .= "\033[" . $fg . "m";
+    }
+
+    if ($bg !== null) {
+        $outString .= "\033[" . $bg . "m";
+    }
+
+    // Add string and end coloring
+    $outString .=  $str . "\033[0m";
+
+    echo $outString.PHP_EOL;
+}
