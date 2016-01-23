@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Common\Di;
 
@@ -27,9 +26,6 @@ class Segment extends AbstractMatcher
 
         $this->userDefinedSegmentMatcherData = $data;
 
-        /**
-         * @TODO Fetch from cache
-         */
         $_segmentData = json_decode(Di::getInstance()->getSplitClient()->getSegmentChanges($data), true);
 
         if ($_segmentData) {
@@ -45,13 +41,25 @@ class Segment extends AbstractMatcher
     protected function _eval($userId)
     {
         foreach ($this->addedUsers as $validUser) {
+
             Di::getInstance()->getLogger()->info("Comparing: IN_SEGMENT - $userId - $validUser");
+
             if ($userId == $validUser) {
+
+                Di::getInstance()->getLogger()->info("User found: $userId");
+
                 return true;
             }
-
         }
 
         return false;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getUsers()
+    {
+        return $this->addedUsers;
     }
 }

@@ -16,6 +16,15 @@ class All extends AbstractMatcher
     protected function _eval($userId)
     {
         Di::getInstance()->getLogger()->info("Comparing: ALL_KEYS - $userId");
+        Di::getInstance()->getLogger()->info("User found: $userId");
         return true;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUsers()
+    {
+        return array();
     }
 }
