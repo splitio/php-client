@@ -6,6 +6,7 @@ use Psr\Cache\CacheItemInterface;
 use SplitIO\Cache\Storage\Adapter\Memcached as MemcachedAdapter;
 use SplitIO\Cache\Storage\Adapter\Redis as RedisAdapter;
 use SplitIO\Cache\Storage\Adapter\Filesystem as FilesystemAdapter;
+use SplitIO\Common\Di;
 
 class Pool implements CacheItemPoolInterface
 {
@@ -191,6 +192,7 @@ class Pool implements CacheItemPoolInterface
 
         if ($this->adapter->save($key, $value, $expiration)) {
 
+            Di::getInstance()->getLogger()->info("Saving cache item: $key - $value - $expiration");
             return true;
         }
 
