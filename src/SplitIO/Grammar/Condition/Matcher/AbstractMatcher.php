@@ -42,4 +42,6 @@ abstract class AbstractMatcher
     }
 
     abstract protected function _eval($userId);
+
+    abstract public function getUsers();
 }
