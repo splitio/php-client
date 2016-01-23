@@ -1,6 +1,8 @@
 <?php
 namespace SplitIO;
 
+use SplitIO\Sdk\Client;
+
 class Sdk
 {
     const VERSION = '0.0.1';
@@ -10,8 +12,17 @@ class Sdk
     /** @var array Arguments for creating clients */
     private $args;
 
-    public static function factory(array $args = [])
+    private function __construct()
     {
-        echo "Split SDK";
+    }
+
+    /**
+     * @param $apiKey
+     * @param array $args
+     * @return \SplitIO\Sdk\Client
+     */
+    public static function factory($apiKey, array $args = [])
+    {
+        return new Client($apiKey, $args);
     }
 }
