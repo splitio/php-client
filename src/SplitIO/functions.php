@@ -1,11 +1,15 @@
 <?php
 namespace SplitIO;
 
-
-function version(){
+function version()
+{
     return \SplitIO\Sdk::VERSION;
 }
 
+function generateCacheKey($userId, $featureName)
+{
+    return "SPLITIO.userId.".$userId."__feature.".$featureName;
+}
 
 function hash($key, $seed){
     //return splitHash($key, $seed);
