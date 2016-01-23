@@ -45,6 +45,7 @@ class Condition
     public function __construct(array $condition)
     {
         Di::getInstance()->getLogger()->debug(print_r($condition, true));
+        Di::getInstance()->getLogger()->info("Constructing Condition");
 
         //On the next versions the condition will support Combiners: AND, OR, NOT
         //$this->combiner = new AndCombiner();
@@ -78,5 +79,23 @@ class Condition
 
         //On the next versions the condition will support Combiners: AND, OR, NOT
         return (isset($eval[0])) ? $eval[0] : false;
+    }
+
+    public function getPartitions()
+    {
+        return $this->partitions;
+    }
+
+    public function getInvolvedUsers()
+    {
+        $users = [];
+        foreach ($this->matcherGroup as $matcher) {
+
+            if ($matcher instanceof \SplitIO\Grammar\Condition\Matcher\AbstractMatcher) {
+                $users = array_merge($users, $matcher->getUsers());
+            }
+        }
+
+        return $users;
     }
 }
