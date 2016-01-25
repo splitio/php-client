@@ -26,7 +26,7 @@ class Segment extends AbstractMatcher
 
         $this->userDefinedSegmentMatcherData = $data;
 
-        $_segmentData = json_decode(Di::getInstance()->getSplitClient()->getSegmentChanges($data), true);
+        $_segmentData = Di::getInstance()->getSplitClient()->getSegmentChanges($data);
 
         if ($_segmentData) {
 
