@@ -1,64 +1,57 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Http\Client as HttpClient;
-use SplitIO\Http\MethodEnum;
-use SplitIO\Http\Request;
+use SplitIO\Client\Config;
+use SplitIO\Client\Resource\Segment;
+use SplitIO\Client\Resource\Split;
+use SplitIO\Common\Di;
 
 /**
  * Class Client
+ *
+ * The Split Facade Client.
+ *
  * @package SplitIO
  */
 class Client
 {
-    private $authorization = null;
+    private $config = null;
 
-    public function __construct($auth)
+    public function __construct($url, $auth)
     {
-        $this->authorization = $auth;
+        $config = new Config();
+        $config->setUrl($url);
+        $config->setAuthorization($auth);
+
+        $this->config = $config;
+
+        //Adding Client configuration as Di value for all Client modules.
+        Di::getInstance()->setSplitClientConfiguration($config);
     }
 
-    /**
-     * @return bool|null
-     */
     public function getSplitChanges()
     {
+        $splitChanges = new Split();
 
-        /**
-         * @TODO Fetch from cache. Move all code to \SplitIO\Client\Split with methog getChanges.
-         */
+        $data = $splitChanges->getSplitChanges();
 
-        $httpClient = new HttpClient();
-
-        $request = new Request(MethodEnum::GET(), 'http://localhost:8081/api/splitChanges');
-        $request->setHeader('Authorization', $this->authorization);
-        $request->setHeader('SplitSDKVersion', 'php-0.0.1');
-
-        $response = $httpClient->send($request);
-
-        if ($response->isSuccess()) {
-            return $response->getBody();
+        if ($data !== false) {
+            return $data;
         }
 
         return false;
     }
 
-    public function getSegmentChanges($segmentName, $since = -1)
+
+    public function getSegmentChanges($segmentName)
     {
-        /**
-         * @TODO Fetch from cache. Move all code to \SplitIO\Client\Segment with methog getChanges.
-         */
 
-        $httpClient = new HttpClient();
+        $segmentChanges = new Segment();
 
-        $request = new Request(MethodEnum::GET(), 'http://localhost:8081/api/segmentChanges/'.$segmentName.'?since='.$since);
-        $request->setHeader('Authorization', $this->authorization);
-        $request->setHeader('SplitSDKVersion', 'php-0.0.1');
+        $data = $segmentChanges->getSegmentChanges($segmentName);
 
-        $response = $httpClient->send($request);
-
-        if ($response->isSuccess()) {
-            return $response->getBody();
+        if ($data !== false) {
+            return $data;
         }
 
         return false;
