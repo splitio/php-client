@@ -1,32 +1,7 @@
 #!/usr/bin/env php
 <?php
-
+require_once __DIR__ . '/constants.php';
 require __DIR__ . '/../vendor/autoload.php';
-
-
-//FOREGROUND COLORS
-define("SPLIT_FG_BLACK", '0;30');
-define("SPLIT_FG_DARK_GRAY", '1;30');
-define("SPLIT_FG_BLUE", '0;34');
-define("SPLIT_FG_LIGHT_BLUE", '1;34');
-define("SPLIT_FG_GREEN", '0;32');
-define("SPLIT_FG_LIGHT_GREEN", '1;32');
-define("SPLIT_FG_CYAN", '0;36');
-define("SPLIT_FG_RED", '0;31');
-define("SPLIT_FG_PURPLE", '0;35');
-define("SPLIT_FG_BROWN", '0;33');
-define("SPLIT_FG_YELLOW", '1;33');
-define("SPLIT_FG_LIGHT_GRAY", '0;37');
-define("SPLIT_FG_WHITE", '1;37');
-//BACKGROUND COLORS
-define("SPLIT_BG_BLACK", '40');
-define("SPLIT_BG_RED", '41');
-define("SPLIT_BG_GREEN", '42');
-define("SPLIT_BG_YELLOW", '43');
-define("SPLIT_BG_BLUE", '44');
-define("SPLIT_BG_MAGENTA", '45');
-define("SPLIT_BG_CYAN", '46');
-define("SPLIT_BG_LIGHT_GRAY", '47');
 
 use SplitIO\Common\Di;
 use SplitIO\Grammar\Split;
@@ -39,22 +14,139 @@ use SplitIO\Cache\Pool;
 
 bootstrap(is_array($argv) ? $argv : array());
 
+function getOption($option, $key, $val, $argv)
+{
+    $optionLen = strlen($option);
+    $return = null;
+
+    if (0 === strpos($val, $option)) {
+        if ($optionLen === strlen($val) && isset($argv[$key+1])) {
+            $return = trim($argv[$key+1]);
+        } else {
+            $return = trim(substr($val, $optionLen+1));
+        }
+    }
+
+    return $return;
+}
+
+function getServiceOptionsMatrix()
+{
+    /**
+     * CONFIG_ARRAY_KEY => ['cli' => '--cli-param', 'ini' => 'section|key']
+     */
+    return [
+        SPLITIO_CONFIG_FILE => ['cli' => '--config-file',
+            'ini'       => null,
+            'default'   => null,
+            'help'      => "the path to your custom ini file"],
+
+        SPLITIO_CONFIG_API_KEY => ['cli' => '--api-key',
+            'ini'       => 'split.api-key',
+            'default'   => 'localhost',
+            'help'      => 'your environment API key'],
+
+        SPLITIO_CONFIG_LOG_ADAPTER => ['cli' => '--log-adapter',
+            'ini'       => 'log.adapter',
+            'default'   => 'stdout',
+            'help'      => 'the log adapter'],
+
+        SPLITIO_CONFIG_LOG_LEVEL => ['cli' => '--log-level',
+            'ini'       => 'log.level',
+            'default'   => 'info',
+            'help'      => 'the log level'],
+
+        SPLITIO_CONFIG_CACHE_TTL => ['cli' => '--cache-ttl',
+            'ini' => 'cache.ttl',
+            'default' => 300,
+            'help' => 'the time to live of cache items'],
+
+
+        SPLITIO_CONFIG_CACHE_ADAPTER => ['cli' => '--cache-adapter',
+            'ini'       => 'cache.adapter',
+            'default'   => 'filesystem',
+            'help'      => 'the cache adapter provided by Split SDK. Values = [filesystem|memcached|redis]'],
+
+        SPLITIO_CONFIG_CACHE_FILESYSTEM_PATH => ['cli' => '--cache-filesystem-path',
+            'ini'       => 'cache.options.path',
+            'default'   => '/tmp',
+            'help'      => 'the cache directory to save the cache files'],
+
+        SPLITIO_CONFIG_CACHE_REDIS_HOST => ['cli' => '--cache-redis-host',
+            'ini'       => 'cache.redis.host',
+            'default'   => 'localhost',
+            'help'      => 'the cache server host address for Redis adapter'],
+
+        SPLITIO_CONFIG_CACHE_REDIS_PORT => ['cli' => '--cache-redis-port',
+            'ini'       => 'cache.redis.port',
+            'default'   => 6379,
+            'help'      => 'the cache server port number for Redis adapter'],
+
+    ];
+}
+
 function bootstrap($options)
 {
     $help = in_array('--help', $options);
-
-    /*foreach ($options as $k => $v) {
-        echo $k." ---> ".$v.PHP_EOL;
-    }*/
 
     if ($help) {
         displayHelp();
         exit(0);
     }
 
+    $cliSyntaxMap = getServiceOptionsMatrix();
+
+    //Parsing the user cli parameters
+    $cliOptions = [];
+    foreach ($options as $key => $val) {
+        foreach ($cliSyntaxMap as $cfgK => $cfgV) {
+            if (0 === strpos($val, $cfgV['cli'])) {
+                $opt = getOption($cfgV['cli'], $key, $val, $options);
+                $cliOptions[$cfgK] = ($opt) ? $opt : null;
+            }
+        }
+    }
+
+    //Parsing the ini file parameters.
+    $customConfigFile = (isset($cliOptions[SPLITIO_CONFIG_FILE])) ? $cliOptions[SPLITIO_CONFIG_FILE] : null;
+    $iniOptions = readConfig($customConfigFile);
+    if (!$iniOptions) {
+        outError("The configuration file is missing");
+        exit(1);
+    }
+
+    //Merging ini and cli parameters. cli has priority.
+    $finalOptions = [];
+    foreach ($cliSyntaxMap as $k => $v) {
+        if (isset($cliOptions[$k])) {
+            $finalOptions[$k] = $cliOptions[$k];
+        } elseif (isset($iniOptions[$v['ini']])) {
+            $finalOptions[$k] = $iniOptions[$v['ini']];
+        } else {
+            if (isset($iniOptions[$v['default']])) {
+                $finalOptions[$k] = $iniOptions[$v['default']];
+            }
+        }
+    }
+
+    //Setting options in Di to use it cross app.
+    Di::getInstance()->set(SPLIT_DI_CONFIG_KEY, $finalOptions);
+
     startSplitService();
 }
 
+function readConfig($configFile = null)
+{
+    if ($configFile === null) {
+        $configFile = __DIR__.'/splitio.ini';
+    }
+    $config = false;
+    if (file_exists($configFile)) {
+        $config = parse_ini_file($configFile, true);
+    }
+
+    return $config;
+}
 
 /**
  * displays the help
@@ -78,64 +170,101 @@ EOF;
     $hlp = <<<EOF
 
 Usage:
-    splitio [OPTION]
+    splitio [OPTIONS]
 
 Options:
-    --help                     this help
-    --version                  SDK version
-    --api-key="..."            your environment API key
-
-    Log:
-    --logger="syslog|stdlog"    the log adapter
-    --logger-php-file="..."     your custom implementation of PSR-3 Logger interface
-
-    Cache:
-    --cache                     the cache adapter
-    --cache-php-file="..."      your custom implementation of cache definition PSR-6
-
 EOF;
-
     out($hlp);
+
+    $options = getServiceOptionsMatrix();
+    foreach ($options as $opt) {
+        $init_str = "  ".$opt['cli'].'="'.$opt['default'].'"';
+        $str = $init_str;
+        for ($i=0; $i < (40 - strlen($init_str)); $i++) {
+            $str .= " ";
+        }
+        $str .= $opt['help'];
+        out($str);
+    }
+
+    out(PHP_EOL);
+
 }
 
+
+function addCachePool()
+{
+    $di = Di::getInstance();
+    $config = $di->get(SPLIT_DI_CONFIG_KEY);
+
+    $adapter_config = [];
+
+    switch ($config[SPLITIO_CONFIG_CACHE_ADAPTER]) {
+        case 'memcached':
+            $adapter_config = [
+                'name' => 'memcached',
+                'options' => [
+                    'servers' => [ //Memcached servers
+                        ['172.17.0.2',11211]
+                    ]
+                ]
+            ];
+            break;
+
+        case 'redis':
+            $adapter_config = [
+                'name' => 'redis',
+                'options' => [
+                    'host' => $config[SPLITIO_CONFIG_CACHE_REDIS_HOST],
+                    'port' => $config[SPLITIO_CONFIG_CACHE_REDIS_PORT],
+                ]
+            ];
+            break;
+
+        case 'filesystem':
+        default:
+            $adapter_config = [
+                'name' => 'filesystem',
+                'options' => [
+                    'path'=> $config[SPLITIO_CONFIG_CACHE_FILESYSTEM_PATH]
+                ]
+            ];
+            break;
+    }
+
+    $di->setCache(new Pool([ 'adapter' => $adapter_config ]));
+
+}
 
 function startSplitService()
 {
     $di = Di::getInstance();
+    $config = $di->get(SPLIT_DI_CONFIG_KEY);
 
-//Setting the log adapter
+    //Setting the log adapter
     $stdoutAdapter = new Stdout();
     $di->setLogger(new Logger($stdoutAdapter, \Psr\Log\LogLevel::INFO));
 
-//Setting Cache.
-    $adapter_config = [
-        'name' => 'filesystem',
-        'options' => [
-            'path'=> '/home/sarrubia/cache'
-        ]
-    ];
+    //Adding Cache on Di
+    addCachePool();
 
-    $di->setCache(new Pool([ 'adapter' => $adapter_config ]));
+    //Setting the Split Client to connect Split servers
+    if ($di->getSplitClient() === null) {
+        $di->setSplitClient(new Client(SPLITIO_URL, $config[SPLITIO_CONFIG_API_KEY]));
+    }
 
-
-//Setting the Split Client to connect Split servers
-//@TODO fetch API-KEY from args
-    $di->setSplitClient(new Client('o95pp36b7lvdce2e98ei2ipbh6'));
-
-    $splitChanges = json_decode(file_get_contents('./tmp/splitChanges.json'), true);
-
+    $splitChanges = $di->getSplitClient()->getSplitChanges();
     $splits = $splitChanges['splits'];
 
-//Creating Split Grammar structures
+    //Creating Split Grammar structures
     $splitList = array();
     foreach ($splits as $split) {
         $splitList[] = new Split($split);
     }
 
+    $cache = $di->getCache();
 
-    $cache = Di::getInstance()->getCache();
-
-//Generating cache data.
+    //Generating cache data.
     foreach ($splitList as $_split) {
 
         $users = $_split->getInvolvedUsers();
@@ -169,4 +298,19 @@ function out($str, $fg=null, $bg=null)
     $outString .=  $str . "\033[0m";
 
     echo $outString.PHP_EOL;
+}
+
+function outError($str)
+{
+    out($str, SPLIT_FG_WHITE, SPLIT_BG_RED);
+}
+
+function outInfo($str)
+{
+    out($str, SPLIT_FG_BROWN);
+}
+
+function outSuccess($str)
+{
+    out($str, SPLIT_FG_GREEN);
 }
