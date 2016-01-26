@@ -4,7 +4,7 @@ namespace SplitIO\Log;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use \SplitIO\Log\Handler\LogHandlerInterface;
-use SplitIO\Log\Handler\Syslog;
+use SplitIO\Log\Handler\Stdout;
 
 /**
  * Class Logger
@@ -51,7 +51,7 @@ class Logger implements LoggerInterface
 
         } else {
 
-            $this->handler = new Syslog();
+            $this->handler = new Stdout();
 
         }
     }
