@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Sdk\Client;
+use SplitIO\Sdk\Client as SdkClient;
 
 class Sdk
 {
@@ -23,6 +23,6 @@ class Sdk
      */
     public static function factory($apiKey, array $args = [])
     {
-        return new Client($apiKey, $args);
+        return new SdkClient($apiKey, $args);
     }
 }
