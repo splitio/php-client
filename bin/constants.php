@@ -11,11 +11,14 @@ define("SPLITIO_CONFIG_API_KEY", "cnf-api-key");
 define("SPLITIO_CONFIG_FILE", "cnf-config-file");
 define("SPLITIO_CONFIG_LOG_ADAPTER", "cnf-log-adapter");
 define("SPLITIO_CONFIG_LOG_LEVEL", "cnf-log-level");
+define("SPLITIO_CONFIG_LOG_CUSTOM", "cnf-log-custom");
 define("SPLITIO_CONFIG_CACHE_TTL", "cnf-cache-ttl");
 define("SPLITIO_CONFIG_CACHE_ADAPTER", "cnf-cache-adapter");
 define("SPLITIO_CONFIG_CACHE_FILESYSTEM_PATH", "cnf-cache-filesystem-path");
 define("SPLITIO_CONFIG_CACHE_REDIS_HOST", "cnf-cache-redis-host");
 define("SPLITIO_CONFIG_CACHE_REDIS_PORT", "cnf-cache-redis-port");
+define("SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS", "cnf-cache-memcached-servers");
+define("SPLITIO_CONFIG_CACHE_CUSTOM", "cnf-cache-custom");
 
 
 //Output defined colors
