@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Common;
 
-class Service
+class ServiceProvider
 {
     public static function registerLogger(\Psr\Log\LoggerInterface $logger)
     {
