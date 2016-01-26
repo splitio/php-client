@@ -198,20 +198,20 @@ EOF;
 
     $hlp = <<<EOF
 
-Usage:
+ Usage:
     splitio [OPTIONS]
 
-Options:
+ Options:
 EOF;
     out($hlp);
 
     $options = getServiceOptionsMatrix();
     foreach ($options as $opt) {
         if (isset($opt['title'])) {
-            out(PHP_EOL."  ".$opt['title']);
+            out(PHP_EOL."   ".$opt['title']);
         }
         //$init_str = "  ".$opt['cli'].'="'.$opt['default'].'"';
-        $init_str = "    ".$opt['cli'];
+        $init_str = "     ".$opt['cli'];
         $str = $init_str;
         for ($i=0; $i < (36 - strlen($init_str)); $i++) {
             $str .= " ";
@@ -228,41 +228,46 @@ function addCachePool()
 {
     $config = Di::getInstance()->get(SPLIT_DI_CONFIG_KEY);
 
-    $adapter_config = [];
+    if (isset($config[SPLITIO_CONFIG_CACHE_CUSTOM]) && file_exists($config[SPLITIO_CONFIG_CACHE_CUSTOM])) {
 
-    switch ($config[SPLITIO_CONFIG_CACHE_ADAPTER]) {
-        case 'memcached':
-            $adapter_config = [
-                'name' => 'memcached',
-                'options' => [
-                    'servers' => $config[SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS]
-                ]
-            ];
-            break;
+        require_once($config[SPLITIO_CONFIG_CACHE_CUSTOM]);
 
-        case 'redis':
-            $adapter_config = [
-                'name' => 'redis',
-                'options' => [
-                    'host' => $config[SPLITIO_CONFIG_CACHE_REDIS_HOST],
-                    'port' => $config[SPLITIO_CONFIG_CACHE_REDIS_PORT],
-                ]
-            ];
-            break;
+    } else {
+        $adapter_config = [];
 
-        case 'filesystem':
-        default:
-            $adapter_config = [
-                'name' => 'filesystem',
-                'options' => [
-                    'path'=> $config[SPLITIO_CONFIG_CACHE_FILESYSTEM_PATH]
-                ]
-            ];
-            break;
+        switch ($config[SPLITIO_CONFIG_CACHE_ADAPTER]) {
+            case 'memcached':
+                $adapter_config = [
+                    'name' => 'memcached',
+                    'options' => [
+                        'servers' => $config[SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS]
+                    ]
+                ];
+                break;
+
+            case 'redis':
+                $adapter_config = [
+                    'name' => 'redis',
+                    'options' => [
+                        'host' => $config[SPLITIO_CONFIG_CACHE_REDIS_HOST],
+                        'port' => $config[SPLITIO_CONFIG_CACHE_REDIS_PORT],
+                    ]
+                ];
+                break;
+
+            case 'filesystem':
+            default:
+                $adapter_config = [
+                    'name' => 'filesystem',
+                    'options' => [
+                        'path'=> $config[SPLITIO_CONFIG_CACHE_FILESYSTEM_PATH]
+                    ]
+                ];
+                break;
+        }
+
+        Di::getInstance()->setCache(new Pool([ 'adapter' => $adapter_config ]));
     }
-
-    Di::getInstance()->setCache(new Pool([ 'adapter' => $adapter_config ]));
-
 }
 
 function addLogger()
