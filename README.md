@@ -24,6 +24,12 @@ if ($splitClient->isOn('user-id','feature-name')) {
 }
 ```
 
+#SDK Architecture
+
+#Backend Service
+This service is on charge to keep synchronized the Split server information with your local cache in order improve the performance at the moment to call the isOn method and avoid undesired overtimes.
+![Split backend service](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.service.png?raw=true)
+
 # Adapters / Handlers
 
 ## Logger - PSR-3 Logger Interface compatibility
