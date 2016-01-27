@@ -25,10 +25,11 @@ if ($splitClient->isOn('user-id','feature-name')) {
 ```
 
 #SDK Architecture
+![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.arch.png?raw=true)
 
-#Backend Service
+#Split Synchronizer Service
 This service is on charge to keep synchronized the Split server information with your local cache in order improve the performance at the moment to call the isOn method and avoid undesired overtimes.
-![Split backend service](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.service.png?raw=true)
+![Split Synchronizer Service](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.service.png?raw=true)
 
 # Adapters / Handlers
 
