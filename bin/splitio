@@ -94,7 +94,7 @@ function getServiceOptionsMatrix()
         SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS => ['cli' => '--cache-memcached-servers',
             'ini'       => 'cache.options.server',
             'default'   => 'localhost:11211',
-            'help'      => 'a list of comma-separated values of "server:port" couple for Memcached adapter.'],
+            'help'      => 'a list of comma-separated values of "server:port" couple for Memcached adapter'],
 
         SPLITIO_CONFIG_CACHE_CUSTOM => ['cli' => '--cache-custom',
             'ini'       => 'cache.custom',
