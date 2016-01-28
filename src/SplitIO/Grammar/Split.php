@@ -1,44 +1,6 @@
 <?php
 namespace SplitIO\Grammar;
 
-/*
-{
-      "orgId": "bf083ab0-b402-11e5-b7d5-024293b5d101",
-      "environment": "bf9d9ce0-b402-11e5-b7d5-024293b5d101",
-      "name": "myFeature",
-      "trafficTypeId": "u",
-      "trafficTypeName": "User",
-      "seed": 93590075,
-      "status": "ACTIVE",
-      "killed": false,
-      "conditions": [
-        {
-          "matcherGroup": {
-            "combiner": "AND",
-            "matchers": [
-              {
-                "matcherType": "ALL_KEYS",
-                "negate": false,
-                "userDefinedSegmentMatcherData": null,
-                "whitelistMatcherData": null
-              }
-            ]
-          },
-          "partitions": [
-            {
-              "treatment": "on",
-              "size": 50
-            },
-            {
-              "treatment": "control",
-              "size": 50
-            }
-          ]
-        }
-      ]
-    }
-*/
-
 use SplitIO\Common\Di;
 
 class Split
