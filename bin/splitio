@@ -47,6 +47,11 @@ function getServiceOptionsMatrix()
             'default'   => 'localhost',
             'help'      => 'your environment API key'],
 
+        SPLITIO_CONFIG_TIME_GAP => ['cli' => '--time-gap',
+            'ini'       => 'split.time-gap',
+            'default'   => '300', //Fetch Splits every 5 minutes
+            'help'      => "the time gap, expressed in seconds, between the last server request and the next one"],
+
         //LOG
         SPLITIO_CONFIG_LOG_ADAPTER => ['cli' => '--log-adapter',
             'ini'       => 'log.adapter',
@@ -106,7 +111,11 @@ function getServiceOptionsMatrix()
 
 function bootstrap($options)
 {
+    //Display command line help
     $help = in_array('--help', $options);
+
+    //run the script as a service (within loop)
+    $asService = in_array('--service', $options);
 
     if ($help) {
         displayHelp();
@@ -156,12 +165,25 @@ function bootstrap($options)
         }
     }
 
-    //var_dump($finalOptions); exit;
-
     //Setting options in Di to use it cross app.
     Di::getInstance()->set(SPLIT_DI_CONFIG_KEY, $finalOptions);
 
-    startSplitService();
+    if ($asService) {
+
+        $seconds = (int) $finalOptions[SPLITIO_CONFIG_TIME_GAP];
+        $micro = $seconds * 1000000;
+
+        while (true) {
+
+            runSplitService();
+            usleep($micro);
+
+        }
+    } else {
+        runSplitService();
+    }
+
+
 }
 
 function readConfig($configFile = null)
@@ -202,6 +224,8 @@ EOF;
     splitio [OPTIONS]
 
  Options:
+     --help                         display this help
+     --service                      run the command on pulling mode (see: --time-gap)
 EOF;
     out($hlp);
 
@@ -210,7 +234,6 @@ EOF;
         if (isset($opt['title'])) {
             out(PHP_EOL."   ".$opt['title']);
         }
-        //$init_str = "  ".$opt['cli'].'="'.$opt['default'].'"';
         $init_str = "     ".$opt['cli'];
         $str = $init_str;
         for ($i=0; $i < (36 - strlen($init_str)); $i++) {
@@ -296,7 +319,7 @@ function addLogger()
     }
 }
 
-function startSplitService()
+function runSplitService()
 {
     $di = Di::getInstance();
     $config = $di->get(SPLIT_DI_CONFIG_KEY);
