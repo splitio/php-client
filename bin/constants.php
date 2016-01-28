@@ -9,6 +9,7 @@ define("SPLIT_DI_CONFIG_KEY", "SplitIO_cli_Config");
 //Config array keys
 define("SPLITIO_CONFIG_API_KEY", "cnf-api-key");
 define("SPLITIO_CONFIG_FILE", "cnf-config-file");
+define("SPLITIO_CONFIG_TIME_GAP", "cnf-time-gap");
 define("SPLITIO_CONFIG_LOG_ADAPTER", "cnf-log-adapter");
 define("SPLITIO_CONFIG_LOG_LEVEL", "cnf-log-level");
 define("SPLITIO_CONFIG_LOG_CUSTOM", "cnf-log-custom");
