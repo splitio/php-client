@@ -20,14 +20,16 @@ class Splitter
 
         Di::getInstance()->getLogger()->info("Butcket: ".$bucket);
 
+        $accumulatedSize = 0;
         foreach ($partitions as $partition) {
             if ($partition instanceof Partition) {
-                if ($bucket <= $partition->getSize()) {
+                $accumulatedSize += $partition->getSize();
+                if ($bucket <= $accumulatedSize) {
                     return $partition->getTreatment()->getValue();
                 }
             }
         }
 
-        return TreatmentEnum::OFF;
+        return TreatmentEnum::CONTROL;
     }
 }
