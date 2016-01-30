@@ -12,7 +12,8 @@ class Engine
 
     public static function isOn($userId, Split $split)
     {
-        if (self::getTreatment($userId, $split) == TreatmentEnum::ON) {
+        $treatment = self::getTreatment($userId, $split);
+        if ($treatment != TreatmentEnum::OFF && $treatment != TreatmentEnum::CONTROL) {
             return true;
         }
 
