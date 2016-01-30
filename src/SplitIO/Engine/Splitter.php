@@ -16,7 +16,7 @@ class Splitter
         Di::getInstance()->getLogger()->info("Seed: ".$seed);
         Di::getInstance()->getLogger()->info("Partitions: ".print_r($partitions, true));
 
-        $bucket = (\SplitIO\hash($userId, $seed) % 100) + 1;
+        $bucket = abs(\SplitIO\hash($userId, $seed) % 100) + 1;
 
         Di::getInstance()->getLogger()->info("Butcket: ".$bucket);
 
