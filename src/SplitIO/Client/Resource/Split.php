@@ -15,13 +15,16 @@ class Split extends ClientBase
     private $servicePath = '/api/splitChanges';
 
     const KEY_SINCE_CACHED_ITEM = 'SPLITIO.splits.since';
+
+    const KEY_TILL_CACHED_ITEM = 'SPLITIO.splits.till';
+
     /**
      * @return bool|null
      */
     public function getSplitChanges()
     {
-        //Fetching since value from cache.
-        $since_cached_item = Di::getInstance()->getCache()->getItem(self::KEY_SINCE_CACHED_ITEM);
+        //Fetching next since value from cache.
+        $since_cached_item = Di::getInstance()->getCache()->getItem(self::KEY_TILL_CACHED_ITEM);
 
         $servicePath = $this->servicePath;
 
@@ -40,20 +43,22 @@ class Split extends ClientBase
 
             $splitChanges = json_decode($response->getBody(), true);
 
-            $this->since = (isset($splitChanges['since'])) ? $splitChanges['since'] : -1;
+            $this->till = (isset($splitChanges['till'])) ? $splitChanges['till'] : -1;
 
-            //Updating since value.
-            $since_cached_item->set($this->since);
-            //@TODO set expiration time from config.
-            $since_cached_item->expiresAfter(300);
+            //Updating next since (till) value.
+            if ($this->till != $since_cached_item->get()) {
+                $since_cached_item->set($this->till);
+            }
+
+            //Refreshing the TTL of the item.
+            $since_cached_item->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
+
             Di::getInstance()->getCache()->save($since_cached_item);
-
-            $this->till = (isset($splitChanges['till'])) ? $splitChanges['till'] : null;
 
             $splits = (isset($splitChanges['splits'])) ? $splitChanges['splits'] : false;
 
             if (!$splits) {
-                Di::getInstance()->getLogger()->error("Splits returned by the server are empty");
+                Di::getInstance()->getLogger()->notice("Splits returned by the server are empty");
                 return false;
             }
 
