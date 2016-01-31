@@ -13,10 +13,10 @@ class All extends AbstractMatcher
         parent::__construct(Matcher::ALL_KEYS, $negate);
     }
 
-    protected function _eval($userId)
+    protected function evalKey($key)
     {
-        Di::getInstance()->getLogger()->info("Comparing: ALL_KEYS - $userId");
-        Di::getInstance()->getLogger()->info("User found: $userId");
+        Di::getInstance()->getLogger()->info("Comparing: ALL_KEYS - $key");
+        Di::getInstance()->getLogger()->info("User found: $key");
         return true;
     }
 
