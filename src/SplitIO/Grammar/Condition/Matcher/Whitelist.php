@@ -16,7 +16,7 @@ class Whitelist extends AbstractMatcher
         $this->whitelistMatcherData = $data;
     }
 
-    protected function _eval($userId)
+    protected function evalKey($userId)
     {
         foreach ($this->whitelistMatcherData as $whiteListedUser) {
 
