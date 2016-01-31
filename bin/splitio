@@ -5,7 +5,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use SplitIO\Common\Di;
 use SplitIO\Grammar\Split;
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
+use SplitIO\Grammar\Condition\Matcher\SegmentData;
 use SplitIO\Log\Logger;
 use SplitIO\Log\Handler\Stdout;
 use SplitIO\Log\Handler\Syslog;
@@ -72,7 +72,7 @@ function getServiceOptionsMatrix()
         //CACHE
         SPLITIO_CONFIG_CACHE_TTL => ['cli' => '--cache-ttl',
             'ini'       => 'cache.ttl',
-            'default'   => 300,
+            'default'   => 3600,
             'help'      => 'the time to live of cache items',
             'title'     => 'Cache:'],
 
@@ -167,6 +167,7 @@ function bootstrap($options)
 
     //Setting options in Di to use it cross app.
     Di::getInstance()->set(SPLIT_DI_CONFIG_KEY, $finalOptions);
+    Di::getInstance()->setSplitSdkConfiguration(\SplitIO\Sdk\SdkConfig::loadFromCliService($finalOptions));
 
     if ($asService) {
 
@@ -249,21 +250,21 @@ EOF;
 
 function addCachePool()
 {
-    $config = Di::getInstance()->get(SPLIT_DI_CONFIG_KEY);
+    $sdkConfig = Di::getInstance()->getSplitSdkConfiguration();
 
-    if (isset($config[SPLITIO_CONFIG_CACHE_CUSTOM]) && file_exists($config[SPLITIO_CONFIG_CACHE_CUSTOM])) {
+    $cacheCustomFile = $sdkConfig->getCacheCustom();
+    if ($cacheCustomFile !== null && file_exists($cacheCustomFile)) {
 
-        require_once($config[SPLITIO_CONFIG_CACHE_CUSTOM]);
+        require_once($cacheCustomFile);
 
     } else {
-        $adapter_config = [];
 
-        switch ($config[SPLITIO_CONFIG_CACHE_ADAPTER]) {
+        switch ($sdkConfig->getCacheAdapter()) {
             case 'memcached':
                 $adapter_config = [
                     'name' => 'memcached',
                     'options' => [
-                        'servers' => $config[SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS]
+                        'servers' => $sdkConfig->getCacheMemcachedServers()
                     ]
                 ];
                 break;
@@ -272,8 +273,8 @@ function addCachePool()
                 $adapter_config = [
                     'name' => 'redis',
                     'options' => [
-                        'host' => $config[SPLITIO_CONFIG_CACHE_REDIS_HOST],
-                        'port' => $config[SPLITIO_CONFIG_CACHE_REDIS_PORT],
+                        'host' => $sdkConfig->getCacheRedisHost(),
+                        'port' => $sdkConfig->getCacheRedisPort(),
                     ]
                 ];
                 break;
@@ -283,7 +284,7 @@ function addCachePool()
                 $adapter_config = [
                     'name' => 'filesystem',
                     'options' => [
-                        'path'=> $config[SPLITIO_CONFIG_CACHE_FILESYSTEM_PATH]
+                        'path'=> $sdkConfig->getCacheFilesystemPath()
                     ]
                 ];
                 break;
@@ -295,16 +296,17 @@ function addCachePool()
 
 function addLogger()
 {
-    $config = Di::getInstance()->get(SPLIT_DI_CONFIG_KEY);
+    $sdkConfig = Di::getInstance()->getSplitSdkConfiguration();
 
-    if (isset($config[SPLITIO_CONFIG_LOG_CUSTOM]) && file_exists($config[SPLITIO_CONFIG_LOG_CUSTOM])) {
+    $logCustomFile = $sdkConfig->getLogCustom();
+    if ($logCustomFile !== null && file_exists($logCustomFile)) {
 
-        require_once($config[SPLITIO_CONFIG_LOG_CUSTOM]);
+        require_once($logCustomFile);
 
     } else {
         $logAdapter = null;
 
-        switch ($config[SPLITIO_CONFIG_LOG_ADAPTER]) {
+        switch ($sdkConfig->getLogAdapter()) {
             case 'syslog':
                 $logAdapter = new Syslog();
                 break;
@@ -315,14 +317,14 @@ function addLogger()
                 break;
         }
 
-        Di::getInstance()->setLogger(new Logger($logAdapter, $config[SPLITIO_CONFIG_LOG_LEVEL]));
+        Di::getInstance()->setLogger(new Logger($logAdapter, $sdkConfig->getLogLevel()));
     }
 }
 
 function runSplitService()
 {
     $di = Di::getInstance();
-    $config = $di->get(SPLIT_DI_CONFIG_KEY);
+    $sdkConfig = $di->getSplitSdkConfiguration();
 
     //Setting the log adapter
     addLogger();
@@ -332,39 +334,64 @@ function runSplitService()
 
     //Setting the Split Client to connect Split servers
     if ($di->getSplitClient() === null) {
-        $di->setSplitClient(new Client(SPLITIO_URL, $config[SPLITIO_CONFIG_API_KEY]));
+        $di->setSplitClient(new Client(SPLITIO_URL, $sdkConfig->getApiKey()));
     }
 
+    //Fetching the Splits changes
+    getSplits();
+
+    //Fetching the Segments changes
+    getSegments();
+
+
+}
+
+function getSplits()
+{
+    $di = Di::getInstance();
+    $sdkConfig = $di->getSplitSdkConfiguration();
+    $cache = $di->getCache();
+
+    //Fetching the Splits changes
     $splitChanges = $di->getSplitClient()->getSplitChanges();
     $splits = $splitChanges['splits'];
 
-    //Creating Split Grammar structures
-    $splitList = array();
-    foreach ($splits as $split) {
-        $splitList[] = new Split($split);
+    if (!empty($splits)) {
+        //Creating Split Grammar structures
+        foreach ($splits as $split) {
+            $splitInstance = new Split($split);
+            $serializedSplitInstance = serialize($splitInstance);
+
+            $di->getLogger()->debug($serializedSplitInstance);
+
+            $cacheItem = $cache->getItem(\SplitIO\getCacheKeyForSplit($splitInstance->getName()));
+            $cacheItem->set($serializedSplitInstance);
+            $cacheItem->expiresAfter($sdkConfig->getCacheItemTtl());
+            $cache->save($cacheItem);
+        }
     }
 
+}
+
+
+function getSegments()
+{
+    $di = Di::getInstance();
     $cache = $di->getCache();
 
-    //Generating cache data.
-    foreach ($splitList as $_split) {
+    $registeredSegmentsItem = $cache->getItem(\SplitIO\getCacheKeyForRegisterSegments());
+    $segments = $registeredSegmentsItem->get();
 
-        $users = $_split->getInvolvedUsers();
-        $featureName = $_split->getName();
-        foreach ($users as $user) {
-            $key = \SplitIO\generateCacheKey($user, $featureName);
-            $cacheItem = $cache->getItem($key);
+    if ($segments !== null) {
+        $arraySegments = explode(',', $segments);
 
-            if (Engine::isOn($user, $_split)) {
-                $cacheItem->set(TreatmentEnum::ON);
-                $cacheItem->expiresAfter($config[SPLITIO_CONFIG_CACHE_TTL]);
-                $cache->save($cacheItem);
-            }
+        foreach ($arraySegments as $segmentName) {
+            Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
         }
     }
 }
 
-function out($str, $fg=null, $bg=null)
+function out($str, $fg = null, $bg = null)
 {
     $outString = "";
 
