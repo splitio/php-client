@@ -69,6 +69,8 @@ class Filesystem implements CacheStorageAdapterInterface
 
             if ($expiration !== 0 && $expiration < time()) {
                 // expired
+                $time = time();
+                Di::getInstance()->getLogger()->debug("//--> Fetched item $key expired at $expiration, NOw($time)");
                 return $item;
             }
 
