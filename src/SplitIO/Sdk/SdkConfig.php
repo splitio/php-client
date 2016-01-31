@@ -2,6 +2,7 @@
 namespace SplitIO\Sdk;
 
 use Psr\Log\LogLevel;
+use SplitIO\Log\LogLevelEnum;
 
 class SdkConfig
 {
@@ -191,7 +192,10 @@ class SdkConfig
      */
     public function setLogLevel($logLevel)
     {
-        $this->logLevel = $logLevel;
+        if (LogLevelEnum::isValid($logLevel)) {
+            $this->logLevel = $logLevel;
+        }
+
     }
 
     /**
