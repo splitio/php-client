@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sarrubia
- * Date: 19/01/16
- * Time: 21:35
- */
-
 namespace SplitIO\Grammar\Condition\Matcher;
 
 /*
@@ -33,15 +26,19 @@ abstract class AbstractMatcher
         $this->negate = $negate;
     }
 
-    public function evaluate($userId)
+    public function evaluate($key)
     {
-        Di::getInstance()->getLogger()->info("Evaluating on {$this->type} the userID $userId");
+        Di::getInstance()->getLogger()->info("Evaluating on {$this->type} the KEY $key");
 
-        $evaluation =  $this->_eval($userId);
-        return ($this->negate) ? !$evaluation : $evaluation;
+        return $this->evalKey($key);
     }
 
-    abstract protected function _eval($userId);
+    public function isNegate()
+    {
+        return $this->negate;
+    }
+
+    abstract protected function evalKey($key);
 
     abstract public function getUsers();
 }
