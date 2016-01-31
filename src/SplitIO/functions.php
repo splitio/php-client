@@ -3,14 +3,27 @@ namespace SplitIO;
 
 function version()
 {
-    return \SplitIO\Sdk::VERSION;
+    return Sdk::VERSION;
 }
 
-function generateCacheKey($userId, $featureName)
+//CACHE Functions
+
+function getCacheKeyForSplit($splitName)
 {
-    return "SPLITIO.userId.".$userId."__feature.".$featureName;
+    return str_replace('{splitName}', $splitName, 'SPLITIO.split.{splitName}');
 }
 
+function getCacheKeyForSegmentData($segmentName)
+{
+    return str_replace('{segmentName}', $segmentName, 'SPLITIO.segmentData.{segmentName}');
+}
+
+function getCacheKeyForRegisterSegments()
+{
+    return 'SPLITIO.segments.registered';
+}
+
+//HASH Functions
 function hash($key, $seed){
     //return splitHash($key, $seed);
     return murmurhash3_int($key, $seed);
