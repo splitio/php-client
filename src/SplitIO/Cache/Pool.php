@@ -65,6 +65,7 @@ class Pool implements CacheItemPoolInterface
     public function getItem($key)
     {
         $this->assertValidKey($key);
+        Di::getInstance()->getLogger()->debug("Fetching item ** $key ** from cache");
         return $this->adapter->getItem($key);
     }
 
@@ -192,7 +193,7 @@ class Pool implements CacheItemPoolInterface
 
         if ($this->adapter->save($key, $value, $expiration)) {
 
-            Di::getInstance()->getLogger()->info("Saving cache item: $key - $value - $expiration");
+            Di::getInstance()->getLogger()->debug("Saving cache item: $key - $value - $expiration");
             return true;
         }
 
