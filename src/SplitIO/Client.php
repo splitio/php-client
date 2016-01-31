@@ -5,6 +5,7 @@ use SplitIO\Client\Config;
 use SplitIO\Client\Resource\Segment;
 use SplitIO\Client\Resource\Split;
 use SplitIO\Common\Di;
+use SplitIO\Grammar\Condition\Matcher\SegmentData;
 
 /**
  * Class Client
@@ -29,6 +30,9 @@ class Client
         Di::getInstance()->setSplitClientConfiguration($config);
     }
 
+    /**
+     * @return bool|null
+     */
     public function getSplitChanges()
     {
         $splitChanges = new Split();
@@ -42,7 +46,10 @@ class Client
         return false;
     }
 
-
+    /**
+     * @param $segmentName
+     * @return bool|mixed
+     */
     public function getSegmentChanges($segmentName)
     {
 
@@ -52,6 +59,26 @@ class Client
 
         if ($data !== false) {
             return $data;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $segmentName
+     * @return bool|SegmentData
+     */
+    public function updateSegmentChanges($segmentName)
+    {
+        $rawSegmentData = $this->getSegmentChanges($segmentName);
+
+        if ($rawSegmentData) {
+            $segmentData = new SegmentData($rawSegmentData);
+            $segmentChanges = new Segment();
+
+            if ($segmentChanges->addSegmentOnCache($segmentData)) {
+                return $segmentData;
+            }
         }
 
         return false;
