@@ -2,9 +2,12 @@
 namespace SplitIO\Grammar;
 
 use SplitIO\Common\Di;
-//use SplitIO\Grammar\Condition\Combiner\AndCombiner;
+use SplitIO\Grammar\Condition\Combiner\AndCombiner;
+use SplitIO\Grammar\Condition\Combiner\CombinerEnum;
+use SplitIO\Grammar\Condition\Combiner\Factor\NotFactor;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Partition;
+use SplitIO\Grammar\Condition\Matcher\AbstractMatcher;
 
 /*
 {
@@ -47,8 +50,8 @@ class Condition
         Di::getInstance()->getLogger()->debug(print_r($condition, true));
         Di::getInstance()->getLogger()->info("Constructing Condition");
 
-        //On the next versions the condition will support Combiners: AND, OR, NOT
-        //$this->combiner = new AndCombiner();
+        //So far the combiner is AND. On next versions the condition will support Combiners: OR
+        $this->combiner = new CombinerEnum(CombinerEnum::_AND);
 
         if (isset($condition['partitions']) && is_array($condition['partitions'])) {
             $this->partitions = array();
@@ -67,18 +70,27 @@ class Condition
         }
     }
 
-    public function match($userId)
+    public function match($key)
     {
         $eval = [];
         foreach ($this->matcherGroup as $matcher) {
 
-            if ($matcher instanceof \SplitIO\Grammar\Condition\Matcher\AbstractMatcher) {
-                $eval[] = $matcher->evaluate($userId);
+            if ($matcher instanceof AbstractMatcher) {
+                $eval[] = ($matcher->isNegate())
+                    ? NotFactor::evaluate($matcher->evaluate($key))
+                    : $matcher->evaluate($key);
             }
         }
 
-        //On the next versions the condition will support Combiners: AND, OR, NOT
-        return (isset($eval[0])) ? $eval[0] : false;
+        if ($this->combiner instanceof CombinerEnum) {
+            switch ($this->combiner->getValue()) {
+                case CombinerEnum::_AND:
+                default:
+                    return AndCombiner::evaluate($eval);
+            }
+        }
+
+        return false;
     }
 
     public function getPartitions()
