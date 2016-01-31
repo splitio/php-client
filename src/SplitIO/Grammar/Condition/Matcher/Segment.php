@@ -6,19 +6,14 @@ use SplitIO\Common\Di;
 
 class Segment extends AbstractMatcher
 {
+
     /**
      * For this version only will be the segment name.
      * @var array|string
      */
     protected $userDefinedSegmentMatcherData = null;
 
-    protected $addedUsers = null;
-
-    protected $removedUsers = null;
-
-    protected $since = -1;
-
-    protected $till = null;
+    protected $segmentData = null;
 
     public function __construct($data, $negate = false)
     {
@@ -26,30 +21,89 @@ class Segment extends AbstractMatcher
 
         $this->userDefinedSegmentMatcherData = $data;
 
-        $_segmentData = Di::getInstance()->getSplitClient()->getSegmentChanges($data);
-
-        if ($_segmentData) {
-
-            $this->addedUsers = (isset($_segmentData['added'])) ? $_segmentData['added'] : [];
-            $this->removedUsers = (isset($_segmentData['removed'])) ? $_segmentData['removed'] : [];
-            $this->since = (isset($_segmentData['since'])) ? $_segmentData['since'] : -1;
-            $this->till = (isset($_segmentData['till'])) ? $_segmentData['till'] : mktime();
-        }
+        $this->registerSegmentOnCache($data);
 
     }
 
-    protected function _eval($userId)
+    /**
+     * Register the Segment Name on Cache
+     * @param $segmentName
+     */
+    protected function registerSegmentOnCache($segmentName)
     {
-        foreach ($this->addedUsers as $validUser) {
+        $cache = Di::getInstance()->getCache();
 
-            Di::getInstance()->getLogger()->info("Comparing: IN_SEGMENT - $userId - $validUser");
+        $registeredSegmentsItem = $cache->getItem(\SplitIO\getCacheKeyForRegisterSegments());
 
-            if ($userId == $validUser) {
+        $segments = $registeredSegmentsItem->get();
 
-                Di::getInstance()->getLogger()->info("User found: $userId");
+        if ($segments) {
+            $arraySegments = explode(',', $segments);
+        } else {
+            $arraySegments = [];
+        }
 
-                return true;
+        if (!in_array($segmentName, $arraySegments)) {
+            $arraySegments[] = $segmentName;
+            $registeredSegmentsItem->set(implode(',', $arraySegments));
+            $registeredSegmentsItem->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
+            $cache->save($registeredSegmentsItem);
+        }
+    }
+
+    /**
+     * Fetch Segment Data from cache system. If not present on cache, force the fetch from server.
+     * @return bool|SegmentData
+     */
+    protected function getSegmentData()
+    {
+        $cache = Di::getInstance()->getCache();
+        $segmentName = $this->userDefinedSegmentMatcherData;
+        $segmentDataCacheItem = $cache->getItem(\SplitIO\getCacheKeyForSegmentData($segmentName));
+
+        if ($segmentDataCacheItem->isHit()) { //Update Segment Data.
+
+            $segment = unserialize($segmentDataCacheItem->get());
+
+            if ($segment instanceof SegmentData) {
+                return $segment;
             }
+        }
+
+        return $this->getSegmentDataFromServer();
+    }
+
+    /**
+     * @return bool|SegmentData
+     */
+    protected function getSegmentDataFromServer()
+    {
+        $segmentName = $this->userDefinedSegmentMatcherData;
+        return Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    protected function evalKey($key)
+    {
+        $this->segmentData = $this->getSegmentData();
+
+        if ($this->segmentData) {
+
+            foreach ($this->segmentData->getAddedUsers() as $validUser) {
+
+                Di::getInstance()->getLogger()->info("Comparing: IN_SEGMENT - $key - $validUser");
+
+                if ($key == $validUser) {
+
+                    Di::getInstance()->getLogger()->info("User found: $key");
+
+                    return true;
+                }
+            }
+
         }
 
         return false;
