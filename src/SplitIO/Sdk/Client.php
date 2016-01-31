@@ -2,50 +2,26 @@
 namespace SplitIO\Sdk;
 
 use SplitIO\Common\Di;
-use SplitIO\Cache\Pool;
-use SplitIO\Cache\Item;
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
-use SplitIO\Log\Handler\Stdout;
-use SplitIO\Log\Logger;
+use SplitIO\Engine;
+use SplitIO\Grammar\Split;
 
 class Client
 {
-    public function __construct($apiKey, array $args = [])
+
+    public function isOn($key, $featureName)
     {
-        $di = Di::getInstance();
+        $splitCachedItem = Di::getInstance()->getCache()->getItem(\SplitIO\getCacheKeyForSplit($featureName));
 
-        $stdoutAdapter = new Stdout();
-        $di->setLogger(new Logger($stdoutAdapter, \Psr\Log\LogLevel::INFO));
+        if ($splitCachedItem->isHit()) {
+            Di::getInstance()->getLogger()->info("$featureName is present on cache");
+            $split = unserialize($splitCachedItem->get());
 
-        $adapter_config = [
-            'name' => 'filesystem',
-            'options' => [
-                'path'=> '/home/sarrubia/cache'
-            ]
-        ];
-
-        $di->setCache(new Pool([ 'adapter' => $adapter_config ]));
-    }
-
-    public function isOn($userId, $featureName)
-    {
-        if (!is_string($userId) || !is_string($featureName)) {
-            return false;
-        }
-
-        $cacheInstance = Di::getInstance()->getCache();
-
-        $cacheKey = \SplitIO\generateCacheKey($userId, $featureName);
-
-        Di::getInstance()->getLogger()->info("Cache-key: $cacheKey");
-
-        if ($cacheInstance->hasItem($cacheKey)) {
-            Di::getInstance()->getLogger()->info("Item Found with cache-key: $cacheKey");
-            if ($cacheInstance->getItem($cacheKey)->get() === TreatmentEnum::ON) {
-                return true;
+            if ($split instanceof Split) {
+                return Engine::isOn($key, $split);
             }
         }
 
+        Di::getInstance()->getLogger()->info("Returning FALSE - $featureName is not on cache");
         return false;
     }
 }
