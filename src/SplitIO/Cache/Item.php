@@ -4,6 +4,7 @@ namespace SplitIO\Cache;
 use Psr\Cache\CacheItemInterface;
 use \DateTime;
 use \DateTimeInterface;
+use SplitIO\Common\Di;
 
 class Item implements CacheItemInterface
 {
@@ -158,6 +159,9 @@ class Item implements CacheItemInterface
         } elseif (is_null($time)) {
             $this->expire = 0;
         }
+
+        Di::getInstance()->getLogger()->info("//--> [CacheItem:{$this->key}]Set expiration time at:
+            {$this->expire} - ".date('Y-m-d H:i:s', $this->expire));
 
         return $this;
     }
