@@ -72,7 +72,7 @@ function getServiceOptionsMatrix()
         //CACHE
         SPLITIO_CONFIG_CACHE_TTL => ['cli' => '--cache-ttl',
             'ini'       => 'cache.ttl',
-            'default'   => 3600,
+            'default'   => 518400,
             'help'      => 'the time to live of cache items',
             'title'     => 'Cache:'],
 

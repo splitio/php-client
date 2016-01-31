@@ -17,8 +17,11 @@ class SdkConfig
     private $logCustom = null;
 
     //CACHE
-    /** @var int */
-    private $cacheItemTtl = 3600;
+    /**
+     * By default 6 days
+     * @var int
+     */
+    private $cacheItemTtl = 518400;
 
     /** @var string */
     private $cacheAdapter = 'filesystem';
