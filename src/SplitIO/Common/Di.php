@@ -5,6 +5,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use SplitIO\Client;
 use SplitIO\Client\Config as ClientConfiguration;
+use SplitIO\Sdk\SdkConfig;
 
 /**
  * Class Di
@@ -19,6 +20,8 @@ class Di
     const KEY_SPLIT_CLIENT = 'SPLIT-CLIENT';
 
     const KEY_SPLIT_CLIENT_CONFIG = 'SPLIT-CLIENT-CONFIG';
+
+    const KEY_SPLIT_SDK_CONFIG = 'SPLIT-SDK-CONFIG';
 
     /**
      * @var Singleton The reference to *Singleton* instance of this class
@@ -144,6 +147,24 @@ class Di
     {
         return (isset($this->container[self::KEY_SPLIT_CLIENT_CONFIG])) ?
                 $this->container[self::KEY_SPLIT_CLIENT_CONFIG] : null;
+    }
+
+    public function setSplitSdkConfiguration(SdkConfig $config)
+    {
+        $this->container[self::KEY_SPLIT_SDK_CONFIG] = $config;
+    }
+
+    /**
+     * @return null|\SplitIO\Sdk\SdkConfig
+     */
+    public function getSplitSdkConfiguration()
+    {
+        if (isset($this->container[self::KEY_SPLIT_SDK_CONFIG])) {
+            return $this->container[self::KEY_SPLIT_SDK_CONFIG];
+        } else {
+            $this->set(self::KEY_SPLIT_SDK_CONFIG, new SdkConfig());
+            return $this->get(self::KEY_SPLIT_SDK_CONFIG);
+        }
     }
 
 }
