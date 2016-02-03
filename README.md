@@ -136,6 +136,10 @@ $additional_options = ['cache' => [
 /** Create the Split Client instance. */
 $splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
 ```
+**IMPORTANT:** When Redis is used as a cache, sometimes it is handy to let it automatically evict old data as you add new one. 
+This behavior is very well known in the community of developers, since it is the default behavior of the popular memcached system.
+ **So, is advisable configure a high memory limit or also a noeviction policy.** Please, take a look here: [Using Redis as an LRU cache](http://redis.io/topics/lru-cache)
+
 ### Out of the box Cache Adapters
 Additionally, Split SDK could be integrated with other Cache System that implement the PSR-6.
 For instance, if you already are using Doctrine Cache on your project, you could integrate it through the [php-cache project](https://github.com/php-cache/doctrine-adapter). See the sample code below:
