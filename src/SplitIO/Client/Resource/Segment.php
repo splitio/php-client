@@ -59,37 +59,37 @@ class Segment extends ClientBase
         return false;
     }
 
-    public function addSegmentOnCache(SegmentData $segmentData)
+    public function addSegmentOnCache(array $segmentData)
     {
         $di = Di::getInstance();
         $cache = $di->getCache();
 
-        $segmentName = $segmentData->getName();
+        $segmentName = $segmentData['name'];
 
         $segmentDataCacheItem = $cache->getItem(\SplitIO\getCacheKeyForSegmentData($segmentName));
 
         if ($segmentDataCacheItem->isHit()) { //Update Segment Data.
 
-            $segment = unserialize($segmentDataCacheItem->get());
+            $segment = json_decode($segmentDataCacheItem->get(), true);
 
-            if ($segment instanceof SegmentData) {
+            if ($segment) {
 
-                $currentUsers = $segment->getAddedUsers();
-                $removedUsers = $segmentData->getRemovedUsers();
+                $currentUsers = $segment['added'];
+                $removedUsers = $segmentData['removed'];
 
-                $allUsers = array_merge($currentUsers, $segmentData->getAddedUsers());
+                $allUsers = array_merge($currentUsers, $segmentData['added']);
 
-                $segment->setAddedUsers(array_diff($allUsers, $removedUsers));
-                $segment->setRemovedUsers($removedUsers);
-                $segment->setSince($segmentData->getSince());
-                $segment->setTill($segmentData->getTill());
+                $segment['added'] = array_diff($allUsers, $removedUsers);
+                $segment['removed'] = ($removedUsers);
+                $segment['since'] = $segmentData['since'];
+                $segment['till'] = $segmentData['till'];
             }
 
         } else { //Create Segment Data.
             $segment = $segmentData;
         }
 
-        $segmentDataCacheItem->set(serialize($segment));
+        $segmentDataCacheItem->set(json_encode($segment));
         $segmentDataCacheItem->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
 
         return $cache->save($segmentDataCacheItem);

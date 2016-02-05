@@ -8,10 +8,6 @@ function version()
 
 //CACHE Functions
 
-function getCacheKeyForSplit($splitName)
-{
-    return str_replace('{splitName}', $splitName, 'SPLITIO.split.{splitName}');
-}
 
 function getCacheKeyForSegmentData($segmentName)
 {

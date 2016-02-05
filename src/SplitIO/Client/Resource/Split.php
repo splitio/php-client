@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Client\Resource;
 
+use SplitIO\Cache\SplitCache;
 use SplitIO\Client\ClientBase;
 use SplitIO\Common\Di;
 use SplitIO\Http\Client as HttpClient;
@@ -23,14 +24,11 @@ class Split extends ClientBase
      */
     public function getSplitChanges()
     {
+
         //Fetching next since value from cache.
-        $since_cached_item = Di::getInstance()->getCache()->getItem(self::KEY_TILL_CACHED_ITEM);
+        $since_cached_value = (new SplitCache())->getChangeNumber();
 
-        $servicePath = $this->servicePath;
-
-        if ($since_cached_item->isHit()) {
-            $servicePath .= '?since='.$since_cached_item->get();
-        }
+        $servicePath = $this->servicePath . '?since='.$since_cached_value;
 
         Di::getInstance()->getLogger()->info("SERVICE PATH: $servicePath");
 
@@ -42,18 +40,6 @@ class Split extends ClientBase
         if ($response->isSuccess()) {
 
             $splitChanges = json_decode($response->getBody(), true);
-
-            $this->till = (isset($splitChanges['till'])) ? $splitChanges['till'] : -1;
-
-            //Updating next since (till) value.
-            if ($this->till != $since_cached_item->get()) {
-                $since_cached_item->set($this->till);
-            }
-
-            //Refreshing the TTL of the item.
-            $since_cached_item->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
-
-            Di::getInstance()->getCache()->save($since_cached_item);
 
             $splits = (isset($splitChanges['splits'])) ? $splitChanges['splits'] : false;
 
