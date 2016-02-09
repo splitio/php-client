@@ -52,7 +52,6 @@ class Client
      */
     public function getSegmentChanges($segmentName)
     {
-
         $segmentChanges = new Segment();
 
         $data = $segmentChanges->getSegmentChanges($segmentName);
@@ -70,11 +69,10 @@ class Client
      */
     public function updateSegmentChanges($segmentName)
     {
-        $rawSegmentData = $this->getSegmentChanges($segmentName);
+        $segmentChanges = new Segment();
+        $rawSegmentData = $segmentChanges->getSegmentChanges($segmentName);
 
         if ($rawSegmentData) {
-            $segmentChanges = new Segment();
-
             if ($segmentChanges->addSegmentOnCache($rawSegmentData)) {
                 return $rawSegmentData;
             }
