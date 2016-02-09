@@ -237,4 +237,27 @@ class Pool implements CacheItemPoolInterface
 
         return $success;
     }
+
+
+    public function saveItemOnList($key, $value)
+    {
+        return $this->adapter->addItemList($key, $value);
+    }
+
+    public function removeItemOnList($key, $value)
+    {
+        return $this->adapter->removeItemList($key, $value);
+    }
+
+    public function isItemOnList($key, $value)
+    {
+        return $this->adapter->isOnList($key, $value);
+    }
+
+    public function getItemsOnList($key)
+    {
+        return $this->adapter->getListItems($key);
+    }
+
+
 }
