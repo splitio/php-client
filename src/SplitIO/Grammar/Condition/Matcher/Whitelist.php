@@ -33,12 +33,4 @@ class Whitelist extends AbstractMatcher
 
         return false;
     }
-
-    /**
-     * @return array
-     */
-    public function getUsers()
-    {
-        return $this->whitelistMatcherData;
-    }
 }

@@ -19,12 +19,4 @@ class All extends AbstractMatcher
         Di::getInstance()->getLogger()->info("User found: $key");
         return true;
     }
-
-    /**
-     * @return array
-     */
-    public function getUsers()
-    {
-        return array();
-    }
 }
