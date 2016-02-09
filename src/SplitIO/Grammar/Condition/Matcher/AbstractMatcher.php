@@ -39,6 +39,4 @@ abstract class AbstractMatcher
     }
 
     abstract protected function evalKey($key);
-
-    abstract public function getUsers();
 }
