@@ -4,8 +4,6 @@ require_once __DIR__ . '/constants.php';
 require __DIR__ . '/../vendor/autoload.php';
 
 use SplitIO\Common\Di;
-use SplitIO\Grammar\Split;
-use SplitIO\Grammar\Condition\Matcher\SegmentData;
 use SplitIO\Log\Logger;
 use SplitIO\Log\Handler\Stdout;
 use SplitIO\Log\Handler\Syslog;
@@ -13,6 +11,7 @@ use SplitIO\Client;
 use SplitIO\Engine;
 use SplitIO\Cache\Pool;
 use SplitIO\Cache\SplitCache;
+use SplitIO\Cache\SegmentCache;
 
 bootstrap(is_array($argv) ? $argv : array());
 
@@ -351,8 +350,6 @@ function runSplitService()
 function getSplits()
 {
     $di = Di::getInstance();
-    $sdkConfig = $di->getSplitSdkConfiguration();
-    $cache = $di->getCache();
 
     //Fetching the Splits changes
     $splitChanges = $di->getSplitClient()->getSplitChanges();
@@ -361,7 +358,6 @@ function getSplits()
     $splitCache = new SplitCache();
 
     if (!empty($splits)) {
-        $detectedSegments = [];
         //Creating Split Grammar structures
         foreach ($splits as $split) {
 
@@ -375,14 +371,12 @@ function getSplits()
 
             foreach ($splitConditions as $condition) {
                 foreach ($condition['matcherGroup']['matchers'] as $matcher) {
+
                     if ($matcher['matcherType'] == "IN_SEGMENT") {
-
                         //Register segment to retrieve Segment Data.
-                        $segmentName = $matcher['userDefinedSegmentMatcherData']['segmentName'];
-
-                        if (!in_array($segmentName, $detectedSegments)) {
-                            $detectedSegments[] = $segmentName;
-                        }
+                        SegmentCache::registerSegment($matcher['userDefinedSegmentMatcherData']['segmentName']);
+                    } elseif ($matcher['matcherType'] == "WHITELIST") {
+                        //@TODO add whitelist members on RedisSet.
                     }
                 }
             }
@@ -396,10 +390,7 @@ function getSplits()
                 $splitCache->removeSplit($splitName);
 
             }
-
         }
-
-        registerSegments($detectedSegments);
     }
 
     $till = (isset($splitChanges['till'])) ? $splitChanges['till'] : -1;
@@ -410,6 +401,18 @@ function getSplits()
     }
 }
 
+function getSegments()
+{
+    $registeredSegments = Di::getInstance()->getCache()->getItemsOnList(SegmentCache::getCacheKeyForRegisterSegments());
+
+    if (is_array($registeredSegments) && !empty($registeredSegments)) {
+        foreach ($registeredSegments as $segmentName) {
+            Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
+        }
+    }
+}
+
+/*
 function registerSegments(array $detectedSegments)
 {
     $cache = Di::getInstance()->getCache();
@@ -429,8 +432,11 @@ function registerSegments(array $detectedSegments)
     $cache->save($registeredSegmentsItem);
 
 }
+*/
 
-function getSegments()
+
+/*
+function __getSegments()
 {
     $di = Di::getInstance();
     $cache = $di->getCache();
@@ -446,7 +452,7 @@ function getSegments()
         }
     }
 }
-
+*/
 function out($str, $fg = null, $bg = null)
 {
     $outString = "";
