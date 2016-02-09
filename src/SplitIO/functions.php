@@ -6,18 +6,6 @@ function version()
     return Sdk::VERSION;
 }
 
-//CACHE Functions
-
-
-function getCacheKeyForSegmentData($segmentName)
-{
-    return str_replace('{segmentName}', $segmentName, 'SPLITIO.segmentData.{segmentName}');
-}
-
-function getCacheKeyForRegisterSegments()
-{
-    return 'SPLITIO.segments.registered';
-}
 
 //HASH Functions
 function hash($key, $seed){
