@@ -29,7 +29,7 @@ class SplitCache implements SplitCacheInterface
         $cache = $di->getCache();
 
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
-        $cacheItem->set(json_encode($split));
+        $cacheItem->set($split);
         $cacheItem->expiresAfter($sdkConfig->getCacheItemTtl());
         return $cache->save($cacheItem);
     }
