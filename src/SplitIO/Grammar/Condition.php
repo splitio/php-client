@@ -43,7 +43,7 @@ class Condition
     private $partitions = null;
 
     //On the next versions the condition will support Combiners: AND, OR, NOT
-    //private $combiner = null;
+    private $combiner = null;
 
     public function __construct(array $condition)
     {
