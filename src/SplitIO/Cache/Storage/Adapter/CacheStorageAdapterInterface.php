@@ -44,4 +44,34 @@ interface CacheStorageAdapterInterface
      * @return bool
      */
     public function save($key, $value, $expiration = null);
+
+    /**
+     * Adds a values to the set value stored at key.
+     * If this value is already in the set, FALSE is returned.
+     *
+     * @param $key
+     * @param $value
+     * @return boolean
+     */
+    public function addItemList($key, $value);
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function removeItemList($key, $value);
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function isOnList($key, $value);
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function getListItems($key);
 }
