@@ -23,8 +23,14 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(true);
     }
 
+    /**
+     * @depends testDiLog
+     */
     public function testDiCache()
     {
+        Di::getInstance()->getLogger()->debug("** REDIS HOST: ".REDIS_HOST);
+        Di::getInstance()->getLogger()->debug("** REDIS PORT: ".REDIS_PORT);
+
         try {
             $cachePoolAdapter = [
                 'name' => 'redis',
