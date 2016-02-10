@@ -1,0 +1,15 @@
+{
+  "name": "employees",
+  "added": [
+    "fake_user_id_4",
+    "fake_user_id_3",
+    "fake_user_id_2",
+    "fake_user_id_1",
+    "fake_user_id_5"
+  ],
+  "removed": [
+    "fake_user_id_6"
+  ],
+  "since": 1454188127510,
+  "till": 1455050183677
+}
