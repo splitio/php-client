@@ -24,7 +24,7 @@ class SdkConfig
     private $cacheItemTtl = 518400;
 
     /** @var string */
-    private $cacheAdapter = 'filesystem';
+    private $cacheAdapter = 'redis';
 
     /** @var string */
     private $cacheFilesystemPath = '/tmp';

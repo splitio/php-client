@@ -4,14 +4,14 @@ require_once __DIR__ . '/constants.php';
 require __DIR__ . '/../vendor/autoload.php';
 
 use SplitIO\Common\Di;
-use SplitIO\Grammar\Split;
-use SplitIO\Grammar\Condition\Matcher\SegmentData;
 use SplitIO\Log\Logger;
 use SplitIO\Log\Handler\Stdout;
 use SplitIO\Log\Handler\Syslog;
 use SplitIO\Client;
 use SplitIO\Engine;
 use SplitIO\Cache\Pool;
+use SplitIO\Cache\SplitCache;
+use SplitIO\Cache\SegmentCache;
 
 bootstrap(is_array($argv) ? $argv : array());
 
@@ -343,38 +343,101 @@ function runSplitService()
     //Fetching the Segments changes
     getSegments();
 
+    //@TODO Refresh cache TTL of all items.
 
 }
 
 function getSplits()
 {
     $di = Di::getInstance();
-    $sdkConfig = $di->getSplitSdkConfiguration();
-    $cache = $di->getCache();
 
     //Fetching the Splits changes
     $splitChanges = $di->getSplitClient()->getSplitChanges();
     $splits = $splitChanges['splits'];
 
+    $splitCache = new SplitCache();
+
     if (!empty($splits)) {
         //Creating Split Grammar structures
         foreach ($splits as $split) {
-            $splitInstance = new Split($split);
-            $serializedSplitInstance = serialize($splitInstance);
 
-            $di->getLogger()->debug($serializedSplitInstance);
+            $di->getLogger()->debug($split);
 
-            $cacheItem = $cache->getItem(\SplitIO\getCacheKeyForSplit($splitInstance->getName()));
-            $cacheItem->set($serializedSplitInstance);
-            $cacheItem->expiresAfter($sdkConfig->getCacheItemTtl());
-            $cache->save($cacheItem);
+            $splitName = $split['name'];
+            $splitStatus = $split['status'];
+            $splitKilled = (bool) $split['killed'];
+
+            $splitConditions = $split['conditions'];
+
+            foreach ($splitConditions as $condition) {
+                foreach ($condition['matcherGroup']['matchers'] as $matcher) {
+
+                    if ($matcher['matcherType'] == "IN_SEGMENT") {
+                        //Register segment to retrieve Segment Data.
+                        SegmentCache::registerSegment($matcher['userDefinedSegmentMatcherData']['segmentName']);
+
+                    } elseif ($matcher['matcherType'] == "WHITELIST") {
+                        //@TODO add whitelist members on RedisSet.
+                    }
+                }
+            }
+
+            if ($splitStatus == 'ACTIVE' && !$splitKilled) { //Update Cache
+
+                $splitCache->addSplit($splitName, json_encode($split));
+
+            } else { //Delete item from cache
+
+                $splitCache->removeSplit($splitName);
+
+            }
         }
     }
 
+    $till = (isset($splitChanges['till'])) ? $splitChanges['till'] : -1;
+
+    //Updating next since (till) value.
+    if ($till != $splitCache->getChangeNumber()) {
+        $splitCache->setChangeNumber($till);
+    }
 }
 
-
 function getSegments()
+{
+    $registeredSegments = Di::getInstance()->getCache()->getItemsOnList(SegmentCache::getCacheKeyForRegisterSegments());
+
+    if (is_array($registeredSegments) && !empty($registeredSegments)) {
+        foreach ($registeredSegments as $segmentName) {
+            Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
+        }
+    }
+}
+
+/*
+function registerSegments(array $detectedSegments)
+{
+    $cache = Di::getInstance()->getCache();
+    $registeredSegmentsItem = $cache->getItem(\SplitIO\getCacheKeyForRegisterSegments());
+    $segments = $registeredSegmentsItem->get();
+
+    if ($segments) {
+        $arraySegments = json_decode($segments, true);
+    } else {
+        $arraySegments = [];
+    }
+
+    $segmentsToAdd = array_unique(array_merge($arraySegments, $detectedSegments));
+
+    $registeredSegmentsItem->set(json_encode($segmentsToAdd));
+    $registeredSegmentsItem->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
+    $cache->save($registeredSegmentsItem);
+
+}
+*/
+
+
+/*
+function __getSegments()
 {
     $di = Di::getInstance();
     $cache = $di->getCache();
@@ -383,14 +446,14 @@ function getSegments()
     $segments = $registeredSegmentsItem->get();
 
     if ($segments !== null) {
-        $arraySegments = explode(',', $segments);
+        $arraySegments = json_decode($segments, true);
 
         foreach ($arraySegments as $segmentName) {
             Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
         }
     }
 }
-
+*/
 function out($str, $fg = null, $bg = null)
 {
     $outString = "";

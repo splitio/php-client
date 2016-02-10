@@ -130,6 +130,7 @@ class Redis implements CacheStorageAdapterInterface
      */
     public function save($key, $value, $expiration = null)
     {
+        /*
         if ($expiration === 0 || $expiration === null) {
             $expirationToSet = $this->options['ttl'];
         } else {
@@ -137,7 +138,50 @@ class Redis implements CacheStorageAdapterInterface
         }
 
         return $this->client->setex($key, $expirationToSet, serialize($value));
+        */
+
+        return $this->client->set($key, serialize($value));
     }
 
+    /**
+     * Adds a values to the set value stored at key.
+     * If this value is already in the set, FALSE is returned.
+     *
+     * @param $key
+     * @param $value
+     * @return boolean
+     */
+    public function addItemList($key, $value)
+    {
+        return $this->client->sAdd($key, $value);
+    }
 
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function removeItemList($key, $value)
+    {
+        return $this->client->sRem($key, $value);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function isOnList($key, $value)
+    {
+        return $this->client->sIsMember($key, $value);
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function getListItems($key)
+    {
+        return $this->client->sMembers($key);
+    }
 }

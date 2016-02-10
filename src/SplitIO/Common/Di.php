@@ -115,7 +115,7 @@ class Di
     }
 
     /**
-     * @return null|\Psr\Cache\CacheItemPoolInterface
+     * @return null|\Psr\Cache\CacheItemPoolInterface|\SplitIO\Cache\Pool
      */
     public function getCache()
     {

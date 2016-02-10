@@ -30,6 +30,7 @@ class HttpCurlAdapter implements HttpAdapterInterface
         $this->httpOptions[CURLOPT_RETURNTRANSFER] = true;
         $this->httpOptions[CURLOPT_FOLLOWLOCATION] = true;
         $this->httpOptions[CURLOPT_HEADER] = true;
+        $this->httpOptions[CURLOPT_ENCODING] = 'gzip';
     }
 
     /**
@@ -71,6 +72,7 @@ class HttpCurlAdapter implements HttpAdapterInterface
         $this->setOptRequest();
 
         $response_object = curl_exec($this->handle);
+        //$response_object = gzinflate(substr($response_object, 10));
         $this->responseObject = $this->httpParseMessage($response_object);
 
         curl_close($this->handle);
@@ -120,8 +122,8 @@ class HttpCurlAdapter implements HttpAdapterInterface
      * @return Response
      * @throws HttpServerException
      */
-    private function httpParseMessage($res) {
-
+    private function httpParseMessage($res)
+    {
         if (!$res) {
             throw new HttpServerException(curl_error($this->handle), -1);
         }

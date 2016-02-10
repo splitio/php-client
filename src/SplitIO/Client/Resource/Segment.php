@@ -3,9 +3,9 @@ namespace SplitIO\Client\Resource;
 
 use SplitIO\Client\ClientBase;
 use SplitIO\Common\Di;
-use SplitIO\Grammar\Condition\Matcher\SegmentData;
 use SplitIO\Http\Client as HttpClient;
 use SplitIO\Http\MethodEnum;
+use SplitIO\Cache\SegmentCache;
 
 class Segment extends ClientBase
 {
@@ -18,14 +18,9 @@ class Segment extends ClientBase
     public function getSegmentChanges($segmentName)
     {
         //Fetching next since (till) value from cache.
-        $cacheKey = str_replace('{segment_name}', $segmentName, self::KEY_TILL_CACHED_ITEM);
-        $since_cached_item = Di::getInstance()->getCache()->getItem($cacheKey);
+        $since_cached_value = (new SegmentCache())->getChangeNumber($segmentName);
 
-        $servicePath = $this->servicePath . $segmentName;
-
-        if ($since_cached_item->isHit()) {
-            $servicePath .= '?since=' . $since_cached_item->get();
-        }
+        $servicePath = $this->servicePath . $segmentName . '?since=' . $since_cached_value;
 
         Di::getInstance()->getLogger()->info("SERVICE PATH: $servicePath");
 
@@ -43,56 +38,29 @@ class Segment extends ClientBase
                 return false;
             }
 
-            $this->till = (isset($segment['till'])) ? $segment['till'] : -1;
-
-            //Updating next since (till) value.
-            if ($this->till != $since_cached_item->get()) {
-                $since_cached_item->set($this->till);
-            }
-            $since_cached_item->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
-
-            Di::getInstance()->getCache()->save($since_cached_item);
-
             return $segment;
         }
 
         return false;
     }
 
-    public function addSegmentOnCache(SegmentData $segmentData)
+    public function addSegmentOnCache(array $segmentData)
     {
-        $di = Di::getInstance();
-        $cache = $di->getCache();
 
-        $segmentName = $segmentData->getName();
+        $segmentName = $segmentData['name'];
 
-        $segmentDataCacheItem = $cache->getItem(\SplitIO\getCacheKeyForSegmentData($segmentName));
+        $segmentCache = new SegmentCache();
 
-        if ($segmentDataCacheItem->isHit()) { //Update Segment Data.
+        if ($segmentCache->getChangeNumber($segmentName) != $segmentData['till']) {
 
-            $segment = unserialize($segmentDataCacheItem->get());
+            $segmentCache->addToSegment($segmentName, $segmentData['added']);
 
-            if ($segment instanceof SegmentData) {
+            $segmentCache->removeFromSegment($segmentName, $segmentData['removed']);
 
-                $currentUsers = $segment->getAddedUsers();
-                $removedUsers = $segmentData->getRemovedUsers();
-
-                $allUsers = array_merge($currentUsers, $segmentData->getAddedUsers());
-
-                $segment->setAddedUsers(array_diff($allUsers, $removedUsers));
-                $segment->setRemovedUsers($removedUsers);
-                $segment->setSince($segmentData->getSince());
-                $segment->setTill($segmentData->getTill());
-            }
-
-        } else { //Create Segment Data.
-            $segment = $segmentData;
+            $segmentCache->setChangeNumber($segmentName, $segmentData['till']);
         }
 
-        $segmentDataCacheItem->set(serialize($segment));
-        $segmentDataCacheItem->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
-
-        return $cache->save($segmentDataCacheItem);
+        return true;
     }
 
 }
