@@ -4,3 +4,4 @@ composer.lock
 vendor
 poc.php
 tmp/*
+phpunit.xml
