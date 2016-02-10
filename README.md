@@ -1,4 +1,7 @@
 # Split - PHP SDK Client
+
+[ ![Codeship Status for splitio/php-client](https://codeship.com/projects/c7efdb80-b249-0133-eb9b-567510b4e5ac/status?branch=master)](https://codeship.com/projects/133329)
+
 ## Installing Split SDK using composer
 ```
 $ composer require splitio/split-sdk-php
@@ -160,3 +163,21 @@ $additional_options = ['cache-adapter'=>$psrPool];
 $splitClient = \SplitIO\Sdk::factory('API_KEY', $additional_options);
 ```
 
+# Testing the SDK
+Within tests folder you can find different test suites in order to run the Split SDK tests. One of the most important test is the **redis-adapter** test suite.
+
+### Redis adapter test suite
+Before to run this test suite, please be sure to have a Redis instance runing:
+- In order to have a local Redis instance you can install [Docker Container Tool](https://www.docker.com) and pull the oficial Redis container running the command ```docker pull redis```.
+
+And set the correct values on the **phpunit.xml** that you should have copied from **phpunit.xml.dist** file.
+```xml
+<php>
+    <const name="REDIS_HOST" value="172.17.0.2"/>
+    <const name="REDIS_PORT" value="6379"/>
+</php>
+```
+Once that you have the configuration file with the right values, move to the main project directory and please run the command below:
+```
+./vendor/bin/phpunit -c phpunit.xml -v --testsuite redis-adapter
+```
