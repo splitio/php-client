@@ -28,6 +28,8 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
      */
     public function testDiCache()
     {
+        echo "** REDIS HOST: ".REDIS_HOST.PHP_EOL;
+        echo "** REDIS PORT: ".REDIS_PORT.PHP_EOL;
         Di::getInstance()->getLogger()->debug("** REDIS HOST: ".REDIS_HOST);
         Di::getInstance()->getLogger()->debug("** REDIS PORT: ".REDIS_PORT);
 
