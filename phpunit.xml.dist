@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true">
+
+    <!-- Values for Suites configuration -->
+    <php>
+        <const name="REDIS_HOST" value="172.17.0.2"/>
+        <const name="REDIS_PORT" value="6379"/>
+    </php>
+
     <testsuites>
-        <testsuite name="SplitIO">
+        <testsuite name="splitio">
             <directory suffix="Test.php">tests/</directory>
         </testsuite>
+        <testsuite name="redis-adapter">
+            <file>tests/Suite/Redis/CacheInterfacesTest.php</file>
+        </testsuite>
     </testsuites>
+
 </phpunit>
