@@ -3,7 +3,7 @@
 
     <!-- Values for Suites configuration -->
     <php>
-        <const name="REDIS_HOST" value="172.17.0.2"/>
+        <const name="REDIS_HOST" value="localhost"/>
         <const name="REDIS_PORT" value="6379"/>
     </php>
 
