@@ -375,6 +375,7 @@ function getSplits()
                     if ($matcher['matcherType'] == "IN_SEGMENT") {
                         //Register segment to retrieve Segment Data.
                         SegmentCache::registerSegment($matcher['userDefinedSegmentMatcherData']['segmentName']);
+
                     } elseif ($matcher['matcherType'] == "WHITELIST") {
                         //@TODO add whitelist members on RedisSet.
                     }
