@@ -130,13 +130,17 @@ class Redis implements CacheStorageAdapterInterface
      */
     public function save($key, $value, $expiration = null)
     {
+        /*
         if ($expiration === 0 || $expiration === null) {
             $expirationToSet = $this->options['ttl'];
         } else {
             $expirationToSet = $expiration - time();
         }
 
-        return $this->client->set($key, serialize($value)); //setex($key, $expirationToSet, serialize($value));
+        return $this->client->setex($key, $expirationToSet, serialize($value));
+        */
+
+        return $this->client->set($key, serialize($value));
     }
 
     /**
