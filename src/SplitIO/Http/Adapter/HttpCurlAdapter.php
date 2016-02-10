@@ -85,7 +85,6 @@ class HttpCurlAdapter implements HttpAdapterInterface
     private function setHeaders(array $headers)
     {
         if (!empty($headers)) {
-
             if (!isset($this->httpOptions[CURLOPT_HTTPHEADER])) {
                 $this->httpOptions[CURLOPT_HTTPHEADER] = array();
             }
@@ -156,7 +155,7 @@ class HttpCurlAdapter implements HttpAdapterInterface
             if ($i === 0) {
                 $headers['http_code'] = $line;
             } else {
-                list ($key, $value) = explode(': ', $line);
+                list($key, $value) = explode(': ', $line);
 
                 $headers[$key] = $value;
             }
@@ -164,5 +163,4 @@ class HttpCurlAdapter implements HttpAdapterInterface
 
         return $headers;
     }
-
 }

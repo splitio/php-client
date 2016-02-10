@@ -46,13 +46,11 @@ class Segment extends ClientBase
 
     public function addSegmentOnCache(array $segmentData)
     {
-
         $segmentName = $segmentData['name'];
 
         $segmentCache = new SegmentCache();
 
         if ($segmentCache->getChangeNumber($segmentName) != $segmentData['till']) {
-
             $segmentCache->addToSegment($segmentName, $segmentData['added']);
 
             $segmentCache->removeFromSegment($segmentName, $segmentData['removed']);
@@ -62,5 +60,4 @@ class Segment extends ClientBase
 
         return true;
     }
-
 }

@@ -125,6 +125,4 @@ class Memcached implements CacheStorageAdapterInterface
 
         return $this->client->set($key, serialize($value), $expirationToSet);
     }
-
-
 }

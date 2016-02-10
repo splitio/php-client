@@ -17,7 +17,7 @@ class ErrorHandler
      */
     public static function registerShutdown()
     {
-        register_shutdown_function([get_called_class(),'shutdown']);
+        register_shutdown_function([get_called_class(), 'shutdown']);
     }
 
     /**

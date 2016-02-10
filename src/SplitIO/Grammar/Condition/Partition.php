@@ -2,6 +2,7 @@
 namespace SplitIO\Grammar\Condition;
 
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
+
 /*
 {
   "treatment": "on",
@@ -60,6 +61,4 @@ class Partition
     {
         $this->treatment = $treatment;
     }
-
-
 }

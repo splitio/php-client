@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-
 class SegmentData
 {
     protected $name = null;
@@ -17,7 +16,6 @@ class SegmentData
     public function __construct($segmentData)
     {
         if ($segmentData) {
-
             $this->name = (isset($segmentData['name'])) ? $segmentData['name'] : '';
             $this->addedUsers = (isset($segmentData['added'])) ? $segmentData['added'] : [];
             $this->removedUsers = (isset($segmentData['removed'])) ? $segmentData['removed'] : [];

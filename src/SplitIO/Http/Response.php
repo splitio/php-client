@@ -9,14 +9,13 @@ class Response
 
     private $body = null;
 
-    public function __construct($code, array $headers = [], $body=null)
+    public function __construct($code, array $headers = [], $body = null)
     {
         $this->statusCode = $code;
 
         $this->headers = $headers;
 
         $this->body = $body;
-
     }
 
     public function getStatusCode()
@@ -26,7 +25,7 @@ class Response
 
     public function isSuccess()
     {
-        return ($this->statusCode >= 200 && $this->statusCode <= 207 )? true : false;
+        return ($this->statusCode >= 200 && $this->statusCode <= 207)? true : false;
     }
 
     public function getHeaders()

@@ -38,7 +38,6 @@ class Filesystem implements CacheStorageAdapterInterface
      */
     public function __construct(array $options)
     {
-
         $this->options = array_merge($this->options, $options);
 
         $this->options['path'] = (!isset($options['path'])) ? sys_get_temp_dir() : $options['path'];
@@ -48,7 +47,6 @@ class Filesystem implements CacheStorageAdapterInterface
         }
 
         $this->path = rtrim($this->options['path'], '/');
-
     }
 
     /**
@@ -63,7 +61,6 @@ class Filesystem implements CacheStorageAdapterInterface
         Di::getInstance()->getLogger()->debug("Cache file: $file");
 
         if (file_exists($file)) {
-
             $data = unserialize(file_get_contents($file));
             $expiration = (int) $data['expiration'];
 
@@ -151,8 +148,6 @@ class Filesystem implements CacheStorageAdapterInterface
         $data = ['expiration' => $expirationToSet, 'value' => serialize($value)];
         $success = file_put_contents($this->getFilePath($key), serialize($data), \LOCK_EX);
         return $success !== false;
-
-
     }
 
     /**
@@ -161,7 +156,7 @@ class Filesystem implements CacheStorageAdapterInterface
      */
     private function getFilePath($key)
     {
-        return $this->options['path'].'/'.self::DEFAULT_FILENAME_PREFIX.'.'.urlencode($key).'.'.self::DEFAULT_FILENAME_EXTENSION;
+        return $this->options['path'].'/'.self::DEFAULT_FILENAME_PREFIX.'.'.
+            urlencode($key).'.'.self::DEFAULT_FILENAME_EXTENSION;
     }
-
 }

@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Engine;
 
-
 use SplitIO\Common\Di;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;

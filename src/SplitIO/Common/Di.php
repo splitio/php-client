@@ -166,5 +166,4 @@ class Di
             return $this->get(self::KEY_SPLIT_SDK_CONFIG);
         }
     }
-
 }

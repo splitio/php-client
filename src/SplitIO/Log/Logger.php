@@ -46,13 +46,9 @@ class Logger implements LoggerInterface
         $this->logLevel = $this->logLevels[$level];
 
         if ($handler !== null) {
-
             $this->handler = $handler;
-
         } else {
-
             $this->handler = new Stdout();
-
         }
     }
 

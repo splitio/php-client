@@ -42,5 +42,4 @@ class Syslog implements LogHandlerInterface
 
         closelog();
     }
-
 }

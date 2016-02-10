@@ -57,7 +57,6 @@ class Sdk
     private static function addSplitClient($apiKey)
     {
         DI::getInstance()->setSplitClient(new Client(self::SPLITIO_URL, $apiKey));
-
     }
 
     private static function addCachePool(array $options)
@@ -66,9 +65,7 @@ class Sdk
 
         if (isset($options['cache']['psr6-instance']) &&
             $options['cache']['psr6-instance'] instanceof CacheItemPoolInterface) {
-
             $cachePool = $options['cache']['psr6-instance'];
-
         } else {
             $cachePoolAdapter = null;
             $sdkConfig = Di::getInstance()->getSplitSdkConfiguration();
@@ -115,9 +112,7 @@ class Sdk
 
         if (isset($options['log']['psr3-instance']) &&
             $options['log']['psr3-instance'] instanceof LoggerInterface) {
-
             $logger = $options['log']['psr3-instance'];
-
         } else {
             $sdkConfig = Di::getInstance()->getSplitSdkConfiguration();
             $logAdapter = null;
@@ -137,7 +132,5 @@ class Sdk
         }
 
         Di::getInstance()->setLogger($logger);
-
     }
-
 }

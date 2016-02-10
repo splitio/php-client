@@ -21,7 +21,6 @@ class Client
             $split = new Split(json_decode($splitRepresentation, true));
 
             return Engine::isOn($key, $split);
-
         }
 
         Di::getInstance()->getLogger()->info("Returning FALSE - $featureName is not on cache");

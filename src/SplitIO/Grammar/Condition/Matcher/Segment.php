@@ -21,7 +21,6 @@ class Segment extends AbstractMatcher
         parent::__construct(Matcher::IN_SEGMENT, $negate);
 
         $this->userDefinedSegmentMatcherData = $data;
-
     }
 
     /**

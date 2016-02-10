@@ -80,6 +80,4 @@ class Client
 
         return false;
     }
-
-
 }

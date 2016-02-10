@@ -24,7 +24,6 @@ class Pool implements CacheItemPoolInterface
      */
     public function __construct(array $options = [])
     {
-
         $adapterName = (isset($options['adapter']['name'])) ? $options['adapter']['name'] : 'memcached';
         $adapterOptions = (isset($options['adapter']['options'])
                             && is_array($options['adapter']['options'])) ? $options['adapter']['options'] : [];
@@ -192,7 +191,6 @@ class Pool implements CacheItemPoolInterface
         $expiration = (method_exists($item, 'getExpiration')) ? $item->getExpiration() : 0;
 
         if ($this->adapter->save($key, $value, $expiration)) {
-
             Di::getInstance()->getLogger()->debug("Saving cache item: $key - $value - $expiration");
             return true;
         }
@@ -258,6 +256,4 @@ class Pool implements CacheItemPoolInterface
     {
         return $this->adapter->getListItems($key);
     }
-
-
 }

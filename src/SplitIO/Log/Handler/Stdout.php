@@ -20,5 +20,4 @@ class Stdout implements LogHandlerInterface
     {
         echo sprintf('<%s> %s', $logLevel, $message) . PHP_EOL;
     }
-
 }

@@ -23,13 +23,9 @@ class Client implements ClientInterface
 
         if (class_exists($this->options[ClientOptions::ADAPTER]) &&
             is_a($this->options[ClientOptions::ADAPTER], '\SplitIO\Http\Adapter\HttpAdapterInterface', true)) {
-
             $this->adapter = new $this->options[ClientOptions::ADAPTER];
-
         } else {
-
             $this->adapter = new HttpCurlAdapter();
-
         }
     }
 
@@ -37,6 +33,4 @@ class Client implements ClientInterface
     {
         return $this->adapter->doRequest($request, $this->options);
     }
-
-
 }

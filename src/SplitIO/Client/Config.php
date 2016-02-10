@@ -38,6 +38,4 @@ class Config
     {
         $this->url = rtrim($url, '/');
     }
-
-
 }

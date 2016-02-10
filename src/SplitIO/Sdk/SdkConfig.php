@@ -87,7 +87,6 @@ class SdkConfig
         if (isset($args['cache']['options']['servers'])) {
             $this->setCacheMemcachedServers($args['cache']['options']['servers']);
         }
-
     }
 
     /**
@@ -198,7 +197,6 @@ class SdkConfig
         if (LogLevelEnum::isValid($logLevel)) {
             $this->logLevel = $logLevel;
         }
-
     }
 
     /**
@@ -302,7 +300,6 @@ class SdkConfig
 
             $this->cacheMemcachedServers = $cacheMemcachedServers;
         }
-
     }
 
     /**
@@ -336,7 +333,4 @@ class SdkConfig
     {
         $this->apiKey = $apiKey;
     }
-
-
-
 }

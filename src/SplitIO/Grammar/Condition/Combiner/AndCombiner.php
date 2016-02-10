@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Combiner;
 
-
 class AndCombiner implements CombinerInterface
 {
 
@@ -9,7 +8,6 @@ class AndCombiner implements CombinerInterface
     {
         $return = true;
         if (!empty($factors)) {
-
             foreach ($factors as $factor) {
                 if (is_bool($factor)) {
                     $return = $return && $factor;

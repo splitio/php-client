@@ -61,7 +61,6 @@ class Condition
         }
 
         if (isset($condition['matcherGroup']['matchers']) && is_array($condition['matcherGroup']['matchers'])) {
-
             $this->matcherGroup = [];
 
             foreach ($condition['matcherGroup']['matchers'] as $matcher) {
@@ -74,7 +73,6 @@ class Condition
     {
         $eval = [];
         foreach ($this->matcherGroup as $matcher) {
-
             if ($matcher instanceof AbstractMatcher) {
                 $eval[] = ($matcher->isNegate())
                     ? NotFactor::evaluate($matcher->evaluate($key))
@@ -102,7 +100,6 @@ class Condition
     {
         $users = [];
         foreach ($this->matcherGroup as $matcher) {
-
             if ($matcher instanceof \SplitIO\Grammar\Condition\Matcher\AbstractMatcher) {
                 $users = array_merge($users, $matcher->getUsers());
             }

@@ -38,7 +38,6 @@ class Split extends ClientBase
         $response = $httpClient->send($request);
 
         if ($response->isSuccess()) {
-
             $splitChanges = json_decode($response->getBody(), true);
 
             $splits = (isset($splitChanges['splits'])) ? $splitChanges['splits'] : false;

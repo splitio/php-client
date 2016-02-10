@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-
 use SplitIO\Common\Di;
 use SplitIO\Grammar\Condition\Matcher;
 
