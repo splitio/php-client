@@ -31,7 +31,8 @@ class Redis implements CacheStorageAdapterInterface
         'host'      => self::DEFAULT_HOST,
         'port'      => self::DEFAULT_PORT,
         'timeout'   => self::DEFAULT_TIMEOUT,
-        'ttl'       => self::DEFAULT_VALUE_TTL
+        'ttl'       => self::DEFAULT_VALUE_TTL,
+        'password'  => false
     ];
 
     /**
@@ -46,11 +47,16 @@ class Redis implements CacheStorageAdapterInterface
         $host = (isset($options['host'])) ? $options['host'] : self::DEFAULT_HOST;
         $port = (isset($options['port'])) ? $options['port'] : self::DEFAULT_PORT;
         $timeout = (isset($options['timeout'])) ? $options['timeout'] : self::DEFAULT_TIMEOUT;
+        $password = (isset($options['password'])) ? $options['password'] : false;
 
         $this->client = new \Redis();
 
         if (! $this->client->connect($host, $port, $timeout)) {
             throw new AdapterException("Redis servers cannot be connected");
+        }
+
+        if ($password !== false) {
+            $this->client->auth($password);
         }
 
         $this->options = array_merge($this->options, $options);
