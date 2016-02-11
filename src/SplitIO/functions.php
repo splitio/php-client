@@ -10,27 +10,54 @@ function version()
 //HASH Functions
 function hash($key, $seed)
 {
-    //return splitHash($key, $seed);
-    return murmurhash3_int($key, $seed);
+    return splitHash($key, $seed);
+    //return murmurhash3_int($key, $seed);
 }
 
+function ToInteger($x)
+{
+    $x = (int) $x;
+    return $x < 0 ? ceil($x) : floor($x);
+}
+
+function modulo($a, $b) {
+    return $a - floor($a/$b)*$b;
+}
+
+function ToUint32($x)
+{
+    return modulo(ToInteger($x), pow(2, 32));
+}
+
+function toInt32($x)
+{
+    $uint32 = ToUint32($x);
+
+    if ($uint32 >= pow(2, 31)) {
+        return $uint32 - pow(2, 32);
+    } else {
+        return $uint32;
+    }
+}
+
+/*
+function toInt32($x)
+{
+    return $x & 0xffffffff;
+}
+*/
 
 function splitHash($key, $seed)
 {
-
-    //return microtime() * rand(1,$seed);
-
-    $h = (integer) $seed;
+    $h = 0;
 
     for ($i = 0; $i < strlen($key); $i++) {
 
-        //$h = 31 * abs((integer)$h) + (integer) $key[$i];
-        $h = 31 * (integer) $h + ord($key[$i]);
+        $h = toInt32(toInt32(31 * $h) + ord($key[$i]));
 
-        //echo $h.PHP_EOL;
     }
 
-    return  (integer) $h;
+    return toInt32($h ^ $seed);
 }
 
 
