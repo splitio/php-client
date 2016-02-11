@@ -19,10 +19,9 @@ class HashTest extends \PHPUnit_Framework_TestCase
                 $hash = \SplitIO\splitHash($_line[1], $_line[0]);
                 $bucket = abs(\SplitIO\hash($_line[1], $_line[0]) % 100) + 1;
 
-                $this->assertEquals((int)$_line[2], (int)$hash, "Hash doesn't match, Expected: ".$_line[2]." Calculated: ".$hash);
+                $this->assertEquals((int)$_line[2], (int)$hash, "Hash, Expected: ".$_line[2]." Calculated: ".$hash);
 
-                $this->assertEquals((int)$_line[3], (int)$bucket, "Bucket doesn't match, Expected: ".
-                    $_line[3]." Calculated: ".$bucket);
+                $this->assertEquals((int)$_line[3], (int)$bucket, "Bucket, Expected: ".$_line[3]." Calculated: ".$bucket);
 
             }
 
