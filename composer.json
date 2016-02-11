@@ -17,6 +17,7 @@
     "php": ">=5.4.0",
     "ext-curl": "*",
     "ext-redis": "*",
+    "ext-mbstring": "*",
     "psr/log": "~1.0",
     "psr/cache": "^1.0"
   },
