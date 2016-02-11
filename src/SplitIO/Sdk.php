@@ -85,6 +85,7 @@ class Sdk
                         'options' => [
                             'host' => $sdkConfig->getCacheRedisHost(),
                             'port' => $sdkConfig->getCacheRedisPort(),
+                            'password' => $sdkConfig->getCacheRedisPassword()
                         ]
                     ];
                     break;

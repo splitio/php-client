@@ -35,6 +35,9 @@ class SdkConfig
     /** @var int */
     private $cacheRedisPort = 6379;
 
+    /** @var bool|string */
+    private $cacheRedisPassword = false;
+
     /** @var array */
     private $cacheMemcachedServers = [['localhost',11211]];
 
@@ -84,9 +87,29 @@ class SdkConfig
             $this->setCacheRedisPort($args['cache']['options']['port']);
         }
 
+        if (isset($args['cache']['options']['password'])) {
+            $this->setCacheRedisPassword($args['cache']['options']['password']);
+        }
+
         if (isset($args['cache']['options']['servers'])) {
             $this->setCacheMemcachedServers($args['cache']['options']['servers']);
         }
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getCacheRedisPassword()
+    {
+        return $this->cacheRedisPassword;
+    }
+
+    /**
+     * @param bool|string $cacheRedisPassword
+     */
+    public function setCacheRedisPassword($cacheRedisPassword)
+    {
+        $this->cacheRedisPassword = $cacheRedisPassword;
     }
 
     /**
