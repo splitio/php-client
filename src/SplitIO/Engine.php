@@ -10,10 +10,10 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 class Engine
 {
 
-    public static function isOn($userId, Split $split)
+    public static function isOn($key, Split $split)
     {
-        $treatment = self::getTreatment($userId, $split);
-        Di::getInstance()->getLogger()->info("*Treatment for $userId in {$split->getName()} is: $treatment");
+        $treatment = self::getTreatment($key, $split);
+        Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
         if ($treatment != TreatmentEnum::OFF && $treatment != TreatmentEnum::CONTROL) {
             return true;
         }
@@ -21,13 +21,13 @@ class Engine
         return false;
     }
 
-    public static function getTreatment($userId, Split $split)
+    public static function getTreatment($key, Split $split)
     {
         $conditions = $split->getConditions();
 
         foreach ($conditions as $condition) {
-            if ($condition->match($userId)) {
-                return Splitter::getTreatment($userId, $split->getSeed(), $condition->getPartitions());
+            if ($condition->match($key)) {
+                return Splitter::getTreatment($key, $split->getSeed(), $condition->getPartitions());
             }
         }
 
