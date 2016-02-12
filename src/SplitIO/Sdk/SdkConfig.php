@@ -159,6 +159,10 @@ class SdkConfig
             $instance->setCacheRedisPort($args[SPLITIO_CONFIG_CACHE_REDIS_PORT]);
         }
 
+        if (isset($args[SPLITIO_CONFIG_CACHE_REDIS_PASS])) {
+            $instance->setCacheRedisPassword($args[SPLITIO_CONFIG_CACHE_REDIS_PASS]);
+        }
+
         if (isset($args[SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS])) {
             $instance->setCacheMemcachedServers($args[SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS]);
         }

@@ -21,6 +21,7 @@ define("SPLITIO_CONFIG_CACHE_ADAPTER", "cnf-cache-adapter");
 define("SPLITIO_CONFIG_CACHE_FILESYSTEM_PATH", "cnf-cache-filesystem-path");
 define("SPLITIO_CONFIG_CACHE_REDIS_HOST", "cnf-cache-redis-host");
 define("SPLITIO_CONFIG_CACHE_REDIS_PORT", "cnf-cache-redis-port");
+define("SPLITIO_CONFIG_CACHE_REDIS_PASS", "cnf-cache-redis-pass");
 define("SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS", "cnf-cache-memcached-servers");
 define("SPLITIO_CONFIG_CACHE_CUSTOM", "cnf-cache-custom");
 

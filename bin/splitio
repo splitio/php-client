@@ -102,6 +102,11 @@ function getServiceOptionsMatrix()
             'default'   => 6379,
             'help'      => 'the cache server port number for Redis adapter'],
 
+        SPLITIO_CONFIG_CACHE_REDIS_PASS => ['cli' => '--cache-redis-pass',
+            'ini'       => 'cache.redis.pass',
+            'default'   => false,
+            'help'      => 'the cache server password for Redis adapter'],
+
         SPLITIO_CONFIG_CACHE_MEMCACHED_SERVERS => ['cli' => '--cache-memcached-servers',
             'ini'       => 'cache.options.server',
             'default'   => 'localhost:11211',
@@ -281,6 +286,7 @@ function addCachePool()
                     'options' => [
                         'host' => $sdkConfig->getCacheRedisHost(),
                         'port' => $sdkConfig->getCacheRedisPort(),
+                        'password' => $sdkConfig->getCacheRedisPassword()
                     ]
                 ];
                 break;
