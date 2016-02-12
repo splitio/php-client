@@ -13,6 +13,10 @@
       "email": "sarrubia@gmail.com"
     }
   ],
+
+  "version": "0.3.5",
+  "bin": ["bin/splitio"],
+
   "require": {
     "php": ">=5.4.0",
     "ext-curl": "*",
