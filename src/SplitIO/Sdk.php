@@ -20,7 +20,7 @@ class Sdk
 
     const NAME = 'Split-SDK-PHP';
 
-    const SPLITIO_URL = "http://localhost:8081";
+    const SPLITIO_URL = "https://sdk.split.io";
 
     /** @var array Arguments for creating clients */
     private $args;

@@ -1,7 +1,7 @@
 <?php
 
 //Split.io
-define("SPLITIO_URL", "http://localhost:8081");
+define("SPLITIO_URL", "https://sdk.split.io");
 
 //Common Cache keys
 define("SPLITIO_SEGMENT_REGISTER_CACHE_KEY", "SPLITIO.segments.registered");
