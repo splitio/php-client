@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Http\Adapter;
 
+use SplitIO\Common\Di;
 use SplitIO\Http\Request;
 use SplitIO\Http\ClientOptions;
 use SplitIO\Http\Response;
@@ -150,6 +151,9 @@ class HttpCurlAdapter implements HttpAdapterInterface
         $headers_text = explode("\r\n\r\n", substr($response, 0, $header_size));
 
         $last_header_text = $headers_text[count($headers_text)-2];
+
+        Di::getInstance()->getLogger()->info("HTTP Response Headers:");
+        Di::getInstance()->getLogger()->info($last_header_text);
 
         foreach (explode("\r\n", $last_header_text) as $i => $line) {
             if ($i === 0) {
