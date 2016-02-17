@@ -1,8 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition;
 
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
-
 /*
 {
   "treatment": "on",
@@ -20,14 +18,14 @@ class Partition
     {
         \SplitIO\Common\Di::getInstance()->getLogger()->debug(print_r($partition, true));
 
-        $this->treatment = (isset($partition['treatment']) && !empty($partition['treatment']))
-            ? new TreatmentEnum($partition['treatment'])
-            : new TreatmentEnum(TreatmentEnum::OFF);
+        if (isset($partition['treatment']) && !empty($partition['treatment'])) {
+            $this->treatment = $partition['treatment'];
+        }
 
         $this->size = (isset($partition['size']) &&
             is_int($partition['size']) &&
             $partition['size'] >= 0 &&
-            $partition['size'] <= 100) ? $partition['size'] : 100;
+            $partition['size'] <= 100) ? $partition['size'] : 0;
     }
 
     /**
@@ -47,7 +45,7 @@ class Partition
     }
 
     /**
-     * @return \SplitIO\Grammar\Condition\Partition\TreatmentEnum
+     * @return string
      */
     public function getTreatment()
     {
@@ -55,9 +53,9 @@ class Partition
     }
 
     /**
-     * @param \SplitIO\Grammar\Condition\Partition\TreatmentEnum
+     * @param string $treatment
      */
-    public function setTreatment(TreatmentEnum $treatment)
+    public function setTreatment($treatment)
     {
         $this->treatment = $treatment;
     }

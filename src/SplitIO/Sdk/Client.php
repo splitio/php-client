@@ -28,28 +28,11 @@ class Client
         return false;
     }
 
-    private function getTratmentFromSplit($key, $featureName)
-    {
-        $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
-        $splitCachedItem = Di::getInstance()->getCache()->getItem($splitCacheKey);
-
-        if ($splitCachedItem->isHit()) {
-            Di::getInstance()->getLogger()->info("$featureName is present on cache");
-            $splitRepresentation = $splitCachedItem->get();
-
-            $split = new Split(json_decode($splitRepresentation, true));
-
-            return Engine::getTreatment($key, $split);
-        }
-
-        return false;
-    }
-
     public function isTreatment($key, $featureName, $treatment)
     {
-        $calculatedTreatment = $this->getTratmentFromSplit($key, $featureName);
+        $calculatedTreatment = $this->getTreatment($key, $featureName);
 
-        if ($calculatedTreatment !== false) {
+        if ($calculatedTreatment !== null) {
             if ($treatment == $calculatedTreatment) {
                 return true;
             } else {
@@ -60,18 +43,28 @@ class Client
         return false;
     }
 
-    public function getTreatment($key, $featureName, $defaultTreatment)
+    public function getTreatment($key, $featureName)
     {
-        $calculatedTreatment = $this->getTratmentFromSplit($key, $featureName);
+        $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
+        $splitCachedItem = Di::getInstance()->getCache()->getItem($splitCacheKey);
 
-        if ($calculatedTreatment !== false) {
-            if ($calculatedTreatment != TreatmentEnum::CONTROL) {
-                return $calculatedTreatment;
-            } else {
-                return $defaultTreatment;
+        if ($splitCachedItem->isHit()) {
+            Di::getInstance()->getLogger()->info("$featureName is present on cache");
+            $splitRepresentation = $splitCachedItem->get();
+
+            $split = new Split(json_decode($splitRepresentation, true));
+
+            $treatment = Engine::getTreatment($key, $split);
+
+            Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
+
+            if ($treatment !== null) {
+                return $treatment;
             }
+
+            return $split->getDefaultTratment();
         }
 
-        return $defaultTreatment;
+        return null;
     }
 }

@@ -13,14 +13,21 @@ class Engine
     public static function isOn($key, Split $split)
     {
         $treatment = self::getTreatment($key, $split);
-        Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
-        if ($treatment != TreatmentEnum::OFF && $treatment != TreatmentEnum::CONTROL) {
+
+        Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is ---> ".$treatment);
+
+        if ($treatment !== null) {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * @param string $key
+     * @param Split $split
+     * @return null|string
+     */
     public static function getTreatment($key, Split $split)
     {
         $conditions = $split->getConditions();
@@ -31,6 +38,6 @@ class Engine
             }
         }
 
-        return TreatmentEnum::CONTROL;
+        return null;
     }
 }

@@ -7,6 +7,12 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 class Splitter
 {
+    /**
+     * @param string $userId
+     * @param long $seed
+     * @param array $partitions
+     * @return null|string
+     */
     public static function getTreatment($userId, $seed, $partitions)
     {
         Di::getInstance()->getLogger()->info("Splitter evaluating partitions");
@@ -24,11 +30,11 @@ class Splitter
             if ($partition instanceof Partition) {
                 $accumulatedSize += $partition->getSize();
                 if ($bucket <= $accumulatedSize) {
-                    return $partition->getTreatment()->getValue();
+                    return $partition->getTreatment();
                 }
             }
         }
 
-        return TreatmentEnum::CONTROL;
+        return null;
     }
 }
