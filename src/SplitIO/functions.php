@@ -7,6 +7,27 @@ function version()
 }
 
 
+function environment()
+{
+    $env = getenv('SPLIT_PHP_SDK_ENV');
+    if (empty($env)) {
+        return 'production';
+    } else {
+        return $env;
+    }
+}
+
+function getSplitServerUrl()
+{
+    if (environment() == 'development') {
+        return 'http://localhost:8081';
+    } else {
+        return Sdk::SPLITIO_URL;
+    }
+}
+
+
+
 //HASH Functions
 function hash($key, $seed)
 {
