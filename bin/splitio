@@ -346,7 +346,7 @@ function runSplitService()
 
     //Setting the Split Client to connect Split servers
     if ($di->getSplitClient() === null) {
-        $di->setSplitClient(new Client(SPLITIO_URL, $sdkConfig->getApiKey()));
+        $di->setSplitClient(new Client(\SplitIO\getSplitServerUrl(), $sdkConfig->getApiKey()));
     }
 
     //Fetching the Splits changes
@@ -393,7 +393,7 @@ function getSplits()
                     }
                 }
             }
-
+//@TODO dont remove from cache is split was killed
             if ($splitStatus == 'ACTIVE' && !$splitKilled) { //Update Cache
 
                 $splitCache->addSplit($splitName, json_encode($split));
@@ -425,47 +425,6 @@ function getSegments()
     }
 }
 
-/*
-function registerSegments(array $detectedSegments)
-{
-    $cache = Di::getInstance()->getCache();
-    $registeredSegmentsItem = $cache->getItem(\SplitIO\getCacheKeyForRegisterSegments());
-    $segments = $registeredSegmentsItem->get();
-
-    if ($segments) {
-        $arraySegments = json_decode($segments, true);
-    } else {
-        $arraySegments = [];
-    }
-
-    $segmentsToAdd = array_unique(array_merge($arraySegments, $detectedSegments));
-
-    $registeredSegmentsItem->set(json_encode($segmentsToAdd));
-    $registeredSegmentsItem->expiresAfter(Di::getInstance()->getSplitSdkConfiguration()->getCacheItemTtl());
-    $cache->save($registeredSegmentsItem);
-
-}
-*/
-
-
-/*
-function __getSegments()
-{
-    $di = Di::getInstance();
-    $cache = $di->getCache();
-
-    $registeredSegmentsItem = $cache->getItem(\SplitIO\getCacheKeyForRegisterSegments());
-    $segments = $registeredSegmentsItem->get();
-
-    if ($segments !== null) {
-        $arraySegments = json_decode($segments, true);
-
-        foreach ($arraySegments as $segmentName) {
-            Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
-        }
-    }
-}
-*/
 function out($str, $fg = null, $bg = null)
 {
     $outString = "";

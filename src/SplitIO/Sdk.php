@@ -56,7 +56,7 @@ class Sdk
 
     private static function addSplitClient($apiKey)
     {
-        DI::getInstance()->setSplitClient(new Client(self::SPLITIO_URL, $apiKey));
+        DI::getInstance()->setSplitClient(new Client(getSplitServerUrl(), $apiKey));
     }
 
     private static function addCachePool(array $options)
