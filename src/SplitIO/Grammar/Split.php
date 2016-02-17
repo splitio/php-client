@@ -23,6 +23,8 @@ class Split
 
     private $conditions = null;
 
+    private $defaultTreatment = null;
+
     public function __construct(array $split)
     {
         Di::getInstance()->getLogger()->debug(print_r($split, true));
@@ -35,6 +37,7 @@ class Split
         $this->seed = $split['seed'];
         $this->status = $split['status'];
         $this->killed = $split['killed'];
+        $this->defaultTreatment = $split['defaultTreatment'];
 
         Di::getInstance()->getLogger()->info("Constructing Split: ".$this->name);
 
@@ -44,6 +47,11 @@ class Split
                 $this->conditions[] = new Condition($condition);
             }
         }
+    }
+
+    public function getDefaultTratment()
+    {
+        return $this->defaultTreatment;
     }
 
     public function getName()
