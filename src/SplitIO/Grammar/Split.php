@@ -49,6 +49,11 @@ class Split
         }
     }
 
+    public function killed()
+    {
+        return (bool) $this->killed;
+    }
+
     public function getDefaultTratment()
     {
         return $this->defaultTreatment;

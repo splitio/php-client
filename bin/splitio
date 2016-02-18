@@ -355,8 +355,6 @@ function runSplitService()
     //Fetching the Segments changes
     getSegments();
 
-    //@TODO Refresh cache TTL of all items.
-
 }
 
 function getSplits()
@@ -377,7 +375,6 @@ function getSplits()
 
             $splitName = $split['name'];
             $splitStatus = $split['status'];
-            $splitKilled = (bool) $split['killed'];
 
             $splitConditions = $split['conditions'];
 
@@ -393,8 +390,8 @@ function getSplits()
                     }
                 }
             }
-//@TODO dont remove from cache is split was killed
-            if ($splitStatus == 'ACTIVE' && !$splitKilled) { //Update Cache
+
+            if ($splitStatus == 'ACTIVE') { //Update Cache
 
                 $splitCache->addSplit($splitName, json_encode($split));
 

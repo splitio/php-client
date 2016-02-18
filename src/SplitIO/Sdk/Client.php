@@ -52,6 +52,10 @@ class Client
 
             $split = new Split(json_decode($splitRepresentation, true));
 
+            if ($split->killed()) {
+                return $split->getDefaultTratment();
+            }
+
             $treatment = Engine::getTreatment($key, $split);
 
             Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
