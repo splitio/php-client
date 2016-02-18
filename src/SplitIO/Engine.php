@@ -9,20 +9,6 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 class Engine
 {
-
-    public static function isOn($key, Split $split)
-    {
-        $treatment = self::getTreatment($key, $split);
-
-        Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is ---> ".$treatment);
-
-        if ($treatment !== null) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * @param string $key
      * @param Split $split
