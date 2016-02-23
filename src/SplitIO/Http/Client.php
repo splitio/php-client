@@ -14,13 +14,13 @@ class Client implements ClientInterface
     protected $options = [
         ClientOptions::TIMEOUT => 30,
         ClientOptions::ADAPTER => 'SplitIO\Http\Adapter\HttpCurlAdapter',
-        ClientOptions::USERAGENT => 'SplitIO-PHP-SDK/1.0'
+        ClientOptions::USERAGENT => 'SplitIO-PHP-SDK/1.0',
+        ClientOptions::VERBOSE => false
     ];
 
     public function __construct(array $options = [])
     {
         $this->options = array_merge($this->options, $options);
-
         if (class_exists($this->options[ClientOptions::ADAPTER]) &&
             is_a($this->options[ClientOptions::ADAPTER], '\SplitIO\Http\Adapter\HttpAdapterInterface', true)) {
             $this->adapter = new $this->options[ClientOptions::ADAPTER];
