@@ -1,13 +1,13 @@
 <?php
 namespace SplitIO\Http\Adapter;
 
-use SplitIO\Common\Di;
+use SplitIO\Split;
 use SplitIO\Http\Request;
 use SplitIO\Http\ClientOptions;
 use SplitIO\Http\Response;
 use SplitIO\Http\MethodEnum;
 use SplitIO\Http\Exception\HttpServerException;
-use SplitIO\Http\Adapter\Exception\CurlAdapterOtionsException;
+use SplitIO\Http\Adapter\Exception\HttpCurlAdapterOtionsException;
 
 class HttpCurlAdapter implements HttpAdapterInterface
 {
@@ -50,11 +50,28 @@ class HttpCurlAdapter implements HttpAdapterInterface
         switch ($request->getMethod()) {
             case MethodEnum::GET:
                 break;
+
             case MethodEnum::POST:
+                Split::logger()->info("[HTTP cUrl adapter] POST method");
+
                 $this->httpOptions[CURLOPT_POST] = true;
-                $this->httpOptions[CURLOPT_POSTFIELDS] = $request->getData();
-                if (is_array($this->httpOptions[CURLOPT_POSTFIELDS])) {
-                    $this->httpOptions[CURLOPT_HTTPHEADER] = array('Content-Type: multipart/form-data');
+
+                $_data = $request->getData();
+
+                $isJson = false;
+                if ($request->getHeader("Content-Type") == "application/json") {
+                    $isJson = true;
+                    Split::logger()->info("[HTTP cUrl adapter] Content-Type: application/json");
+                } elseif (is_array($_data)) {
+                    $this->httpOptions[CURLOPT_HTTPHEADER][] = 'Content-Type: multipart/form-data';
+                    Split::logger()->info("[HTTP cUrl adapter] Content-Type: multipart/form-data");
+                }
+
+                if (is_array($_data) && $isJson) {
+                    Split::logger()->info("[HTTP cUrl adapter] Encoding Array to JSON");
+                    $this->httpOptions[CURLOPT_POSTFIELDS] = json_encode($_data);
+                } else {
+                    $this->httpOptions[CURLOPT_POSTFIELDS] = $_data;
                 }
                 break;
             case MethodEnum::PUT:
@@ -73,7 +90,6 @@ class HttpCurlAdapter implements HttpAdapterInterface
         $this->setOptRequest();
 
         $response_object = curl_exec($this->handle);
-        //$response_object = gzinflate(substr($response_object, 10));
         $this->responseObject = $this->httpParseMessage($response_object);
 
         curl_close($this->handle);
@@ -95,7 +111,7 @@ class HttpCurlAdapter implements HttpAdapterInterface
             }
 
             foreach ($headers as $k => $v) {
-                $this->httpOptions[CURLOPT_HTTPHEADER][] = $k.':'.$v;
+                $this->httpOptions[CURLOPT_HTTPHEADER][] = $k.': '.$v;
             }
         }
     }
@@ -106,6 +122,7 @@ class HttpCurlAdapter implements HttpAdapterInterface
      */
     private function setOptions($options = array())
     {
+        $this->httpOptions[CURLOPT_VERBOSE] = $options[ClientOptions::VERBOSE];
         $this->httpOptions[CURLOPT_TIMEOUT] = $options[ClientOptions::TIMEOUT];
         $this->httpOptions[CURLOPT_USERAGENT] = $options[ClientOptions::USERAGENT];
     }
@@ -152,8 +169,8 @@ class HttpCurlAdapter implements HttpAdapterInterface
 
         $last_header_text = $headers_text[count($headers_text)-2];
 
-        Di::getInstance()->getLogger()->info("HTTP Response Headers:");
-        Di::getInstance()->getLogger()->info($last_header_text);
+        Split::logger()->info("HTTP Response Headers:");
+        Split::logger()->info($last_header_text);
 
         foreach (explode("\r\n", $last_header_text) as $i => $line) {
             if ($i === 0) {
