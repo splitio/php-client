@@ -256,4 +256,9 @@ class Pool implements CacheItemPoolInterface
     {
         return $this->adapter->getListItems($key);
     }
+
+    public function getKeys($pattern = '*')
+    {
+        return $this->adapter->getKeys($pattern);
+    }
 }
