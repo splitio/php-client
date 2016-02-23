@@ -1,11 +1,12 @@
 <?php
 namespace SplitIO;
 
+use SplitIO\Cache\ImpressionCache;
 use SplitIO\Client\Config;
-use SplitIO\Client\Resource\Segment;
-use SplitIO\Client\Resource\Split;
+use SplitIO\Client\Resource\Segment as SegmentResource;
+use SplitIO\Client\Resource\Split as SplitResource;
+use SplitIO\Client\Resource\TestImpression as TestImpressionResource;
 use SplitIO\Common\Di;
-use SplitIO\Grammar\Condition\Matcher\SegmentData;
 
 /**
  * Class Client
@@ -35,7 +36,7 @@ class Client
      */
     public function getSplitChanges()
     {
-        $splitChanges = new Split();
+        $splitChanges = new SplitResource();
 
         $data = $splitChanges->getSplitChanges();
 
@@ -52,7 +53,7 @@ class Client
      */
     public function getSegmentChanges($segmentName)
     {
-        $segmentChanges = new Segment();
+        $segmentChanges = new SegmentResource();
 
         $data = $segmentChanges->getSegmentChanges($segmentName);
 
@@ -69,7 +70,7 @@ class Client
      */
     public function updateSegmentChanges($segmentName)
     {
-        $segmentChanges = new Segment();
+        $segmentChanges = new SegmentResource();
         $rawSegmentData = $segmentChanges->getSegmentChanges($segmentName);
 
         if ($rawSegmentData) {
@@ -79,5 +80,40 @@ class Client
         }
 
         return false;
+    }
+
+    public function sendTestImpressions()
+    {
+        $impressionKeys = Split::cache()->getKeys(ImpressionCache::getCacheKeySearchPattern());
+        $impressionsResource = new TestImpressionResource();
+        $impressionCache = new ImpressionCache();
+
+        $result = [];
+
+        foreach ($impressionKeys as $key) {
+
+            $featureName = ImpressionCache::getFeatureNameFromKey($key);
+            $cachedImpressions = $impressionCache->getAllImpressions($key);
+            $impressions = [];
+
+            //restoring cached impressions from JSON string to PHP Array.
+            for ($i=0; $i < count($cachedImpressions); $i++) {
+                $impressions[$i] = json_decode($cachedImpressions[$i], true);
+            }
+
+            //Sending Impressions dataset.
+            $resp = $impressionsResource->sendTestImpressions($featureName, $impressions);
+
+            //removing sent impressions from cache.
+            if ($resp === true) {
+                for ($i=0; $i < count($cachedImpressions); $i++) {
+                    $impressionCache->removeImpression($key, $cachedImpressions[$i]);
+                }
+            }
+            //Status control for each sent impression.
+            $result[$featureName] = ['cacheKey' => $key, 'response' => $resp];
+        }
+
+        return $result;
     }
 }
