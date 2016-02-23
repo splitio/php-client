@@ -190,4 +190,9 @@ class Redis implements CacheStorageAdapterInterface
     {
         return $this->client->sMembers($key);
     }
+
+    public function getKeys($pattern = '*')
+    {
+        return $this->client->keys($pattern);
+    }
 }
