@@ -4,7 +4,6 @@ namespace SplitIO;
 use SplitIO\Sdk\Client as SdkClient;
 use SplitIO\Client;
 
-
 class Sdk
 {
     //Trait to initialize SDK options

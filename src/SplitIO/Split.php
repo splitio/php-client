@@ -97,6 +97,4 @@ class Split
     {
         return Di::getInstance()->getSplitSdkConfiguration();
     }
-
-
 }

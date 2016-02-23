@@ -30,5 +30,4 @@ class TestImpression extends ClientBase
 
         return false;
     }
-
 }

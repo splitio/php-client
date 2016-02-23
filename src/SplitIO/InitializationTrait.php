@@ -1,13 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sarrubia
- * Date: 19/02/16
- * Time: 21:10
- */
-
 namespace SplitIO;
-
 
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
