@@ -82,38 +82,12 @@ class Client
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function sendTestImpressions()
     {
-        $impressionKeys = Split::cache()->getKeys(ImpressionCache::getCacheKeySearchPattern());
         $impressionsResource = new TestImpressionResource();
-        $impressionCache = new ImpressionCache();
-
-        $result = [];
-
-        foreach ($impressionKeys as $key) {
-
-            $featureName = ImpressionCache::getFeatureNameFromKey($key);
-            $cachedImpressions = $impressionCache->getAllImpressions($key);
-            $impressions = [];
-
-            //restoring cached impressions from JSON string to PHP Array.
-            for ($i=0; $i < count($cachedImpressions); $i++) {
-                $impressions[$i] = json_decode($cachedImpressions[$i], true);
-            }
-
-            //Sending Impressions dataset.
-            $resp = $impressionsResource->sendTestImpressions($featureName, $impressions);
-
-            //removing sent impressions from cache.
-            if ($resp === true) {
-                for ($i=0; $i < count($cachedImpressions); $i++) {
-                    $impressionCache->removeImpression($key, $cachedImpressions[$i]);
-                }
-            }
-            //Status control for each sent impression.
-            $result[$featureName] = ['cacheKey' => $key, 'response' => $resp];
-        }
-
-        return $result;
+        return $impressionsResource->sendTestImpressions();
     }
 }
