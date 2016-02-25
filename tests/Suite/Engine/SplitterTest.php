@@ -31,7 +31,6 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
             $partitions[$i] = new Partition(['treatment' => "$i", 'size' => 1]);
         }
 
-        //$treatments = range(1, 100);
         $treatments = [];
         for ($i = 0; $i < 100; $i++) {
             $treatments[$i] = 0;
@@ -46,21 +45,17 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
             $treatments[(int)$treatment - 1]++;
         }
 
-
-        //var_dump($treatments); exit;
-
         $mean = $n * $p;
         $stddev = sqrt($mean * (1 - $p));
 
         $min = (int)($mean - 4 * $stddev);
         $max = (int)($mean + 4 * $stddev);
 
-        //echo "MEAN: $mean   STDDEV: $stddev   MIN: $min   MAX: $max"; exit;
-
         $range = range($min, $max);
 
         for ($i = 0; $i < count($treatments); $i++) {
-            $this->assertTrue( in_array($treatments[$i], $range), "Value: " . $treatments[$i] . " is out of range " . print_r($range,true));
+            $message = "Value: " . $treatments[$i] . " is out of range " . print_r($range, true);
+            $this->assertTrue(in_array($treatments[$i], $range), $message);
         }
     }
 }
