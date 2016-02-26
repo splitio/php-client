@@ -43,7 +43,7 @@ class TestImpression extends ClientBase
         $response = $httpClient->send($request);
 
         if ($response->isSuccess()) {
-            SplitApp::logger()->info("Impressions sent successfuly");
+            SplitApp::logger()->info(count($dataset)." Impressions sent successfuly");
 
             try {
                 //removing sent impressions from cache.
