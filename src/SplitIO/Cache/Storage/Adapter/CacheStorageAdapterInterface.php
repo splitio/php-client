@@ -7,6 +7,12 @@ interface CacheStorageAdapterInterface
     public function __construct(array $options);
 
     /**
+     * @param null|string $pattern
+     * @return mixed
+     */
+    public function getKeys($pattern = '*');
+
+    /**
      * @param string $key
      * @return \Psr\Cache\CacheItemInterface
      */

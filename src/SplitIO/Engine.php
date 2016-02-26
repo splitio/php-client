@@ -1,20 +1,18 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Common\Di;
-use SplitIO\Grammar\Split;
+use SplitIO\Grammar\Split as SplitGrammar;
 use SplitIO\Grammar\Condition;
 use SplitIO\Engine\Splitter;
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 class Engine
 {
     /**
      * @param string $key
-     * @param Split $split
+     * @param \SplitIO\Grammar\Split $split
      * @return null|string
      */
-    public static function getTreatment($key, Split $split)
+    public static function getTreatment($key, SplitGrammar $split)
     {
         $conditions = $split->getConditions();
 
