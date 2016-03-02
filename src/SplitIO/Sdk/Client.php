@@ -1,11 +1,13 @@
 <?php
 namespace SplitIO\Sdk;
 
+use SplitIO\Cache\MetricsCache;
 use SplitIO\Cache\SplitCache;
 use SplitIO\Common\Di;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
+use SplitIO\Metrics;
 use SplitIO\TreatmentImpression;
 
 class Client
@@ -57,7 +59,14 @@ class Client
                 return $split->getDefaultTratment();
             }
 
+            $timeStart = Metrics::startMeasuringLatency();
             $treatment = Engine::getTreatment($key, $split);
+            $latency = Metrics::calculateLatency($timeStart);
+
+            MetricsCache::addLatencyOnBucket(
+                Metrics::MNAME_SDK_GET_TREATMENT,
+                Metrics::getBucketForLatencyMicros($latency)
+            );
 
             TreatmentImpression::log($key, $featureName, $treatment);
 
