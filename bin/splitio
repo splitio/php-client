@@ -355,6 +355,15 @@ function runSplitService()
     //Fetching the Segments changes
     getSegments();
 
+    //Send Impressions
+    sendImpressions();
+
+}
+
+function sendImpressions()
+{
+    $response = Di::getInstance()->getSplitClient()->sendTestImpressions();
+    //@TODO log the response errors.
 }
 
 function getSplits()

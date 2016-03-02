@@ -6,8 +6,9 @@ use SplitIO\Common\Di;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
+use SplitIO\TreatmentImpression;
 
-class Client
+class Client implements ClientInterface
 {
     /**
      * Returns the treatment to show this id for this feature.
@@ -58,6 +59,8 @@ class Client
 
             $treatment = Engine::getTreatment($key, $split);
 
+            TreatmentImpression::log($key, $featureName, $treatment);
+
             Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
 
             if ($treatment !== null) {
@@ -66,6 +69,8 @@ class Client
 
             return $split->getDefaultTratment();
         }
+
+        TreatmentImpression::log($key, $featureName, TreatmentEnum::CONTROL);
 
         return TreatmentEnum::CONTROL;
     }
