@@ -349,21 +349,47 @@ function runSplitService()
         $di->setSplitClient(new Client(\SplitIO\getSplitServerUrl(), $sdkConfig->getApiKey()));
     }
 
-    //Fetching the Splits changes
-    getSplits();
+    try {
+        //Fetching the Splits changes
+        getSplits();
+    } catch (\Exception $e) {
+        $di->getLogger()->critical($e->getMessage());
+        $di->getLogger()->critical($e->getTraceAsString());
+    }
 
-    //Fetching the Segments changes
-    getSegments();
+    try {
+        //Fetching the Segments changes
+        getSegments();
+    } catch (\Exception $e) {
+        $di->getLogger()->critical($e->getMessage());
+        $di->getLogger()->critical($e->getTraceAsString());
+    }
 
-    //Send Impressions
-    sendImpressions();
+    try {
+        //Send Impressions
+        sendImpressions();
+    } catch (\Exception $e) {
+        $di->getLogger()->critical($e->getMessage());
+        $di->getLogger()->critical($e->getTraceAsString());
+    }
 
+    try {
+        //Send Metrics
+        sendMetrics();
+    } catch (\Exception $e) {
+        $di->getLogger()->critical($e->getMessage());
+        $di->getLogger()->critical($e->getTraceAsString());
+    }
+}
+
+function sendMetrics()
+{
+    Di::getInstance()->getSplitClient()->sendMetrics();
 }
 
 function sendImpressions()
 {
     $response = Di::getInstance()->getSplitClient()->sendTestImpressions();
-    //@TODO log the response errors.
 }
 
 function getSplits()
