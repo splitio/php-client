@@ -3,6 +3,7 @@ namespace SplitIO;
 
 use SplitIO\Sdk\Client as SdkClient;
 use SplitIO\Client;
+use SplitIO\Sdk\FakeClient;
 
 class Sdk
 {
@@ -25,10 +26,15 @@ class Sdk
     /**
      * @param $apiKey
      * @param array $args
-     * @return \SplitIO\Sdk\Client
+     * @return \SplitIO\Sdk\ClientInterface
      */
-    public static function factory($apiKey, array $args = [])
+    public static function factory($apiKey = 'localhost', array $args = [])
     {
+        if ($apiKey == 'localhost') {
+            $filePath = (isset($args['splitFile']) && file_exists($args['splitFile'])) ? $args['splitFile'] : null;
+            return new FakeClient($filePath);
+        }
+
         //Adding API Key into args array.
         $args['apiKey'] = $apiKey;
 

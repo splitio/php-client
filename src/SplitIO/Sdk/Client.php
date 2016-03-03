@@ -8,7 +8,7 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\TreatmentImpression;
 
-class Client
+class Client implements ClientInterface
 {
     /**
      * Returns the treatment to show this id for this feature.
