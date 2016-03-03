@@ -3,7 +3,7 @@ namespace SplitIO\Sdk;
 
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
-class FakeClient implements ClientInterface
+class LocalhostClient implements ClientInterface
 {
     private $splits = null;
 
