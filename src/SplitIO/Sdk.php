@@ -3,7 +3,7 @@ namespace SplitIO;
 
 use SplitIO\Sdk\Client as SdkClient;
 use SplitIO\Client;
-use SplitIO\Sdk\FakeClient;
+use SplitIO\Sdk\LocalhostClient;
 
 class Sdk
 {
@@ -32,7 +32,7 @@ class Sdk
     {
         if ($apiKey == 'localhost') {
             $filePath = (isset($args['splitFile']) && file_exists($args['splitFile'])) ? $args['splitFile'] : null;
-            return new FakeClient($filePath);
+            return new LocalhostClient($filePath);
         }
 
         //Adding API Key into args array.
