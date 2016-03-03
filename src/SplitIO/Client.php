@@ -3,6 +3,7 @@ namespace SplitIO;
 
 use SplitIO\Cache\ImpressionCache;
 use SplitIO\Client\Config;
+use SplitIO\Client\Resource\Metrics as MetricsResource;
 use SplitIO\Client\Resource\Segment as SegmentResource;
 use SplitIO\Client\Resource\Split as SplitResource;
 use SplitIO\Client\Resource\TestImpression as TestImpressionResource;
@@ -89,5 +90,11 @@ class Client
     {
         $impressionsResource = new TestImpressionResource();
         return $impressionsResource->sendTestImpressions();
+    }
+
+    public function sendMetrics()
+    {
+        $metricsResource = new MetricsResource();
+        return $metricsResource->sendMetrics();
     }
 }

@@ -195,4 +195,14 @@ class Redis implements CacheStorageAdapterInterface
     {
         return $this->client->keys($pattern);
     }
+
+    public function incrementKey($key)
+    {
+        return $this->client->incr($key);
+    }
+
+    public function getSet($key, $value)
+    {
+        return $this->client->getSet($key, $value);
+    }
 }

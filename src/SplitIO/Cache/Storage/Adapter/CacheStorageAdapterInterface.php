@@ -80,4 +80,17 @@ interface CacheStorageAdapterInterface
      * @return mixed
      */
     public function getListItems($key);
+
+    /**
+     * @param $key
+     * @return int
+     */
+    public function incrementKey($key);
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function getSet($key, $value);
 }
