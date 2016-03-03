@@ -452,7 +452,14 @@ function getSegments()
 
     if (is_array($registeredSegments) && !empty($registeredSegments)) {
         foreach ($registeredSegments as $segmentName) {
-            Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
+            Di::getInstance()->getLogger()->info(">>> Fetching data from segment: $segmentName");
+            while (true) {
+                if (! Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName)) {
+                    Di::getInstance()->getLogger()->info(">>> Finishing GREEDY fetch Segment: $segmentName");
+                    break;
+                }
+            }
+
         }
     }
 }
