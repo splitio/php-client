@@ -20,6 +20,9 @@
         <testsuite name="engine">
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
         </testsuite>
+        <testsuite name="metrics">
+            <directory suffix="Test.php">tests/Suite/Metrics/</directory>
+        </testsuite>
     </testsuites>
 
 </phpunit>
