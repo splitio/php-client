@@ -18,6 +18,7 @@ use SplitIO\Engine;
 use SplitIO\Cache\Pool;
 use SplitIO\Cache\SplitCache;
 use SplitIO\Cache\SegmentCache;
+use SplitIO\Metrics;
 
 bootstrap(is_array($argv) ? $argv : array());
 
@@ -452,7 +453,24 @@ function getSegments()
 
     if (is_array($registeredSegments) && !empty($registeredSegments)) {
         foreach ($registeredSegments as $segmentName) {
-            Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName);
+
+            Di::getInstance()->getLogger()->info(">>> Fetching data from segment: $segmentName");
+            $timeStart = Metrics::startMeasuringLatency();
+            while (true) {
+                $timeStartPart = Metrics::startMeasuringLatency();
+                if (! Di::getInstance()->getSplitClient()->updateSegmentChanges($segmentName)) {
+
+                    $timeItTook = Metrics::calculateLatency($timeStartPart);
+                    Di::getInstance()->getLogger()->debug("Fetching segment last part ($segmentName) took $timeItTook microseconds");
+                    $greedyTime = Metrics::calculateLatency($timeStart);
+                    Di::getInstance()->getLogger()->info("Finished fetching whole segment $segmentName, took $greedyTime microseconds");
+                    break;
+                }
+
+                $timeItTook = Metrics::calculateLatency($timeStartPart);
+                Di::getInstance()->getLogger()->debug("Fetching segment part ($segmentName) took $timeItTook microseconds");
+            }
+
         }
     }
 }

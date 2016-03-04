@@ -33,7 +33,7 @@ class Segment extends ClientBase
             $segment = json_decode($response->getBody(), true);
 
             //Returning false due the server has not changes
-            if (isset($segment['since']) && isset($segment['till']) && $segment['since'] == $segment['till']) {
+            if (isset($segment['since']) && isset($segment['till']) && $segment['since'] >= $segment['till']) {
                 Di::getInstance()->getLogger()->notice("Segments returned by the server are empty");
                 return false;
             }
