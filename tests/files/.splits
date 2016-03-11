@@ -1,0 +1,9 @@
+;This is a comment
+feature_A = treatment_1
+
+   ;This is a comment whit blanks
+
+feature_B = treatment_2
+
+feature_C = treatment_1
+
