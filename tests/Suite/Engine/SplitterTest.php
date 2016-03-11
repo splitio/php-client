@@ -1,22 +1,18 @@
 <?php
 namespace SplitIO\Test\Suite\Engine;
 
-use SplitIO\Common\Di;
+use SplitIO\Component\Initialization\LoggerTrait;
+use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition;
-use SplitIO\Log\Handler\Stdout;
-use SplitIO\Log\Logger;
-use SplitIO\Log\LogLevelEnum;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {
+    use LoggerTrait;
+
     public function testDiLog()
     {
-        $logAdapter = new Stdout();
-
-        $logger = new Logger($logAdapter, LogLevelEnum::ERROR);
-
-        Di::getInstance()->setLogger($logger);
+        self::addLogger('stdout', LogLevelEnum::ERROR);
 
         $this->assertTrue(true);
     }
@@ -40,7 +36,7 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
         $p = 0.01;
 
         for ($i = 0; $i < $n; $i++) {
-            $key = \SplitIO\uuid();
+            $key = uniqid('', true);
             $treatment = Splitter::getTreatment($key, 123, $partitions);
             $treatments[(int)$treatment - 1]++;
         }
@@ -57,5 +53,16 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
             $message = "Value: " . $treatments[$i] . " is out of range " . print_r($range, true);
             $this->assertTrue(in_array($treatments[$i], $range), $message);
         }
+    }
+
+    /**
+     * @depends testDiLog
+     */
+    public function testSplitterErrorPartions()
+    {
+        $partition = new Partition(['treatment' => "on", 'size' => -1]);
+
+        $this->assertNull(Splitter::getTreatment('someValidKey', 123123545, [$partition]));
+
     }
 }

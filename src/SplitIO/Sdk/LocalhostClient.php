@@ -10,39 +10,12 @@ class LocalhostClient implements ClientInterface
     /**
      * Try to get the user home directory
      * @return string|null
+     * @codeCoverageIgnore
      */
     private function getUserHome()
     {
         $userData = posix_getpwuid(posix_getuid());
         return (isset($userData['dir'])) ? $userData['dir'] : null;
-    }
-
-    /**
-     * Parse the .splits file, returning an array of feature=>treatment pairs
-     * @param $fileContent
-     * @return array
-     */
-    private function parseSplitsFile($fileContent)
-    {
-        $re = "/([a-zA-Z]+[-_a-zA-Z0-9]*)\\s+([a-zA-Z]+[-_a-zA-Z0-9]*)/";
-
-        $lines = explode(PHP_EOL, $fileContent);
-
-        $result = [];
-
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (isset($line[0]) && $line[0] != '#') {
-                $matches = [];
-                if (preg_match($re, $line, $matches)) {
-                    if (isset($matches[1]) && isset($matches[2])) {
-                        $result[$matches[1]] = $matches[2];
-                    }
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -52,28 +25,32 @@ class LocalhostClient implements ClientInterface
      */
     public function __construct($splitFilePath = null)
     {
-        $splitFile = null;
-
         //Try to load Splits file given by developer
         if ($splitFilePath !== null) {
-            if (file_exists($splitFilePath)) {
-                $splitFile = file_get_contents($splitFilePath);
-            }
+            $this->loadSplits($splitFilePath);
         }
 
+        // @codeCoverageIgnoreStart
         //Try to load Splits file from developer home if this has not given by developer
-        if ($splitFile === null) {
+        if ($this->splits === null) {
             $homeFilePath = $this->getUserHome().'/.splits';
-            if (file_exists($homeFilePath)) {
-                $splitFile = file_get_contents($homeFilePath);
-            }
+            $this->loadSplits($homeFilePath);
         }
 
-        if ($splitFile === null) {
+        if ($this->splits === null) {
             throw new \Exception("Splits file could not be found");
         }
+        // @codeCoverageIgnoreEnd
+    }
 
-        $this->splits = $this->parseSplitsFile($splitFile);
+    /**
+     * @param $splitFilePath
+     */
+    private function loadSplits($splitFilePath)
+    {
+        if (file_exists($splitFilePath)) {
+            $this->splits = parse_ini_file($splitFilePath, true);
+        }
     }
 
     /**
@@ -138,9 +115,9 @@ class LocalhostClient implements ClientInterface
         if ($calculatedTreatment !== TreatmentEnum::CONTROL) {
             if ($treatment == $calculatedTreatment) {
                 return true;
-            } else {
-                return false;
             }
         }
+
+        return false;
     }
 }

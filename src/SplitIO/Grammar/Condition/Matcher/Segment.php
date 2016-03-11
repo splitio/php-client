@@ -1,9 +1,8 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Cache\SegmentCache;
+use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Grammar\Condition\Matcher;
-use SplitIO\Common\Di;
 
 class Segment extends AbstractMatcher
 {

@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Cache\ImpressionCache;
+use SplitIO\Component\Cache\ImpressionCache;
 
 class TreatmentImpression
 {
@@ -15,7 +15,6 @@ class TreatmentImpression
     public static function log($key, $featureName, $treatment, $time = null)
     {
         $miliseconds = (($time == null) ? time() : $time) * 1000;
-
         return (new ImpressionCache())->addDataToFeature($featureName, $key, $treatment, $miliseconds);
     }
 }

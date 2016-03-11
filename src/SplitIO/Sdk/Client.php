@@ -1,14 +1,14 @@
 <?php
 namespace SplitIO\Sdk;
 
-use SplitIO\Cache\MetricsCache;
-use SplitIO\Cache\SplitCache;
-use SplitIO\Common\Di;
+use SplitIO\Component\Cache\MetricsCache;
+use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Metrics;
 use SplitIO\TreatmentImpression;
+use SplitIO\Split as SplitApp;
 
 class Client implements ClientInterface
 {
@@ -47,10 +47,10 @@ class Client implements ClientInterface
     public function getTreatment($key, $featureName)
     {
         $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
-        $splitCachedItem = Di::getInstance()->getCache()->getItem($splitCacheKey);
+        $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
 
         if ($splitCachedItem->isHit()) {
-            Di::getInstance()->getLogger()->info("$featureName is present on cache");
+            SplitApp::logger()->info("$featureName is present on cache");
             $splitRepresentation = $splitCachedItem->get();
 
             $split = new Split(json_decode($splitRepresentation, true));
@@ -63,20 +63,24 @@ class Client implements ClientInterface
             $treatment = Engine::getTreatment($key, $split);
             $latency = Metrics::calculateLatency($timeStart);
 
+            //If the given key doesn't match on any condition, default treatment is returned
+            if ($treatment == null) {
+                $treatment = $split->getDefaultTratment();
+            }
+
+            //Registering latency value
             MetricsCache::addLatencyOnBucket(
                 Metrics::MNAME_SDK_GET_TREATMENT,
                 Metrics::getBucketForLatencyMicros($latency)
             );
 
+            SplitApp::logger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
+
+            //Logging treatment impressions
             TreatmentImpression::log($key, $featureName, $treatment);
 
-            Di::getInstance()->getLogger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
-
-            if ($treatment !== null) {
-                return $treatment;
-            }
-
-            return $split->getDefaultTratment();
+            //Returning treatment.
+            return $treatment;
         }
 
         TreatmentImpression::log($key, $featureName, TreatmentEnum::CONTROL);
@@ -107,15 +111,15 @@ class Client implements ClientInterface
             if ($calculatedTreatment !== TreatmentEnum::CONTROL) {
                 if ($treatment == $calculatedTreatment) {
                     return true;
-                } else {
-                    return false;
                 }
             }
 
         } catch (\Exception $e) {
-            Di::getInstance()->getLogger()->critical("SDK Client on isTreatment is critical");
-            Di::getInstance()->getLogger()->critical($e->getMessage());
-            Di::getInstance()->getLogger()->critical($e->getTraceAsString());
+            // @codeCoverageIgnoreStart
+            SplitApp::logger()->critical("SDK Client on isTreatment is critical");
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
+            // @codeCoverageIgnoreEnd
         }
 
         return false;

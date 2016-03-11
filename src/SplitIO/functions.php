@@ -6,28 +6,6 @@ function version()
     return Sdk::VERSION;
 }
 
-
-function environment()
-{
-    $env = getenv('SPLIT_PHP_SDK_ENV');
-    if (empty($env)) {
-        return 'production';
-    } else {
-        return $env;
-    }
-}
-
-function getSplitServerUrl()
-{
-    if (environment() == 'development') {
-        return 'http://localhost:8081';
-    } else {
-        return Sdk::SPLITIO_URL;
-    }
-}
-
-
-
 //HASH Functions
 function hash($key, $seed)
 {
@@ -61,13 +39,6 @@ function toInt32($x)
     }
 }
 
-/*
-function toInt32($x)
-{
-    return $x & 0xffffffff;
-}
-*/
-
 function splitHash($key, $seed)
 {
     $h = 0;
@@ -81,7 +52,7 @@ function splitHash($key, $seed)
     return toInt32($h ^ $seed);
 }
 
-
+// @codeCoverageIgnoreStart
 /**
  * PHP Implementation of MurmurHash3
  *
@@ -143,81 +114,38 @@ function murmurhash3_int($key, $seed=0)
     $h1 ^= ($h1 >= 0 ? $h1 >> 16 : (($h1 & 0x7fffffff) >> 16) | 0x8000);
     return $h1;
 }
-
-
-function uuid()
-{
-    return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-        // 32 bits for "time_low"
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-
-        // 16 bits for "time_mid"
-        mt_rand(0, 0xffff),
-
-        // 16 bits for "time_hi_and_version",
-        // four most significant bits holds version number 4
-        mt_rand(0, 0x0fff) | 0x4000,
-
-        // 16 bits, 8 bits for "clk_seq_hi_res",
-        // 8 bits for "clk_seq_low",
-        // two most significant bits holds zero and one for variant DCE1.1
-        mt_rand(0, 0x3fff) | 0x8000,
-
-        // 48 bits for "node"
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-    );
-}
-
-
+// @codeCoverageIgnoreEnd
 
 /**
- * Validate PSR-6 cache key
- * @param $key
- * @return bool
+ * Parse the .splits file, returning an array of feature=>treatment pairs
+ * Sample:
+ *          #This is a comment
+ *          feature_A treatment_1
+ *          feature_B treatment_2
+ *          feature_C treatment_1
+ *
+ * @param $fileContent
+ * @return array
  */
-function isValidCacheKey($key)
+function parseSplitsFile($fileContent)
 {
-    //$key = iconv("UTF-8", "ISO-8859-1", $key);
-    if (mb_detect_encoding($key, 'UTF-8', true) !== 'UTF-8') {
-        return false;
-    }
+    $re = "/([a-zA-Z]+[-_a-zA-Z0-9]*)\\s+([a-zA-Z]+[-_a-zA-Z0-9]*)/";
 
-    if (strlen($key) > 255) {
-        return false;
-    }
+    $lines = explode(PHP_EOL, $fileContent);
 
-    //Valid characters for a key.
-    $re = "/[A-Za-z0-9_.]+/";
+    $result = [];
 
-    if (preg_match($re, $key, $matches) === 1) {
-        if (strlen($matches[0]) !== strlen($key)) {
-            return false;
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (isset($line[0]) && $line[0] != '#') {
+            $matches = [];
+            if (preg_match($re, $line, $matches)) {
+                if (isset($matches[1]) && isset($matches[2])) {
+                    $result[$matches[1]] = $matches[2];
+                }
+            }
         }
-        return true;
     }
 
-    return false;
-}
-
-/**
- * Checks if the provided value is serializable
- * @param $value
- * @return bool
- */
-function isSerializable($value)
-{
-    if (is_resource($value)) {
-        return false;
-    }
-
-    $return = true;
-    $arr = array($value);
-
-    array_walk_recursive($arr, function ($element) use (&$return) {
-        if (is_object($element) && get_class($element) == 'Closure') {
-            $return = false;
-        }
-    });
-
-    return $return;
+    return $result;
 }

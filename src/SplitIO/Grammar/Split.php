@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Grammar;
 
-use SplitIO\Common\Di;
+use SplitIO\Split as SplitApp;
 
 class Split
 {
@@ -27,7 +27,7 @@ class Split
 
     public function __construct(array $split)
     {
-        Di::getInstance()->getLogger()->debug(print_r($split, true));
+        SplitApp::logger()->debug(print_r($split, true));
 
         $this->orgId = $split['orgId'];
         $this->environment = $split['environment'];
@@ -39,7 +39,7 @@ class Split
         $this->killed = $split['killed'];
         $this->defaultTreatment = $split['defaultTreatment'];
 
-        Di::getInstance()->getLogger()->info("Constructing Split: ".$this->name);
+        SplitApp::logger()->info("Constructing Split: ".$this->name);
 
         if (isset($split['conditions']) && is_array($split['conditions'])) {
             $this->conditions = array();
@@ -49,16 +49,25 @@ class Split
         }
     }
 
+    /**
+     * @return bool
+     */
     public function killed()
     {
         return (bool) $this->killed;
     }
 
+    /**
+     * @return string
+     */
     public function getDefaultTratment()
     {
         return $this->defaultTreatment;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
@@ -72,20 +81,11 @@ class Split
         return $this->conditions;
     }
 
+    /**
+     * @return int
+     */
     public function getSeed()
     {
         return $this->seed;
-    }
-
-    public function getInvolvedUsers()
-    {
-        $users = [];
-        foreach ($this->conditions as $condition) {
-            if ($condition instanceof \SplitIO\Grammar\Condition) {
-                $users = array_merge($users, $condition->getInvolvedUsers());
-            }
-        }
-
-        return array_unique($users, SORT_STRING);
     }
 }

@@ -3,7 +3,10 @@ namespace SplitIO\Grammar\Condition\Combiner;
 
 class AndCombiner implements CombinerInterface
 {
-
+    /**
+     * @param array $factors
+     * @return bool
+     */
     public static function evaluate(array $factors)
     {
         $return = true;
@@ -11,8 +14,6 @@ class AndCombiner implements CombinerInterface
             foreach ($factors as $factor) {
                 if (is_bool($factor)) {
                     $return = $return && $factor;
-                } else {
-                    return false;
                 }
             }
         }
