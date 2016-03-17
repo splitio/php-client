@@ -95,6 +95,7 @@ Split SDK has its own cache implementation, the main and default adapter is Redi
   - **port:** The PORT value for Redis adapter
   - **pass:** The PASSWORD value for Redis adapter
   - **url:** The full URL for Redis adapter. If this url is set, host, port and pass will be ignored. The url pattern could be: **redis://user:pass@host:port**
+
 #### Provided Redis Cache Adapter - sample code
 ```php
 /** SDK options */
@@ -103,8 +104,9 @@ $options = [
             'adapter' => 'redis', 
             'options' => [
                             'host' => '172.17.0.2', 
-                            'port' => 6379]
+                            'port' => 6379
                         ]
+                ]
 ];
 
 /** Create the Split Client instance. */
@@ -115,15 +117,16 @@ This behavior is very well known in the community of developers, since it is the
  **So, is advisable configure a high memory limit or also a noeviction policy.** Please, take a look here: [Using Redis as an LRU cache](http://redis.io/topics/lru-cache)
 
 
-
 # Testing the SDK
-Within tests folder you can find different test suites in order to run the Split SDK tests. One of the most important test is the **redis-adapter** test suite.
+Within tests folder you can find different test suites in order to run the Split SDK tests. The most important test suite is: integration, which involves all test suites.
 
-### Redis adapter test suite
+### Integration test suite
 Before to run this test suite, please be sure to have a Redis instance runing:
 - In order to have a local Redis instance you can install [Docker Container Tool](https://www.docker.com) and pull the oficial Redis container running the command ```docker pull redis```.
 
-And set the correct values on the **phpunit.xml** that you should have copied from **phpunit.xml.dist** file.
+And set the correct values on the **phpunit.xml** that you should have copied from **phpunit.xml.dist** file. 
+
+For instance:
 ```xml
 <php>
     <const name="REDIS_HOST" value="172.17.0.2"/>
@@ -132,5 +135,5 @@ And set the correct values on the **phpunit.xml** that you should have copied fr
 ```
 Once that you have the configuration file with the right values, move to the main project directory and please run the command below:
 ```
-./vendor/bin/phpunit -c phpunit.xml -v --testsuite redis-adapter
+./vendor/bin/phpunit -c phpunit.xml -v --testsuite integration
 ```
