@@ -6,9 +6,9 @@
 ```
 $ composer require splitsoftware/split-sdk-php
 ```
-## Setting Split synchronization service
+## Setting backend service
 Once that  Split SDK has been installed via composer, you will find the Split background service in the **vendor/bin** folder located in your own project.
-You need run this service on background. To do it, you could add an script under Upstart system or use Supervisor (Take a look to the section: Supervisor).
+You need run this service on background. To do it, you could add an script under Upstart system or use Supervisor. Take a look to the section: **Split Synchronizer Service**.
 
 ```
 /usr/bin/env php /path/to/your/project/vendor/bin/splitio service
@@ -34,10 +34,10 @@ if ($splitSdk->isTreatment('key', 'sample_feature', 'on') {
 }
 ```
 
-#SDK Architecture
+# SDK Architecture
 ![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.arch.png?raw=true)
 
-#Split Synchronizer Service
+# Split Synchronizer Service
 This service is on charge to keep synchronized the Split server information with your local cache in order improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
 ![Split Synchronizer Service](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.service.png?raw=true)
 
@@ -118,7 +118,7 @@ This behavior is very well known in the community of developers, since it is the
 
 
 # Testing the SDK
-Within tests folder you can find different test suites in order to run the Split SDK tests. The most important test suite is: integration, which involves all test suites.
+Within tests folder you can find different test suites in order to run the Split SDK tests. The most important test suite is: **integration** that wrap the others test suites.
 
 ### Integration test suite
 Before to run this test suite, please be sure to have a Redis instance runing:
