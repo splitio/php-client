@@ -8,7 +8,8 @@ $ composer require splitsoftware/split-sdk-php
 ```
 ## Setting backend service
 Once that  Split SDK has been installed via composer, you will find the Split background service in the **vendor/bin** folder located in your own project.
-You need run this service on background. To do it, you could add an script under Upstart system or use Supervisor. Take a look to the section: **Split Synchronizer Service**.
+You need run this service on background. To do it, you could add an script under Upstart system or use Supervisor.
+Take a look to the section: [Split Synchronizer Service](#split-synchronizer-service).
 
 ```
 /usr/bin/env php /path/to/your/project/vendor/bin/splitio service
