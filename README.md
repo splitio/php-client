@@ -39,8 +39,13 @@ if ($splitSdk->isTreatment('key', 'sample_feature', 'on') {
 ![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.arch.png?raw=true)
 
 # Split Synchronizer Service
-This service is on charge to keep synchronized the Split server information with your local cache in order improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
+This service is on charge to keep synchronized the Split server information with your local cache in order to improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
 ![Split Synchronizer Service](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.service.png?raw=true)
+
+## Running the synchronizer service
+
+### Heroku workers
+
 
 # Adapters / Handlers
 
