@@ -43,10 +43,10 @@ This service is on charge to keep synchronized the Split server information with
 ![Split Synchronizer Service](https://github.com/splitio/php-client/blob/sdk-refactor/doc/img/splitio.service.png?raw=true)
 
 ### Running the synchronizer service on production
-When running **Split synchronizer service** in production it's highly recommended launching it from suporvisord. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
+When running **Split synchronizer service** in production it's highly recommended launching it from ```suporvisord```. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
 
 ### Heroku workers
-If your application is running on [Heroku](https://www.heroku.com/) you will able to run this service as a Dyno Worker. To get it, add the line below on your application **Procfile**:
+If your application is running on [Heroku](https://www.heroku.com/) you will be able to run this service as a Dyno Worker. To get it, add the line below on your application **Procfile**:
 ```
 worker: php vendor/bin/splitio.phar service
 ```
