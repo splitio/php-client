@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Grammar\Condition\Combiner;
 
-use SplitIO\Common\Enum;
+use SplitIO\Component\Common\Enum;
 
 class CombinerEnum extends Enum
 {

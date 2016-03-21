@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Grammar;
 
-use SplitIO\Common\Di;
+use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Combiner\AndCombiner;
 use SplitIO\Grammar\Condition\Combiner\CombinerEnum;
 use SplitIO\Grammar\Condition\Combiner\Factor\NotFactor;
@@ -9,33 +9,6 @@ use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Grammar\Condition\Matcher\AbstractMatcher;
 
-/*
-{
-  "matcherGroup": {
-    "combiner": "AND",
-    "matchers": [
-      {
-        "matcherType": "IN_SEGMENT",
-        "negate": false,
-        "userDefinedSegmentMatcherData": {
-          "segmentName": "demo"
-        },
-        "whitelistMatcherData": null
-      }
-    ]
-  },
-  "partitions": [
-    {
-      "treatment": "on",
-      "size": 10
-    },
-    {
-      "treatment": "control",
-      "size": 90
-    }
-  ]
-}
-*/
 class Condition
 {
     private $matcherGroup = null;
@@ -45,10 +18,13 @@ class Condition
     //On the next versions the condition will support Combiners: AND, OR, NOT
     private $combiner = null;
 
+    /**
+     * @param array $condition
+     */
     public function __construct(array $condition)
     {
-        Di::getInstance()->getLogger()->debug(print_r($condition, true));
-        Di::getInstance()->getLogger()->info("Constructing Condition");
+        SplitApp::logger()->debug(print_r($condition, true));
+        SplitApp::logger()->info("Constructing Condition");
 
         //So far the combiner is AND. On next versions the condition will support Combiners: OR
         $this->combiner = new CombinerEnum(CombinerEnum::_AND);
@@ -69,6 +45,10 @@ class Condition
         }
     }
 
+    /**
+     * @param $key
+     * @return bool
+     */
     public function match($key)
     {
         $eval = [];
@@ -91,20 +71,11 @@ class Condition
         return false;
     }
 
+    /**
+     * @return array|null
+     */
     public function getPartitions()
     {
         return $this->partitions;
-    }
-
-    public function getInvolvedUsers()
-    {
-        $users = [];
-        foreach ($this->matcherGroup as $matcher) {
-            if ($matcher instanceof \SplitIO\Grammar\Condition\Matcher\AbstractMatcher) {
-                $users = array_merge($users, $matcher->getUsers());
-            }
-        }
-
-        return $users;
     }
 }

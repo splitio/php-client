@@ -1,15 +1,7 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-/*
-{
-"matcherType": "ALL_KEYS",
-"negate": false,
-"userDefinedSegmentMatcherData": null,
-"whitelistMatcherData": null
-}
-*/
-use SplitIO\Common\Di;
+use SplitIO\Split as SplitApp;
 
 abstract class AbstractMatcher
 {
@@ -19,7 +11,7 @@ abstract class AbstractMatcher
 
     protected function __construct($type, $negate = false)
     {
-        Di::getInstance()->getLogger()->info("Constructing matcher of type: ".$type);
+        SplitApp::logger()->info("Constructing matcher of type: ".$type);
 
         $this->type = $type;
 
@@ -28,7 +20,7 @@ abstract class AbstractMatcher
 
     public function evaluate($key)
     {
-        Di::getInstance()->getLogger()->info("Evaluating on {$this->type} the KEY $key");
+        SplitApp::logger()->info("Evaluating on {$this->type} the KEY $key");
 
         return $this->evalKey($key);
     }
