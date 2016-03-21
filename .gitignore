@@ -8,3 +8,4 @@ vendor
 poc.php
 tmp/*
 phpunit.xml
+!bin/splitio.phar
