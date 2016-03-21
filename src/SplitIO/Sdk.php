@@ -14,15 +14,6 @@ class Sdk
 
     use CacheTrait;
 
-    const VERSION = '0.0.1';
-
-    const NAME = 'Split-SDK-PHP';
-
-    const SPLITIO_URL = "https://sdk.split.io";
-
-    /** @var array Arguments for creating clients */
-    private $args;
-
     /**
      * Sdk class should be used as statically
      * @codeCoverageIgnore
@@ -99,6 +90,10 @@ class Sdk
                 $_options['redis-pass'] = isset($options['options']['pass']) ? $options['options']['pass'] : null;
 
             }
+
+            $_options['redis-timeout'] = isset($options['options']['timeout']) ? $options['options']['timeout'] : null;
+
+
         } /* elseif ($cacheAdapter == 'filesystem') {
             $_options['filesystem-path'] = isset($options['options']['path']) ? $options['options']['path'] : null;
         } */
