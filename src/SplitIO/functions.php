@@ -3,7 +3,7 @@ namespace SplitIO;
 
 function version()
 {
-    return Sdk::VERSION;
+    return Version::CURRENT;
 }
 
 //HASH Functions
