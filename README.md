@@ -40,7 +40,7 @@ if ($splitSdk->isTreatment('key', 'sample_feature', 'on') {
 
 # Split Synchronizer Service
 This service is on charge to keep synchronized the Split server information with your local cache in order to improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
-![Split Synchronizer Service](https://github.com/splitio/php-client/blob/sdk-refactor/doc/img/splitio.service.png?raw=true)
+![Split Synchronizer Service](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.service.png?raw=true)
 
 ### Running the synchronizer service on production
 When running **Split synchronizer service** in production it's highly recommended launching it from ```suporvisord```. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
