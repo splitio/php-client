@@ -44,6 +44,37 @@ This service is on charge to keep synchronized the Split server information with
 
 ### Running the synchronizer service on production
 When running **Split synchronizer service** in production it's highly recommended launching it from ```suporvisord```. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
+In order to configure the synchronizer service, you could follow these steps:
+
+1- Create a folder to copy the service:
+```
+mkdir /opt/splitsoftware
+```
+
+2- Copy the service within the created folder
+```
+cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
+```
+
+3- Customize the values in the splitio.ini file with the your correct values, such as the api-key and redis information
+```
+vi /opt/splitsoftware/splitio.ini
+```
+
+4- Add the lines below in your supervisor configuration file.
+```
+[program:splitio_service]
+command=/usr/bin/env php /opt/splitsoftware/splitio.phar service --config-file="/opt/splitsoftware/splitio.ini"
+process_name = Split Synchronizer Service
+numprocs = 1
+autostart=true
+autorestart=true
+user = root
+stderr_logfile=/var/log/splitio.err.log
+stderr_logfile_maxbytes = 1MB
+stdout_logfile=/var/log/splitio.out.log
+stdout_logfile_maxbytes = 1MB
+```
 
 ### Heroku workers
 If your application is running on [Heroku](https://www.heroku.com/) you will be able to run this service as a Dyno Worker. To get it, add the line below on your application **Procfile**:
