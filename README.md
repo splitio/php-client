@@ -104,6 +104,7 @@ Split SDK has its own cache implementation, the main and default adapter is Redi
   - **host:**  The HOST value for Redis adapter 
   - **port:** The PORT value for Redis adapter
   - **pass:** The PASSWORD value for Redis adapter
+  - **timeout:** The Timeout value (in seconds) for Redis adapter
   - **url:** The full URL for Redis adapter. If this url is set, host, port and pass will be ignored. The url pattern could be: **redis://user:pass@host:port**
 
 #### Provided Redis Cache Adapter - sample code
@@ -114,7 +115,10 @@ $options = [
             'adapter' => 'redis', 
             'options' => [
                             'host' => '172.17.0.2', 
-                            'port' => 6379
+                            'port' => 6379,
+                            'pass' => 'somePassword',
+                            'timeout' => 10,
+                            'url' => 'redis://u:somePassword@172.17.0.2:6379'
                         ]
                 ]
 ];
