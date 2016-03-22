@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Common\Di;
+use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
 
 class All extends AbstractMatcher
@@ -14,8 +14,8 @@ class All extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        Di::getInstance()->getLogger()->info("Comparing: ALL_KEYS - $key");
-        Di::getInstance()->getLogger()->info("User found: $key");
+        SplitApp::logger()->info("Comparing: ALL_KEYS - $key");
+        SplitApp::logger()->info("User found: $key");
         return true;
     }
 }

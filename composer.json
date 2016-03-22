@@ -1,5 +1,5 @@
 {
-  "name": "splitio/split-sdk-php",
+  "name": "splitsoftware/split-sdk-php",
   "description": "Split SDK for PHP",
   "minimum-stability": "stable",
   "license": "proprietary",
@@ -10,20 +10,16 @@
     },
     {
       "name": "Sebastian Arrubia",
-      "email": "sarrubia@gmail.com"
+      "email": "sebastian@split.io"
     }
   ],
 
-  "version": "0.3.7",
-  "bin": ["bin/splitio"],
+  "bin": ["bin/splitio.phar"],
 
   "require": {
     "php": ">=5.4.0",
-    "ext-curl": "*",
     "ext-redis": "*",
-    "ext-mbstring": "*",
-    "psr/log": "~1.0",
-    "psr/cache": "^1.0"
+    "splitsoftware/split-php-common": "^1.0.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",

@@ -38,9 +38,10 @@ class Matcher
                     ? $matcher['whitelistMatcherData']['whitelist'] : null;
                 return new Whitelist($data, $negate);
                 break;
-
+            // @codeCoverageIgnoreStart
             default:
                 return null;
         }
+        // @codeCoverageIgnoreEnd
     }
 }

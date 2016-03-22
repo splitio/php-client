@@ -1,29 +1,27 @@
 <?php
 namespace SplitIO\Engine;
 
-use SplitIO\Common\Di;
+use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Partition;
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 class Splitter
 {
     /**
-     * @param string $userId
+     * @param string $key
      * @param long $seed
      * @param array $partitions
      * @return null|string
      */
-    public static function getTreatment($userId, $seed, $partitions)
+    public static function getTreatment($key, $seed, $partitions)
     {
-        Di::getInstance()->getLogger()->info("Splitter evaluating partitions");
+        SplitApp::logger()->info("Splitter evaluating partitions");
+        SplitApp::logger()->info("UserID: ".$key);
+        SplitApp::logger()->info("Seed: ".$seed);
+        SplitApp::logger()->info("Partitions: ".print_r($partitions, true));
 
-        Di::getInstance()->getLogger()->info("UserID: ".$userId);
-        Di::getInstance()->getLogger()->info("Seed: ".$seed);
-        Di::getInstance()->getLogger()->info("Partitions: ".print_r($partitions, true));
+        $bucket = abs(\SplitIO\hash($key, $seed) % 100) + 1;
 
-        $bucket = abs(\SplitIO\hash($userId, $seed) % 100) + 1;
-
-        Di::getInstance()->getLogger()->info("Butcket: ".$bucket);
+        SplitApp::logger()->info("Butcket: ".$bucket);
 
         $accumulatedSize = 0;
         foreach ($partitions as $partition) {

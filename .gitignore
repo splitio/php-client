@@ -1,7 +1,11 @@
 *.phar
 .idea
+*.sh
+*~
+ci
 composer.lock
 vendor
 poc.php
 tmp/*
 phpunit.xml
+!bin/splitio.phar

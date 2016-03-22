@@ -1,11 +1,9 @@
 <?php
 namespace SplitIO\Grammar\Condition\Partition;
 
-class TreatmentEnum extends \SplitIO\Common\Enum
+use SplitIO\Component\Common\Enum;
+
+class TreatmentEnum extends Enum
 {
-    const OFF = 'off';
-
-    const ON = 'on';
-
     const CONTROL = 'control';
 }

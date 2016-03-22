@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Common\Di;
+use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
 
 class Whitelist extends AbstractMatcher
@@ -18,10 +18,10 @@ class Whitelist extends AbstractMatcher
     protected function evalKey($userId)
     {
         foreach ($this->whitelistMatcherData as $whiteListedUser) {
-            Di::getInstance()->getLogger()->info("Comparing: WHITELIST - $userId - $whiteListedUser");
+            SplitApp::logger()->info("Comparing: WHITELIST - $userId - $whiteListedUser");
 
             if ($userId == $whiteListedUser) {
-                Di::getInstance()->getLogger()->info("User found: $userId");
+                SplitApp::logger()->info("User found: $userId");
 
                 return true;
             }

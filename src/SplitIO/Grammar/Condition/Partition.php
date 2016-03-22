@@ -1,12 +1,7 @@
 <?php
 namespace SplitIO\Grammar\Condition;
 
-/*
-{
-  "treatment": "on",
-  "size": 10
-}
-*/
+use SplitIO\Split as SplitApp;
 
 class Partition
 {
@@ -16,16 +11,18 @@ class Partition
 
     public function __construct(array $partition)
     {
-        \SplitIO\Common\Di::getInstance()->getLogger()->debug(print_r($partition, true));
+        SplitApp::logger()->debug(print_r($partition, true));
 
         if (isset($partition['treatment']) && !empty($partition['treatment'])) {
-            $this->treatment = $partition['treatment'];
+            $this->setTreatment($partition['treatment']);
         }
 
-        $this->size = (isset($partition['size']) &&
+        $size = (isset($partition['size']) &&
             is_int($partition['size']) &&
             $partition['size'] >= 0 &&
             $partition['size'] <= 100) ? $partition['size'] : 0;
+
+        $this->setSize($size);
     }
 
     /**
