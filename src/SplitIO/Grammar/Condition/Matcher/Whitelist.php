@@ -15,18 +15,8 @@ class Whitelist extends AbstractMatcher
         $this->whitelistMatcherData = $data;
     }
 
-    protected function evalKey($userId)
+    protected function evalKey($key)
     {
-        foreach ($this->whitelistMatcherData as $whiteListedUser) {
-            SplitApp::logger()->info("Comparing: WHITELIST - $userId - $whiteListedUser");
-
-            if ($userId == $whiteListedUser) {
-                SplitApp::logger()->info("User found: $userId");
-
-                return true;
-            }
-        }
-
-        return false;
+        return (is_array($this->whitelistMatcherData)) ? in_array($key, $this->whitelistMatcherData) : false;
     }
 }
