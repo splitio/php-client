@@ -2,7 +2,7 @@
   "name": "splitsoftware/split-sdk-php",
   "description": "Split SDK for PHP",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Split",
