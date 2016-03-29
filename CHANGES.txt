@@ -1,0 +1,2 @@
+1.1.0
+ - The feature specification is stored in shared memory in order to improve the evaluation performance.
