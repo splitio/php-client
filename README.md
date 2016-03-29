@@ -162,6 +162,35 @@ This behavior is very well known in the community of developers, since it is the
  **So, is advisable configure a high memory limit or also a noeviction policy.** Please, take a look here: [Using Redis as an LRU cache](http://redis.io/topics/lru-cache)
 
 
+## Memory
+In order to improve the evaluation performance, the Features are saved in shared memory. If your PHP instance has been compiled with **--enable-shmop** parameter, the SDK will use the **shmop** functions.
+For further information check this URL: [PHP - Shared Memory](http://php.net/manual/en/book.shmop.php)
+
+### Customizing the shared memory blocks
+```php
+/** SDK options */
+$options = [
+    'memory' => [
+                    'size' => 10000, 
+                    'mode' => 0644,
+                    'ttl'  =>  60,
+                    'seed' => 4560987,
+                ]
+];
+
+/** Create the Split Client instance. */
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
+```
+
+| Option | Description | Default value |
+| --- | --- | --- |
+| size | The size of the shared memory block you wish to create in bytes | 40000 |
+| mode | The permissions that you wish to assign to your memory segment, those are the same as permission for a file. Permissions need to be passed in octal form | 0644 |
+| ttl | The time to live for the value added into the shared memory block **in seconds** | 60 |
+| seed | An integer value used to generate the system's id for the shared memory block | 123123 |
+
+
+
 # Testing the SDK
 Within tests folder you can find different test suites in order to run the Split SDK tests. The most important test suite is: **integration** that wrap the others test suites.
 
