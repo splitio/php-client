@@ -46,7 +46,7 @@ class Client implements ClientInterface
     /**
      * @param array $options
      */
-    public function __construct($options=[])
+    public function __construct($options = [])
     {
         $this->smSize       = isset($options['memory']['size']) ? $options['memory']['size'] : 40000;
         $this->smMode       = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
