@@ -36,11 +36,11 @@ if ($splitSdk->isTreatment('key', 'sample_feature', 'on') {
 ```
 
 # SDK Architecture
-![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.arch.png?raw=true)
+![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/master/doc/img/splitio.arch.png?raw=true)
 
 # Split Synchronizer Service
 This service is on charge to keep synchronized the Split server information with your local cache in order to improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
-![Split Synchronizer Service](https://github.com/splitio/php-client/blob/develop/doc/img/splitio.service.png?raw=true)
+![Split Synchronizer Service](https://github.com/splitio/php-client/blob/master/doc/img/splitio.service.png?raw=true)
 
 ### Running the synchronizer service on production
 When running **Split synchronizer service** in production it's highly recommended launching it from ```suporvisord```. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
@@ -160,6 +160,35 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 **IMPORTANT:** When Redis is used as a cache, sometimes it is handy to let it automatically evict old data as you add new one. 
 This behavior is very well known in the community of developers, since it is the default behavior of the popular memcached system.
  **So, is advisable configure a high memory limit or also a noeviction policy.** Please, take a look here: [Using Redis as an LRU cache](http://redis.io/topics/lru-cache)
+
+
+## Memory
+In order to improve the evaluation performance, the Features are saved in shared memory. If your PHP instance has been compiled with **--enable-shmop** parameter, the SDK will use the **shmop** functions.
+For further information check this URL: [PHP - Shared Memory](http://php.net/manual/en/book.shmop.php)
+
+### Customizing the shared memory blocks
+```php
+/** SDK options */
+$options = [
+    'memory' => [
+                    'size' => 10000, 
+                    'mode' => 0644,
+                    'ttl'  =>  60,
+                    'seed' => 4560987,
+                ]
+];
+
+/** Create the Split Client instance. */
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
+```
+
+| Option | Description | Default value |
+| --- | --- | --- |
+| size | The size of the shared memory block you wish to create in bytes | 40000 |
+| mode | The permissions that you wish to assign to your memory segment, those are the same as permission for a file. Permissions need to be passed in octal form | 0644 |
+| ttl | The time to live for the value added into the shared memory block **in seconds** | 60 |
+| seed | An integer value used to generate the system's id for the shared memory block | 123123 |
+
 
 
 # Testing the SDK

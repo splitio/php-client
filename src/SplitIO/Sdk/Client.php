@@ -3,6 +3,11 @@ namespace SplitIO\Sdk;
 
 use SplitIO\Component\Cache\MetricsCache;
 use SplitIO\Component\Cache\SplitCache;
+use SplitIO\Component\Memory\Exception\OpenSharedMemoryException;
+use SplitIO\Component\Memory\Exception\ReadSharedMemoryException;
+use SplitIO\Component\Memory\Exception\SupportSharedMemoryException;
+use SplitIO\Component\Memory\Exception\WriteSharedMemoryException;
+use SplitIO\Component\Memory\SharedMemory;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
@@ -12,6 +17,101 @@ use SplitIO\Split as SplitApp;
 
 class Client implements ClientInterface
 {
+
+    /**
+     * Size of memory block in bytes
+     * @var int
+     */
+    private $smSize;
+
+    /**
+     * mode of shared memory block
+     * @var int
+     */
+    private $smMode;
+
+    /**
+     * Time to live of data in shared memory block
+     * @var int
+     */
+    private $smTtl;
+
+
+    /**
+     * Seed to generate an integer key
+     * @var int
+     */
+    private $smKeySeed;
+
+    /**
+     * @param array $options
+     */
+    public function __construct($options = [])
+    {
+        $this->smSize       = isset($options['memory']['size']) ? $options['memory']['size'] : 40000;
+        $this->smMode       = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
+        $this->smTtl        = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
+        $this->smKeySeed    = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
+    }
+
+    private function getSmKey($featureName)
+    {
+        return \SplitIO\murmurhash3_int('feature::'.$featureName, $this->smKeySeed);
+    }
+
+    /**
+     * @param $featureName
+     * @return null|\SplitIO\Grammar\Split
+     */
+    private function getCachedFeature($featureName)
+    {
+        $ikey = $this->getSmKey($featureName);
+
+        $value = null;
+
+        try {
+
+            $value = SharedMemory::read($ikey, $this->smMode, $this->smSize);
+
+            if (!($value instanceof Split)) {
+                return null;
+            }
+
+        } catch (SupportSharedMemoryException $se) {
+            SplitApp::logger()->warning($se->getMessage());
+        } catch (OpenSharedMemoryException $oe) {
+            SplitApp::logger()->error($oe->getMessage());
+        } catch (ReadSharedMemoryException $re) {
+            SplitApp::logger()->error($re->getMessage());
+        } catch (\Exception $e) {
+            SplitApp::logger()->error($e->getMessage());
+        }
+
+        return $value;
+    }
+
+    private function cacheFeature($featureName, \SplitIO\Grammar\Split $split)
+    {
+
+        $ikey = $this->getSmKey($featureName);
+
+        try {
+
+            return SharedMemory::write($ikey, $split, $this->smTtl, $this->smMode, $this->smSize);
+
+        } catch (SupportSharedMemoryException $se) {
+            SplitApp::logger()->warning($se->getMessage());
+        } catch (OpenSharedMemoryException $oe) {
+            SplitApp::logger()->error($oe->getMessage());
+        } catch (WriteSharedMemoryException $we) {
+            SplitApp::logger()->error($we->getMessage());
+        } catch (\Exception $e) {
+            SplitApp::logger()->error($e->getMessage());
+        }
+
+        return false;
+    }
+
     /**
      * Returns the treatment to show this id for this feature.
      * The set of treatments for a feature can be configured
@@ -46,14 +146,38 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName)
     {
-        $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
-        $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
 
-        if ($splitCachedItem->isHit()) {
-            SplitApp::logger()->info("$featureName is present on cache");
-            $splitRepresentation = $splitCachedItem->get();
+        $split = null;
 
-            $split = new Split(json_decode($splitRepresentation, true));
+        $do_evaluation = false;
+
+        $cachedFeature = $this->getCachedFeature($featureName);
+
+        if ($cachedFeature !== null) {
+
+            $split = $cachedFeature;
+            $do_evaluation = true;
+
+        } else {
+
+            $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
+            $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
+
+            if ($splitCachedItem->isHit()) {
+
+                SplitApp::logger()->info("$featureName is present on cache");
+                $splitRepresentation = $splitCachedItem->get();
+
+                $split = new Split(json_decode($splitRepresentation, true));
+
+                $this->cacheFeature($featureName, $split);
+
+                $do_evaluation = true;
+            }
+
+        }
+
+        if ($do_evaluation) {
 
             if ($split->killed()) {
                 return $split->getDefaultTratment();
