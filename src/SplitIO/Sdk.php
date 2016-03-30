@@ -46,7 +46,7 @@ class Sdk
         //Register Cache
         self::registerCache((isset($options['cache'])) ? $options['cache'] : []);
 
-        return new Client();
+        return new Client($options);
     }
 
 
