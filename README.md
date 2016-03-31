@@ -20,7 +20,7 @@ Take a look to the section: [Split Synchronizer Service](#split-synchronizer-ser
 ```php
 /** SDK options */
 $options = [
-    'log'   => ['adapter' => 'syslog'],
+    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
     'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
 ];
 
