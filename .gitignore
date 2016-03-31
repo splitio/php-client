@@ -10,3 +10,4 @@ release.php
 tmp/*
 phpunit.xml
 !bin/splitio.phar
+tests/coverage-report/*
