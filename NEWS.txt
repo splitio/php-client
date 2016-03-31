@@ -1,4 +1,2 @@
-1.1.1
- - No news on this version
-1.1.0
- - Adding support to use shmop functions
+1.0.1
+ - No news for this version

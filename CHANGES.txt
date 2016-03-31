@@ -1,4 +1,4 @@
-1.1.1
+1.0.1
  - The Segment evaluation has benn added into a shared memory block to improve the performance.
-1.1.0
- - The feature specification is stored in shared memory in order to improve the evaluation performance.
+ - The Feature specification is stored in shared memory in order to improve the evaluation performance.
+ - Metrics and impressions are dropped from cache after send it, despite of response status.
