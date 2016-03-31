@@ -80,7 +80,7 @@ class Client implements ClientInterface
         } catch (SupportSharedMemoryException $se) {
             SplitApp::logger()->warning($se->getMessage());
         } catch (OpenSharedMemoryException $oe) {
-            SplitApp::logger()->error($oe->getMessage());
+            SplitApp::logger()->warning($oe->getMessage());
         } catch (ReadSharedMemoryException $re) {
             SplitApp::logger()->error($re->getMessage());
         } catch (\Exception $e) {
