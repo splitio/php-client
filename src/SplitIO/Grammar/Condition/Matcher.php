@@ -2,6 +2,7 @@
 namespace SplitIO\Grammar\Condition;
 
 use SplitIO\Grammar\Condition\Matcher\All;
+use SplitIO\Grammar\Condition\Matcher\EqualTo;
 use SplitIO\Grammar\Condition\Matcher\Segment;
 use SplitIO\Grammar\Condition\Matcher\Whitelist;
 
@@ -14,10 +15,13 @@ class Matcher
 
     const WHITELIST = 'WHITELIST';
 
+    const EQUAL_TO = 'EQUAL_TO';
+
     public static function factory($matcher)
     {
         $matcherType = $matcher['matcherType'];
         $negate = (isset($matcher['negate']) && is_bool($matcher['negate'])) ? $matcher['negate'] : false;
+        $attribute = (isset($matcher['keySelector']['attribute'])) ? $matcher['keySelector']['attribute'] : null;
 
         switch ($matcherType) {
 
@@ -38,6 +42,14 @@ class Matcher
                     ? $matcher['whitelistMatcherData']['whitelist'] : null;
                 return new Whitelist($data, $negate);
                 break;
+
+            case self::EQUAL_TO:
+                $data = (isset($matcher['unaryNumericMatcherData']) &&
+                    is_array($matcher['unaryNumericMatcherData']))
+                    ? $matcher['unaryNumericMatcherData'] : null;
+                return new EqualTo($data, $negate, $attribute);
+                break;
+
             // @codeCoverageIgnoreStart
             default:
                 return null;
