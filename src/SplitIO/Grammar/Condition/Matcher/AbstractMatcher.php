@@ -9,13 +9,17 @@ abstract class AbstractMatcher
 
     protected $negate = false;
 
-    protected function __construct($type, $negate = false)
+    protected $attribute = null;
+
+    protected function __construct($type, $negate = false, $attribute = null)
     {
         SplitApp::logger()->info("Constructing matcher of type: ".$type);
 
         $this->type = $type;
 
         $this->negate = $negate;
+
+        $this->attribute = $attribute;
     }
 
     public function evaluate($key)
@@ -28,6 +32,16 @@ abstract class AbstractMatcher
     public function isNegate()
     {
         return $this->negate;
+    }
+
+    public function hasAttribute()
+    {
+        return $this->attribute !== null;
+    }
+
+    public function getAttribute()
+    {
+        return $this->attribute;
     }
 
     abstract protected function evalKey($key);
