@@ -6,6 +6,8 @@ ci
 composer.lock
 vendor
 poc.php
+release.php
 tmp/*
 phpunit.xml
 !bin/splitio.phar
+tests/coverage-report/*
