@@ -33,7 +33,7 @@ class LocalhostClient implements ClientInterface
         // @codeCoverageIgnoreStart
         //Try to load Splits file from developer home if this has not given by developer
         if ($this->splits === null) {
-            $homeFilePath = $this->getUserHome().'/.splits';
+            $homeFilePath = $this->getUserHome().'/.split';
             $this->loadSplits($homeFilePath);
         }
 
@@ -49,7 +49,8 @@ class LocalhostClient implements ClientInterface
     private function loadSplits($splitFilePath)
     {
         if (file_exists($splitFilePath)) {
-            $this->splits = parse_ini_file($splitFilePath, true);
+            $fileContent = file_get_contents($splitFilePath);
+            $this->splits = \SplitIO\parseSplitsFile($fileContent);
         }
     }
 
