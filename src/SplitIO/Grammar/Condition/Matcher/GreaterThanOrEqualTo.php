@@ -5,7 +5,7 @@ use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Split as SplitApp;
 
-class EqualTo extends AbstractMatcher
+class GreaterThanOrEqualTo extends AbstractMatcher
 {
     /**
      * @var array
@@ -14,7 +14,7 @@ class EqualTo extends AbstractMatcher
 
     public function __construct($data, $negate = false, $attribute = null)
     {
-        parent::__construct(Matcher::EQUAL_TO, $negate, $attribute);
+        parent::__construct(Matcher::GREATER_THAN_OR_EQUAL_TO, $negate, $attribute);
 
         $this->unaryNumericMatcherData = $data;
     }
@@ -29,7 +29,7 @@ class EqualTo extends AbstractMatcher
             return false;
         }
 
-        SplitApp::logger()->info('---> Evaluating EQUAL_TO');
+        SplitApp::logger()->info('---> Evaluating GREATER_THAN_OR_EQUAL_TO');
 
         if (isset($this->unaryNumericMatcherData['value'])) {
 
@@ -43,13 +43,13 @@ class EqualTo extends AbstractMatcher
 
                 if (DataTypeEnum::DATETIME == $this->unaryNumericMatcherData['dataType']) {
 
-                    $phpTimestamp   = DateTime::millisecondToPHPTimestamp($this->unaryNumericMatcherData['value']);
+                    $phpTimestamp = DateTime::millisecondToPHPTimestamp($this->unaryNumericMatcherData['value']);
 
-                    return DateTime::zeroOutTime($phpTimestamp) == DateTime::zeroOutTime($key);
+                    return DateTime::zeroOutSeconds($key) >= DateTime::zeroOutSeconds($phpTimestamp);
                 }
             }
 
-            return $key == $this->unaryNumericMatcherData['value'];
+            return $key >= $this->unaryNumericMatcherData['value'];
         }
 
         return false;
