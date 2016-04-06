@@ -52,9 +52,9 @@ class Segment extends AbstractMatcher
      * @param $data
      * @param bool|false $negate
      */
-    public function __construct($data, $negate = false)
+    public function __construct($data, $negate = false, $attribute = null)
     {
-        parent::__construct(Matcher::IN_SEGMENT, $negate);
+        parent::__construct(Matcher::IN_SEGMENT, $negate, $attribute);
 
         $this->userDefinedSegmentMatcherData = $data;
     }

@@ -8,9 +8,9 @@ class Whitelist extends AbstractMatcher
 {
     protected $whitelistMatcherData = null;
 
-    public function __construct($data, $negate = false)
+    public function __construct($data, $negate = false, $attribute = null)
     {
-        parent::__construct(Matcher::WHITELIST, $negate);
+        parent::__construct(Matcher::WHITELIST, $negate, $attribute);
 
         $this->whitelistMatcherData = $data;
     }
