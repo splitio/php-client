@@ -47,6 +47,7 @@ class Condition
 
     /**
      * @param $key
+     * @param array|null $attributes
      * @return bool
      */
     public function match($key, array $attributes = null)
