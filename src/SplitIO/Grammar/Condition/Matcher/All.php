@@ -7,9 +7,9 @@ use SplitIO\Grammar\Condition\Matcher;
 class All extends AbstractMatcher
 {
 
-    public function __construct($data, $negate = false)
+    public function __construct($negate = false, $attribute = null)
     {
-        parent::__construct(Matcher::ALL_KEYS, $negate);
+        parent::__construct(Matcher::ALL_KEYS, $negate, $attribute);
     }
 
     protected function evalKey($key)

@@ -36,7 +36,7 @@ class Matcher
         switch ($matcherType) {
 
             case self::ALL_KEYS:
-                return new All($negate);
+                return new All($negate, $attribute);
                 break;
 
             case self::IN_SEGMENT:
