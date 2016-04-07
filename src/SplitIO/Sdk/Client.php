@@ -208,6 +208,7 @@ class Client implements ClientInterface
      *
      * @param $key
      * @param $featureName
+     * @param $attributes
      * @return string
      */
     public function getTreatment($key, $featureName, array $attributes = null)
