@@ -45,6 +45,9 @@ class GreaterThanOrEqualTo extends AbstractMatcher
 
                     $phpTimestamp = DateTime::millisecondToPHPTimestamp($this->unaryNumericMatcherData['value']);
 
+                    SplitApp::logger()->info($key ." >= " . $phpTimestamp);
+                    SplitApp::logger()->info(DateTime::zeroOutSeconds($key) ." >= " . DateTime::zeroOutSeconds($phpTimestamp));
+
                     return DateTime::zeroOutSeconds($key) >= DateTime::zeroOutSeconds($phpTimestamp);
                 }
             }
