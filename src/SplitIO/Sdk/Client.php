@@ -70,13 +70,11 @@ class Client implements ClientInterface
         $value = null;
 
         try {
-
             $value = SharedMemory::read($ikey, $this->smMode, $this->smSize);
 
             if (!($value instanceof Split)) {
                 return null;
             }
-
         } catch (SupportSharedMemoryException $se) {
             SplitApp::logger()->warning($se->getMessage());
         } catch (OpenSharedMemoryException $oe) {
@@ -96,9 +94,7 @@ class Client implements ClientInterface
         $ikey = $this->getSmKey($featureName);
 
         try {
-
             return SharedMemory::write($ikey, $split, $this->smTtl, $this->smMode, $this->smSize);
-
         } catch (SupportSharedMemoryException $se) {
             SplitApp::logger()->warning($se->getMessage());
         } catch (OpenSharedMemoryException $oe) {
@@ -112,7 +108,7 @@ class Client implements ClientInterface
         return false;
     }
 
-    private function evalTreatment($key, $featureName)
+    private function evalTreatment($key, $featureName, array $attributes = null)
     {
         $split = null;
 
@@ -121,17 +117,13 @@ class Client implements ClientInterface
         $cachedFeature = $this->getCachedFeature($featureName);
 
         if ($cachedFeature !== null) {
-
             $split = $cachedFeature;
             $do_evaluation = true;
-
         } else {
-
             $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
             $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
 
             if ($splitCachedItem->isHit()) {
-
                 SplitApp::logger()->info("$featureName is present on cache");
                 $splitRepresentation = $splitCachedItem->get();
 
@@ -141,17 +133,15 @@ class Client implements ClientInterface
 
                 $do_evaluation = true;
             }
-
         }
 
         if ($do_evaluation) {
-
             if ($split->killed()) {
                 return $split->getDefaultTratment();
             }
 
             $timeStart = Metrics::startMeasuringLatency();
-            $treatment = Engine::getTreatment($key, $split);
+            $treatment = Engine::getTreatment($key, $split, $attributes);
             $latency = Metrics::calculateLatency($timeStart);
 
             //If the given key doesn't match on any condition, default treatment is returned
@@ -208,14 +198,13 @@ class Client implements ClientInterface
      *
      * @param $key
      * @param $featureName
+     * @param $attributes
      * @return string
      */
-    public function getTreatment($key, $featureName)
+    public function getTreatment($key, $featureName, array $attributes = null)
     {
         try {
-
-            return $this->evalTreatment($key, $featureName);
-
+            return $this->evalTreatment($key, $featureName, $attributes);
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatment method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
@@ -243,7 +232,6 @@ class Client implements ClientInterface
     public function isTreatment($key, $featureName, $treatment)
     {
         try {
-
             $calculatedTreatment = $this->getTreatment($key, $featureName);
 
             if ($calculatedTreatment !== TreatmentEnum::CONTROL) {
@@ -251,7 +239,6 @@ class Client implements ClientInterface
                     return true;
                 }
             }
-
         } catch (\Exception $e) {
             // @codeCoverageIgnoreStart
             SplitApp::logger()->critical("SDK Client on isTreatment is critical");
