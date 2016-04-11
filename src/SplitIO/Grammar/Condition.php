@@ -47,16 +47,34 @@ class Condition
 
     /**
      * @param $key
+     * @param array|null $attributes
      * @return bool
      */
-    public function match($key)
+    public function match($key, array $attributes = null)
     {
         $eval = [];
         foreach ($this->matcherGroup as $matcher) {
             if ($matcher instanceof AbstractMatcher) {
-                $eval[] = ($matcher->isNegate())
-                    ? NotFactor::evaluate($matcher->evaluate($key))
-                    : $matcher->evaluate($key);
+                $_evaluation = false;
+                //Check if Matcher has attributes
+                if (!$matcher->hasAttribute()) {
+                    // scenario 1: no attr in matcher
+                    // e.g. if user is in segment all then split 100:on
+                    $_evaluation = $matcher->evaluate($key);
+                } else {
+                    // scenario 2: attribute provided but no attribute value provided. Matcher does not match
+                    // e.g. if user.age is >= 10 then split 100:on
+                    if ($attributes === null || !isset($attributes[$matcher->getAttribute()])) {
+                        $_evaluation = false;
+                    } else {
+                        // instead of using the user id, we use the attribute value for evaluation
+                        $attrValue = $attributes[$matcher->getAttribute()];
+                        $_evaluation = $matcher->evaluate($attrValue);
+                    }
+                }
+
+                //If matcher is Negate or not
+                $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
             }
         }
 

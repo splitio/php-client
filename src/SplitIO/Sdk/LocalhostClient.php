@@ -86,7 +86,7 @@ class LocalhostClient implements ClientInterface
      * @param $featureName
      * @return string
      */
-    public function getTreatment($key, $featureName)
+    public function getTreatment($key, $featureName, array $attributes = null)
     {
         if (isset($this->splits[$featureName])) {
             return $this->splits[$featureName];
