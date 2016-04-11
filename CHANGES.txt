@@ -1,3 +1,5 @@
+2.0.0
+ - Added attributes support
 1.0.1
  - The Segment evaluation has benn added into a shared memory block to improve the performance.
  - The Feature specification is stored in shared memory in order to improve the evaluation performance.
