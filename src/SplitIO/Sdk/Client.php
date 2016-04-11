@@ -112,7 +112,7 @@ class Client implements ClientInterface
         return false;
     }
 
-    private function evalTreatment($key, $featureName)
+    private function evalTreatment($key, $featureName, array $attributes = null)
     {
         $split = null;
 
@@ -151,7 +151,7 @@ class Client implements ClientInterface
             }
 
             $timeStart = Metrics::startMeasuringLatency();
-            $treatment = Engine::getTreatment($key, $split);
+            $treatment = Engine::getTreatment($key, $split, $attributes);
             $latency = Metrics::calculateLatency($timeStart);
 
             //If the given key doesn't match on any condition, default treatment is returned
@@ -208,13 +208,14 @@ class Client implements ClientInterface
      *
      * @param $key
      * @param $featureName
+     * @param $attributes
      * @return string
      */
-    public function getTreatment($key, $featureName)
+    public function getTreatment($key, $featureName, array $attributes = null)
     {
         try {
 
-            return $this->evalTreatment($key, $featureName);
+            return $this->evalTreatment($key, $featureName, $attributes);
 
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatment method is throwing exceptions');

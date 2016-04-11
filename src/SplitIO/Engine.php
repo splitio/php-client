@@ -12,12 +12,12 @@ class Engine
      * @param \SplitIO\Grammar\Split $split
      * @return null|string
      */
-    public static function getTreatment($key, SplitGrammar $split)
+    public static function getTreatment($key, SplitGrammar $split, array $attributes = null)
     {
         $conditions = $split->getConditions();
 
         foreach ($conditions as $condition) {
-            if ($condition->match($key)) {
+            if ($condition->match($key, $attributes)) {
                 return Splitter::getTreatment($key, $split->getSeed(), $condition->getPartitions());
             }
         }

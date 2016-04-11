@@ -34,6 +34,35 @@ if ($splitSdk->isTreatment('key', 'sample_feature', 'on') {
     //Code for disabled feature
 }
 ```
+### Attributes support
+```php
+/** SDK options */
+$options = [
+    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
+    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
+];
+
+/** Create the Split Client instance. */
+$splitSdk = \SplitIO\Sdk::factory('API_KEY', $options);
+
+$attributes = ['age' => 20]
+
+/** Checking if the attribute 'age' belong to treatment 'yound' in sample_feature. */
+$treatment = $splitSdk->getTreatment('key', 'sample_feature', $attributes)
+
+if ($tratment == 'young') {
+    //Code for young feature
+} else {
+    //Code for old feature
+}
+```
+**NOTE:** For date and time values the attribute should be set as Unix Timestamp in UTC. The sample below shows how to do it on PHP using the [DateTime](http://php.net/manual/en/class.datetime.php) and [DateTimeZone](http://php.net/manual/en/class.datetimezone.php) classes:
+```php
+
+$attributes = ['suscription' => (new \DateTime("2016/03/17 07:54PM", new \DateTimeZone("UTC")))->getTimestamp()]
+
+```
+
 
 # SDK Architecture
 ![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/master/doc/img/splitio.arch.png?raw=true)
