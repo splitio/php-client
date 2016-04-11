@@ -34,7 +34,6 @@ class Matcher
         $attribute = (isset($matcher['keySelector']['attribute'])) ? $matcher['keySelector']['attribute'] : null;
 
         switch ($matcherType) {
-
             case self::ALL_KEYS:
                 return new All($negate, $attribute);
                 break;

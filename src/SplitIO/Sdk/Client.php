@@ -136,7 +136,6 @@ class Client implements ClientInterface
         }
 
         if ($do_evaluation) {
-
             if ($split->killed()) {
                 return $split->getDefaultTratment();
             }

@@ -56,16 +56,12 @@ class Sdk
     private static function registerLogger(array $options)
     {
         if (isset($options['psr3-instance'])) {
-
             self::addLogger(null, null, $options['psr3-instance']);
-
         } else {
-
             $adapter = (isset($options['adapter'])) ? $options['adapter'] : null;
             $level = (isset($options['level'])) ? $options['level'] : null;
 
             self::addLogger($adapter, $level);
-
         }
     }
 
@@ -76,24 +72,18 @@ class Sdk
 
         if ($cacheAdapter == 'redis') {
             if (isset($options['options']['url']) && !empty($options['options']['url'])) {
-
                 $uri = new Uri($options['options']['url']);
 
                 $_options['redis-host'] = $uri->getHost();
                 $_options['redis-port'] = $uri->getPort();
                 $_options['redis-pass'] = $uri->getPass();
-
             } else {
-
                 $_options['redis-host'] = isset($options['options']['host']) ? $options['options']['host'] : null;
                 $_options['redis-port'] = isset($options['options']['port']) ? $options['options']['port'] : null;
                 $_options['redis-pass'] = isset($options['options']['pass']) ? $options['options']['pass'] : null;
-
             }
 
             $_options['redis-timeout'] = isset($options['options']['timeout']) ? $options['options']['timeout'] : null;
-
-
         } /* elseif ($cacheAdapter == 'filesystem') {
             $_options['filesystem-path'] = isset($options['options']['path']) ? $options['options']['path'] : null;
         } */

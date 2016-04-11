@@ -72,7 +72,6 @@ class Segment extends AbstractMatcher
         if ($segmentEvaluation !== null && is_bool($segmentEvaluation)) {
             return $segmentEvaluation;
         } else {
-
             $segmentCache = new SegmentCache();
 
             if ($segmentCache->isInSegment($segmentName, $key)) {
@@ -107,13 +106,11 @@ class Segment extends AbstractMatcher
         $value = null;
 
         try {
-
             $value = SharedMemory::read($ikey, $this->smMode, $this->smSize);
 
             if (!is_bool($value)) {
                 return null;
             }
-
         } catch (SupportSharedMemoryException $se) {
             SplitApp::logger()->warning($se->getMessage());
         } catch (OpenSharedMemoryException $oe) {
@@ -138,9 +135,7 @@ class Segment extends AbstractMatcher
         $ikey = $this->getSmKey($segmentName, $key);
 
         try {
-
             return SharedMemory::write($ikey, $value, $this->smTtl, $this->smMode, $this->smSize);
-
         } catch (SupportSharedMemoryException $se) {
             SplitApp::logger()->warning($se->getMessage());
         } catch (OpenSharedMemoryException $oe) {

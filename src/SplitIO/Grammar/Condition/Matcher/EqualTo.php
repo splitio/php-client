@@ -32,7 +32,6 @@ class EqualTo extends AbstractMatcher
         SplitApp::logger()->info('---> Evaluating EQUAL_TO');
 
         if (isset($this->unaryNumericMatcherData['value'])) {
-
             $logMsg = '---> KEY: '.$key;
             $logMsg .= PHP_EOL.'---> VAL: '.$this->unaryNumericMatcherData['value'];
             $logMsg .= PHP_EOL.'---> ATR: '.$this->attribute;
@@ -40,11 +39,8 @@ class EqualTo extends AbstractMatcher
 
             if (isset($this->unaryNumericMatcherData['dataType'])
                 && DataTypeEnum::isValid($this->unaryNumericMatcherData['dataType']) ) {
-
                 if (DataTypeEnum::DATETIME == $this->unaryNumericMatcherData['dataType']) {
-
                     $phpTimestamp   = DateTime::millisecondToPHPTimestamp($this->unaryNumericMatcherData['value']);
-
                     return DateTime::zeroOutTime($phpTimestamp) == DateTime::zeroOutTime($key);
                 }
             }
