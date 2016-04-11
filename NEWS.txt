@@ -1,2 +1,4 @@
+2.0.0
+ - This version support attributes evaluation via getTreatment method
 1.0.1
  - No news for this version
