@@ -45,9 +45,6 @@ class LessThanOrEqualTo extends AbstractMatcher
 
                     $phpTimestamp = DateTime::millisecondToPHPTimestamp($this->unaryNumericMatcherData['value']);
 
-                    SplitApp::logger()->info("---> EVAL: ".DateTime::zeroOutSeconds($key)." <= ".DateTime::zeroOutSeconds($phpTimestamp));
-
-
                     return DateTime::zeroOutSeconds($key) <= DateTime::zeroOutSeconds($phpTimestamp);
                 }
             }
