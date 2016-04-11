@@ -45,12 +45,13 @@ $options = [
 /** Create the Split Client instance. */
 $splitSdk = \SplitIO\Sdk::factory('API_KEY', $options);
 
+/** Set the attributes values as array */
 $attributes = ['age' => 20]
 
 /** Checking if the attribute 'age' belong to treatment 'yound' in sample_feature. */
 $treatment = $splitSdk->getTreatment('key', 'sample_feature', $attributes)
 
-if ($tratment == 'young') {
+if ($treatment == 'young') {
     //Code for young feature
 } else {
     //Code for old feature
