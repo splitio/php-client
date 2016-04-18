@@ -84,6 +84,9 @@ class Sdk
             }
 
             $_options['redis-timeout'] = isset($options['options']['timeout']) ? $options['options']['timeout'] : null;
+        } elseif ($cacheAdapter == 'predis') {
+            $_options['predis-options'] = isset($options['options']) ? $options['options'] : null;
+            $_options['predis-parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
         } /* elseif ($cacheAdapter == 'filesystem') {
             $_options['filesystem-path'] = isset($options['options']['path']) ? $options['options']['path'] : null;
         } */

@@ -329,7 +329,7 @@
                                 "betweenMatcherData": {
                                     "dataType": "DATETIME",
                                     "start": 1458240947021,
-                                    "end": 1458246884077
+                                    "end": 1459452812642
                                 }
                             }
                         ]
@@ -348,7 +348,7 @@
             "environment": null,
             "trafficTypeId": null,
             "trafficTypeName": null,
-            "name": "user_attr_btw_number_10_and_20",
+            "name": "user_attr_btw_number_negative_10_and_20",
             "seed": 1278563110,
             "status": "ACTIVE",
             "killed": false,
@@ -370,7 +370,7 @@
                                 "unaryNumericMatcherData": null,
                                 "betweenMatcherData": {
                                     "dataType": "NUMBER",
-                                    "start": 10,
+                                    "start": -10,
                                     "end": 20
                                 }
                             }
@@ -390,7 +390,7 @@
             "environment": null,
             "trafficTypeId": null,
             "trafficTypeName": null,
-            "name": "user_attr_btw_10_and_20",
+            "name": "user_attr_btw_negative_10_and_20",
             "seed": 315283984,
             "status": "ACTIVE",
             "killed": false,
@@ -412,7 +412,7 @@
                                 "unaryNumericMatcherData": null,
                                 "betweenMatcherData": {
                                     "dataType": null,
-                                    "start": 10,
+                                    "start": -10,
                                     "end": 20
                                 }
                             }
@@ -536,6 +536,88 @@
                                 "unaryNumericMatcherData": {
                                     "dataType": null,
                                     "value": 10
+                                },
+                                "betweenMatcherData": null
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 100
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "user_attr_lte_negative_number_10",
+            "seed": -1713019736,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "user",
+                                    "attribute": "attr"
+                                },
+                                "matcherType": "LESS_THAN_OR_EQUAL_TO",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "unaryNumericMatcherData": {
+                                    "dataType": "NUMBER",
+                                    "value": -10
+                                },
+                                "betweenMatcherData": null
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 100
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "user_attr_lte_negative_10",
+            "seed": 1478174197,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "user",
+                                    "attribute": "attr"
+                                },
+                                "matcherType": "LESS_THAN_OR_EQUAL_TO",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "unaryNumericMatcherData": {
+                                    "dataType": null,
+                                    "value": -10
                                 },
                                 "betweenMatcherData": null
                             }
