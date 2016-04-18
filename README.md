@@ -7,13 +7,14 @@
 $ composer require splitsoftware/split-sdk-php
 ```
 ## Setting backend service
-Once that  Split SDK has been installed via composer, you will find the Split background service in the **vendor/bin** folder located in your own project.
+Once that  Split SDK has been installed via composer, you will find the Split synchronizer service located within **vendor/splitsoftware/split-sdk-php/bin** folder located in your own project.
 You need run this service on background. To do it, you could add an script under Upstart system or use Supervisor.
 Take a look to the section: [Split Synchronizer Service](#split-synchronizer-service).
 
 ```
-/usr/bin/env php /path/to/your/project/vendor/bin/splitio service
+/usr/bin/env php /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio service --config-file='/path/to/splitio.ini'
 ```
+**NOTE:** By default the ```splitio.ini``` is loaded from the same directory in which the service ```splitio.phar``` is located.
 
 
 ## Write your code!
@@ -86,8 +87,9 @@ mkdir /opt/splitsoftware
 cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
 ```
 
-3- Customize the values in the splitio.ini file with the your correct values, such as the api-key and redis information
+3- Make a copy of ```splitio.dist.ini``` file as ```splitio.ini``` and customize the values in the splitio.ini file with the your correct values, such as the api-key and redis information
 ```
+cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini 
 vi /opt/splitsoftware/splitio.ini
 ```
 
@@ -95,7 +97,7 @@ vi /opt/splitsoftware/splitio.ini
 ```
 [program:splitio_service]
 command=/usr/bin/env php /opt/splitsoftware/splitio.phar service --config-file="/opt/splitsoftware/splitio.ini"
-process_name = Split Synchronizer Service
+process_name = SplitIO
 numprocs = 1
 autostart=true
 autorestart=true
@@ -107,9 +109,21 @@ stdout_logfile_maxbytes = 1MB
 ```
 
 ### Heroku workers
-If your application is running on [Heroku](https://www.heroku.com/) you will be able to run this service as a Dyno Worker. To get it, add the line below on your application **Procfile**:
+If your application is running on [Heroku](https://www.heroku.com/) you will be able to run this service as a Dyno Worker. To get it, follow the steps below located on your project root directory:
+
+1- Create a folder to copy the service:
 ```
-worker: php vendor/bin/splitio.phar service
+mkdir service
+```
+
+2- Copy the service within the created folder
+```
+cp -R ./vendor/splitsoftware/split-sdk-php/bin/* service
+```
+
+3- Add the line below on your application **Procfile**:
+```
+worker: php service/splitio.phar service
 ```
 
 # Adapters / Handlers
@@ -160,7 +174,7 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 
 
 ## Cache
-Split SDK has its own cache implementation, the main and default adapter is Redis.
+Split SDK has its own cache implementation, the main and default adapter is Redis. However the popular [PRedis](https://github.com/nrk/predis) library is supported as well.
 #### Redis Cache Adapter - Configuration Options
   - **host:**  The HOST value for Redis adapter 
   - **port:** The PORT value for Redis adapter
@@ -190,6 +204,26 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 **IMPORTANT:** When Redis is used as a cache, sometimes it is handy to let it automatically evict old data as you add new one. 
 This behavior is very well known in the community of developers, since it is the default behavior of the popular memcached system.
  **So, is advisable configure a high memory limit or also a noeviction policy.** Please, take a look here: [Using Redis as an LRU cache](http://redis.io/topics/lru-cache)
+
+#### PRedis Cache Adapter
+The PRedis library is supported as adapter for Redis Cache connections. For further information about how to configure the ```predis``` client, please take a look on [PRedis official docs](https://github.com/nrk/predis)
+
+#### Provided PRedis Cache Adapter - sample code
+```php
+/** PRedis options */
+//The options below, will be loaded as: $client = new Predis\Client($parameters, $options);
+
+$parameters = ['scheme' => 'redis', 'host' => '172.17.0.2', 'port' => 6379, 'timeout' => 881];
+$options = ['profile' => '2.8', 'prefix' => 'sample:'];
+
+/** SDK options */
+$sdkOptions = [
+    'cache' => ['adapter' => 'predis', 'parameters' => $parameters, 'options' => $options]
+];
+
+/** Create the Split Client instance. */
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $sdkOptions);
+```
 
 
 ## Memory
