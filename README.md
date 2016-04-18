@@ -221,6 +221,7 @@ This behavior is very well known in the community of developers, since it is the
 
 #### PRedis Cache Adapter
 The PRedis library is supported as adapter for Redis Cache connections. For further information about how to configure the ```predis``` client, please take a look on [PRedis official docs](https://github.com/nrk/predis)
+
 For ```predis``` installation you can use ```composer``` running the command ```composer require predis/predis```
 
 #### Provided PRedis Cache Adapter - sample code
