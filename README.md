@@ -206,7 +206,7 @@ This behavior is very well known in the community of developers, since it is the
  **So, is advisable configure a high memory limit or also a noeviction policy.** Please, take a look here: [Using Redis as an LRU cache](http://redis.io/topics/lru-cache)
 
 #### PRedis Cache Adapter
-The PRedis library has been supported as adapter for Redis Cache connections. For further information about how to configure the ```predis``` class, please take a look on [PRedis official docs](https://github.com/nrk/predis)
+The PRedis library is supported as adapter for Redis Cache connections. For further information about how to configure the ```predis``` client, please take a look on [PRedis official docs](https://github.com/nrk/predis)
 
 #### Provided PRedis Cache Adapter - sample code
 ```php
