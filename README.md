@@ -21,7 +21,7 @@ cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini
  
 vi /opt/splitsoftware/splitio.ini
 
-php /opt/splitsoftware/splitio service --config-file='/opt/splitsoftware/splitio.ini'
+php /opt/splitsoftware/splitio.phar service --config-file='/opt/splitsoftware/splitio.ini'
 ```
 **IMPORTANT:** By default the ```splitio.ini``` is loaded from the same directory in which the service ```splitio.phar``` is located, so you can avoid adding the ```--config-file``` option.
 
