@@ -11,8 +11,7 @@ Once that  Split SDK has been installed via composer, you will find the Split sy
 You need run this service on background. To do it, you could add an script under Upstart system or use Supervisor.
 Take a look to the section: [Split Synchronizer Service](#split-synchronizer-service).
 
-**Basic installation**
-For a basic installation follow the steps below:
+**Basic installation:** For a basic installation follow the steps below:
 ```
 mkdir /opt/splitsoftware
 
