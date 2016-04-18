@@ -13,15 +13,20 @@ Take a look to the section: [Split Synchronizer Service](#split-synchronizer-ser
 
 **Basic installation:** For a basic installation follow the steps below:
 ```
-mkdir /opt/splitsoftware
+1- Create a folder to copy the background service script. 
+#> mkdir /opt/splitsoftware
 
-cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
+2- Copy the binary script and the config file into created folder. 
+#> cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
 
-cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini
- 
-vi /opt/splitsoftware/splitio.ini
+3- Copy the distributed config file as environment file
+#> cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini
 
-php /opt/splitsoftware/splitio.phar service --config-file='/opt/splitsoftware/splitio.ini'
+4- Add your custom configuration
+#> vi /opt/splitsoftware/splitio.ini
+
+5- Run the service!
+#> php /opt/splitsoftware/splitio.phar service --config-file='/opt/splitsoftware/splitio.ini'
 ```
 **IMPORTANT:** By default the ```splitio.ini``` is loaded from the same directory in which the service ```splitio.phar``` is located, so you can avoid adding the ```--config-file``` option.
 
