@@ -1,3 +1,5 @@
+2.1.0
+ - Added PRedis Adapter support
 2.0.0
  - Added attributes support
 1.0.1
