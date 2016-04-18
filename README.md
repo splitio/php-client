@@ -11,10 +11,24 @@ Once that  Split SDK has been installed via composer, you will find the Split sy
 You need run this service on background. To do it, you could add an script under Upstart system or use Supervisor.
 Take a look to the section: [Split Synchronizer Service](#split-synchronizer-service).
 
+**Basic installation:** For a basic installation follow the steps below:
 ```
-/usr/bin/env php /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio service --config-file='/path/to/splitio.ini'
+1- Create a folder to copy the background service script. 
+#> mkdir /opt/splitsoftware
+
+2- Copy the binary script and the config file into created folder. 
+#> cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
+
+3- Copy the distributed config file as environment file
+#> cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini
+
+4- Add your custom configuration
+#> vi /opt/splitsoftware/splitio.ini
+
+5- Run the service!
+#> php /opt/splitsoftware/splitio.phar service --config-file='/opt/splitsoftware/splitio.ini'
 ```
-**NOTE:** By default the ```splitio.ini``` is loaded from the same directory in which the service ```splitio.phar``` is located.
+**IMPORTANT:** By default the ```splitio.ini``` is loaded from the same directory in which the service ```splitio.phar``` is located, so you can avoid adding the ```--config-file``` option.
 
 
 ## Write your code!
@@ -26,10 +40,10 @@ $options = [
 ];
 
 /** Create the Split Client instance. */
-$splitSdk = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 
 /** Checking if the key belong to treatment 'on' in sample_feature. */
-if ($splitSdk->isTreatment('key', 'sample_feature', 'on') {
+if ($splitClient->isTreatment('key', 'sample_feature', 'on')) {
     //Code for enabled feature
 } else {
     //Code for disabled feature
@@ -44,13 +58,13 @@ $options = [
 ];
 
 /** Create the Split Client instance. */
-$splitSdk = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 
 /** Set the attributes values as array */
 $attributes = ['age' => 20];
 
 /** Checking if the attribute 'age' belong to treatment 'yound' in sample_feature. */
-$treatment = $splitSdk->getTreatment('key', 'sample_feature', $attributes);
+$treatment = $splitClient->getTreatment('key', 'sample_feature', $attributes);
 
 if ($treatment == 'young') {
     //Code for young feature
@@ -207,6 +221,8 @@ This behavior is very well known in the community of developers, since it is the
 
 #### PRedis Cache Adapter
 The PRedis library is supported as adapter for Redis Cache connections. For further information about how to configure the ```predis``` client, please take a look on [PRedis official docs](https://github.com/nrk/predis)
+
+For ```predis``` installation you can use ```composer``` running the command ```composer require predis/predis```
 
 #### Provided PRedis Cache Adapter - sample code
 ```php
