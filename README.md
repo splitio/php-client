@@ -217,12 +217,12 @@ $parameters = ['scheme' => 'redis', 'host' => '172.17.0.2', 'port' => 6379, 'tim
 $options = ['profile' => '2.8', 'prefix' => 'sample:'];
 
 /** SDK options */
-$options = [
+$sdkOptions = [
     'cache' => ['adapter' => 'predis', 'parameters' => $parameters, 'options' => $options]
 ];
 
 /** Create the Split Client instance. */
-$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitClient = \SplitIO\Sdk::factory('API_KEY', $sdkOptions);
 ```
 
 
