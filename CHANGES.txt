@@ -1,3 +1,6 @@
+2.1.1
+ - Added Events endpoint support in binary splitio.phar
+ - Fixed Standard messages in binary splitio.phar
 2.1.0
  - Added PRedis Adapter support
 2.0.0
