@@ -165,6 +165,9 @@ class Client implements ClientInterface
         }
 
         TreatmentImpression::log($key, $featureName, TreatmentEnum::CONTROL);
+
+        SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");
+
         return TreatmentEnum::CONTROL;
     }
 
