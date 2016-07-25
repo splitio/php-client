@@ -6,15 +6,20 @@ use SplitIO\Component\Http\Uri;
 use SplitIO\Component\Initialization\LoggerTrait;
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Service\Client\SplitIOClient;
+use SplitIO\Service\Console\ConsoleApp;
 use SplitIO\Service\Console\OptionsEnum;
 use SplitIO\Component\Utils as SplitIOUtils;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
-class Command extends \Symfony\Component\Console\Command\Command
+abstract class Command
 {
 
+    private $name;
+
+    private $description;
+
     private $config = array();
+
+    private $application;
 
     /**
      * @var null|OutputInterface
@@ -26,10 +31,57 @@ class Command extends \Symfony\Component\Console\Command\Command
      */
     private $input = null;
 
+    public function __construct()
+    {
+        $this->configure();
+    }
+
+
+    public function run(ConsoleApp $application)
+    {
+        $this->registerApplication($application);
+        $this->initialize();
+        $this->execute();
+    }
+
+    public function registerApplication(ConsoleApp $application)
+    {
+        $this->application = $application;
+    }
+
+    protected function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    protected function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @return ConsoleApp
+     */
+    protected function getApplication()
+    {
+        return $this->application;
+    }
+
     private function parseConfiguration()
     {
-
-        $customConfigFile = $this->input->getOption(OptionsEnum::CONFIG_FILE);
+        $customConfigFile = $this->getApplication()->getInputConfigFile();
 
         $iniOptions = $this->getApplication()->readConfig($customConfigFile);
 
@@ -38,16 +90,7 @@ class Command extends \Symfony\Component\Console\Command\Command
             exit(1);
         }
 
-        $cliOptions = $this->input->getOptions();
-        $validCliOptions = array();
-
-        foreach ($cliOptions as $k => $v) {
-            if ($v !== null) {
-                $validCliOptions[$k] = $v;
-            }
-        }
-
-        $this->config = array_merge($iniOptions, $validCliOptions);
+        $this->config = $iniOptions;
     }
 
     /**
@@ -124,14 +167,6 @@ class Command extends \Symfony\Component\Console\Command\Command
     }
 
     /**
-     * @return \SplitIO\Service\Console\ConsoleApp
-     */
-    public function getApplication()
-    {
-        return parent::getApplication();
-    }
-
-    /**
      * @return \Psr\Log\LoggerInterface
      */
     public function logger()
@@ -156,12 +191,14 @@ class Command extends \Symfony\Component\Console\Command\Command
         return (isset($this->config[$key])) ? $this->config[$key] : null;
     }
 
+
+
     /**
      * @param $message
      */
     public function error($message)
     {
-        $this->output->writeln("<error>$message</error>");
+        $this->getApplication()->writeln("<error>$message</error>");
     }
 
     /**
@@ -169,7 +206,7 @@ class Command extends \Symfony\Component\Console\Command\Command
      */
     public function info($message)
     {
-        $this->output->writeln("<info>$message</info>");
+        $this->getApplication()->writeln("<info>$message</info>");
     }
 
     /**
@@ -177,18 +214,11 @@ class Command extends \Symfony\Component\Console\Command\Command
      */
     public function comment($message)
     {
-        $this->output->writeln("<comment>$message</comment>");
+        $this->getApplication()->writeln("<comment>$message</comment>");
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
-    public function initialize(InputInterface $input, OutputInterface $output)
+    public function initialize()
     {
-        $this->input  = $input;
-        $this->output = $output;
-
         //Parse ini file and merge with command options.
         $this->parseConfiguration();
 
@@ -203,12 +233,19 @@ class Command extends \Symfony\Component\Console\Command\Command
 
         //Register the SplitIO Client
         $this->registerSplitHttpClient();
-
-        //Call _initialize method on child command
-        if (method_exists($this, 'init')) {
-            $this->init($input, $output);
-        }
     }
 
+
+    /**
+     * Configure the name and the description of the command
+     * @return mixed
+     */
+    protected abstract function configure();
+
+    /**
+     * Anstract method called to execute the command
+     * @return mixed
+     */
+    public abstract function execute();
 
 }

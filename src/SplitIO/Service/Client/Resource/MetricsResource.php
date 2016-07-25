@@ -41,7 +41,7 @@ class MetricsResource extends EventTypeResource
         //Sending Metrics dataset.
         $response = $this->post($this->servicePath, $dataset);
 
-        if (ResponseHelper::isSuccessful($response->getStatusCode())) {
+        if ($response->isSuccessful()) {
             Di::getLogger()->info(count($dataset) . " Metrics sent successfuly");
         } else {
             Di::getLogger()->error("Metrics have not been sent successfully");

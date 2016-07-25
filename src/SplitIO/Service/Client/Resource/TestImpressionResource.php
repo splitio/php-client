@@ -38,7 +38,7 @@ class TestImpressionResource extends EventTypeResource
         //Sending Impressions dataset.
         $response = $this->post($this->servicePath, $dataset);
 
-        if (ResponseHelper::isSuccessful($response->getStatusCode())) {
+        if ($response->isSuccessful()) {
             Di::getLogger()->info(count($dataset)." Impressions sent successfuly");
             $this->dropDataset($dataset);
             return true;

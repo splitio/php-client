@@ -30,7 +30,7 @@ class SplitResource extends SdkTypeResource
 
         $response = $this->get($servicePath);
 
-        if (ResponseHelper::isSuccessful($response->getStatusCode())) {
+        if ($response->isSuccessful()) {
             $splitChanges = json_decode($response->getBody(), true);
 
             $splits = (isset($splitChanges['splits'])) ? $splitChanges['splits'] : false;

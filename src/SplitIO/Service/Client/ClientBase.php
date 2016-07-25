@@ -1,10 +1,10 @@
 <?php
 namespace SplitIO\Service\Client;
 
-use GuzzleHttp\Client;
+//use GuzzleHttp\Client;
 use SplitIO\Component\Common\Di;
 use SplitIO\Component\Http\MethodEnum;
-use GuzzleHttp\Psr7\Request;
+//use GuzzleHttp\Psr7\Request;
 use SplitIO\Service\Client\Resource\ResourceTypeEnum;
 
 abstract class ClientBase
@@ -14,7 +14,7 @@ abstract class ClientBase
      */
     protected $config = null;
 
-    protected $httpClient = null;
+    protected $httpTransport = null;
 
     protected $resourceType = null;
 
@@ -22,7 +22,7 @@ abstract class ClientBase
     {
         $this->config = Di::get(Di::KEY_SPLIT_CLIENT_CONFIG);
 
-        $this->httpClient = new Client();
+        $this->httpTransport = array('transport' => 'Requests_Transport_fsockopen');
 
         $this->resourceType = $this->getResourceType();
     }
@@ -48,35 +48,38 @@ abstract class ClientBase
 
     /**
      * @param $servicePath
-     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @return Response
      */
     protected function get($servicePath)
     {
-        $data = array(
-            'headers' => $this->getCommonHeaders()
-        );
-
         $uri = $this->getBaseUrl() . $servicePath;
 
-        return $this->httpClient->request('GET',$uri, $data);
+        $requestResponse = \Requests::get($uri, $this->getCommonHeaders(), $this->httpTransport);
+
+        return $this->decorateResponse($requestResponse);
     }
 
     /**
      * @param $servicePath
      * @param $body
-     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @return Response
      */
     protected function post($servicePath, $body)
     {
-
-        $data = array(
-            'headers' => $this->getCommonHeaders(),
-            'json' => $body
-        );
-
         $uri = $this->getBaseUrl() . $servicePath;
 
-        return $this->httpClient->request('POST',$uri, $data);
+        $requestResponse = \Requests::post($uri, $this->getCommonHeaders(), json_encode($body), $this->httpTransport);
+
+        return $this->decorateResponse($requestResponse);
+    }
+
+    /**
+     * @param \Requests_Response $requestResponse
+     * @return Response
+     */
+    private function decorateResponse(\Requests_Response $requestResponse)
+    {
+        return new Response($requestResponse);
     }
 
     /**

@@ -2,13 +2,6 @@
 namespace SplitIO\Service\Console\Command;
 
 use SplitIO\Service\Console\OptionsEnum;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ServiceCommand extends Command
 {
@@ -19,34 +12,8 @@ class ServiceCommand extends Command
 
     protected function configure()
     {
-        $this
-            ->setName('service')
-            ->setDescription('Running Split as service')
-            ->addOption(
-                OptionsEnum::RATE_FETCH_SPLITS,
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Set the rate to fetch the Splits definitions from server'
-            )
-            ->addOption(
-                OptionsEnum::RATE_FETCH_SEGMENTS,
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Set the rate to fetch the Segments keys from server'
-            )
-            ->addOption(
-                OptionsEnum::RATE_SEND_IMPRESSIONS,
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Set the rate to send the treatments impressions to server'
-            )
-            ->addOption(
-                OptionsEnum::RATE_SEND_METRICS,
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Set the rate to send the SDK metrics to server'
-            )
-        ;
+        $this->setName('service')
+            ->setDescription('Running Split as service');
     }
 
     private function registerProcess($cmd, $rate)
@@ -70,9 +37,15 @@ class ServiceCommand extends Command
                     .'--config-file='.getenv('SPLITIO_SERVICE_CONFIGFILE');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute()
     {
         $this->info("Running Split Synchronizer Service ...");
+
+        exit;
+
+
+
+
 
         $seconds = 0.5;
         $micro = $seconds * 1000000;

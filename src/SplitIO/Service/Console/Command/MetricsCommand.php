@@ -9,11 +9,11 @@ class MetricsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('process:send-metrics')
+            ->setName('send-metrics')
             ->setDescription('Send SDK metrics to the server');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute()
     {
         $this->getSplitClient()->sendMetrics();
     }

@@ -11,11 +11,11 @@ class SegmentCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('process:fetch-segments')
+            ->setName('fetch-segments')
             ->setDescription('Fetch Segment keys from server');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute()
     {
         $registeredSegments = $this->cache()->getItemsOnList(SegmentCache::getCacheKeyForRegisterSegments());
 

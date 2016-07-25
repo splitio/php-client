@@ -9,11 +9,11 @@ class ImpressionsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('process:send-impressions')
+            ->setName('send-impressions')
             ->setDescription('Send treatment impressions');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute()
     {
         $this->getSplitClient()->sendTestImpressions();
     }

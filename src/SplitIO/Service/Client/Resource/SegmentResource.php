@@ -27,7 +27,7 @@ class SegmentResource extends SdkTypeResource
             //GETting data from server
             $response = $this->get($servicePath);
 
-            if (ResponseHelper::isSuccessful($response->getStatusCode())) {
+            if ($response->isSuccessful()) {
                 $segment = json_decode($response->getBody(), true);
 
                 //Returning false due the server has not changes

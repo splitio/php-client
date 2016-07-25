@@ -3,19 +3,17 @@ namespace SplitIO\Service\Console\Command;
 
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class SplitCommand extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('process:fetch-splits')
+            ->setName('fetch-splits')
             ->setDescription('Fetch Splits definitons from server');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute()
     {
         //Fetching the Splits changes
         $splitChanges = $this->getSplitClient()->getSplitChanges();
