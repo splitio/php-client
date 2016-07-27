@@ -48,9 +48,13 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
+
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
         $sdkConfig = [
             'log' => ['adapter' => 'stdout', 'level' => 'info'],
-            'cache' => ['adapter' => 'redis', 'options' => ['host' => REDIS_HOST, 'port' => REDIS_PORT]]
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         ];
 
         //Initializing the SDK instance.
