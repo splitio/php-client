@@ -11,7 +11,7 @@ use SplitIO\Component\Log\LogLevelEnum;
 
 class LoggerTrait
 {
-    public static function addLogger($adapter, $level, LoggerInterface $custom=null)
+    public static function addLogger($adapter, $level, LoggerInterface $custom = null)
     {
         $logger = null;
 
@@ -44,9 +44,7 @@ class LoggerTrait
     public static function addLoggerFromFile($filePath)
     {
         if (file_exists($filePath)) {
-
             require_once($filePath);
-
         }
     }
 }

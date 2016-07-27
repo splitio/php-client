@@ -35,7 +35,6 @@ class Pool extends CacheKeyTrait
             default:
                 $this->adapter = new RedisAdapter($adapterOptions);
                 break;
-
         }
     }
 

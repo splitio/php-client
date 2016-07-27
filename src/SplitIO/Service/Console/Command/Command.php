@@ -244,12 +244,11 @@ abstract class Command
      * Configure the name and the description of the command
      * @return mixed
      */
-    protected abstract function configure();
+    abstract protected function configure();
 
     /**
      * Anstract method called to execute the command
      * @return mixed
      */
-    public abstract function execute();
-
+    abstract public function execute();
 }

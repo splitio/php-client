@@ -23,7 +23,6 @@ class SegmentResource extends SdkTypeResource
         Di::getLogger()->info("SERVICE PATH: $servicePath");
 
         try {
-
             //GETting data from server
             $response = $this->get($servicePath);
 
@@ -38,7 +37,6 @@ class SegmentResource extends SdkTypeResource
 
                 return $segment;
             }
-
         } catch (\Exception $e) {
             Di::getLogger()->error($e->getMessage());
         }

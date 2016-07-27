@@ -38,8 +38,6 @@ class CacheTrait
                     )
                 );
                 break;
-
-
         }
 
         ServiceProvider::registerCache(new Pool(array('adapter' => $adapter_config)));

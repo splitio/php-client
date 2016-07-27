@@ -50,41 +50,29 @@ class ServiceCommand extends Command
 
         $numOfProcess = count($this->process);
         while (true) {
-
             for ($i=0; $i < $numOfProcess; $i++) {
-
                 $gap = time() - $this->process[$i]['last'];
 
                 if ($gap >= (int) $this->process[$i]['rate']) {
-
                     if (!$this->process[$i]['process']->isRunning()) {
                         try {
-
                             $this->process[$i]['process']->start();
                             if ($this->process[$i]['process']->isStarted()) {
-
                                 if ($this->getApplication()->isVerbose()) {
                                     $this->comment("Process started successfully: "
                                         . $this->process[$i]['process']->getCommandLine());
                                 }
-
                             }
-
                         } catch (\Exception $e) {
-
                             $this->logger()->critical($e->getMessage());
                             $this->error($e->getMessage());
-
                         }
-
                     }
                     $this->process[$i]['last'] = time();
                 }
-
             }
 
             usleep($micro);
         }
     }
-
 }

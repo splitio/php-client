@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Component\Http;
 
-
 class ResponseHelper
 {
     public static function isSuccessful($statusCode)

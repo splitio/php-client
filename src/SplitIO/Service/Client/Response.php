@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Service\Client;
 
-
 class Response
 {
 

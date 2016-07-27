@@ -20,7 +20,6 @@ class TestImpressionResource extends EventTypeResource
         $dataset = array();
 
         foreach ($impressionKeys as $key) {
-
             $featureName = ImpressionCache::getFeatureNameFromKey($key);
             $cachedImpressions = $impressionCache->getAllImpressions($key);
             $impressions = array();
@@ -32,7 +31,6 @@ class TestImpressionResource extends EventTypeResource
 
             //Bulk data set
             $dataset[] = array('testName' => $featureName, 'keyImpressions' => $impressions);
-
         }
 
         //Sending Impressions dataset.

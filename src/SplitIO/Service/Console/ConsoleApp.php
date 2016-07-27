@@ -20,7 +20,7 @@ class ConsoleApp
 
     private $commands = array();
 
-    private $_helpSeparatorLength=0;
+    private $helpSeparatorLength=0;
 
     private $verboseMode = false;
 
@@ -53,10 +53,9 @@ class ConsoleApp
 
         foreach ($this->commands as $k => $v) {
             if ($k != 'service') {
-                $_separator = implode('', array_fill(0, $this->_helpSeparatorLength - strlen($k) + 4, ' '));
+                $_separator = implode('', array_fill(0, $this->helpSeparatorLength - strlen($k) + 4, ' '));
                 $commandHelp[] = $k.$_separator.$v->getDescription();
             }
-
         }
 
         $helpOutput = Logo::getAsciiLogo() . PHP_EOL;
@@ -142,8 +141,8 @@ class ConsoleApp
         $commandName = $command->getName();
         $strlenCommandName = strlen($commandName);
 
-        if ($strlenCommandName > $this->_helpSeparatorLength) {
-            $this->_helpSeparatorLength = $strlenCommandName;
+        if ($strlenCommandName > $this->helpSeparatorLength) {
+            $this->helpSeparatorLength = $strlenCommandName;
         }
 
         $this->commands[$commandName] = $command;
@@ -188,25 +187,20 @@ class ConsoleApp
         if (empty($parsedOptions) ||
             isset($parsedOptions['h']) && ($parsedOptions['h'] === false) ||
             isset($parsedOptions['help']) && ($parsedOptions['help'] === false)) {
-
             $this->writeln($this->getHelp());
             exit(0);
         }
 
         if (isset($parsedOptions['v']) && ($parsedOptions['v'] === false) ||
             isset($parsedOptions['verbose']) && ($parsedOptions['verbose'] === false)) {
-
             $this->verboseMode = true;
-
         }
 
         if (isset($parsedOptions['s']) && ($parsedOptions['s'] === false) ||
             isset($parsedOptions['service']) && ($parsedOptions['service'] === false)) {
-
             $service = $this->commands['service'];
 
             if ($service instanceof ServiceCommand) {
-
                 $service->run($this);
             }
         }
@@ -221,7 +215,6 @@ class ConsoleApp
         }
 
         if ($processName !== null && isset($this->commands[$processName])) {
-
             $cmd = $this->commands[$processName];
 
             if ($cmd instanceof Command) {

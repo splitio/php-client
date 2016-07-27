@@ -76,7 +76,7 @@ class Di
      * @param $key
      * @param $instance
      */
-    private function _set($key, $instance)
+    private function setKey($key, $instance)
     {
         $this->container[$key] = $instance;
     }
@@ -85,7 +85,7 @@ class Di
      * @param $key
      * @return mixed
      */
-    private function _get($key)
+    private function getKey($key)
     {
         return (isset($this->container[$key])) ? $this->container[$key] : null;
     }
@@ -97,7 +97,7 @@ class Di
      */
     public static function set($key, $instance)
     {
-        self::getInstance()->_set($key, $instance);
+        self::getInstance()->setKey($key, $instance);
     }
 
     /**
@@ -107,7 +107,7 @@ class Di
      */
     public static function get($key)
     {
-        return self::getInstance()->_get($key);
+        return self::getInstance()->getKey($key);
     }
 
 

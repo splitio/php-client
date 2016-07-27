@@ -19,29 +19,28 @@ class SegmentCommand extends Command
     {
         $registeredSegments = $this->cache()->getItemsOnList(SegmentCache::getCacheKeyForRegisterSegments());
 
+        $log = $this->logger();
+
         if (is_array($registeredSegments) && !empty($registeredSegments)) {
             foreach ($registeredSegments as $segmentName) {
-
-                $this->logger()->info(">>> Fetching data from segment: $segmentName");
+                $log->info(">>> Fetching data from segment: $segmentName");
                 $timeStart = Latency::startMeasuringLatency();
                 while (true) {
                     $timeStartPart = Latency::startMeasuringLatency();
                     if (! $this->getSplitClient()->updateSegmentChanges($segmentName)) {
-
                         $timeItTook = Latency::calculateLatency($timeStartPart);
-                        $this->logger()->debug("Fetching segment last part ($segmentName) took $timeItTook microseconds");
+                        $log->debug("Fetching segment last part ($segmentName) took $timeItTook microseconds");
                         $greedyTime = Latency::calculateLatency($timeStart);
-                        $this->logger()->info("Finished fetching whole segment $segmentName, took $greedyTime microseconds");
+                        $log->info("Finished fetching whole segment $segmentName, took $greedyTime microseconds");
                         break;
                     }
 
                     $timeItTook = Latency::calculateLatency($timeStartPart);
-                    $this->logger()->debug("Fetching segment part ($segmentName) took $timeItTook microseconds");
+                    $log->debug("Fetching segment part ($segmentName) took $timeItTook microseconds");
 
                     //Sleep 1/2 second
                     usleep(500000);
                 }
-
             }
         }
     }

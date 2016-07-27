@@ -25,7 +25,6 @@ class Process
         $this->processInformation = array();
 
         $this->status = self::STATUS_READY;
-
     }
 
     public function __destruct()

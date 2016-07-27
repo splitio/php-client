@@ -19,7 +19,6 @@ class MetricsResource extends EventTypeResource
         $cachedMetrics = array();
 
         foreach ($metricsKeys as $key) {
-
             $metricName = MetricsCache::getMetricNameFromKey($key);
             $metricBucket = MetricsCache::getBucketFromKey($key);
 
@@ -48,6 +47,5 @@ class MetricsResource extends EventTypeResource
             Di::getLogger()->error("HTTP Code: ".$response->getStatusCode());
             Di::getLogger()->error("HTTP Body: ".$response->getBody());
         }
-
     }
 }

@@ -29,7 +29,7 @@ class SharedMemory
      * @throws SupportSharedMemoryException
      * @throws WriteSharedMemoryException
      */
-    public static function write ($key, $value, $expiration=60, $mode=0644, $size=100)
+    public static function write($key, $value, $expiration = 60, $mode = 0644, $size = 100)
     {
         if (!self::checkSHMOPSupport()) {
             return null;
@@ -67,7 +67,7 @@ class SharedMemory
      * @throws ReadSharedMemoryException
      * @throws SupportSharedMemoryException
      */
-    public static function read($key, $mode=0644, $size=100)
+    public static function read($key, $mode = 0644, $size = 100)
     {
         if (!self::checkSHMOPSupport()) {
             return null;

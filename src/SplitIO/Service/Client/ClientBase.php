@@ -27,7 +27,8 @@ abstract class ClientBase
         $this->resourceType = $this->getResourceType();
     }
 
-    private function getBaseUrl(){
+    private function getBaseUrl()
+    {
         switch ($this->resourceType->getValue()) {
             case ResourceTypeEnum::EVENT:
                 return $this->config->getEventsUrl();
@@ -38,13 +39,12 @@ abstract class ClientBase
                 return $this->config->getUrl();
                 break;
         }
-
     }
 
     /**
      * @return \SplitIO\Service\Client\Resource\ResourceTypeEnum $type
      */
-    public abstract function getResourceType();
+    abstract public function getResourceType();
 
     /**
      * @param $servicePath

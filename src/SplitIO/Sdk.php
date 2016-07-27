@@ -4,7 +4,6 @@ namespace SplitIO;
 use SplitIO\Component\Http\Uri;
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerTrait;
-use SplitIO\Component\Log\Logger;
 use SplitIO\Exception\Exception;
 use SplitIO\Sdk\Client;
 use SplitIO\Sdk\LocalhostClient;
@@ -17,7 +16,6 @@ class Sdk
      */
     private function __construct()
     {
-
     }
 
     /**
@@ -84,8 +82,7 @@ class Sdk
         } elseif ($cacheAdapter == 'predis') {
             $_options['predis-options'] = isset($options['options']) ? $options['options'] : null;
             $_options['predis-parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
-        }
-        else {
+        } else {
             throw new Exception("A valid cache system is required. Given: $cacheAdapter");
         }
 

@@ -22,16 +22,12 @@ class SplitCommand extends Command
         $splitCache = new SplitCache();
 
         if (!empty($splits)) {
-
             foreach ($splits as $split) {
-
                 if (!is_array($split)
                     || !isset($split['name'])
                     || !isset($split['conditions'])
                     || !isset($split['status'])) {
-
                     continue; //continue with next Split
-
                 }
 
                 $this->logger()->debug(print_r($split, true));
@@ -43,11 +39,9 @@ class SplitCommand extends Command
 
                 foreach ($splitConditions as $condition) {
                     foreach ($condition['matcherGroup']['matchers'] as $matcher) {
-
                         if ($matcher['matcherType'] == "IN_SEGMENT") {
                             //Register segment to retrieve Segment Data.
                             SegmentCache::registerSegment($matcher['userDefinedSegmentMatcherData']['segmentName']);
-
                         }
                     }
                 }
@@ -55,11 +49,9 @@ class SplitCommand extends Command
                 if ($splitStatus == 'ACTIVE') { //Update Cache
 
                     $splitCache->addSplit($splitName, json_encode($split));
-
                 } else { //Delete item from cache
 
                     $splitCache->removeSplit($splitName);
-
                 }
             }
         }
