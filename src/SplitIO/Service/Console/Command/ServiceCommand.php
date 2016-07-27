@@ -2,11 +2,11 @@
 namespace SplitIO\Service\Console\Command;
 
 use SplitIO\Service\Console\OptionsEnum;
+use SplitIO\Component\Process\Process;
 
 class ServiceCommand extends Command
 {
     const BIN_PHP = '/usr/bin/env php';
-    const BIN_HHVM = '/usr/bin/hhvm';
 
     private $process = array();
 
@@ -23,62 +23,52 @@ class ServiceCommand extends Command
 
     private function cmd($processCmd)
     {
-        $bin = self::BIN_PHP;
+        $command = array();
 
         //By default is php development bin script
-        $splitBin = '/bin/splitio';
+        $splitBin = 'splitio';
 
-        //If the app is running as phar, the binary script is the phar file
-        if (extension_loaded('phar') && ($uri = \Phar::running())) {
-            $splitBin = '/splitio.phar';
-        }
+        $command[] = self::BIN_PHP;
+        $command[] = SPLITIO_SERVICE_HOME . DIRECTORY_SEPARATOR . $splitBin;
+        $command[] = '--process="'.$processCmd.'"';
+        $command[] = '--config-file='.getenv('SPLITIO_SERVICE_CONFIGFILE');
 
-        return $bin . ' ' .SPLITIO_SERVICE_HOME . $splitBin . ' ' . $processCmd . ' '
-                    .'--config-file='.getenv('SPLITIO_SERVICE_CONFIGFILE');
+        return implode(' ', $command);
     }
 
     public function execute()
     {
         $this->info("Running Split Synchronizer Service ...");
 
-        exit;
-
-
-
-
-
         $seconds = 0.5;
         $micro = $seconds * 1000000;
 
-        $this->registerProcess($this->cmd('process:fetch-splits'), $this->get(OptionsEnum::RATE_FETCH_SPLITS));
-        $this->registerProcess($this->cmd('process:fetch-segments'), $this->get(OptionsEnum::RATE_FETCH_SEGMENTS));
-        $this->registerProcess($this->cmd('process:send-impressions'), $this->get(OptionsEnum::RATE_SEND_IMPRESSIONS));
-        $this->registerProcess($this->cmd('process:send-metrics'), $this->get(OptionsEnum::RATE_SEND_METRICS));
+        $this->registerProcess($this->cmd('fetch-splits'), $this->get(OptionsEnum::RATE_FETCH_SPLITS));
+        $this->registerProcess($this->cmd('fetch-segments'), $this->get(OptionsEnum::RATE_FETCH_SEGMENTS));
+        $this->registerProcess($this->cmd('send-impressions'), $this->get(OptionsEnum::RATE_SEND_IMPRESSIONS));
+        $this->registerProcess($this->cmd('send-metrics'), $this->get(OptionsEnum::RATE_SEND_METRICS));
 
-        $process = $this->process;
-        $numOfProcess = count($process);
+        $numOfProcess = count($this->process);
         while (true) {
 
             for ($i=0; $i < $numOfProcess; $i++) {
 
-                $gap = time() - $process[$i]['last'];
+                $gap = time() - $this->process[$i]['last'];
 
-                if ($gap >= $process[$i]['rate'] ) {
+                if ($gap >= (int) $this->process[$i]['rate']) {
 
-                    if (!$process[$i]['process']->isRunning()) {
+                    if (!$this->process[$i]['process']->isRunning()) {
                         try {
 
-                            $process[$i]['process']->start();
-                            if ($process[$i]['process']->isStarted()) {
-                                if ($output->isVerbose()) {
-                                    $this->comment("Process started successfully: ".$process[$i]['process']->getCommandLine());
+                            $this->process[$i]['process']->start();
+                            if ($this->process[$i]['process']->isStarted()) {
+
+                                if ($this->getApplication()->isVerbose()) {
+                                    $this->comment("Process started successfully: "
+                                        . $this->process[$i]['process']->getCommandLine());
                                 }
+
                             }
-
-                        } catch (ProcessFailedException $e) {
-
-                            $this->logger()->critical($e->getMessage());
-                            $this->error($e->getMessage());
 
                         } catch (\Exception $e) {
 
@@ -88,7 +78,7 @@ class ServiceCommand extends Command
                         }
 
                     }
-                    $process[$i]['last'] = time();
+                    $this->process[$i]['last'] = time();
                 }
 
             }

@@ -35,6 +35,11 @@ class Process
         }
     }
 
+    public function getCommandLine()
+    {
+        return $this->userCommand;
+    }
+
     public function start()
     {
         $descriptor = array(

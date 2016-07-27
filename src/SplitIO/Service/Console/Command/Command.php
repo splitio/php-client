@@ -137,7 +137,11 @@ abstract class Command
             $options[OptionsEnum::PREDIS_PARAMETERS] = json_decode($this->get(OptionsEnum::PREDIS_PARAMETERS), true);
         }
 
-        CacheTrait::addCache($cacheAdapter, $options);
+        try {
+            CacheTrait::addCache($cacheAdapter, $options);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
     }
 
     /**

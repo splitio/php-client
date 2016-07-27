@@ -22,6 +22,8 @@ class ConsoleApp
 
     private $_helpSeparatorLength=0;
 
+    private $verboseMode = false;
+
     /**
      * @var \Psr\Log\LoggerInterface
      */
@@ -67,6 +69,7 @@ class ConsoleApp
         $helpOutput .= PHP_EOL . "Options:" . PHP_EOL;
         $helpOutput .= "-c, --config-file      Set the path to splitio.ini configuration file" . PHP_EOL;
         $helpOutput .= "-h, --help             Show this help" . PHP_EOL;
+        $helpOutput .= "-v, --verbose          Enable verbose mode" . PHP_EOL;
 
         $helpOutput .= PHP_EOL . "Service:" . PHP_EOL;
         $helpOutput .= "-s, --service          Run this program as a service" . PHP_EOL;
@@ -148,8 +151,8 @@ class ConsoleApp
 
     public function getInputOptions()
     {
-        $options = "h::p:c:s::";
-        $longOptions = array("help::", "process:","config-file:", "service::");
+        $options = "h::v::p:c:s::";
+        $longOptions = array("help::", "verbose::", "process:","config-file:", "service::");
 
         return getopt($options, $longOptions);
     }
@@ -169,6 +172,11 @@ class ConsoleApp
         return null;
     }
 
+    public function isVerbose()
+    {
+        return $this->verboseMode;
+    }
+
     /**
      * @return int
      */
@@ -183,6 +191,13 @@ class ConsoleApp
 
             $this->writeln($this->getHelp());
             exit(0);
+        }
+
+        if (isset($parsedOptions['v']) && ($parsedOptions['v'] === false) ||
+            isset($parsedOptions['verbose']) && ($parsedOptions['verbose'] === false)) {
+
+            $this->verboseMode = true;
+
         }
 
         if (isset($parsedOptions['s']) && ($parsedOptions['s'] === false) ||
