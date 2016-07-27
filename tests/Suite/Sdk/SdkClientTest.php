@@ -64,9 +64,12 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
         $sdkConfig = [
             'log' => ['adapter' => 'stdout'],
-            'cache' => ['adapter' => 'redis', 'options' => ['host' => REDIS_HOST, 'port' => REDIS_PORT]]
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         ];
 
         //Initializing the SDK instance.
@@ -100,16 +103,18 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @depends testClient
      */
-    public function testRedisUrlAndCustomLog()
+    public function testCustomLog()
     {
         // create a log channel
         $log = new Logger('SplitIO');
         $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
 
-        $redis_url = 'redis://'.REDIS_HOST.':'.REDIS_PORT;
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
         $sdkConfig = [
             'log' => ['psr3-instance' => $log],
-            'cache' => ['adapter' => 'redis', 'options' => ['url' => $redis_url]]
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         ];
 
         $splitSdk = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
