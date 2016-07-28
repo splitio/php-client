@@ -14,7 +14,7 @@
     }
   ],
 
-  "bin": ["bin/splitio.phar"],
+  "bin": ["bin/splitio"],
 
   "require": {
     "php": ">=5.3.9",

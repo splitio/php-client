@@ -1,7 +1,16 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__.'/../vendor/autoload.php';
+//Possible vendor path when the bin is run from package
+$vendorPath = dirname(dirname(dirname(__DIR__)));
+
+//Trying to load PSR-0 and PSR-4 from Composer autoload script.
+if (file_exists(__DIR__.'/../vendor/autoload.php')) {
+    require __DIR__.'/../vendor/autoload.php';
+
+} elseif (file_exists($vendorPath.'/autoload.php')) {
+    require $vendorPath.'/autoload.php';
+}
 
 // Define SPLITIO_SERVICE_HOME
 defined('SPLITIO_SERVICE_HOME') || define('SPLITIO_SERVICE_HOME', (getenv('SPLITIO_SERVICE_HOME') ?

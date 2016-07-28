@@ -86,6 +86,10 @@ class Process
 
     private function updateStatus()
     {
+        if (!is_resource($this->process)) {
+            return;
+        }
+
         $this->processInformation = proc_get_status($this->process);
 
         $running = $this->processInformation['running'];
