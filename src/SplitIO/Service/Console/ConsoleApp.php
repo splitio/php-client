@@ -78,7 +78,7 @@ class ConsoleApp
 
         $helpOutput .= PHP_EOL . PHP_EOL;
 
-        $setConfigFile = $this->readConfig();
+        $setConfigFile = $this->readConfig($this->getInputConfigFile());
 
         if ($setConfigFile === false) {
             $helpOutput .= "<info>WARNING: The common config file located in " .SPLITIO_SERVICE_HOME .
