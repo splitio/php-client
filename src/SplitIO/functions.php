@@ -133,12 +133,12 @@ function parseSplitsFile($fileContent)
 
     $lines = explode(PHP_EOL, $fileContent);
 
-    $result = [];
+    $result = array();
 
     foreach ($lines as $line) {
         $line = trim($line);
         if (isset($line[0]) && $line[0] != '#') {
-            $matches = [];
+            $matches = array();
             if (preg_match($re, $line, $matches)) {
                 if (isset($matches[1]) && isset($matches[2])) {
                     $result[$matches[1]] = $matches[2];

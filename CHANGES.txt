@@ -1,3 +1,6 @@
+2.1.2
+ - Added support for Block Until Redy
+ - Removed php serialization at Redis cache to support Cache cross SDK spec
 2.1.1
  - Added Events endpoint support in binary splitio.phar
  - Fixed Standard messages in binary splitio.phar

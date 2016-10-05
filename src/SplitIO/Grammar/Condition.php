@@ -37,7 +37,7 @@ class Condition
         }
 
         if (isset($condition['matcherGroup']['matchers']) && is_array($condition['matcherGroup']['matchers'])) {
-            $this->matcherGroup = [];
+            $this->matcherGroup = array();
 
             foreach ($condition['matcherGroup']['matchers'] as $matcher) {
                 $this->matcherGroup[] = Matcher::factory($matcher);
@@ -52,7 +52,7 @@ class Condition
      */
     public function match($key, array $attributes = null)
     {
-        $eval = [];
+        $eval = array();
         foreach ($this->matcherGroup as $matcher) {
             if ($matcher instanceof AbstractMatcher) {
                 $_evaluation = false;
