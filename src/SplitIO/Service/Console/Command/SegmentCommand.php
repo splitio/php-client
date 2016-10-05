@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Service\Console\Command;
 
+use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Stats\Latency;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,6 +43,12 @@ class SegmentCommand extends Command
                     usleep(500000);
                 }
             }
+
+            // Setting Segments ready mark
+            $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
+            $bur = new BlockUntilReadyCache();
+            $bur->setReadySegments($dateTimeUTC->getTimestamp());
+
         }
     }
 }

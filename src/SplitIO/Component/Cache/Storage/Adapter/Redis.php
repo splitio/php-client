@@ -74,7 +74,7 @@ class Redis implements CacheStorageAdapterInterface
         $redisItem = $this->client->get($key);
 
         if ($redisItem !== false) {
-            $item->set(unserialize($redisItem));
+            $item->set($redisItem);
         }
 
         return $item;
@@ -147,7 +147,7 @@ class Redis implements CacheStorageAdapterInterface
         return $this->client->setex($key, $expirationToSet, serialize($value));
         */
 
-        return $this->client->set($key, serialize($value));
+        return $this->client->set($key, $value);
     }
 
     /**

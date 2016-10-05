@@ -40,7 +40,7 @@ class PRedis implements CacheStorageAdapterInterface
         $redisItem = $this->client->get($key);
 
         if ($redisItem !== null) {
-            $item->set(unserialize($redisItem));
+            $item->set($redisItem);
         }
 
         return $item;
@@ -103,7 +103,7 @@ class PRedis implements CacheStorageAdapterInterface
      */
     public function save($key, $value, $expiration = null)
     {
-        return $this->client->set($key, serialize($value));
+        return $this->client->set($key, $value);
     }
 
     /**

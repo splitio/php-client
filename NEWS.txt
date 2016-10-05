@@ -1,3 +1,5 @@
+2.1.2
+ - Added support for Block Until Ready
 2.1.1
  - This version supports Split Events
 2.1.0

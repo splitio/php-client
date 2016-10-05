@@ -1,10 +1,13 @@
 <?php
 namespace SplitIO;
 
+use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Http\Uri;
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerTrait;
+use SplitIO\Component\Stats\Latency;
 use SplitIO\Exception\Exception;
+use SplitIO\Exception\TimeOutException;
 use SplitIO\Sdk\Client;
 use SplitIO\Sdk\LocalhostClient;
 
@@ -41,9 +44,44 @@ class Sdk
         //Register Cache
         self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
 
+        //Block Until Ready
+        if (isset($options['ready']) && $options['ready'] > 0) {
+            if (!self::blockUntilReady($options['ready'])) {
+                throw new TimeOutException("Cache data is not ready yet");
+            }
+        }
+
         return new Client($options);
     }
 
+    /**
+     * @param $timeout
+     * @return bool
+     */
+    private static function blockUntilReady($timeout)
+    {
+        $bur = new BlockUntilReadyCache();
+
+        $startTime = Latency::startMeasuringLatency();
+
+        do {
+
+            $lastreadyCheckpoint = $bur->getReadyCheckpoint();
+
+            if ($lastreadyCheckpoint > 0) {
+                return true;
+            }
+
+            // Checkpoint in milliseconds
+            $checkPoint = Latency::calculateLatency($startTime) / 1000;
+
+            // waiting 10 milliseconds
+            usleep(10000);
+
+        } while ($checkPoint < $timeout);
+
+        return false;
+    }
 
     /**
      * Register the logger class

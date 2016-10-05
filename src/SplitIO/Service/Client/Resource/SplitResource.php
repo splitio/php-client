@@ -1,10 +1,9 @@
 <?php
 namespace SplitIO\Service\Client\Resource;
 
+use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Service\Client\ClientBase;
 use SplitIO\Component\Common\Di;
-use SplitIO\Component\Http\ResponseHelper;
 
 class SplitResource extends SdkTypeResource
 {
@@ -32,6 +31,15 @@ class SplitResource extends SdkTypeResource
 
         if ($response->isSuccessful()) {
             $splitChanges = json_decode($response->getBody(), true);
+
+            if (isset($splitChanges['since']) && isset($splitChanges['till'])
+                && $splitChanges['since'] == $splitChanges['till']  ) {
+
+                Di::getLogger()->info("Registering splits ready mark");
+                $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
+                $bur = new BlockUntilReadyCache();
+                $bur->setReadySplits($dateTimeUTC->getTimestamp());
+            }
 
             $splits = (isset($splitChanges['splits'])) ? $splitChanges['splits'] : false;
 

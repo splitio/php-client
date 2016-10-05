@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Service\Console\Command;
 
+use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 

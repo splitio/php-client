@@ -11,3 +11,7 @@ tmp/*
 phpunit.xml
 !bin/splitio.phar
 tests/coverage-report/*
+
+bin/splitio.ini
+php53test.php
+test.php

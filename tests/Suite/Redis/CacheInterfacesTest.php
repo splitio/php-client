@@ -1,13 +1,14 @@
 <?php
 namespace SplitIO\Test\Suite\Redis;
 
-use SplitIO\Cache\Pool;
-use SplitIO\Cache\SegmentCache;
-use SplitIO\Cache\SplitCache;
-use SplitIO\Common\Di;
-use SplitIO\Log\Handler\Stdout;
-use SplitIO\Log\Logger;
-use SplitIO\Log\LogLevelEnum;
+use SplitIO\Component\Cache\Pool;
+use SplitIO\Component\Cache\SegmentCache;
+use SplitIO\Component\Cache\SplitCache;
+use SplitIO\Component\Common\Di;
+use SplitIO\Component\Cache\BlockUntilReadyCache;
+use SplitIO\Component\Log\Handler\Stdout;
+use SplitIO\Component\Log\Logger;
+use SplitIO\Component\Log\LogLevelEnum;
 
 class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
 {
@@ -100,5 +101,28 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($segmentData['till'], $segmentCache->getChangeNumber($segmentName));
 
+    }
+
+    /**
+     * @depends testDiLog
+     * @depends testDiCache
+     */
+    public function testBlockUntilReadyCacheInterface()
+    {
+        $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
+        $deltaTime = 100;
+
+        $splitsTimestamp = $dateTimeUTC->getTimestamp();
+        $segmentsTimestamp = $dateTimeUTC->getTimestamp() + $deltaTime;
+
+        $bur = new BlockUntilReadyCache();
+        $bur->setReadySplits($splitsTimestamp);
+        $bur->setReadySegments($segmentsTimestamp);
+
+        //Checking
+        $this->assertEquals($splitsTimestamp, $bur->getReadySplits());
+        $this->assertEquals($segmentsTimestamp, $bur->getReadySegments());
+
+        $this->assertEquals(min($splitsTimestamp, $segmentsTimestamp), $bur->getReadyCheckpoint());
     }
 }
