@@ -34,7 +34,6 @@ class SplitResource extends SdkTypeResource
 
             if (isset($splitChanges['since']) && isset($splitChanges['till'])
                 && $splitChanges['since'] == $splitChanges['till']  ) {
-
                 Di::getLogger()->info("Registering splits ready mark");
                 $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
                 $bur = new BlockUntilReadyCache();

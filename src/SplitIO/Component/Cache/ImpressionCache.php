@@ -61,6 +61,11 @@ class ImpressionCache
         return Di::getCache()->getItemsOnList($key);
     }
 
+    public function getRandomImpressions($key, $count)
+    {
+        return Di::getCache()->getItemsRandomlyOnList($key, $count);
+    }
+
     /**
      * @param $key
      * @param $value

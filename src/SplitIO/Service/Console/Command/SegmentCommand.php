@@ -48,7 +48,6 @@ class SegmentCommand extends Command
             $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
             $bur = new BlockUntilReadyCache();
             $bur->setReadySegments($dateTimeUTC->getTimestamp());
-
         }
     }
 }

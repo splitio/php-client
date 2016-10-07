@@ -30,4 +30,7 @@ class OptionsEnum extends Enum
     const RATE_FETCH_SEGMENTS       = 'segments-refresh-rate';
     const RATE_SEND_IMPRESSIONS     = 'impressions-refresh-rate';
     const RATE_SEND_METRICS         = 'metrics-refresh-rate';
+
+    //Process parameters
+    const IMPRESSIONS_PER_TEST      = 'impressions-per-test';
 }

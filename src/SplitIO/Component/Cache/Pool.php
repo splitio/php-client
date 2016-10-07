@@ -250,6 +250,11 @@ class Pool extends CacheKeyTrait
         return $this->adapter->getListItems($key);
     }
 
+    public function getItemsRandomlyOnList($key, $count)
+    {
+        return $this->adapter->getListItemsRandomly($key, $count);
+    }
+
     public function getKeys($pattern = '*')
     {
         return $this->adapter->getKeys($pattern);

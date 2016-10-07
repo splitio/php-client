@@ -12,19 +12,29 @@ class TestImpressionResource extends EventTypeResource
 {
     private $servicePath = '/api/testImpressions/bulk';
 
-    public function sendTestImpressions()
+    public function sendTestImpressions($keyImpressionsPerTest)
     {
         $impressionKeys = Di::getCache()->getKeys(ImpressionCache::getCacheKeySearchPattern());
         $impressionCache = new ImpressionCache();
 
+        $toDrop = array();
         $dataset = array();
+        $totalImpressions = 0;
 
         foreach ($impressionKeys as $key) {
             $featureName = ImpressionCache::getFeatureNameFromKey($key);
-            $cachedImpressions = $impressionCache->getAllImpressions($key);
+            $cachedImpressions = $impressionCache->getRandomImpressions($key, $keyImpressionsPerTest);
+
+            if (empty($cachedImpressions)) {
+                continue;
+            }
+
+            $toDrop[$key] = $cachedImpressions;
             $impressions = array();
 
-            for ($i=0; $i < count($cachedImpressions); $i++) {
+            $cachedImpressionsCount = count($cachedImpressions);
+            $totalImpressions += $cachedImpressionsCount;
+            for ($i=0; $i < $cachedImpressionsCount; $i++) {
                 //restoring cached impressions from JSON string to PHP Array.
                 $impressions[$i] = json_decode($cachedImpressions[$i], true);
             }
@@ -36,29 +46,27 @@ class TestImpressionResource extends EventTypeResource
         //Sending Impressions dataset.
         $response = $this->post($this->servicePath, $dataset);
 
+        //Dropping impressions
+        $this->dropDataset($toDrop);
+
         if ($response->isSuccessful()) {
-            Di::getLogger()->info(count($dataset)." Impressions sent successfuly");
-            $this->dropDataset($dataset);
+            Di::getLogger()->info($totalImpressions." Impressions sent successfuly");
             return true;
         }
 
-        $this->dropDataset($dataset);
         return false;
     }
 
-    private function dropDataset($dataset)
+    private function dropDataset($toDrop)
     {
-        $impressionCache = new ImpressionCache();
-
         try {
-            //removing sent impressions from cache.
-            foreach ($dataset as $tiDTO) {
-                $rKey = ImpressionCache::getCacheKeyForImpressionData($tiDTO['testName']);
+            $impressionCache = new ImpressionCache();
 
-                foreach ($tiDTO['keyImpressions'] as $imp) {
-                    $impressionCache->removeImpression($rKey, json_encode($imp));
-                }
+            foreach ($toDrop as $key => $impressions) {
+                Di::getLogger()->debug("Dropping impressions for key: " . $key);
+                $impressionCache->removeImpression($key, $impressions);
             }
+
             Di::getLogger()->info("Sent Impressions removed from cache successfuly");
         } catch (\Exception $e) {
             Di::getLogger()->error($e->getMessage());

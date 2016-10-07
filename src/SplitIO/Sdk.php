@@ -65,7 +65,6 @@ class Sdk
         $startTime = Latency::startMeasuringLatency();
 
         do {
-
             $lastreadyCheckpoint = $bur->getReadyCheckpoint();
 
             if ($lastreadyCheckpoint > 0) {
@@ -77,7 +76,6 @@ class Sdk
 
             // waiting 10 milliseconds
             usleep(10000);
-
         } while ($checkPoint < $timeout);
 
         return false;

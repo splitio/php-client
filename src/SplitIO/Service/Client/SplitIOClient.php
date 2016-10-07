@@ -90,10 +90,10 @@ class SplitIOClient
     /**
      * @return bool
      */
-    public function sendTestImpressions()
+    public function sendTestImpressions($keyImpressionsPerTest)
     {
         $impressionsResource = new TestImpressionResource();
-        return $impressionsResource->sendTestImpressions();
+        return $impressionsResource->sendTestImpressions($keyImpressionsPerTest);
     }
 
     public function sendMetrics()

@@ -148,9 +148,31 @@ class PRedis implements CacheStorageAdapterInterface
         return $this->client->sMembers($key);
     }
 
+    public function getListItemsRandomly($key, $count)
+    {
+        return $this->client->srandmember($key, $count);
+    }
+
     public function getKeys($pattern = '*')
     {
-        return $this->client->keys($pattern);
+        $prefix = null;
+        if ($this->client->getOptions()->__isset("prefix")) {
+            $prefix = $this->client->getOptions()->__get("prefix")->getPrefix();
+        }
+
+        $keys = $this->client->keys($pattern);
+
+        if ($prefix) {
+            if (is_array($keys)) {
+                for ($i=0; $i < count($keys); $i++) {
+                    $keys[$i] = str_replace($prefix, '', $keys[$i]);
+                }
+            } else {
+                $keys = str_replace($prefix, '', $keys);
+            }
+        }
+
+        return $keys;
     }
 
     public function incrementKey($key)
