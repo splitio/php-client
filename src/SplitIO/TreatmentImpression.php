@@ -15,13 +15,15 @@ class TreatmentImpression
     public static function log($key, $featureName, $treatment, $time = null)
     {
         if ($time === null || !is_integer($time)) {
-            $milliseconds = (new \DateTime("now", new \DateTimeZone("UTC")))->getTimestamp();
+            $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
+            $milliseconds = $dateTimeUTC->getTimestamp();
         } else {
             $milliseconds = $time;
         }
 
         $milliseconds = $milliseconds * 1000;
 
-        return (new ImpressionCache())->addDataToFeature($featureName, $key, $treatment, $milliseconds);
+        $impressionCache = new ImpressionCache();
+        return $impressionCache->addDataToFeature($featureName, $key, $treatment, $milliseconds);
     }
 }

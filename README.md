@@ -4,7 +4,7 @@
 
 ## Installing Split SDK using composer
 ```
-$ composer require splitsoftware/split-sdk-php
+composer require splitsoftware/split-sdk-php:"dev-php-5.3-stable"
 ```
 ## Setting backend service
 Once that  Split SDK has been installed via composer, you will find the Split synchronizer service located within **vendor/splitsoftware/split-sdk-php/bin** folder located in your own project.
@@ -13,22 +13,15 @@ Take a look to the section: [Split Synchronizer Service](#split-synchronizer-ser
 
 **Basic installation:** For a basic installation follow the steps below:
 ```
-1- Create a folder to copy the background service script. 
-#> mkdir /opt/splitsoftware
+1- Copy the distributed config file as environment file
+#> cp /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio.dist.ini /opt/splitsoftware/splitio.ini
 
-2- Copy the binary script and the config file into created folder. 
-#> cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
-
-3- Copy the distributed config file as environment file
-#> cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini
-
-4- Add your custom configuration
+2- Add your custom configuration
 #> vi /opt/splitsoftware/splitio.ini
 
-5- Run the service!
-#> php /opt/splitsoftware/splitio.phar service --config-file='/opt/splitsoftware/splitio.ini'
+3- Run the service!
+#> php /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio -s --config-file="/opt/splitsoftware/splitio.ini"
 ```
-**IMPORTANT:** By default the ```splitio.ini``` is loaded from the same directory in which the service ```splitio.phar``` is located, so you can avoid adding the ```--config-file``` option.
 
 
 ## Write your code!
@@ -91,26 +84,16 @@ This service is on charge to keep synchronized the Split server information with
 When running **Split synchronizer service** in production it's highly recommended launching it from ```suporvisord```. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
 In order to configure the synchronizer service, you could follow these steps:
 
-1- Create a folder to copy the service:
+1- Make a copy of ```splitio.dist.ini``` file as ```splitio.ini``` and customize the values in the splitio.ini file with the your correct values, such as the api-key and redis information
 ```
-mkdir /opt/splitsoftware
-```
-
-2- Copy the service within the created folder
-```
-cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
-```
-
-3- Make a copy of ```splitio.dist.ini``` file as ```splitio.ini``` and customize the values in the splitio.ini file with the your correct values, such as the api-key and redis information
-```
-cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini 
+cp /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio.dist.ini /opt/splitsoftware/splitio.ini 
 vi /opt/splitsoftware/splitio.ini
 ```
 
-4- Add the lines below in your supervisor configuration file.
+2- Add the lines below in your supervisor configuration file.
 ```
 [program:splitio_service]
-command=/usr/bin/env php /opt/splitsoftware/splitio.phar service --config-file="/opt/splitsoftware/splitio.ini"
+command=/usr/bin/env php /path/to/your/project/vendor/bin/splitio --service --config-file="/opt/splitsoftware/splitio.ini"
 process_name = SplitIO
 numprocs = 1
 autostart=true
@@ -130,14 +113,14 @@ If your application is running on [Heroku](https://www.heroku.com/) you will be 
 mkdir service
 ```
 
-2- Copy the service within the created folder
+2- Copy the service config file within the created folder
 ```
-cp -R ./vendor/splitsoftware/split-sdk-php/bin/* service
+cp ./vendor/splitsoftware/split-sdk-php/bin/splitio.dist.ini service
 ```
 
 3- Add the line below on your application **Procfile**:
 ```
-worker: php service/splitio.phar service
+worker: php vendor/bin/splitio --service --config-file="service/splitio.ini"
 ```
 
 # Adapters / Handlers

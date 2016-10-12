@@ -1,3 +1,8 @@
+2.1.2
+ - Merging the branch php 5.5 and php 5.3 to get only one SDK version which support PHP >= 5.3.9
+ - Added support for Block Until Redy
+ - Removed php serialization at Redis cache to support Cache cross SDK spec
+ - Fixed push impressions minor bug using redis prefix
 2.1.1
  - Added Events endpoint support in binary splitio.phar
  - Fixed Standard messages in binary splitio.phar

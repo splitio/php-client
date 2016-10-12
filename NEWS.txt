@@ -1,3 +1,8 @@
+2.1.2
+ - Merged branches php version support
+ - Added support for Block Until Ready
+ - Split Redis spec support
+ - Fixed push impressions minor bug using redis prefix
 2.1.1
  - This version supports Split Events
 2.1.0

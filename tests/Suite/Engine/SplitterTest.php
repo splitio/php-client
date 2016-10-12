@@ -8,11 +8,10 @@ use SplitIO\Grammar\Condition\Partition;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {
-    use LoggerTrait;
 
     public function testDiLog()
     {
-        self::addLogger('stdout', LogLevelEnum::ERROR);
+        LoggerTrait::addLogger('stdout', LogLevelEnum::ERROR);
 
         $this->assertTrue(true);
     }
