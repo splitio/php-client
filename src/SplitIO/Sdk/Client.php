@@ -12,6 +12,8 @@ use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Metrics;
+use SplitIO\Sdk\Impressions\Impression;
+use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\TreatmentImpression;
 use SplitIO\Split as SplitApp;
 
@@ -108,7 +110,7 @@ class Client implements ClientInterface
         return false;
     }
 
-    private function evalTreatment($key, $featureName, array $attributes = null)
+    private function evalTreatment($matchingKey, $bucketingKey, $featureName, array $attributes = null)
     {
         $split = null;
 
@@ -136,17 +138,23 @@ class Client implements ClientInterface
         }
 
         if ($do_evaluation) {
+            //If the split was killed, log the impression and return default treatment.
             if ($split->killed()) {
-                return $split->getDefaultTratment();
+                $defaultTreatment = $split->getDefaultTratment();
+                $chn = $split->getChangeNumber();
+                $this->logImpression($matchingKey, $featureName, $defaultTreatment, ImpressionLabel::KILLED, $chn);
+                return $defaultTreatment;
             }
 
             $timeStart = Metrics::startMeasuringLatency();
-            $treatment = Engine::getTreatment($key, $split, $attributes);
+            $treatment = Engine::getTreatment($matchingKey, $bucketingKey, $split, $attributes);
             $latency = Metrics::calculateLatency($timeStart);
 
             //If the given key doesn't match on any condition, default treatment is returned
+            $impressionLabel = '';
             if ($treatment == null) {
                 $treatment = $split->getDefaultTratment();
+                $impressionLabel = ImpressionLabel::NO_CONDITION_MATCHED;
             }
 
             //Registering latency value
@@ -155,20 +163,51 @@ class Client implements ClientInterface
                 Metrics::getBucketForLatencyMicros($latency)
             );
 
-            SplitApp::logger()->info("*Treatment for $key in {$split->getName()} is: $treatment");
+            SplitApp::logger()->info("*Treatment for $matchingKey in {$split->getName()} is: $treatment");
 
             //Logging treatment impressions
-            TreatmentImpression::log($key, $featureName, $treatment);
+            $this->logImpression($matchingKey, $featureName, $treatment, $impressionLabel, $split->getChangeNumber());
 
             //Returning treatment.
             return $treatment;
         }
 
-        TreatmentImpression::log($key, $featureName, TreatmentEnum::CONTROL);
+        // Split not found impression
+        $this->logImpression($matchingKey, $featureName, TreatmentEnum::CONTROL, ImpressionLabel::SPLIT_NOT_FOUND);
 
         SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");
 
         return TreatmentEnum::CONTROL;
+    }
+
+    /**
+     * @param $matchingKey
+     * @param $feature
+     * @param $treatment
+     * @param string $label
+     * @param null $time
+     * @param int $changeNumber
+     * @param string $bucketingKey
+     */
+    private function logImpression(
+        $matchingKey,
+        $feature,
+        $treatment,
+        $label = '',
+        $changeNumber = -1,
+        $bucketingKey = '',
+        $time = null
+    ) {
+        $impression = new Impression(
+            $matchingKey,
+            $feature,
+            $treatment,
+            $label,
+            $time,
+            $changeNumber,
+            $bucketingKey
+        );
+        TreatmentImpression::log($impression);
     }
 
     /**
@@ -206,15 +245,24 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
+        //Getting Matching key and Bucketing key
+        if ($key instanceof Key) {
+            $matchingKey = $key->getMatchingKey();
+            $bucketingKey = $key->getBucketingKey();
+        } else {
+            $matchingKey = $key;
+            $bucketingKey = $key;
+        }
+
         try {
-            return $this->evalTreatment($key, $featureName, $attributes);
+            return $this->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatment method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
             SplitApp::logger()->critical($e->getTraceAsString());
         }
 
-        TreatmentImpression::log($key, $featureName, TreatmentEnum::CONTROL);
+        $this->logImpression($matchingKey, $featureName, TreatmentEnum::CONTROL, ImpressionLabel::EXCEPTION);
         return TreatmentEnum::CONTROL;
     }
 
