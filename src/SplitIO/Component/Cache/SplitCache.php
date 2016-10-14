@@ -7,14 +7,21 @@ class SplitCache implements SplitCacheInterface
 {
     const KEY_TILL_CACHED_ITEM = 'SPLITIO.splits.till';
 
+    const KEY_SPLIT_CACHED_ITEM = 'SPLITIO.split.{splitName}';
+
     public static function getCacheKeyForSinceParameter()
     {
         return self::KEY_TILL_CACHED_ITEM;
     }
 
+    public static function getCacheKeySearchPattern()
+    {
+        return self::getCacheKeyForSplit('*');
+    }
+
     public static function getCacheKeyForSplit($splitName)
     {
-        return str_replace('{splitName}', $splitName, 'SPLITIO.split.{splitName}');
+        return str_replace('{splitName}', $splitName, self::KEY_SPLIT_CACHED_ITEM);
     }
 
     /**
