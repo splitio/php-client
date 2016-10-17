@@ -1,4 +1,6 @@
-2.1.2
+3.0.0
+ - Added SDK Factory Method with Manager API and Sdk Client
+ - Added Bucketing key support
  - Merging the branch php 5.5 and php 5.3 to get only one SDK version which support PHP >= 5.3.9
  - Added support for Block Until Redy
  - Removed php serialization at Redis cache to support Cache cross SDK spec
