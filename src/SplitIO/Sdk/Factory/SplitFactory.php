@@ -37,6 +37,9 @@ class SplitFactory implements SplitFactoryInterface
     {
         $this->options = $options;
 
+        //Block until ready
+        $this->doBUR();
+
         $this->client = new Client($options);
 
         $this->manager = new SplitManager();
@@ -86,7 +89,6 @@ class SplitFactory implements SplitFactoryInterface
      */
     public function client()
     {
-        $this->doBUR();
         return $this->client;
     }
 
@@ -95,7 +97,6 @@ class SplitFactory implements SplitFactoryInterface
      */
     public function manager()
     {
-        $this->doBUR();
         return $this->manager;
     }
 }

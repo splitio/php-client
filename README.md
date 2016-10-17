@@ -4,7 +4,7 @@
 
 ## Installing Split SDK using composer
 ```
-composer require splitsoftware/split-sdk-php:"dev-php-5.3-stable"
+composer require splitsoftware/split-sdk-php
 ```
 ## Setting backend service
 Once that  Split SDK has been installed via composer, you will find the Split synchronizer service located within **vendor/splitsoftware/split-sdk-php/bin** folder located in your own project.
@@ -23,7 +23,6 @@ Take a look to the section: [Split Synchronizer Service](#split-synchronizer-ser
 #> php /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio -s --config-file="/opt/splitsoftware/splitio.ini"
 ```
 
-
 ## Write your code!
 ```php
 /** SDK options */
@@ -33,7 +32,9 @@ $options = [
 ];
 
 /** Create the Split Client instance. */
-$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+
+$splitClient = $splitFactory->client();
 
 /** Checking if the key belong to treatment 'on' in sample_feature. */
 if ($splitClient->isTreatment('key', 'sample_feature', 'on')) {
@@ -42,41 +43,13 @@ if ($splitClient->isTreatment('key', 'sample_feature', 'on')) {
     //Code for disabled feature
 }
 ```
-### Attributes support
-```php
-/** SDK options */
-$options = [
-    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
-    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
-];
-
-/** Create the Split Client instance. */
-$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
-
-/** Set the attributes values as array */
-$attributes = ['age' => 20];
-
-/** Checking if the attribute 'age' belong to treatment 'yound' in sample_feature. */
-$treatment = $splitClient->getTreatment('key', 'sample_feature', $attributes);
-
-if ($treatment == 'young') {
-    //Code for young feature
-} else {
-    //Code for old feature
-}
-```
-**NOTE:** For date and time values the attribute should be set as Unix Timestamp in UTC. The sample below shows how to do it on PHP using the [DateTime](http://php.net/manual/en/class.datetime.php) and [DateTimeZone](http://php.net/manual/en/class.datetimezone.php) classes:
-```php
-
-$attributes = ['suscription' => (new \DateTime("2016/03/17 07:54PM", new \DateTimeZone("UTC")))->getTimestamp()]
-
-```
-
 
 # SDK Architecture
 ![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/master/doc/img/splitio.arch.png?raw=true)
 
-# Split Synchronizer Service
+# SDK Advanced Settings
+
+## Split Synchronizer Service
 This service is on charge to keep synchronized the Split server information with your local cache in order to improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
 ![Split Synchronizer Service](https://github.com/splitio/php-client/blob/master/doc/img/splitio.service.png?raw=true)
 
@@ -121,6 +94,119 @@ cp ./vendor/splitsoftware/split-sdk-php/bin/splitio.dist.ini service
 3- Add the line below on your application **Procfile**:
 ```
 worker: php vendor/bin/splitio --service --config-file="service/splitio.ini"
+```
+
+
+### Attributes support
+```php
+/** SDK options */
+$options = [
+    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
+    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
+];
+
+/** Create the Split Client instance. */
+$splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitClient = $splitFactory->client();
+
+/** Set the attributes values as array */
+$attributes = ['age' => 20];
+
+/** Checking if the attribute 'age' belong to treatment 'yound' in sample_feature. */
+$treatment = $splitClient->getTreatment('key', 'sample_feature', $attributes);
+
+if ($treatment == 'young') {
+    //Code for young feature
+} else {
+    //Code for old feature
+}
+```
+**NOTE:** For date and time values the attribute should be set as Unix Timestamp in UTC. The sample below shows how to do it on PHP using the [DateTime](http://php.net/manual/en/class.datetime.php) and [DateTimeZone](http://php.net/manual/en/class.datetimezone.php) classes:
+```php
+
+$attributes = ['suscription' => (new \DateTime("2016/03/17 07:54PM", new \DateTimeZone("UTC")))->getTimestamp()]
+
+```
+
+### Block Until Ready
+Due to nature of the SDK, for different reasons the cached information of Splits definitions could be absent at the first evaluations since at the initialization process a pulling action of the information is performed and the fetched data are saved into the cache system (Redis). To prevent this behaviour, the SDK Factory has been provided with a blocking mechanism named "Blocki Until Ready" or BUR. The idea is pretty simple, as developer you'll be able to set a timeout value and if the provided timeout is reached, the SDK going to throw an exception, avoiding its execution.
+
+```php
+/** SDK options */
+$options = [
+    'ready' => 100, //Time in milliseconds
+    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
+    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
+];
+
+/** Create the Split Factory instance using BUR. */
+try {
+   $splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+} catch (\SplitIO\Exception\TimeOutException $e) {
+    //Do something to avoid evaluation errors 
+    exit;
+}
+
+$splitClient = $splitFactory->client();
+
+$treatment = $splitClient->getTreatment('key', 'sample_feature');
+
+if ($treatment == 'on') {
+    //Code for on feature
+} else {
+    //Code for another feature 
+}
+```
+
+### Manager API
+The Manager API is a class created for debugging purpose. Using this class, as developer, you will be able to fetch a view of the cached data.
+The view class is described below:
+
+```php
+class SplitView
+{
+    private $name;
+    private $trafficType; // the name of the traffic type
+    private $killed;
+    private $treatments;
+    private $changeNumber;
+}
+```
+
+In order to use the Manager API an instance is created by the `factory` method of the SDK:
+```php
+/** SDK options */
+$options = [
+    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
+    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
+];
+
+/** Create the Split Factory instance. */
+$splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+
+/** Get the Manager API instance. */
+$splitManager = $splitFactory->manager();
+
+/** Given a feature name, return the Split view */
+$splitView = $splitManager->split('my_feature_name'); 
+
+echo $splitView->getName();
+echo $splitView->getTrafficType();
+echo $splitView->getKilled();
+echo $splitView->getTreatments();
+echo $splitView->getChangeNumber();
+
+/** Resturn an array of views for all cached splits */
+$splitViews = $splitManager->splits(); 
+
+foreach ($splitViews as $splitView) {
+    echo $splitView->getName();
+    echo $splitView->getTrafficType();
+    echo $splitView->getKilled();
+    echo $splitView->getTreatments();
+    echo $splitView->getChangeNumber();
+}
+
 ```
 
 # Adapters / Handlers

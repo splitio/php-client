@@ -1,4 +1,8 @@
-2.1.2
+3.0.0
+ - This version supports the SDK spec 1.3
+ - SDK Factory module
+ - Manager API module
+ - Added Bucketing key support
  - Merged branches php version support
  - Added support for Block Until Ready
  - Split Redis spec support
