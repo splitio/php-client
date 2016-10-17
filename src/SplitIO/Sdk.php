@@ -5,50 +5,41 @@ use SplitIO\Component\Http\Uri;
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerTrait;
 use SplitIO\Exception\Exception;
-use SplitIO\Sdk\Client;
-use SplitIO\Sdk\LocalhostClient;
+use SplitIO\Sdk\Factory\LocalhostSplitFactory;
+use SplitIO\Sdk\Factory\SplitFactory;
 
 class Sdk
 {
-    use LoggerTrait;
-
-    use CacheTrait;
-
     /**
      * Sdk class should be used as statically
      * @codeCoverageIgnore
      */
     private function __construct()
     {
-
     }
 
     /**
      * @param $apiKey
      * @param array $options
-     * @return \SplitIO\Sdk\ClientInterface
+     * @return \SplitIO\Sdk\Factory\SplitFactoryInterface
      */
-    public static function factory($apiKey = 'localhost', array $options = [])
+    public static function factory($apiKey = 'localhost', array $options = array())
     {
-        if ($apiKey == 'localhost') {
-            $filePath = (isset($options['splitFile']) && file_exists($options['splitFile']))
-                        ? $options['splitFile']
-                        : null;
-            return new LocalhostClient($filePath);
-        }
-
         //Adding API Key into args array.
         $options['apiKey'] = $apiKey;
 
-        //Register Logger
-        self::registerLogger((isset($options['log'])) ? $options['log'] : []);
+        if ($apiKey == 'localhost') {
+            return new LocalhostSplitFactory($options);
+        } else {
+            //Register Logger
+            self::registerLogger((isset($options['log'])) ? $options['log'] : array());
 
-        //Register Cache
-        self::registerCache((isset($options['cache'])) ? $options['cache'] : []);
+            //Register Cache
+            self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
 
-        return new Client($options);
+            return new SplitFactory($apiKey, $options);
+        }
     }
-
 
     /**
      * Register the logger class
@@ -56,18 +47,18 @@ class Sdk
     private static function registerLogger(array $options)
     {
         if (isset($options['psr3-instance'])) {
-            self::addLogger(null, null, $options['psr3-instance']);
+            LoggerTrait::addLogger(null, null, $options['psr3-instance']);
         } else {
             $adapter = (isset($options['adapter'])) ? $options['adapter'] : null;
             $level = (isset($options['level'])) ? $options['level'] : null;
 
-            self::addLogger($adapter, $level);
+            LoggerTrait::addLogger($adapter, $level);
         }
     }
 
     private static function registerCache(array $options)
     {
-        $_options = [];
+        $_options = array();
         $cacheAdapter = isset($options['adapter']) ? $options['adapter'] : 'redis';
 
         if ($cacheAdapter == 'redis') {
@@ -87,13 +78,10 @@ class Sdk
         } elseif ($cacheAdapter == 'predis') {
             $_options['predis-options'] = isset($options['options']) ? $options['options'] : null;
             $_options['predis-parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
-        } /* elseif ($cacheAdapter == 'filesystem') {
-            $_options['filesystem-path'] = isset($options['options']['path']) ? $options['options']['path'] : null;
-        } */
-        else {
+        } else {
             throw new Exception("A valid cache system is required. Given: $cacheAdapter");
         }
 
-        self::addCache($cacheAdapter, $_options);
+        CacheTrait::addCache($cacheAdapter, $_options);
     }
 }

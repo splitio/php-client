@@ -45,7 +45,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     public function testLocalClient()
     {
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/.splits';
-        $splitSdk = \SplitIO\Sdk::factory('localhost', $options);
+        $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
+        $splitSdk = $splitFactory->client();
 
         $this->assertEquals('treatment_1', $splitSdk->getTreatment('someKey', 'feature_A'));
         $this->assertEquals('treatment_2', $splitSdk->getTreatment('someKey', 'feature_B'));
@@ -64,13 +65,17 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
-        $sdkConfig = [
-            'log' => ['adapter' => 'stdout'],
-            'cache' => ['adapter' => 'redis', 'options' => ['host' => REDIS_HOST, 'port' => REDIS_PORT]]
-        ];
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
 
         //Initializing the SDK instance.
-        $splitSdk = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -100,19 +105,22 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @depends testClient
      */
-    public function testRedisUrlAndCustomLog()
+    public function testCustomLog()
     {
         // create a log channel
         $log = new Logger('SplitIO');
         $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
 
-        $redis_url = 'redis://'.REDIS_HOST.':'.REDIS_PORT;
-        $sdkConfig = [
-            'log' => ['psr3-instance' => $log],
-            'cache' => ['adapter' => 'redis', 'options' => ['url' => $redis_url]]
-        ];
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
 
-        $splitSdk = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $sdkConfig = array(
+            'log' => array('psr3-instance' => $log),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -131,10 +139,10 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(\SplitIO\Exception\Exception::class);
 
-        $sdkConfig = [
-            'log' => ['adapter' => 'stdout'],
-            'cache' => ['adapter' => 'invalidAdapter']
-        ];
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'invalidAdapter')
+        );
 
         //Initializing the SDK instance.
         \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);

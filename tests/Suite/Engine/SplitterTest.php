@@ -8,11 +8,10 @@ use SplitIO\Grammar\Condition\Partition;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {
-    use LoggerTrait;
 
     public function testDiLog()
     {
-        self::addLogger('stdout', LogLevelEnum::ERROR);
+        LoggerTrait::addLogger('stdout', LogLevelEnum::ERROR);
 
         $this->assertTrue(true);
     }
@@ -22,12 +21,12 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWorks()
     {
-        $partitions = [];
+        $partitions = array();
         for ($i = 1; $i <= 100; $i++) {
-            $partitions[$i] = new Partition(['treatment' => "$i", 'size' => 1]);
+            $partitions[$i] = new Partition(array('treatment' => "$i", 'size' => 1));
         }
 
-        $treatments = [];
+        $treatments = array();
         for ($i = 0; $i < 100; $i++) {
             $treatments[$i] = 0;
         }
@@ -37,7 +36,7 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
 
         for ($i = 0; $i < $n; $i++) {
             $key = uniqid('', true);
-            $treatment = Splitter::getTreatment($key, 123, $partitions);
+            $treatment = Splitter::getTreatment($key, 32126754, $partitions);
             $treatments[(int)$treatment - 1]++;
         }
 
@@ -60,9 +59,9 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
      */
     public function testSplitterErrorPartions()
     {
-        $partition = new Partition(['treatment' => "on", 'size' => -1]);
+        $partition = new Partition(array('treatment' => "on", 'size' => -1));
 
-        $this->assertNull(Splitter::getTreatment('someValidKey', 123123545, [$partition]));
+        $this->assertNull(Splitter::getTreatment('someValidKey', 123123545, array($partition)));
 
     }
 }

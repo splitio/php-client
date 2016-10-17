@@ -14,11 +14,13 @@
     }
   ],
 
-  "bin": ["bin/splitio.phar"],
+  "bin": ["bin/splitio"],
 
   "require": {
-    "php": ">=5.4.0",
-    "splitsoftware/split-php-common": "^1.0"
+    "php": ">=5.3.9",
+    "psr/log": "~1.0",
+    "predis/predis": "^1.1",
+    "rmccue/requests": "^1.6"
   },
 
   "require-dev": {
@@ -35,7 +37,8 @@
 
   "autoload": {
     "psr-4": {
-      "SplitIO\\": "src/SplitIO/"
+      "SplitIO\\": "src/SplitIO/",
+      "SplitIO\\Component\\": "src/SplitIO/Component/"
     },
     "files": ["src/functions_include.php"]
   },

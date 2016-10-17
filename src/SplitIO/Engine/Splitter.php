@@ -14,10 +14,12 @@ class Splitter
      */
     public static function getTreatment($key, $seed, $partitions)
     {
-        SplitApp::logger()->info("Splitter evaluating partitions");
-        SplitApp::logger()->info("UserID: ".$key);
-        SplitApp::logger()->info("Seed: ".$seed);
-        SplitApp::logger()->info("Partitions: ".print_r($partitions, true));
+        $logMsg = "Splitter evaluating partitions ... \n
+        Bucketing Key: $key \n
+        Seed: $seed \n
+        Partitions: ". print_r($partitions, true);
+
+        SplitApp::logger()->debug($logMsg);
 
         $bucket = abs(\SplitIO\hash($key, $seed) % 100) + 1;
 

@@ -2,26 +2,24 @@
 namespace SplitIO;
 
 use SplitIO\Component\Cache\ImpressionCache;
+use SplitIO\Sdk\Impressions\Impression;
 
 class TreatmentImpression
 {
     /**
-     * @param string $key
-     * @param string $featureName
-     * @param string $treatment
-     * @param long $time
+     * @param \SplitIO\Sdk\Impressions\Impression $impression
      * @return bool
      */
-    public static function log($key, $featureName, $treatment, $time = null)
+    public static function log(Impression $impression)
     {
-        if ($time === null || !is_integer($time)) {
-            $milliseconds = (new \DateTime("now", new \DateTimeZone("UTC")))->getTimestamp();
-        } else {
-            $milliseconds = $time;
-        }
+        Split::logger()->debug($impression);
 
-        $milliseconds = $milliseconds * 1000;
-
-        return (new ImpressionCache())->addDataToFeature($featureName, $key, $treatment, $milliseconds);
+        $impressionCache = new ImpressionCache();
+        return $impressionCache->addDataToFeature(
+            $impression->getFeature(),
+            $impression->getId(),
+            $impression->getTreatment(),
+            $impression->getTime()
+        );
     }
 }

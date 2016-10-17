@@ -5,13 +5,7 @@ use SplitIO\Split as SplitApp;
 
 class Split
 {
-    private $orgId = null;
-
-    private $environment = null;
-
     private $name = null;
-
-    private $trafficTypeId = null;
 
     private $trafficTypeName = null;
 
@@ -25,19 +19,20 @@ class Split
 
     private $defaultTreatment = null;
 
+    private $changeNumber = -1;
+
     public function __construct(array $split)
     {
         SplitApp::logger()->debug(print_r($split, true));
 
-        $this->orgId = $split['orgId'];
-        $this->environment = $split['environment'];
         $this->name = $split['name'];
-        $this->trafficTypeId = $split['trafficTypeId'];
         $this->trafficTypeName = $split['trafficTypeName'];
         $this->seed = $split['seed'];
         $this->status = $split['status'];
         $this->killed = $split['killed'];
         $this->defaultTreatment = $split['defaultTreatment'];
+        $this->changeNumber = (isset($split['changeNumber'])) ? $split['changeNumber'] : -1;
+
 
         SplitApp::logger()->info("Constructing Split: ".$this->name);
 
@@ -87,5 +82,44 @@ class Split
     public function getSeed()
     {
         return $this->seed;
+    }
+
+    /**
+     * @return int
+     */
+    public function getChangeNumber()
+    {
+        return $this->changeNumber;
+    }
+
+    /**
+     * @return null
+     */
+    public function getTrafficTypeName()
+    {
+        return $this->trafficTypeName;
+    }
+
+    /**
+     * @return null
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTreatments()
+    {
+        $treatments = array();
+
+        if ($this->conditions) {
+            $condition = $this->conditions[0];
+            $treatments = $condition->getTreatments();
+        }
+
+        return $treatments;
     }
 }

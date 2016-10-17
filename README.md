@@ -4,7 +4,7 @@
 
 ## Installing Split SDK using composer
 ```
-$ composer require splitsoftware/split-sdk-php
+composer require splitsoftware/split-sdk-php
 ```
 ## Setting backend service
 Once that  Split SDK has been installed via composer, you will find the Split synchronizer service located within **vendor/splitsoftware/split-sdk-php/bin** folder located in your own project.
@@ -13,23 +13,15 @@ Take a look to the section: [Split Synchronizer Service](#split-synchronizer-ser
 
 **Basic installation:** For a basic installation follow the steps below:
 ```
-1- Create a folder to copy the background service script. 
-#> mkdir /opt/splitsoftware
+1- Copy the distributed config file as environment file
+#> cp /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio.dist.ini /opt/splitsoftware/splitio.ini
 
-2- Copy the binary script and the config file into created folder. 
-#> cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
-
-3- Copy the distributed config file as environment file
-#> cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini
-
-4- Add your custom configuration
+2- Add your custom configuration
 #> vi /opt/splitsoftware/splitio.ini
 
-5- Run the service!
-#> php /opt/splitsoftware/splitio.phar service --config-file='/opt/splitsoftware/splitio.ini'
+3- Run the service!
+#> php /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio -s --config-file="/opt/splitsoftware/splitio.ini"
 ```
-**IMPORTANT:** By default the ```splitio.ini``` is loaded from the same directory in which the service ```splitio.phar``` is located, so you can avoid adding the ```--config-file``` option.
-
 
 ## Write your code!
 ```php
@@ -40,7 +32,9 @@ $options = [
 ];
 
 /** Create the Split Client instance. */
-$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+
+$splitClient = $splitFactory->client();
 
 /** Checking if the key belong to treatment 'on' in sample_feature. */
 if ($splitClient->isTreatment('key', 'sample_feature', 'on')) {
@@ -49,6 +43,60 @@ if ($splitClient->isTreatment('key', 'sample_feature', 'on')) {
     //Code for disabled feature
 }
 ```
+
+# SDK Architecture
+![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/master/doc/img/splitio.arch.png?raw=true)
+
+# SDK Advanced Settings
+
+## Split Synchronizer Service
+This service is on charge to keep synchronized the Split server information with your local cache in order to improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
+![Split Synchronizer Service](https://github.com/splitio/php-client/blob/master/doc/img/splitio.service.png?raw=true)
+
+### Running the synchronizer service on production
+When running **Split synchronizer service** in production it's highly recommended launching it from ```suporvisord```. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
+In order to configure the synchronizer service, you could follow these steps:
+
+1- Make a copy of ```splitio.dist.ini``` file as ```splitio.ini``` and customize the values in the splitio.ini file with the your correct values, such as the api-key and redis information
+```
+cp /path/to/your/project/vendor/splitsoftware/split-sdk-php/bin/splitio.dist.ini /opt/splitsoftware/splitio.ini 
+vi /opt/splitsoftware/splitio.ini
+```
+
+2- Add the lines below in your supervisor configuration file.
+```
+[program:splitio_service]
+command=/usr/bin/env php /path/to/your/project/vendor/bin/splitio --service --config-file="/opt/splitsoftware/splitio.ini"
+process_name = SplitIO
+numprocs = 1
+autostart=true
+autorestart=true
+user = root
+stderr_logfile=/var/log/splitio.err.log
+stderr_logfile_maxbytes = 1MB
+stdout_logfile=/var/log/splitio.out.log
+stdout_logfile_maxbytes = 1MB
+```
+
+### Heroku workers
+If your application is running on [Heroku](https://www.heroku.com/) you will be able to run this service as a Dyno Worker. To get it, follow the steps below located on your project root directory:
+
+1- Create a folder to copy the service:
+```
+mkdir service
+```
+
+2- Copy the service config file within the created folder
+```
+cp ./vendor/splitsoftware/split-sdk-php/bin/splitio.dist.ini service
+```
+
+3- Add the line below on your application **Procfile**:
+```
+worker: php vendor/bin/splitio --service --config-file="service/splitio.ini"
+```
+
+
 ### Attributes support
 ```php
 /** SDK options */
@@ -58,7 +106,8 @@ $options = [
 ];
 
 /** Create the Split Client instance. */
-$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+$splitClient = $splitFactory->client();
 
 /** Set the attributes values as array */
 $attributes = ['age' => 20];
@@ -79,65 +128,85 @@ $attributes = ['suscription' => (new \DateTime("2016/03/17 07:54PM", new \DateTi
 
 ```
 
+### Block Until Ready
+Due to nature of the SDK, for different reasons the cached information of Splits definitions could be absent at the first evaluations since at the initialization process a pulling action of the information is performed and the fetched data are saved into the cache system (Redis). To prevent this behaviour, the SDK Factory has been provided with a blocking mechanism named "Blocki Until Ready" or BUR. The idea is pretty simple, as developer you'll be able to set a timeout value and if the provided timeout is reached, the SDK going to throw an exception, avoiding its execution.
 
-# SDK Architecture
-![Split PHP SDK Architecture](https://github.com/splitio/php-client/blob/master/doc/img/splitio.arch.png?raw=true)
+```php
+/** SDK options */
+$options = [
+    'ready' => 100, //Time in milliseconds
+    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
+    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
+];
 
-# Split Synchronizer Service
-This service is on charge to keep synchronized the Split server information with your local cache in order to improve the performance at the moment to call the isTreatment or getTreatment methods and avoid undesired overtimes.
-![Split Synchronizer Service](https://github.com/splitio/php-client/blob/master/doc/img/splitio.service.png?raw=true)
+/** Create the Split Factory instance using BUR. */
+try {
+   $splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+} catch (\SplitIO\Exception\TimeOutException $e) {
+    //Do something to avoid evaluation errors 
+    exit;
+}
 
-### Running the synchronizer service on production
-When running **Split synchronizer service** in production it's highly recommended launching it from ```suporvisord```. [Suporvisor](http://supervisord.org) is a daemon that launches other processes and ensures they stay running. If for any reason your long running **Split** service halted the supervisor daemon would ensure it starts back up immediately. Supervisor can be installed with any of the following tools: pip, easy_install, apt-get, yum.
-In order to configure the synchronizer service, you could follow these steps:
+$splitClient = $splitFactory->client();
 
-1- Create a folder to copy the service:
-```
-mkdir /opt/splitsoftware
-```
+$treatment = $splitClient->getTreatment('key', 'sample_feature');
 
-2- Copy the service within the created folder
-```
-cp -R ./vendor/splitsoftware/split-sdk-php/bin/* /opt/splitsoftware
-```
-
-3- Make a copy of ```splitio.dist.ini``` file as ```splitio.ini``` and customize the values in the splitio.ini file with the your correct values, such as the api-key and redis information
-```
-cp /opt/splitsoftware/splitio.dist.ini /opt/splitsoftware/splitio.ini 
-vi /opt/splitsoftware/splitio.ini
-```
-
-4- Add the lines below in your supervisor configuration file.
-```
-[program:splitio_service]
-command=/usr/bin/env php /opt/splitsoftware/splitio.phar service --config-file="/opt/splitsoftware/splitio.ini"
-process_name = SplitIO
-numprocs = 1
-autostart=true
-autorestart=true
-user = root
-stderr_logfile=/var/log/splitio.err.log
-stderr_logfile_maxbytes = 1MB
-stdout_logfile=/var/log/splitio.out.log
-stdout_logfile_maxbytes = 1MB
+if ($treatment == 'on') {
+    //Code for on feature
+} else {
+    //Code for another feature 
+}
 ```
 
-### Heroku workers
-If your application is running on [Heroku](https://www.heroku.com/) you will be able to run this service as a Dyno Worker. To get it, follow the steps below located on your project root directory:
+### Manager API
+The Manager API is a class created for debugging purpose. Using this class, as developer, you will be able to fetch a view of the cached data.
+The view class is described below:
 
-1- Create a folder to copy the service:
-```
-mkdir service
+```php
+class SplitView
+{
+    private $name;
+    private $trafficType; // the name of the traffic type
+    private $killed;
+    private $treatments;
+    private $changeNumber;
+}
 ```
 
-2- Copy the service within the created folder
-```
-cp -R ./vendor/splitsoftware/split-sdk-php/bin/* service
-```
+In order to use the Manager API an instance is created by the `factory` method of the SDK:
+```php
+/** SDK options */
+$options = [
+    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
+    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
+];
 
-3- Add the line below on your application **Procfile**:
-```
-worker: php service/splitio.phar service
+/** Create the Split Factory instance. */
+$splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
+
+/** Get the Manager API instance. */
+$splitManager = $splitFactory->manager();
+
+/** Given a feature name, return the Split view */
+$splitView = $splitManager->split('my_feature_name'); 
+
+echo $splitView->getName();
+echo $splitView->getTrafficType();
+echo $splitView->getKilled();
+echo $splitView->getTreatments();
+echo $splitView->getChangeNumber();
+
+/** Resturn an array of views for all cached splits */
+$splitViews = $splitManager->splits(); 
+
+foreach ($splitViews as $splitView) {
+    echo $splitView->getName();
+    echo $splitView->getTrafficType();
+    echo $splitView->getKilled();
+    echo $splitView->getTreatments();
+    echo $splitView->getChangeNumber();
+}
+
 ```
 
 # Adapters / Handlers
