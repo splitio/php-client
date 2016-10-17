@@ -58,7 +58,8 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         ];
 
         //Initializing the SDK instance.
-        $splitSdk = \SplitIO\Sdk::factory('some-api-key', $sdkConfig);
+        $splitFactory = \SplitIO\Sdk::factory('some-api-key', $sdkConfig);
+        $splitSdk = $splitFactory->client();
 
         //Populating the cache.
         $this->addSplitsInCache();

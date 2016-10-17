@@ -91,4 +91,35 @@ class Split
     {
         return $this->changeNumber;
     }
+
+    /**
+     * @return null
+     */
+    public function getTrafficTypeName()
+    {
+        return $this->trafficTypeName;
+    }
+
+    /**
+     * @return null
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTreatments()
+    {
+        $treatments = array();
+
+        if ($this->conditions) {
+            $condition = $this->conditions[0];
+            $treatments = $condition->getTreatments();
+        }
+
+        return $treatments;
+    }
 }

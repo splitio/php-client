@@ -96,4 +96,19 @@ class Condition
     {
         return $this->partitions;
     }
+
+    /**
+     * @return array
+     */
+    public function getTreatments()
+    {
+        $treatments = array();
+        if ($this->partitions) {
+            foreach ($this->partitions as $partition) {
+                $treatments[] = $partition->getTreatment();
+            }
+        }
+
+        return $treatments;
+    }
 }

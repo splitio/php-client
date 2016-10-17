@@ -1,15 +1,12 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Http\Uri;
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerTrait;
-use SplitIO\Component\Stats\Latency;
 use SplitIO\Exception\Exception;
-use SplitIO\Exception\TimeOutException;
-use SplitIO\Sdk\Client;
-use SplitIO\Sdk\LocalhostClient;
+use SplitIO\Sdk\Factory\LocalhostSplitFactory;
+use SplitIO\Sdk\Factory\SplitFactory;
 
 class Sdk
 {
@@ -24,61 +21,24 @@ class Sdk
     /**
      * @param $apiKey
      * @param array $options
-     * @return \SplitIO\Sdk\ClientInterface
+     * @return \SplitIO\Sdk\Factory\SplitFactoryInterface
      */
     public static function factory($apiKey = 'localhost', array $options = array())
     {
-        if ($apiKey == 'localhost') {
-            $filePath = (isset($options['splitFile']) && file_exists($options['splitFile']))
-                        ? $options['splitFile']
-                        : null;
-            return new LocalhostClient($filePath);
-        }
-
         //Adding API Key into args array.
         $options['apiKey'] = $apiKey;
 
-        //Register Logger
-        self::registerLogger((isset($options['log'])) ? $options['log'] : array());
+        if ($apiKey == 'localhost') {
+            return new LocalhostSplitFactory($options);
+        } else {
+            //Register Logger
+            self::registerLogger((isset($options['log'])) ? $options['log'] : array());
 
-        //Register Cache
-        self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
+            //Register Cache
+            self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
 
-        //Block Until Ready
-        if (isset($options['ready']) && $options['ready'] > 0) {
-            if (!self::blockUntilReady($options['ready'])) {
-                throw new TimeOutException("Cache data is not ready yet");
-            }
+            return new SplitFactory($apiKey, $options);
         }
-
-        return new Client($options);
-    }
-
-    /**
-     * @param $timeout
-     * @return bool
-     */
-    private static function blockUntilReady($timeout)
-    {
-        $bur = new BlockUntilReadyCache();
-
-        $startTime = Latency::startMeasuringLatency();
-
-        do {
-            $lastreadyCheckpoint = $bur->getReadyCheckpoint();
-
-            if ($lastreadyCheckpoint > 0) {
-                return true;
-            }
-
-            // Checkpoint in milliseconds
-            $checkPoint = Latency::calculateLatency($startTime) / 1000;
-
-            // waiting 10 milliseconds
-            usleep(10000);
-        } while ($checkPoint < $timeout);
-
-        return false;
     }
 
     /**

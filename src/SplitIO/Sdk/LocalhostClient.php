@@ -54,6 +54,11 @@ class LocalhostClient implements ClientInterface
         }
     }
 
+    public function getSplits()
+    {
+        return $this->splits;
+    }
+
     /**
      * Returns the treatment to show this id for this feature.
      * The set of treatments for a feature can be configured
