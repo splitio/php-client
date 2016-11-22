@@ -9,6 +9,16 @@ use SplitIO\Component\Cache\SplitCache;
 
 class SplitManager implements SplitManagerInterface
 {
+    public function splitNames()
+    {
+        $splitKeys = Di::getCache()->getKeys(SplitCache::getCacheKeySearchPattern());
+
+        if (in_array('SPLITIO.split.till', $splitKeys)) {
+            $splitKeys = array_diff($splitKeys, array('SPLITIO.split.till'));
+        }
+
+        return array_map('SplitIO\Component\Cache\SplitCache::getSplitNameFromCacheKey', $splitKeys);
+    }
 
     /**
      * @return array
@@ -19,8 +29,14 @@ class SplitManager implements SplitManagerInterface
 
         $splitKeys = Di::getCache()->getKeys(SplitCache::getCacheKeySearchPattern());
 
-        foreach ($splitKeys as $key) {
-            $splitView = $this->getSplitByCacheKey($key);
+        if (in_array('SPLITIO.split.till', $splitKeys)) {
+            $splitKeys = array_diff($splitKeys, array('SPLITIO.split.till'));
+        }
+
+        $cachedSplits = Di::getCache()->getItems($splitKeys);
+
+        foreach ($cachedSplits as $split) {
+            $splitView = $this->parseSplitView($split);
             if ($splitView != null) {
                 $_splits[] = $splitView;
             }
@@ -35,30 +51,35 @@ class SplitManager implements SplitManagerInterface
      */
     public function split($featureName)
     {
-        return $this->getSplitByCacheKey(SplitCache::getCacheKeyForSplit($featureName));
-    }
-
-    /**
-     * @param $splitCacheKey
-     * @return null|SplitView
-     */
-    private function getSplitByCacheKey($splitCacheKey)
-    {
+        $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
         $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
 
         if ($splitCachedItem->isHit()) {
-            $splitRepresentation = $splitCachedItem->get();
-            $split = new Split(json_decode($splitRepresentation, true));
-
-            return new SplitView(
-                $split->getName(),
-                $split->getTrafficTypeName(),
-                $split->killed(),
-                $split->getTreatments(),
-                $split->getChangeNumber()
-            );
+            return $this->parseSplitView($splitCachedItem->get());
         }
 
         return null;
+    }
+
+    /**
+     * @param $splitRepresentation
+     * @return SplitView
+     */
+    private function parseSplitView($splitRepresentation)
+    {
+        if (empty($splitRepresentation)) {
+            return null;
+        }
+
+        $split = new Split(json_decode($splitRepresentation, true));
+
+        return new SplitView(
+            $split->getName(),
+            $split->getTrafficTypeName(),
+            $split->killed(),
+            $split->getTreatments(),
+            $split->getChangeNumber()
+        );
+
     }
 }
