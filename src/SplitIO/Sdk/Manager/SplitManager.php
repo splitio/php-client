@@ -80,6 +80,5 @@ class SplitManager implements SplitManagerInterface
             $split->getTreatments(),
             $split->getChangeNumber()
         );
-
     }
 }
