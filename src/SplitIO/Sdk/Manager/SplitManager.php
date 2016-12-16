@@ -29,10 +29,6 @@ class SplitManager implements SplitManagerInterface
 
         $splitKeys = Di::getCache()->getKeys(SplitCache::getCacheKeySearchPattern());
 
-        if (in_array('SPLITIO.split.till', $splitKeys)) {
-            $splitKeys = array_diff($splitKeys, array('SPLITIO.split.till'));
-        }
-
         $cachedSplits = Di::getCache()->getItems($splitKeys);
 
         foreach ($cachedSplits as $split) {
