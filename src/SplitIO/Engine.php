@@ -36,6 +36,9 @@ class Engine
                 );
 
                 $result[self::EVALUATION_RESULT_LABEL] = $condition->getLabel();
+
+                //Return the first condition that match.
+                return $result;
             }
         }
 

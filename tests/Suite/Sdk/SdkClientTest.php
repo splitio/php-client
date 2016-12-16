@@ -1,5 +1,5 @@
 <?php
-namespace SplitIO\Test\Suite\Engine;
+namespace SplitIO\Test\Suite\Sdk;
 
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
