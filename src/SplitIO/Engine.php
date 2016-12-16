@@ -29,7 +29,6 @@ class Engine
 
         foreach ($conditions as $condition) {
             if ($condition->match($matchingKey, $attributes)) {
-
                 $result[self::EVALUATION_RESULT_TREATMENT] = Splitter::getTreatment(
                     $bucketingKey,
                     $split->getSeed(),
