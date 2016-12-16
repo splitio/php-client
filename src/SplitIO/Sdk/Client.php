@@ -142,16 +142,25 @@ class Client implements ClientInterface
             if ($split->killed()) {
                 $defaultTreatment = $split->getDefaultTratment();
                 $chn = $split->getChangeNumber();
-                $this->logImpression($matchingKey, $featureName, $defaultTreatment, ImpressionLabel::KILLED, $chn);
+                $this->logImpression(
+                    $matchingKey,
+                    $featureName,
+                    $defaultTreatment,
+                    ImpressionLabel::KILLED,
+                    $bucketingKey,
+                    $chn
+                );
                 return $defaultTreatment;
             }
 
             $timeStart = Metrics::startMeasuringLatency();
-            $treatment = Engine::getTreatment($matchingKey, $bucketingKey, $split, $attributes);
+            $evaluationResult = Engine::getTreatment($matchingKey, $bucketingKey, $split, $attributes);
             $latency = Metrics::calculateLatency($timeStart);
 
+            $treatment = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
+            $impressionLabel = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];
+
             //If the given key doesn't match on any condition, default treatment is returned
-            $impressionLabel = '';
             if ($treatment == null) {
                 $treatment = $split->getDefaultTratment();
                 $impressionLabel = ImpressionLabel::NO_CONDITION_MATCHED;
@@ -166,14 +175,27 @@ class Client implements ClientInterface
             SplitApp::logger()->info("*Treatment for $matchingKey in {$split->getName()} is: $treatment");
 
             //Logging treatment impressions
-            $this->logImpression($matchingKey, $featureName, $treatment, $impressionLabel, $split->getChangeNumber());
+            $this->logImpression(
+                $matchingKey,
+                $featureName,
+                $treatment,
+                $impressionLabel,
+                $bucketingKey,
+                $split->getChangeNumber()
+            );
 
             //Returning treatment.
             return $treatment;
         }
 
         // Split not found impression
-        $this->logImpression($matchingKey, $featureName, TreatmentEnum::CONTROL, ImpressionLabel::SPLIT_NOT_FOUND);
+        $this->logImpression(
+            $matchingKey,
+            $featureName,
+            TreatmentEnum::CONTROL,
+            ImpressionLabel::SPLIT_NOT_FOUND,
+            $bucketingKey
+        );
 
         SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");
 
@@ -194,8 +216,8 @@ class Client implements ClientInterface
         $feature,
         $treatment,
         $label = '',
-        $changeNumber = -1,
         $bucketingKey = '',
+        $changeNumber = -1,
         $time = null
     ) {
         $impression = new Impression(
@@ -262,7 +284,13 @@ class Client implements ClientInterface
             SplitApp::logger()->critical($e->getTraceAsString());
         }
 
-        $this->logImpression($matchingKey, $featureName, TreatmentEnum::CONTROL, ImpressionLabel::EXCEPTION);
+        $this->logImpression(
+            $matchingKey,
+            $featureName,
+            TreatmentEnum::CONTROL,
+            ImpressionLabel::EXCEPTION,
+            $bucketingKey
+        );
         return TreatmentEnum::CONTROL;
     }
 
