@@ -46,14 +46,21 @@ class Client implements ClientInterface
     private $smKeySeed;
 
     /**
+     * Flag to get Impression's labels feature enabled
+     * @var bool
+     */
+    private $labelsEnabled;
+
+    /**
      * @param array $options
      */
     public function __construct($options = array())
     {
-        $this->smSize       = isset($options['memory']['size']) ? $options['memory']['size'] : 40000;
-        $this->smMode       = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
-        $this->smTtl        = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
-        $this->smKeySeed    = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
+        $this->smSize        = isset($options['memory']['size']) ? $options['memory']['size'] : 40000;
+        $this->smMode        = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
+        $this->smTtl         = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
+        $this->smKeySeed     = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
+        $this->labelsEnabled = isset($options['labelsEnabled']) ? $options['labelsEnabled'] : true;
     }
 
     private function getSmKey($featureName)
@@ -220,6 +227,11 @@ class Client implements ClientInterface
         $changeNumber = -1,
         $time = null
     ) {
+
+        if (!$this->labelsEnabled) {
+            $label = null;
+        }
+
         $impression = new Impression(
             $matchingKey,
             $feature,
