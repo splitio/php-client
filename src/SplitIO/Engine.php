@@ -20,6 +20,10 @@ class Engine
      */
     public static function getTreatment($matchingKey, $bucketingKey, SplitGrammar $split, array $attributes = null)
     {
+        if ($bucketingKey === null) {
+            $bucketingKey = $matchingKey;
+        }
+
         $conditions = $split->getConditions();
 
         $result = array(

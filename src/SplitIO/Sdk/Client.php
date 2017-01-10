@@ -223,7 +223,7 @@ class Client implements ClientInterface
         $feature,
         $treatment,
         $label = '',
-        $bucketingKey = '',
+        $bucketingKey = null,
         $changeNumber = -1,
         $time = null
     ) {
@@ -285,7 +285,7 @@ class Client implements ClientInterface
             $bucketingKey = $key->getBucketingKey();
         } else {
             $matchingKey = $key;
-            $bucketingKey = $key;
+            $bucketingKey = null;
         }
 
         try {
