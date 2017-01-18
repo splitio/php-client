@@ -1,3 +1,6 @@
+3.1.0
+ - Added enabled labels
+ - Added impressions by sdk and version including bucketing key
 3.0.0
  - Added SDK Factory Method with Manager API and Sdk Client
  - Added Bucketing key support
