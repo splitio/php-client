@@ -79,13 +79,7 @@ class Pool extends CacheKeyTrait
      */
     public function getItems(array $keys = array())
     {
-        $items = array();
-
-        foreach ($keys as $key) {
-            $items[$key] = $this->getItem($key);
-        }
-
-        return $items;
+        return $this->adapter->getItems($keys);
     }
 
     /**

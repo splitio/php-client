@@ -15,6 +15,8 @@ class Condition
 
     private $partitions = null;
 
+    private $label = null;
+
     //On the next versions the condition will support Combiners: AND, OR, NOT
     private $combiner = null;
 
@@ -24,7 +26,6 @@ class Condition
     public function __construct(array $condition)
     {
         SplitApp::logger()->debug(print_r($condition, true));
-        SplitApp::logger()->info("Constructing Condition");
 
         //So far the combiner is AND. On next versions the condition will support Combiners: OR
         $this->combiner = new CombinerEnum(CombinerEnum::_AND);
@@ -42,6 +43,10 @@ class Condition
             foreach ($condition['matcherGroup']['matchers'] as $matcher) {
                 $this->matcherGroup[] = Matcher::factory($matcher);
             }
+        }
+
+        if (isset($condition['label']) && !empty($condition['label'])) {
+            $this->label = $condition['label'];
         }
     }
 
@@ -110,5 +115,13 @@ class Condition
         }
 
         return $treatments;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 }

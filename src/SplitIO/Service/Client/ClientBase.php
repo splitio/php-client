@@ -91,7 +91,7 @@ abstract class ClientBase
 
         $headers = array(
             'Authorization'     => 'Bearer ' . $authorization,
-            'SplitSDKVersion'   => 'php-0.0.1',
+            'SplitSDKVersion'   => 'php-' . \SplitIO\version(),
             'User-Agent'        => 'SplitIO-SDK-PHP/0.1',
             'Accept-Encoding'   => 'gzip',
             'Content-Type'      => 'application/json'

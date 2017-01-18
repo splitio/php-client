@@ -19,14 +19,14 @@ class ImpressionLabel
      * Treatment: Default Treatment
      * Label: no condition matched
      */
-    const NO_CONDITION_MATCHED = "no condition matched";
+    const NO_CONDITION_MATCHED = "no rule matched";
 
     /**
      * Condition: Split definition was not found
      * Treatment: control
      * Label: split not found
      */
-    const SPLIT_NOT_FOUND = "split not found";
+    const SPLIT_NOT_FOUND = "rules not found";
 
     /**
      * Condition: There was an exception
