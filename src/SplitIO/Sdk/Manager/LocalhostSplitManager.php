@@ -10,6 +10,19 @@ class LocalhostSplitManager implements SplitManagerInterface
         $this->splits = $splits;
     }
 
+    public function splitNames()
+    {
+        $_splits = array();
+
+        if ($this->splits) {
+            foreach ($this->splits as $featureName => $treatment) {
+                $_splits[] = $featureName;
+            }
+        }
+
+        return $_splits;
+    }
+
     public function splits()
     {
         $_splits = array();

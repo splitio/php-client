@@ -24,6 +24,12 @@ class SplitCache implements SplitCacheInterface
         return str_replace('{splitName}', $splitName, self::KEY_SPLIT_CACHED_ITEM);
     }
 
+    public static function getSplitNameFromCacheKey($key)
+    {
+        $cacheKeyPrefix = self::getCacheKeyForSplit('');
+        return str_replace($cacheKeyPrefix, '', $key);
+    }
+
     /**
      * @param string $splitName
      * @param string $split JSON representation

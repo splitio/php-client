@@ -6,6 +6,11 @@ interface SplitManagerInterface
     /**
      * @return array
      */
+    public function splitNames();
+
+    /**
+     * @return array
+     */
     public function splits();
 
     /**

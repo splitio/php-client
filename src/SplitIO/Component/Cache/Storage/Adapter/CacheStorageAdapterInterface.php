@@ -18,6 +18,8 @@ interface CacheStorageAdapterInterface
      */
     public function getItem($key);
 
+    public function getItems(array $keys);
+
     /**
      * @param string $key
      * @param mixed $value
@@ -25,6 +27,7 @@ interface CacheStorageAdapterInterface
      * @return bool
      */
     public function addItem($key, $value, $expiration = null);
+
 
     /**
      * @return bool

@@ -94,18 +94,17 @@ class Impression
     }
 
     /**
-     * @param mixed $time
+     * @param mixed $timemillis
      */
-    public function setTime($time)
+    public function setTime($timemillis)
     {
-        if ($time === null || !is_integer($time)) {
-            $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
-            $milliseconds = $dateTimeUTC->getTimestamp();
+        if ($timemillis === null || !is_integer($timemillis)) {
+            $milliseconds = round(microtime(true) * 1000);
         } else {
-            $milliseconds = $time;
+            $milliseconds = $timemillis;
         }
 
-        $this->time = $milliseconds * 1000;
+        $this->time = $milliseconds;
     }
 
     /**

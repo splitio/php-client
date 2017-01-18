@@ -46,14 +46,21 @@ class Client implements ClientInterface
     private $smKeySeed;
 
     /**
+     * Flag to get Impression's labels feature enabled
+     * @var bool
+     */
+    private $labelsEnabled;
+
+    /**
      * @param array $options
      */
     public function __construct($options = array())
     {
-        $this->smSize       = isset($options['memory']['size']) ? $options['memory']['size'] : 40000;
-        $this->smMode       = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
-        $this->smTtl        = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
-        $this->smKeySeed    = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
+        $this->smSize        = isset($options['memory']['size']) ? $options['memory']['size'] : 40000;
+        $this->smMode        = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
+        $this->smTtl         = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
+        $this->smKeySeed     = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
+        $this->labelsEnabled = isset($options['labelsEnabled']) ? $options['labelsEnabled'] : true;
     }
 
     private function getSmKey($featureName)
@@ -142,16 +149,25 @@ class Client implements ClientInterface
             if ($split->killed()) {
                 $defaultTreatment = $split->getDefaultTratment();
                 $chn = $split->getChangeNumber();
-                $this->logImpression($matchingKey, $featureName, $defaultTreatment, ImpressionLabel::KILLED, $chn);
+                $this->logImpression(
+                    $matchingKey,
+                    $featureName,
+                    $defaultTreatment,
+                    ImpressionLabel::KILLED,
+                    $bucketingKey,
+                    $chn
+                );
                 return $defaultTreatment;
             }
 
             $timeStart = Metrics::startMeasuringLatency();
-            $treatment = Engine::getTreatment($matchingKey, $bucketingKey, $split, $attributes);
+            $evaluationResult = Engine::getTreatment($matchingKey, $bucketingKey, $split, $attributes);
             $latency = Metrics::calculateLatency($timeStart);
 
+            $treatment = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
+            $impressionLabel = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];
+
             //If the given key doesn't match on any condition, default treatment is returned
-            $impressionLabel = '';
             if ($treatment == null) {
                 $treatment = $split->getDefaultTratment();
                 $impressionLabel = ImpressionLabel::NO_CONDITION_MATCHED;
@@ -166,14 +182,27 @@ class Client implements ClientInterface
             SplitApp::logger()->info("*Treatment for $matchingKey in {$split->getName()} is: $treatment");
 
             //Logging treatment impressions
-            $this->logImpression($matchingKey, $featureName, $treatment, $impressionLabel, $split->getChangeNumber());
+            $this->logImpression(
+                $matchingKey,
+                $featureName,
+                $treatment,
+                $impressionLabel,
+                $bucketingKey,
+                $split->getChangeNumber()
+            );
 
             //Returning treatment.
             return $treatment;
         }
 
         // Split not found impression
-        $this->logImpression($matchingKey, $featureName, TreatmentEnum::CONTROL, ImpressionLabel::SPLIT_NOT_FOUND);
+        $this->logImpression(
+            $matchingKey,
+            $featureName,
+            TreatmentEnum::CONTROL,
+            ImpressionLabel::SPLIT_NOT_FOUND,
+            $bucketingKey
+        );
 
         SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");
 
@@ -194,10 +223,15 @@ class Client implements ClientInterface
         $feature,
         $treatment,
         $label = '',
+        $bucketingKey = null,
         $changeNumber = -1,
-        $bucketingKey = '',
         $time = null
     ) {
+
+        if (!$this->labelsEnabled) {
+            $label = null;
+        }
+
         $impression = new Impression(
             $matchingKey,
             $feature,
@@ -251,7 +285,7 @@ class Client implements ClientInterface
             $bucketingKey = $key->getBucketingKey();
         } else {
             $matchingKey = $key;
-            $bucketingKey = $key;
+            $bucketingKey = null;
         }
 
         try {
@@ -262,7 +296,13 @@ class Client implements ClientInterface
             SplitApp::logger()->critical($e->getTraceAsString());
         }
 
-        $this->logImpression($matchingKey, $featureName, TreatmentEnum::CONTROL, ImpressionLabel::EXCEPTION);
+        $this->logImpression(
+            $matchingKey,
+            $featureName,
+            TreatmentEnum::CONTROL,
+            ImpressionLabel::EXCEPTION,
+            $bucketingKey
+        );
         return TreatmentEnum::CONTROL;
     }
 

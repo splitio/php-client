@@ -19,7 +19,10 @@ class TreatmentImpression
             $impression->getFeature(),
             $impression->getId(),
             $impression->getTreatment(),
-            $impression->getTime()
+            $impression->getTime(),
+            $impression->getChangeNumber(),
+            $impression->getLabel(),
+            $impression->getBucketingKey()
         );
     }
 }

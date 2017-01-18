@@ -41,12 +41,15 @@ class ImpressionCache
      * @param $time
      * @return bool
      */
-    public function addDataToFeature($featureName, $key, $treatment, $time)
+    public function addDataToFeature($featureName, $key, $treatment, $time, $changeNumber, $label, $bucketingKey)
     {
         $data = array(
             'keyName' => $key,
             'treatment' => $treatment,
-            'time' => $time
+            'time' => $time,
+            'changeNumber' => $changeNumber,
+            'label' => $label,
+            'bucketingKey' => $bucketingKey
         );
 
         return Di::getCache()->saveItemOnList(self::getCacheKeyForImpressionData($featureName), json_encode($data));
