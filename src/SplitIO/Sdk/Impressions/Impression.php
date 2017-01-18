@@ -98,7 +98,7 @@ class Impression
      */
     public function setTime($timemillis)
     {
-        if ($time === null || !is_integer($time)) {
+        if ($timemillis === null || !is_integer($timemillis)) {
             $milliseconds = round(microtime(true) * 1000);
         } else {
             $milliseconds = $timemillis;
