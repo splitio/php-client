@@ -3,5 +3,5 @@ namespace SplitIO;
 
 class Version
 {
-    const CURRENT = '3.1.0';
+    const CURRENT = '3.1.1';
 }
