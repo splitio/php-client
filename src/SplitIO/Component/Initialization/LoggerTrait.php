@@ -4,8 +4,10 @@ namespace SplitIO\Component\Initialization;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use SplitIO\Component\Common\ServiceProvider;
+use SplitIO\Component\Log\Handler\Echos;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Handler\Syslog;
+use SplitIO\Component\Log\Handler\Void;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;
 
@@ -21,18 +23,26 @@ class LoggerTrait
             $logAdapter = null;
 
             switch ($adapter) {
-                case 'syslog':
-                    $logAdapter = new Syslog();
+                case 'stdout':
+                    $logAdapter = new Stdout();
                     break;
 
-                case 'stdout':
+                case 'echo':
+                    $logAdapter = new Echos();
+                    break;
+
+                case 'void':
+                    $logAdapter = new Void();
+                    break;
+
+                case 'syslog':
                 default:
-                    $logAdapter = new Stdout();
+                    $logAdapter = new Syslog();
                     break;
             }
 
             if (! LogLevelEnum::isValid($level)) {
-                $level = LogLevel::INFO;
+                $level = LogLevel::WARNING;
             }
 
             $logger = new Logger($logAdapter, $level);
