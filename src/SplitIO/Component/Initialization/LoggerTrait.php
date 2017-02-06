@@ -4,6 +4,7 @@ namespace SplitIO\Component\Initialization;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use SplitIO\Component\Common\ServiceProvider;
+use SplitIO\Component\Log\Handler\Echos;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Handler\Syslog;
 use SplitIO\Component\Log\Handler\Void;
@@ -24,6 +25,10 @@ class LoggerTrait
             switch ($adapter) {
                 case 'stdout':
                     $logAdapter = new Stdout();
+                    break;
+
+                case 'echo':
+                    $logAdapter = new Echos();
                     break;
 
                 case 'void':

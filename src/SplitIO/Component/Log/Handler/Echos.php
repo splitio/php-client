@@ -2,21 +2,19 @@
 namespace SplitIO\Component\Log\Handler;
 
 /**
- * Class Stdout
+ * Class Echos
  * Logger Handler to write on system standard output
  * @package SplitIO\Component\Log\Handler
  */
-class Stdout implements LogHandlerInterface
+class Echos implements LogHandlerInterface
 {
     /**
-     * Write on standard output
+     * Write on output
      * @param $logLevel
      * @param $message
      */
     public function write($logLevel, $message)
     {
-        $stdout = fopen('php://stdout', 'w');
-        fwrite($stdout, sprintf('<%s> %s', $logLevel, $message) . PHP_EOL);
-        fclose($stdout);
+        echo sprintf('<%s> %s', $logLevel, $message) . PHP_EOL;
     }
 }
