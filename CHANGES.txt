@@ -1,3 +1,6 @@
+3.1.2
+ - Modified stdout logger handler
+ - Added "echo" logger handler
 3.1.1
  - Set syslog as default log adapter
  - Added "void" log adapter
