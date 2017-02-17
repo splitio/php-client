@@ -19,7 +19,7 @@
   "require": {
     "php": ">=5.3.9",
     "psr/log": "~1.0",
-    "predis/predis": "^1.1",
+    "predis/predis": "^1.0",
     "rmccue/requests": "^1.6"
   },
 
@@ -29,12 +29,7 @@
     "squizlabs/php_codesniffer": "2.*",
     "fabpot/php-cs-fixer": "^1.11"
   },
-
-  "suggest": {
-    "ext-redis": "Allows communicate with Redis servers (php extension)",
-    "predis/predis": "Allows communicate with Redis server and clusters (predis library)"
-  },
-
+  
   "autoload": {
     "psr-4": {
       "SplitIO\\": "src/SplitIO/",

@@ -257,33 +257,8 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 
 
 ## Cache
-Split SDK has its own cache implementation, the main and default adapter is Redis. However the popular [PRedis](https://github.com/nrk/predis) library is supported as well.
-#### Redis Cache Adapter - Configuration Options
-  - **host:**  The HOST value for Redis adapter 
-  - **port:** The PORT value for Redis adapter
-  - **pass:** The PASSWORD value for Redis adapter
-  - **timeout:** The Timeout value (in seconds) for Redis adapter
-  - **url:** The full URL for Redis adapter. If this url is set, host, port and pass will be ignored. The url pattern could be: **redis://user:pass@host:port**
+Split SDK depends of the popular [PRedis](https://github.com/nrk/predis) library.
 
-#### Provided Redis Cache Adapter - sample code
-```php
-/** SDK options */
-$options = [
-    'cache' => [
-            'adapter' => 'redis', 
-            'options' => [
-                            'host' => '172.17.0.2', 
-                            'port' => 6379,
-                            'pass' => 'somePassword',
-                            'timeout' => 10,
-                            'url' => 'redis://u:somePassword@172.17.0.2:6379'
-                        ]
-                ]
-];
-
-/** Create the Split Client instance. */
-$splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
-```
 **IMPORTANT:** When Redis is used as a cache, sometimes it is handy to let it automatically evict old data as you add new one. 
 This behavior is very well known in the community of developers, since it is the default behavior of the popular memcached system.
  **So, is advisable configure a high memory limit or also a noeviction policy.** Please, take a look here: [Using Redis as an LRU cache](http://redis.io/topics/lru-cache)
@@ -298,8 +273,8 @@ For ```predis``` installation you can use ```composer``` running the command ```
 /** PRedis options */
 //The options below, will be loaded as: $client = new Predis\Client($parameters, $options);
 
-$parameters = ['scheme' => 'redis', 'host' => '172.17.0.2', 'port' => 6379, 'timeout' => 881];
-$options = ['profile' => '2.8', 'prefix' => 'sample:'];
+$parameters = ['scheme' => 'tcp', 'host' => '172.17.0.2', 'port' => 6379, 'timeout' => 881];
+$options = ['profile' => '2.8', 'prefix' => ''];
 
 /** SDK options */
 $sdkOptions = [
