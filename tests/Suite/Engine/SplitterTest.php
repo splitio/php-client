@@ -5,6 +5,7 @@ use SplitIO\Component\Initialization\LoggerTrait;
 use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition;
+use SplitIO\HashAlgorithmEnum;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +37,7 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
 
         for ($i = 0; $i < $n; $i++) {
             $key = uniqid('', true);
-            $treatment = Splitter::getTreatment($key, 32126754, $partitions);
+            $treatment = Splitter::getTreatment($key, 32126754, $partitions, HashAlgorithmEnum::LEGACY);
             $treatments[(int)$treatment - 1]++;
         }
 
@@ -61,7 +62,8 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
     {
         $partition = new Partition(array('treatment' => "on", 'size' => -1));
 
-        $this->assertNull(Splitter::getTreatment('someValidKey', 123123545, array($partition)));
-
+        $this->assertNull(
+            Splitter::getTreatment('someValidKey', 123123545, array($partition), HashAlgorithmEnum::LEGACY)
+        );
     }
 }
