@@ -5,7 +5,7 @@ use SplitIO\Component\Initialization\LoggerTrait;
 use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition;
-use SplitIO\HashAlgorithmEnum;
+use SplitIO\Engine\HashAlgorithmEnum;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {

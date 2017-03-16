@@ -1,5 +1,5 @@
 <?php
-namespace SplitIO;
+namespace SplitIO\Engine;
 
 use SplitIO\Component\Common\Enum;
 

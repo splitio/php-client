@@ -3,7 +3,7 @@ namespace SplitIO\Engine;
 
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Partition;
-use SplitIO\HashAlgorithmEnum;
+use SplitIO\Engine\HashAlgorithmEnum;
 
 class Splitter
 {
