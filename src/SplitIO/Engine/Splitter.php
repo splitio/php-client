@@ -3,7 +3,7 @@ namespace SplitIO\Engine;
 
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Partition;
-use SplitIO\Engine\HashAlgorithmEnum;
+use SplitIO\Engine\HashFactory;
 
 class Splitter
 {
@@ -22,14 +22,8 @@ class Splitter
 
         SplitApp::logger()->debug($logMsg);
 
-        switch ($algo) {
-            case HashAlgorithmEnum::MURMUR:
-                $hash = \SplitIO\murmurhash3_int($key, $seed);
-                break;
-            case HashAlgorithmEnum::LEGACY:
-            default:
-                $hash = \SplitIO\splitHash($key, $seed);
-        }
+        $hashFunction = HashFactory::getHashAlgorithm($algo);
+        $hash = $hashFunction($key, $seed);
 
         $bucket = abs($hash  % 100) + 1;
         SplitApp::logger()->info("Butcket: ".$bucket);

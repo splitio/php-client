@@ -1,10 +1,12 @@
 <?php
-namespace SplitIO\Test\Suite\Common;
+namespace SplitIO\Test\Suite\Engine;
+
+use SplitIO\Engine\LegacyHash;
+use SplitIO\Engine\Murmur3Hash;
 
 class HashTest extends \PHPUnit_Framework_TestCase
 {
-
-    public function testHashFunction()
+    public function testLegacyHashFunction()
     {
         $handle = fopen(__DIR__."/../../files/sample-data.csv", "r");
         if ($handle) {
@@ -15,8 +17,9 @@ class HashTest extends \PHPUnit_Framework_TestCase
                     continue;
                 }
 
-                $hash = \SplitIO\splitHash($_line[1], $_line[0]);
-                $bucket = abs(\SplitIO\hash($_line[1], $_line[0]) % 100) + 1;
+                $hashfn = new LegacyHash();
+                $hash = $hashfn($_line[1], $_line[0]);
+                $bucket = abs($hash % 100) + 1;
 
                 $this->assertEquals((int)$_line[2], (int)$hash, "Hash, Expected: ".$_line[2]." Calculated: ".$hash);
                 $this->assertEquals(
@@ -47,9 +50,10 @@ class HashTest extends \PHPUnit_Framework_TestCase
                     if ($_line[0] == '#seed') {
                         continue;
                     }
-    
-                    $hash = \SplitIO\murmurhash3_int($_line[1], $_line[0]);
-                    $bucket = abs(\SplitIO\murmurhash3_int($_line[1], $_line[0]) % 100) + 1;
+
+                    $hashfn = new Murmur3Hash();
+                    $hash = $hashfn($_line[1], $_line[0]);
+                    $bucket = abs($hash % 100) + 1;
     
                     $this->assertEquals((int)$_line[2], (int)$hash, "Hash, Expected: ".$_line[2]." Calculated: ".$hash);
                     $this->assertEquals(

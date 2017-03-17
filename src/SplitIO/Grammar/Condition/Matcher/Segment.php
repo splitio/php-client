@@ -91,7 +91,8 @@ class Segment extends AbstractMatcher
      */
     private function getSmKey($segmentName, $key)
     {
-        return $ikey = \SplitIO\murmurhash3_int("segment::".$segmentName."::".$key, $this->smKeySeed);
+        $murmurHashFn = new \SplitIO\Engine\Murmur3Hash();
+        return $murmurHashFn("segment::".$segmentName."::".$key, $this->smKeySeed);
     }
 
     /**

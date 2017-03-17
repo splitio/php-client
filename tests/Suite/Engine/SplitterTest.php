@@ -6,6 +6,8 @@ use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Engine\HashAlgorithmEnum;
+use SplitIO\Engine\LegacyHash;
+use SplitIO\Engine\Murmur3Hash;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {
