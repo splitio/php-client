@@ -2,7 +2,7 @@
 namespace SplitIO\Grammar;
 
 use SplitIO\Split as SplitApp;
-use SplitIO\Engine\HashAlgorithmEnum;
+use SplitIO\Engine\Hash\HashAlgorithmEnum;
 
 class Split
 {
