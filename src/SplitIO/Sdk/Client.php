@@ -65,8 +65,8 @@ class Client implements ClientInterface
 
     private function getSmKey($featureName)
     {
-        $murmurHashFn = new \SplitIO\Engine\Murmur3Hash();
-        return $murmurHashFn('feature::'.$featureName, $this->smKeySeed);
+        $murmurHashFn = new \SplitIO\Engine\Hash\Murmur3Hash();
+        return $murmurHashFn->getHash('feature::'.$featureName, $this->smKeySeed);
     }
 
     /**
