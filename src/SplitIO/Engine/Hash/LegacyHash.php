@@ -2,9 +2,9 @@
 
 namespace SplitIO\Engine;
 
-class LegacyHash
+class LegacyHash implements HashInterface
 {
-    public function __invoke($key, $seed)
+    public function getHash($key, $seed)
     {
         $h = 0;
         for ($i = 0; $i < strlen($key); $i++) {

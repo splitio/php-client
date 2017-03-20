@@ -21,9 +21,9 @@ namespace SplitIO\Engine;
  * @param  number $seed  Positive integer only
  * @return number 32-bit (base 32 converted) positive integer hash
  */
-class Murmur3Hash
+class Murmur3Hash implements HashInterface
 {
-    public function __invoke($key, $seed)
+    public function getHash($key, $seed)
     {
         $key = (string) $key;
         $klen = strlen($key);

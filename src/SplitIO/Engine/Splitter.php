@@ -22,8 +22,8 @@ class Splitter
 
         SplitApp::logger()->debug($logMsg);
 
-        $hashFunction = HashFactory::getHashAlgorithm($algo);
-        $hash = $hashFunction($key, $seed);
+        $hashFactory = HashFactory::getHashAlgorithm($algo);
+        $hash = $hashFactory->getHash($key, $seed);
 
         $bucket = abs($hash  % 100) + 1;
         SplitApp::logger()->info("Butcket: ".$bucket);

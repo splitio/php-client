@@ -2,16 +2,17 @@
 
 namespace SplitIO\Engine;
 
-use SplitIO\Engine\LegacyHash;
-use SplitIO\Engine\Murmur3Hash;
-
 class HashFactory
 {
+    /**
+     * @param $algo
+     * @return \SplitIO\Engine\HashInterface
+     */
     public static function getHashAlgorithm($algo)
     {
         switch ($algo) {
             case HashAlgorithmEnum::MURMUR:
-                return new MurMurHash();
+                return new Murmur3Hash();
             case HashAlgorithmEnum::LEGACY:
             default:
                 return new LegacyHash();
