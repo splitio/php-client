@@ -1,5 +1,5 @@
 <?php
-namespace SplitIO\Engine;
+namespace SplitIO\Engine\Hash;
 
 
 interface HashInterface

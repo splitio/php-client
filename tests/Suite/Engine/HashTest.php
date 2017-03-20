@@ -1,8 +1,8 @@
 <?php
 namespace SplitIO\Test\Suite\Engine;
 
-use SplitIO\Engine\LegacyHash;
-use SplitIO\Engine\Murmur3Hash;
+use SplitIO\Engine\Hash\LegacyHash;
+use SplitIO\Engine\Hash\Murmur3Hash;
 
 class HashTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
                 }
 
                 $hashfn = new LegacyHash();
-                $hash = $hashfn($_line[1], $_line[0]);
+                $hash = $hashfn->getHash($_line[1], $_line[0]);
                 $bucket = abs($hash % 100) + 1;
 
                 $this->assertEquals((int)$_line[2], (int)$hash, "Hash, Expected: ".$_line[2]." Calculated: ".$hash);
@@ -52,7 +52,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
                     }
 
                     $hashfn = new Murmur3Hash();
-                    $hash = $hashfn($_line[1], $_line[0]);
+                    $hash = $hashfn->getHash($_line[1], $_line[0]);
                     $bucket = abs($hash % 100) + 1;
     
                     $this->assertEquals((int)$_line[2], (int)$hash, "Hash, Expected: ".$_line[2]." Calculated: ".$hash);

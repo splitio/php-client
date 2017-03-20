@@ -1,6 +1,5 @@
 <?php
-
-namespace SplitIO\Engine;
+namespace SplitIO\Engine\Hash;
 
 /**
  * PHP Implementation of MurmurHash3

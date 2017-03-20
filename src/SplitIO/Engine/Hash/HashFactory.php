@@ -1,6 +1,6 @@
 <?php
 
-namespace SplitIO\Engine;
+namespace SplitIO\Engine\Hash;
 
 class HashFactory
 {
