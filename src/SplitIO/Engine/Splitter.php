@@ -3,7 +3,7 @@ namespace SplitIO\Engine;
 
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Partition;
-use SplitIO\Engine\HashFactory;
+use SplitIO\Engine\Hash\HashFactory;
 
 class Splitter
 {
