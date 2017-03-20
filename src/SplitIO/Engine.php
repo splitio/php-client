@@ -36,7 +36,8 @@ class Engine
                 $result[self::EVALUATION_RESULT_TREATMENT] = Splitter::getTreatment(
                     $bucketingKey,
                     $split->getSeed(),
-                    $condition->getPartitions()
+                    $condition->getPartitions(),
+                    $split->getAlgo()
                 );
 
                 $result[self::EVALUATION_RESULT_LABEL] = $condition->getLabel();
