@@ -37,6 +37,10 @@ class Sdk
             //Register Cache
             self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
 
+            if (isset($options['ipAddress'])) {
+                self::setIP($options['ipAddress']);
+            }
+
             return new SplitFactory($apiKey, $options);
         }
     }
