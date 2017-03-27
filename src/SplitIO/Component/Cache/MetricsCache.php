@@ -2,10 +2,11 @@
 namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Common\Di;
+use SplitIO\Component\Cache\KeyFactory;
 
 class MetricsCache
 {
-    const KEY_LATENCY_BUCKET = "SPLITIO.latency.{metricName}.bucket.{bucketNumber}";
+    const KEY_LATENCY_BUCKET = "SPLITIO/{sdk-language-version}/{instance-id}/latency.{metricName}.bucket.{bucketNumber}";
 
     /**
      * @param $bucketNumber
@@ -13,8 +14,10 @@ class MetricsCache
      */
     public static function getCacheKeyForLatencyButcket($metricName, $bucketNumber)
     {
-        $key = str_replace('{bucketNumber}', $bucketNumber, self::KEY_LATENCY_BUCKET);
-        return str_replace('{metricName}', $metricName, $key);
+        return KeyFactory::make(self::KEY_LATENCY_BUCKET, array(
+            '{bucketNumber}' => $bucketNumber,
+            '{metricName}' => $metricName
+        ));
     }
 
     /**
@@ -22,28 +25,30 @@ class MetricsCache
      */
     public static function getCacheKeySearchLatencyPattern()
     {
-        $key = str_replace('{bucketNumber}', '*', self::KEY_LATENCY_BUCKET);
-        return str_replace('{metricName}', '*', $key);
+        return KeyFactory::make(self::KEY_LATENCY_BUCKET, array(
+            '{bucketNumber}' => '*',
+            '{metricName}' => '*'
+        ));
     }
 
-    /**
+    /** TODO: VERIFY AND REFACTOR
      * @param $key
      * @return string
      */
     public static function getMetricNameFromKey($key)
     {
-        $shards = explode('.', $key);
-        return implode('.', array_slice($shards, 2, -2));
+        $lastShard = explode('/', $key)[3];
+        return explode('.', $lastShard)[1];
     }
 
-    /**
+    /** TODO: VERIFY AND REFACTOR
      * @param $key
      * @return int
      */
     public static function getBucketFromKey($key)
     {
-        $shards = explode('.', $key);
-        return (int) implode('.', array_slice($shards, -1));
+        $lastShard = explode('/', $key)[3];
+        return explode('.', $lastShard)[3];
     }
 
     /**

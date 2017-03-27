@@ -84,4 +84,9 @@ class Sdk
 
         CacheTrait::addCache($cacheAdapter, $_options);
     }
+
+    private static function setIP($ip)
+    {
+        \SplitIO\Component\Common\Di::set('ipAddress', $ip);
+    }
 }
