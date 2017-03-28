@@ -12,7 +12,7 @@ class MetricsCache
      * @param $bucketNumber
      * @return mixed
      */
-    public static function getCacheKeyForLatencyButcket($metricName, $bucketNumber)
+    public static function getCacheKeyForLatencyBucket($metricName, $bucketNumber)
     {
         return KeyFactory::make(self::KEY_LATENCY_BUCKET, array(
             '{bucketNumber}' => $bucketNumber,
@@ -57,7 +57,7 @@ class MetricsCache
      */
     public static function addLatencyOnBucket($metricName, $bucketNumber)
     {
-        return Di::getCache()->incrementKey(self::getCacheKeyForLatencyButcket($metricName, $bucketNumber));
+        return Di::getCache()->incrementKey(self::getCacheKeyForLatencyBucket($metricName, $bucketNumber));
     }
 
     /**

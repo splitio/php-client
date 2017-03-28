@@ -17,6 +17,9 @@
         <testsuite name="common">
             <directory suffix="Test.php">tests/Suite/Common/</directory>
         </testsuite>
+        <testsuite name="component">
+            <directory suffix="Test.php">tests/Suite/Component/</directory>
+        </testsuite>
         <testsuite name="engine">
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
         </testsuite>
@@ -32,6 +35,7 @@
 
         <testsuite name="integration">
             <directory suffix="Test.php">tests/Suite/Common/</directory>
+            <directory suffix="Test.php">tests/Suite/Component/</directory>
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
             <directory suffix="Test.php">tests/Suite/Metrics/</directory>
             <directory suffix="Test.php">tests/Suite/Sdk/</directory>
