@@ -6,7 +6,8 @@ use SplitIO\Component\Cache\KeyFactory;
 
 class MetricsCache
 {
-    const KEY_LATENCY_BUCKET = "SPLITIO/{sdk-language-version}/{instance-id}/latency.{metricName}.bucket.{bucketNumber}";
+    const KEY_LATENCY_BUCKET =
+        "SPLITIO/{sdk-language-version}/{instance-id}/latency.{metricName}.bucket.{bucketNumber}";
 
     /**
      * @param $bucketNumber
