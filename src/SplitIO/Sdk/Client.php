@@ -294,7 +294,7 @@ class Client implements ClientInterface
 
         try {
             return $this->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
-        } catch (InvalidMatcherException $ie){
+        } catch (InvalidMatcherException $ie) {
             SplitApp::logger()->critical('Exception due an INVALID MATCHER');
             $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
         } catch (\Exception $e) {
