@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Grammar;
 
+use SplitIO\Exception\InvalidMatcherException;
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Combiner\AndCombiner;
 use SplitIO\Grammar\Condition\Combiner\CombinerEnum;
@@ -80,6 +81,9 @@ class Condition
 
                 //If matcher is Negate or not
                 $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
+            } else {
+                //Throwing catchable exception the SDK client will return CONTROL
+                throw new InvalidMatcherException("Invalid Matcher");
             }
         }
 
