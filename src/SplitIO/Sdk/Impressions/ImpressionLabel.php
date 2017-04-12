@@ -29,6 +29,14 @@ class ImpressionLabel
     const SPLIT_NOT_FOUND = "rules not found";
 
     /**
+     * Condition: The required matcher in condition was not found
+     * Treatment: control
+     * Label: matcher not found
+     */
+    const MATCHER_NOT_FOUND = "matcher not found";
+
+
+    /**
      * Condition: There was an exception
      * Treatment: control
      * Label: exception

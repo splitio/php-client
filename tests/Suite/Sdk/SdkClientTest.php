@@ -99,6 +99,9 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('on', $splitSdk->getTreatment('whitelisted_user', 'whitelist_feature'));
         $this->assertEquals('off', $splitSdk->getTreatment('unwhitelisted_user', 'whitelist_feature'));
 
+        // testing INVALID matcher
+        $this->assertEquals('control',$splitSdk->getTreatment('some_user_key','invalid_matcher_feature'));
+
 
     }
 
