@@ -3,6 +3,7 @@ namespace SplitIO\Engine;
 
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Partition;
+use SplitIO\Engine\Hash\HashFactory;
 
 class Splitter
 {
@@ -12,7 +13,7 @@ class Splitter
      * @param array $partitions
      * @return null|string
      */
-    public static function getTreatment($key, $seed, $partitions)
+    public static function getTreatment($key, $seed, $partitions, $algo)
     {
         $logMsg = "Splitter evaluating partitions ... \n
         Bucketing Key: $key \n
@@ -21,8 +22,10 @@ class Splitter
 
         SplitApp::logger()->debug($logMsg);
 
-        $bucket = abs(\SplitIO\hash($key, $seed) % 100) + 1;
+        $hashFactory = HashFactory::getHashAlgorithm($algo);
+        $hash = $hashFactory->getHash($key, $seed);
 
+        $bucket = abs($hash  % 100) + 1;
         SplitApp::logger()->info("Butcket: ".$bucket);
 
         $accumulatedSize = 0;

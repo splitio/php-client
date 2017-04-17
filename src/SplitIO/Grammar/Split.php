@@ -2,6 +2,7 @@
 namespace SplitIO\Grammar;
 
 use SplitIO\Split as SplitApp;
+use SplitIO\Engine\Hash\HashAlgorithmEnum;
 
 class Split
 {
@@ -21,6 +22,8 @@ class Split
 
     private $changeNumber = -1;
 
+    private $algo = HashAlgorithmEnum::LEGACY;
+
     public function __construct(array $split)
     {
         SplitApp::logger()->debug(print_r($split, true));
@@ -32,7 +35,7 @@ class Split
         $this->killed = $split['killed'];
         $this->defaultTreatment = $split['defaultTreatment'];
         $this->changeNumber = (isset($split['changeNumber'])) ? $split['changeNumber'] : -1;
-
+        $this->algo = (isset($split['algo'])) ? $split['algo'] : HashAlgorithmEnum::LEGACY;
 
         SplitApp::logger()->info("Constructing Split: ".$this->name);
 
@@ -121,5 +124,13 @@ class Split
         }
 
         return $treatments;
+    }
+
+    /**
+     * @return HashAlgorithmEnum
+     */
+    public function getAlgo()
+    {
+        return $this->algo;
     }
 }

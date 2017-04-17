@@ -7,6 +7,7 @@ use SplitIO\Component\Memory\Exception\ReadSharedMemoryException;
 use SplitIO\Component\Memory\Exception\SupportSharedMemoryException;
 use SplitIO\Component\Memory\Exception\WriteSharedMemoryException;
 use SplitIO\Component\Memory\SharedMemory;
+use SplitIO\Engine\Hash\Murmur3Hash;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Split as SplitApp;
 
@@ -91,7 +92,8 @@ class Segment extends AbstractMatcher
      */
     private function getSmKey($segmentName, $key)
     {
-        return $ikey = \SplitIO\murmurhash3_int("segment::".$segmentName."::".$key, $this->smKeySeed);
+        $murmurHashFn = new Murmur3Hash();
+        return $murmurHashFn->getHash("segment::".$segmentName."::".$key, $this->smKeySeed);
     }
 
     /**
