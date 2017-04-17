@@ -5,66 +5,8 @@
             "environment": null,
             "trafficTypeId": null,
             "trafficTypeName": null,
-            "name": "invalid_matcher_feature",
-            "seed": -1222652054,
-            "status": "ACTIVE",
-            "killed": false,
-            "defaultTreatment": "off",
-            "conditions": [
-                {
-                    "matcherGroup": {
-                        "combiner": "AND",
-                        "matchers": [
-                            {
-                                "matcherType": "INVALID",
-                                "negate": false,
-                                "userDefinedSegmentMatcherData": null,
-                                "whitelistMatcherData": {
-                                    "whitelist": [
-                                        "whitelisted_user"
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    "partitions": [
-                        {
-                            "treatment": "on",
-                            "size": 100
-                        }
-                    ]
-                },
-                {
-                    "matcherGroup": {
-                        "combiner": "AND",
-                        "matchers": [
-                            {
-                                "matcherType": "INVALID_ALL_KEYS",
-                                "negate": false,
-                                "userDefinedSegmentMatcherData": null,
-                                "whitelistMatcherData": null
-                            }
-                        ]
-                    },
-                    "partitions": [
-                        {
-                            "treatment": "on",
-                            "size": 0
-                        },
-                        {
-                            "treatment": "off",
-                            "size": 100
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "orgId": null,
-            "environment": null,
-            "trafficTypeId": null,
-            "trafficTypeName": null,
-            "name": "whitelist_feature",
+            "name": "some_feature_1",
+            "algo": 1,
             "seed": -1222652054,
             "status": "ACTIVE",
             "killed": false,
@@ -123,7 +65,8 @@
             "environment": null,
             "trafficTypeId": null,
             "trafficTypeName": null,
-            "name": "all_feature",
+            "name": "some_feature_2",
+            "algo": 2,
             "seed": 1699838640,
             "status": "ACTIVE",
             "killed": false,
@@ -159,7 +102,8 @@
             "environment": null,
             "trafficTypeId": null,
             "trafficTypeName": null,
-            "name": "killed_feature",
+            "name": "some_feature_3",
+            "algo": null,
             "seed": -480091424,
             "status": "ACTIVE",
             "killed": true,
@@ -195,7 +139,7 @@
             "environment": null,
             "trafficTypeId": null,
             "trafficTypeName": null,
-            "name": "sample_feature",
+            "name": "some_feature_4",
             "seed": 1548363147,
             "status": "ACTIVE",
             "killed": false,

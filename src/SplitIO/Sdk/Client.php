@@ -9,6 +9,7 @@ use SplitIO\Component\Memory\Exception\SupportSharedMemoryException;
 use SplitIO\Component\Memory\Exception\WriteSharedMemoryException;
 use SplitIO\Component\Memory\SharedMemory;
 use SplitIO\Engine;
+use SplitIO\Exception\InvalidMatcherException;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Metrics;
@@ -289,8 +290,13 @@ class Client implements ClientInterface
             $bucketingKey = null;
         }
 
+        $impressionLabel = ImpressionLabel::EXCEPTION;
+
         try {
             return $this->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
+        } catch (InvalidMatcherException $ie) {
+            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
+            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatment method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
@@ -301,7 +307,7 @@ class Client implements ClientInterface
             $matchingKey,
             $featureName,
             TreatmentEnum::CONTROL,
-            ImpressionLabel::EXCEPTION,
+            $impressionLabel,
             $bucketingKey
         );
         return TreatmentEnum::CONTROL;
