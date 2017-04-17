@@ -1,3 +1,6 @@
+4.0.0
+ - Added support to evaluate keys with murmur3 hashing
+ - Fixed result when invalid matchers are used for evaluation
 3.1.0
  - Includes bucketing key into impressions
  - SDK version and name added in impressions
