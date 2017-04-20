@@ -6,7 +6,7 @@ namespace SplitIO\Component\Log\Handler;
  * Logger Handler to prevent write anything
  * @package SplitIO\Component\Log\Handler
  */
-class Void implements LogHandlerInterface
+class VoidHandler implements LogHandlerInterface
 {
     /**
      * Log messages will not be written
