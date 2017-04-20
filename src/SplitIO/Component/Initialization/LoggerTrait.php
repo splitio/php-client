@@ -7,7 +7,7 @@ use SplitIO\Component\Common\ServiceProvider;
 use SplitIO\Component\Log\Handler\Echos;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Handler\Syslog;
-use SplitIO\Component\Log\Handler\Void;
+use SplitIO\Component\Log\Handler\VoidHandler;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;
 
@@ -32,7 +32,7 @@ class LoggerTrait
                     break;
 
                 case 'void':
-                    $logAdapter = new Void();
+                    $logAdapter = new VoidHandler();
                     break;
 
                 case 'syslog':
