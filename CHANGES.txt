@@ -1,3 +1,5 @@
+4.0.1 (April 20, 2017)
+ - Renaming Void log handler to get PHP 7.1 compatibility
 4.0.0 (April 17, 2017)
  - Added support for murmur3 hashing
  - Fixed result "control" when invalid matchers are used for evaluation
