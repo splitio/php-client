@@ -4,7 +4,7 @@ namespace SplitIO\Component\Log;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use \SplitIO\Component\Log\Handler\LogHandlerInterface;
-use SplitIO\Component\Log\Handler\Void;
+use SplitIO\Component\Log\Handler\VoidHandler;
 
 /**
  * Class Logger
@@ -45,7 +45,7 @@ class Logger extends LoggerTrait implements LoggerInterface
         if ($handler !== null) {
             $this->handler = $handler;
         } else {
-            $this->handler = new Void();
+            $this->handler = new VoidHandler();
         }
     }
 
