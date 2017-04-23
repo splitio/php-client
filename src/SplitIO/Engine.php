@@ -4,6 +4,7 @@ namespace SplitIO;
 use SplitIO\Grammar\Split as SplitGrammar;
 use SplitIO\Grammar\Condition;
 use SplitIO\Engine\Splitter;
+use SplitIO\Grammar\Condition\ConditionTypeEnum;
 
 class Engine
 {
@@ -31,7 +32,21 @@ class Engine
             self::EVALUATION_RESULT_LABEL => null
         );
 
+        $inRollOut = false;
         foreach ($conditions as $condition) {
+            if (!$inRollOut  && $condition->getConditionType() == ConditionTypeEnum::ROLLOUT) {
+                if ($split->getTrafficAllocation() < 100) {
+                    $bucket = Splitter::getBucket(
+                        $split->getAlgo(),
+                        $split->getKey(),
+                        $split->getTrafficAllocationSeed()
+                    );
+                    if ($bucket >= $split->getTrafficAllocation()) {
+                        return $split->getDefaultTratment();
+                    }
+                    $inRollOut = true;
+                }
+            }
             if ($condition->match($matchingKey, $attributes)) {
                 $result[self::EVALUATION_RESULT_TREATMENT] = Splitter::getTreatment(
                     $bucketingKey,
