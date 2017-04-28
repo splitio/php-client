@@ -38,11 +38,13 @@ class Engine
                 if ($split->getTrafficAllocation() < 100) {
                     $bucket = Splitter::getBucket(
                         $split->getAlgo(),
-                        $split->getKey(),
+                        $bucketingKey,
                         $split->getTrafficAllocationSeed()
                     );
                     if ($bucket >= $split->getTrafficAllocation()) {
-                        return $split->getDefaultTratment();
+                        $result[self::EVALUATION_RESULT_LABEL] = $condition->getLabel();
+                        $result[self::EVALUATION_RESULT_TREATMENT] = $split->getDefaultTratment();
+                        return $result;
                     }
                     $inRollOut = true;
                 }
