@@ -5,6 +5,7 @@ use SplitIO\Grammar\Split as SplitGrammar;
 use SplitIO\Grammar\Condition;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\ConditionTypeEnum;
+use SplitIO\Sdk\Impressions\ImpressionLabel;
 
 class Engine
 {
@@ -42,7 +43,7 @@ class Engine
                         $split->getTrafficAllocationSeed()
                     );
                     if ($bucket >= $split->getTrafficAllocation()) {
-                        $result[self::EVALUATION_RESULT_LABEL] = $condition->getLabel();
+                        $result[self::EVALUATION_RESULT_LABEL] = ImpressionLabel::NOT_IN_SPLIT;
                         $result[self::EVALUATION_RESULT_TREATMENT] = $split->getDefaultTratment();
                         return $result;
                     }
