@@ -35,6 +35,12 @@ class ImpressionLabel
      */
     const MATCHER_NOT_FOUND = "matcher not found";
 
+    /**
+     * Condition: Traffic allocation failed
+     * Treatment: Default Treatment
+     * Label: not in split
+     */
+    const NOT_IN_SPLIT = "not in split";
 
     /**
      * Condition: There was an exception

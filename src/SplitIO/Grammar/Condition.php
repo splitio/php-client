@@ -9,6 +9,7 @@ use SplitIO\Grammar\Condition\Combiner\Factor\NotFactor;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Grammar\Condition\Matcher\AbstractMatcher;
+use SplitIO\Grammar\Condition\ConditionTypeEnum;
 
 class Condition
 {
@@ -17,6 +18,8 @@ class Condition
     private $partitions = null;
 
     private $label = null;
+
+    private $conditionType = null;
 
     //On the next versions the condition will support Combiners: AND, OR, NOT
     private $combiner = null;
@@ -48,6 +51,12 @@ class Condition
 
         if (isset($condition['label']) && !empty($condition['label'])) {
             $this->label = $condition['label'];
+        }
+
+        if (isset($condition['conditionType']) && ConditionTypeEnum::isValid($condition['conditionType'])) {
+            $this->conditionType = $condition['conditionType'];
+        } else {
+            $this->conditionType = ConditionTypeEnum::WHITELIST;
         }
     }
 
@@ -127,5 +136,10 @@ class Condition
     public function getLabel()
     {
         return $this->label;
+    }
+
+    public function getConditionType()
+    {
+        return $this->conditionType;
     }
 }
