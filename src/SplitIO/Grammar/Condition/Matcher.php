@@ -8,6 +8,8 @@ use SplitIO\Grammar\Condition\Matcher\GreaterThanOrEqualTo;
 use SplitIO\Grammar\Condition\Matcher\LessThanOrEqualTo;
 use SplitIO\Grammar\Condition\Matcher\Segment;
 use SplitIO\Grammar\Condition\Matcher\Whitelist;
+use SplitIO\Grammar\Condition\Matcher\StartsWith;
+use SplitIO\Grammar\Condition\Matcher\EndsWith;
 
 class Matcher
 {
@@ -25,6 +27,12 @@ class Matcher
     const LESS_THAN_OR_EQUAL_TO = 'LESS_THAN_OR_EQUAL_TO';
 
     const BETWEEN = 'BETWEEN';
+
+    const STARTS_WITH = 'STARTS_WITH';
+    
+    const ENDS_WITH = 'ENDS_WITH';
+
+    const CONSTAINS_STRING = 'CONSTAINS_STRING';
 
 
     public static function factory($matcher)
@@ -78,6 +86,27 @@ class Matcher
                     is_array($matcher['betweenMatcherData']))
                     ? $matcher['betweenMatcherData'] : null;
                 return new Between($data, $negate, $attribute);
+                break;
+
+            case self::STARTS_WITH:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['stringMatcherData'] : null;
+                return new StarsWith($data, $negate, $attribute);
+                break;
+
+            case self::ENDS_WITH:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['stringMatcherData'] : null;
+                return new EndsWith($data, $negate, $attribute);
+                break;
+
+            case self::CONTAINS_STRING:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new ContainsString($data, $negate, $attribute);
                 break;
 
             // @codeCoverageIgnoreStart
