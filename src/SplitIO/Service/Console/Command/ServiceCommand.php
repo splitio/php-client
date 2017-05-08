@@ -70,13 +70,13 @@ class ServiceCommand extends Command
                     }
 
                     if (in_array($this->get(OptionsEnum::LOG_ADAPTER), array("stdout","echo"))) {
-                        $procStdout = $this->process[$i]['process']->getStdout();
-                        if (!empty(trim($procStdout))) {
+                        $procStdout = trim($this->process[$i]['process']->getStdout());
+                        if (!empty($procStdout)) {
                             $this->logger()->debug($procStdout);
                         }
 
-                        $procStderr = $this->process[$i]['process']->getStderr();
-                        if (!empty(trim($procStderr))) {
+                        $procStderr = trim($this->process[$i]['process']->getStderr());
+                        if (!empty($procStderr)) {
                             $this->logger()->error($procStderr);
                         }
                     }
