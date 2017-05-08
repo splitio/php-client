@@ -12,6 +12,8 @@ class Process
     private $processInformation;
     private $pipes;
     private $status;
+    private $stdoutBuffer;
+    private $stderrBuffer;
 
     public function __construct($cmd)
     {
@@ -25,6 +27,9 @@ class Process
         $this->processInformation = array();
 
         $this->status = self::STATUS_READY;
+
+        $this->stderrBuffer = "";
+        $this->stdoutBuffer = "";
     }
 
     public function __destruct()
@@ -84,11 +89,28 @@ class Process
         return isset($this->processInformation['running']) ? $this->processInformation['running'] : false;
     }
 
+    public function getStdout()
+    {
+        $buff = $this->stdoutBuffer;
+        $this->stdoutBuffer = "";
+        return $buff;
+    }
+
+    public function getStderr()
+    {
+        $buff = $this->stderrBuffer;
+        $this->stderrBuffer = "";
+        return $buff;
+    }
+
     private function updateStatus()
     {
         if (!is_resource($this->process)) {
             return;
         }
+
+        $this->stdoutBuffer .= PHP_EOL . stream_get_contents($this->pipes[1]);
+        $this->stderrBuffer .= PHP_EOL .  stream_get_contents($this->pipes[2]);
 
         $this->processInformation = proc_get_status($this->process);
 

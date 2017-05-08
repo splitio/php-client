@@ -68,6 +68,18 @@ class ServiceCommand extends Command
                             $this->error($e->getMessage());
                         }
                     }
+
+                    if (in_array($this->get(OptionsEnum::LOG_ADAPTER), array("stdout","echo"))) {
+                        $procStdout = $this->process[$i]['process']->getStdout();
+                        if (!empty(trim($procStdout))) {
+                            $this->logger()->debug($procStdout);
+                        }
+
+                        $procStderr = $this->process[$i]['process']->getStderr();
+                        if (!empty(trim($procStderr))) {
+                            $this->logger()->error($procStderr);
+                        }
+                    }
                     $this->process[$i]['last'] = time();
                 }
             }
