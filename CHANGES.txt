@@ -1,3 +1,6 @@
+4.0.2 (May 8, 2017)
+ - Adding support for Traffic Allocation
+ - Fixing stdout log blocker on synchronizer when run as service
 4.0.1 (April 20, 2017)
  - Renaming Void log handler to get PHP 7.1 compatibility
 4.0.0 (April 17, 2017)
