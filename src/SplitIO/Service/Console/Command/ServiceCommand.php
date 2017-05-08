@@ -70,7 +70,6 @@ class ServiceCommand extends Command
                     }
 
                     if (in_array($this->get(OptionsEnum::LOG_ADAPTER), array("stdout","echo"))) {
-
                         $procStdout = $this->process[$i]['process']->getStdout();
                         if (!empty(trim($procStdout))) {
                             $this->logger()->debug($procStdout);

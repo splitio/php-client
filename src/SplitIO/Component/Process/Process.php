@@ -89,13 +89,15 @@ class Process
         return isset($this->processInformation['running']) ? $this->processInformation['running'] : false;
     }
 
-    public function getStdout() {
+    public function getStdout()
+    {
         $buff = $this->stdoutBuffer;
         $this->stdoutBuffer = "";
         return $buff;
     }
 
-    public function getStderr() {
+    public function getStderr()
+    {
         $buff = $this->stderrBuffer;
         $this->stderrBuffer = "";
         return $buff;
