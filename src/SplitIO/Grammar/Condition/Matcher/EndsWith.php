@@ -23,7 +23,8 @@ class EndsWith extends AbstractMatcher
         }
 
         foreach ($this->endsWithMatcherData as $item) {
-            if (is_string($item) && substr($item, -$keyLength) == $key) {
+            $itemLength = strlen($item);
+            if (is_string($item) && substr($key, -$itemLength) == $item) {
                 return true;
             }
         }

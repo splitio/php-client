@@ -69,18 +69,18 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
             'matcherType' => 'ENDS_WITH',
             'whitelistMatcherData' => array(
                 'whitelist' => array(
-                    'itemABC',
-                    'itemDEF',
-                    'itemGHI',
+                    'ABC',
+                    'DEF',
+                    'GHI',
                 )
             )
         );
 
         $matcher = Matcher::factory($condition);
-        $this->assertEquals($matcher->evaluate('ABC'), true);
-        $this->assertEquals($matcher->evaluate('DEF'), true);
-        $this->assertEquals($matcher->evaluate('GHI'), true);
-        $this->assertEquals($matcher->evaluate('JKL'), false);
+        $this->assertEquals($matcher->evaluate('testABC'), true);
+        $this->assertEquals($matcher->evaluate('testDEF'), true);
+        $this->assertEquals($matcher->evaluate('testGHI'), true);
+        $this->assertEquals($matcher->evaluate('testJKL'), false);
         $this->assertEquals($matcher->evaluate(''), false);
         $this->assertEquals($matcher->evaluate(null), false);
     }
