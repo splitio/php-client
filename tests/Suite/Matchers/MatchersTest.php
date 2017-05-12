@@ -57,8 +57,8 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($matcher->evaluate('another'), true);
         $this->assertEquals($matcher->evaluate('yetAnother'), true);
         $this->assertEquals($matcher->evaluate('non-matching-prefix'), false);
-        $this->assertEquals($matcher->evaluate(''), true);
-//        $this->assertEquals($matcher->evaluate(null), false);
+        $this->assertEquals($matcher->evaluate(''), false);
+        $this->assertEquals($matcher->evaluate(null), false);
     }
 
     public function testEndsWithMatcher()
@@ -81,8 +81,8 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($matcher->evaluate('DEF'), true);
         $this->assertEquals($matcher->evaluate('GHI'), true);
         $this->assertEquals($matcher->evaluate('JKL'), false);
-        $this->assertEquals($matcher->evaluate(''), true);
-//        $this->assertEquals($matcher->evaluate(null), false);
+        $this->assertEquals($matcher->evaluate(''), false);
+        $this->assertEquals($matcher->evaluate(null), false);
     }
 
     public function testContainsStringMatcher()
@@ -105,7 +105,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($matcher->evaluate('SitAmet'), true);
         $this->assertEquals($matcher->evaluate('sectetur'), true);
         $this->assertEquals($matcher->evaluate('Curabitur'), false);
-//        $this->assertEquals($matcher->evaluate(''), true);
+        $this->assertEquals($matcher->evaluate(''), false);
         $this->assertEquals($matcher->evaluate(null), false);
     }
 
@@ -123,8 +123,8 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($matcher->evaluate('SitAmet'), true);
         $this->assertEquals($matcher->evaluate('sectetur'), true);
         $this->assertEquals($matcher->evaluate('Curabitur'), true);
-        $this->assertEquals($matcher->evaluate(''), true);
-//        $this->assertEquals($matcher->evaluate(null), false); // TODO: REVIEW WITH @sarrubia
+        $this->assertEquals($matcher->evaluate(''), true);      // review this with @sarrubia
+        $this->assertEquals($matcher->evaluate(null), true);    // same here
     }
 
     public function testInSegmentMatcher()
@@ -143,8 +143,8 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($matcher->evaluate('id2'), true);
         $this->assertEquals($matcher->evaluate('id3'), true);
         $this->assertEquals($matcher->evaluate('id4'), false);
-//        $this->assertEquals($matcher->evaluate(''), true);
-        $this->assertEquals($matcher->evaluate(null), false); // TODO: REVIEW WITH @sarrubia
+        $this->assertEquals($matcher->evaluate(''), false);
+        $this->assertEquals($matcher->evaluate(null), false);
     }
 
     public function testWhitelistMatcher()
@@ -165,7 +165,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($matcher->evaluate('dolorSitAmet'), true);
         $this->assertEquals($matcher->evaluate('consectetur'), true);
         $this->assertEquals($matcher->evaluate('Curabitur'), false);
-//        $this->assertEquals($matcher->evaluate(''), true);
+        $this->assertEquals($matcher->evaluate(''), false);
         $this->assertEquals($matcher->evaluate(null), false);
     }
 
@@ -193,7 +193,6 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($matcher1->evaluate(12), false);
         $this->assertEquals($matcher1->evaluate(-7), false);
         $this->assertEquals($matcher1->evaluate('someString'), false);
-//        $this->assertEquals($matcher1->evaluate(''), true);
         $this->assertEquals($matcher1->evaluate(null), false);
 
         $matcher2 = Matcher::factory($condition2);

@@ -17,7 +17,8 @@ class ContainsString extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        if (!is_array($this->containsStringMatcherData)) {
+        $keyLength = strlen($key);
+        if (!is_array($this->containsStringMatcherData) || !is_string($key) || $keyLength == 0) {
             return false;
         }
 

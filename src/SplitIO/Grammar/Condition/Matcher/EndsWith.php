@@ -17,14 +17,9 @@ class EndsWith extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        if (!is_array($this->endsWithMatcherData)) {
-            return false;
-        }
-
-        // TODO: Review this case with @sarrubia
         $keyLength = strlen($key);
-        if ($keyLength === 0) {
-            return true;
+        if (!is_array($this->endsWithMatcherData) || !is_string($key) || $keyLength == 0) {
+            return false;
         }
 
         foreach ($this->endsWithMatcherData as $item) {

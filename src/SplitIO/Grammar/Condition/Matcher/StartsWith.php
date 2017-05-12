@@ -17,7 +17,7 @@ class StartsWith extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        if (!is_array($this->startsWithMatcherData)) {
+        if (!is_array($this->startsWithMatcherData) || !is_string($key) || strlen($key) == 0) {
             return false;
         }
 
