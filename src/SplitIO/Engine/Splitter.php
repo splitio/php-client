@@ -8,9 +8,25 @@ use SplitIO\Engine\Hash\HashFactory;
 class Splitter
 {
     /**
+     * @param HashAlgorithmEnum $algo
+     * @param string $key
+     * @param long $seed
+     * @return int
+     */
+    public static function getBucket($algo, $key, $seed)
+    {
+        $hashFactory = HashFactory::getHashAlgorithm($algo);
+        $hash = $hashFactory->getHash($key, $seed);
+
+        return abs($hash  % 100) + 1;
+    }
+
+
+    /**
      * @param string $key
      * @param long $seed
      * @param array $partitions
+     * @param HashAlgorithmEnum $algo
      * @return null|string
      */
     public static function getTreatment($key, $seed, $partitions, $algo)
@@ -21,11 +37,8 @@ class Splitter
         Partitions: ". print_r($partitions, true);
 
         SplitApp::logger()->debug($logMsg);
-
-        $hashFactory = HashFactory::getHashAlgorithm($algo);
-        $hash = $hashFactory->getHash($key, $seed);
-
-        $bucket = abs($hash  % 100) + 1;
+        
+        $bucket = self::getBucket($algo, $key, $seed);
         SplitApp::logger()->info("Butcket: ".$bucket);
 
         $accumulatedSize = 0;

@@ -6,6 +6,8 @@ use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
+use SplitIO\Grammar\Split;
+use SplitIO\Engine;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {
@@ -65,5 +67,62 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
         $this->assertNull(
             Splitter::getTreatment('someValidKey', 123123545, array($partition), HashAlgorithmEnum::LEGACY)
         );
+    }
+
+    public function testTrafficAllocation()
+    {
+        $rawSplit = array(
+            'name' => 'test1',
+            'algo' => 1,
+            'killed' => false,
+            'status' => 'ACTIVE',
+            'defaultTreatment' => 'default',
+            'seed' => -1222652054,
+            'orgId' => null,
+            'environment' => null,
+            'trafficTypeId' => null,
+            'trafficTypeName' => null,
+            'conditions' => array(
+                array(
+                    'conditionType' => 'WHITELIST',
+                    'matcherGroup' => array(
+                        'combiner' => 'AND',
+                        'matchers' => array(
+                            array(
+                                'matcherType' => 'ALL_KEYS',
+                                'negate' => false,
+                                'userDefinedSegmentMatcherData' => null,
+                                'whitelistMatcherData' => null
+                            )
+                        )
+                    ),
+                    'partitions' => array(
+                        array(
+                            'treatment' => 'on',
+                            'size' => 100
+                        )
+                    ),
+                    'label' => 'in segment all'
+                )
+            )
+        );
+    
+        // Test that conditionType = WHITELIST works normally
+        $split1 = new Split($rawSplit);
+        $treatment1 = Engine::getTreatment('testKey', null, $split1);
+        $this->assertEquals('on', $treatment1[Engine::EVALUATION_RESULT_TREATMENT]);
+
+        // Test that conditionType = ROLLOUT w/o trafficAllocation behaves like WHITELIST
+        $rawSplit['conditions'][0]['conditionType'] = 'ROLLOUT';
+        $split2 = new Split($rawSplit);
+        $treatment2 = Engine::getTreatment('testKey', null, $split2);
+        $this->assertEquals('on', $treatment2[Engine::EVALUATION_RESULT_TREATMENT]);
+
+        // Set a low trafficAllocation to force the bucket outside it.
+        $rawSplit['trafficAllocation'] = 1;
+        $rawSplit['trafficAllocationSeed'] = -1;
+        $split3 = new Split($rawSplit);
+        $treatment3 = Engine::getTreatment('testKey', null, $split3);
+        $this->assertEquals('default', $treatment3[Engine::EVALUATION_RESULT_TREATMENT]);
     }
 }

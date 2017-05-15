@@ -6,6 +6,8 @@ use SplitIO\Engine\Hash\HashAlgorithmEnum;
 
 class Split
 {
+    const DEFAULT_TRAFFIC_ALLOCATION = 100;
+
     private $name = null;
 
     private $trafficTypeName = null;
@@ -24,6 +26,10 @@ class Split
 
     private $algo = HashAlgorithmEnum::LEGACY;
 
+    private $trafficAllocation = self::DEFAULT_TRAFFIC_ALLOCATION;
+
+    private $trafficAllocationSeed = null;
+
     public function __construct(array $split)
     {
         SplitApp::logger()->debug(print_r($split, true));
@@ -36,6 +42,10 @@ class Split
         $this->defaultTreatment = $split['defaultTreatment'];
         $this->changeNumber = (isset($split['changeNumber'])) ? $split['changeNumber'] : -1;
         $this->algo = (isset($split['algo'])) ? $split['algo'] : HashAlgorithmEnum::LEGACY;
+        $this->trafficAllocation = isset($split['trafficAllocation']) ?
+            $split['trafficAllocation'] : self::DEFAULT_TRAFFIC_ALLOCATION;
+        $this->trafficAllocationSeed = isset($split['trafficAllocationSeed']) ?
+            $split['trafficAllocationSeed'] : null;
 
         SplitApp::logger()->info("Constructing Split: ".$this->name);
 
@@ -132,5 +142,15 @@ class Split
     public function getAlgo()
     {
         return $this->algo;
+    }
+
+    public function getTrafficAllocation()
+    {
+        return $this->trafficAllocation;
+    }
+
+    public function getTrafficAllocationSeed()
+    {
+        return $this->trafficAllocationSeed;
     }
 }
