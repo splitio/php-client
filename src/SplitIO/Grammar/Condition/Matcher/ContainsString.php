@@ -23,7 +23,7 @@ class ContainsString extends AbstractMatcher
         }
 
         foreach ($this->containsStringMatcherData as $item) {
-            if (is_string($item) && strpos($item, $key) !== false) {
+            if (is_string($item) && strpos($key, $item) !== false) {
                 return true;
             }
         }

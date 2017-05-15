@@ -22,7 +22,7 @@ class StartsWith extends AbstractMatcher
         }
 
         foreach ($this->startsWithMatcherData as $item) {
-            if (is_string($item) && substr($item, 0, strlen($key)) == $key) {
+            if (is_string($item) && substr($key, 0, strlen($item)) == $item) {
                 return true;
             }
         }
