@@ -8,6 +8,13 @@ use SplitIO\Grammar\Condition\Matcher\GreaterThanOrEqualTo;
 use SplitIO\Grammar\Condition\Matcher\LessThanOrEqualTo;
 use SplitIO\Grammar\Condition\Matcher\Segment;
 use SplitIO\Grammar\Condition\Matcher\Whitelist;
+use SplitIO\Grammar\Condition\Matcher\StartsWith;
+use SplitIO\Grammar\Condition\Matcher\EndsWith;
+use SplitIO\Grammar\Condition\Matcher\ContainsString;
+use SplitIO\Grammar\Condition\Matcher\ContainsAllOfSet;
+use SplitIO\Grammar\Condition\Matcher\ContainsAnyOfSet;
+use SplitIO\Grammar\Condition\Matcher\EqualToSet;
+use SplitIO\Grammar\Condition\Matcher\PartOfSet;
 
 class Matcher
 {
@@ -26,6 +33,19 @@ class Matcher
 
     const BETWEEN = 'BETWEEN';
 
+    const STARTS_WITH = 'STARTS_WITH';
+    
+    const ENDS_WITH = 'ENDS_WITH';
+
+    const CONTAINS_STRING = 'CONTAINS_STRING';
+
+    const CONTAINS_ALL_OF_SET = 'CONTAINS_ALL_OF_SET';
+
+    const CONTAINS_ANY_OF_SET = 'CONTAINS_ANY_OF_SET';
+
+    const EQUAL_TO_SET = 'EQUAL_TO_SET';
+
+    const PART_OF_SET = 'PART_OF_SET';
 
     public static function factory($matcher)
     {
@@ -78,6 +98,55 @@ class Matcher
                     is_array($matcher['betweenMatcherData']))
                     ? $matcher['betweenMatcherData'] : null;
                 return new Between($data, $negate, $attribute);
+                break;
+
+            case self::STARTS_WITH:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new StartsWith($data, $negate, $attribute);
+                break;
+
+            case self::ENDS_WITH:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new EndsWith($data, $negate, $attribute);
+                break;
+
+            case self::CONTAINS_STRING:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new ContainsString($data, $negate, $attribute);
+                break;
+
+            case self::CONTAINS_ALL_OF_SET:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new ContainsAllOfSet($data, $negate, $attribute);
+                break;
+
+            case self::CONTAINS_ANY_OF_SET:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new ContainsAnyOfSet($data, $negate, $attribute);
+                break;
+
+            case self::EQUAL_TO_SET:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new EqualToSet($data, $negate, $attribute);
+                break;
+
+            case self::PART_OF_SET:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new PartOfSet($data, $negate, $attribute);
                 break;
 
             // @codeCoverageIgnoreStart
