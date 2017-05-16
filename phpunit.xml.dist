@@ -20,6 +20,9 @@
         <testsuite name="engine">
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
         </testsuite>
+        <testsuite name="matchers">
+            <directory suffix="Test.php">tests/Suite/Matchers/</directory>
+        </testsuite>
         <testsuite name="metrics">
             <directory suffix="Test.php">tests/Suite/Metrics/</directory>
         </testsuite>
@@ -32,7 +35,9 @@
 
         <testsuite name="integration">
             <directory suffix="Test.php">tests/Suite/Common/</directory>
+            <directory suffix="Test.php">tests/Suite/Component/</directory>
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
+            <directory suffix="Test.php">tests/Suite/Matchers/</directory>
             <directory suffix="Test.php">tests/Suite/Metrics/</directory>
             <directory suffix="Test.php">tests/Suite/Sdk/</directory>
             <directory suffix="Test.php">tests/Suite/Attributes/</directory>

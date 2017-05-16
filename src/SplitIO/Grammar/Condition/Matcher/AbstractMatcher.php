@@ -24,7 +24,8 @@ abstract class AbstractMatcher
 
     public function evaluate($key)
     {
-        SplitApp::logger()->info("Evaluating on {$this->type} the KEY $key");
+        $printable = is_array($key) ? implode($key) : $key;
+        SplitApp::logger()->info("Evaluating on {$this->type} the KEY $printable");
 
         return $this->evalKey($key);
     }
