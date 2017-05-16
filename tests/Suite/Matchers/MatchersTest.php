@@ -45,18 +45,18 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
             'matcherType' => 'STARTS_WITH',
             'whitelistMatcherData' => array(
                 'whitelist' => array(
-                    'someItem',
-                    'anotherItem',
-                    'yetAnotherItem',
+                    'some',
+                    'another',
+                    'yetAnother',
                 )
             )
         );
 
         $matcher = Matcher::factory($condition);
-        $this->assertEquals($matcher->evaluate('some'), true);
-        $this->assertEquals($matcher->evaluate('another'), true);
-        $this->assertEquals($matcher->evaluate('yetAnother'), true);
-        $this->assertEquals($matcher->evaluate('non-matching-prefix'), false);
+        $this->assertEquals($matcher->evaluate('someItem'), true);
+        $this->assertEquals($matcher->evaluate('anotherItem'), true);
+        $this->assertEquals($matcher->evaluate('yetAnotherItem'), true);
+        $this->assertEquals($matcher->evaluate('withoutPrefix'), false);
         $this->assertEquals($matcher->evaluate(''), false);
         $this->assertEquals($matcher->evaluate(null), false);
     }
@@ -93,17 +93,17 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
             'matcherType' => 'CONTAINS_STRING',
             'whitelistMatcherData' => array(
                 'whitelist' => array(
-                    'LoremIpsum',
-                    'dolorSitAmet',
+                    'Lorem',
+                    'dolor',
                     'consectetur',
                 )
             )
         );
 
         $matcher = Matcher::factory($condition);
-        $this->assertEquals($matcher->evaluate('Ipsum'), true);
-        $this->assertEquals($matcher->evaluate('SitAmet'), true);
-        $this->assertEquals($matcher->evaluate('sectetur'), true);
+        $this->assertEquals($matcher->evaluate('LoremIpsum'), true);
+        $this->assertEquals($matcher->evaluate('WEdolor2f'), true);
+        $this->assertEquals($matcher->evaluate('Iconsectetur'), true);
         $this->assertEquals($matcher->evaluate('Curabitur'), false);
         $this->assertEquals($matcher->evaluate(''), false);
         $this->assertEquals($matcher->evaluate(null), false);
