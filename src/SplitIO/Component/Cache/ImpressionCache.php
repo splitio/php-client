@@ -2,10 +2,11 @@
 namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Common\Di;
+use SplitIO\Component\Cache\KeyFactory;
 
 class ImpressionCache
 {
-    const KEY_IMPRESSION_DATA = "SPLITIO.impressions.{featureName}";
+    const KEY_IMPRESSION_DATA = "SPLITIO/{sdk-language-version}/{instance-id}/impressions.{featureName}";
 
     /**
      * @param $key
@@ -13,7 +14,7 @@ class ImpressionCache
      */
     public static function getFeatureNameFromKey($key)
     {
-        $prefixLen = strlen(str_replace('{featureName}', '', self::KEY_IMPRESSION_DATA));
+        $prefixLen = strlen(KeyFactory::make(self::KEY_IMPRESSION_DATA, array('{featureName}' => '')));
         return substr($key, $prefixLen);
     }
 
@@ -22,7 +23,7 @@ class ImpressionCache
      */
     public static function getCacheKeySearchPattern()
     {
-        return str_replace('{featureName}', '*', self::KEY_IMPRESSION_DATA);
+        return KeyFactory::make(self::KEY_IMPRESSION_DATA, array('{featureName}' => '*'));
     }
 
     /**
@@ -31,7 +32,7 @@ class ImpressionCache
      */
     public static function getCacheKeyForImpressionData($featureName)
     {
-        return str_replace('{featureName}', $featureName, self::KEY_IMPRESSION_DATA);
+        return KeyFactory::make(self::KEY_IMPRESSION_DATA, array('{featureName}' => $featureName));
     }
 
     /**
