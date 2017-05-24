@@ -32,14 +32,16 @@ class MetricsCache
         ));
     }
 
-    /** TODO: VERIFY AND REFACTOR
+    /** TODO: metrics with a dot as part of name will fail.
      * @param $key
      * @return string
      */
     public static function getMetricNameFromKey($key)
     {
-        $lastShard = explode('/', $key)[3];
-        return explode('.', $lastShard)[1];
+        $explodeKey = explode('/', $key);
+        $lastShard = $explodeKey[3];
+        $explodeLastShard = explode('.', $lastShard);
+        return $explodeLastShard[1];
     }
 
     /** TODO: VERIFY AND REFACTOR
@@ -48,8 +50,10 @@ class MetricsCache
      */
     public static function getBucketFromKey($key)
     {
-        $lastShard = explode('/', $key)[3];
-        return explode('.', $lastShard)[3];
+        $explodeKey = explode('/', $key);
+        $lastShard = $explodeKey[3];
+        $explodeLastShard = explode('.', $lastShard);
+        return $explodeLastShard[3];
     }
 
     /**
