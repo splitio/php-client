@@ -5,9 +5,9 @@ use SplitIO\Component\Common\Di;
 
 class BlockUntilReadyCache
 {
-    const KEY_CACHE_SPLITS_READY = 'SPLITIO.cache.ready.splits';
+    const KEY_CACHE_SPLITS_READY = 'SPLITIO.cache.splits.ready';
 
-    const KEY_CACHE_SEGMENTS_READY = 'SPLITIO.cache.ready.segments';
+    const KEY_CACHE_SEGMENTS_READY = 'SPLITIO.cache.segments.ready';
 
     /**
      * @param $key
