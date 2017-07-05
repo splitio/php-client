@@ -64,7 +64,7 @@ class Segment extends AbstractMatcher
      * @param $key
      * @return bool
      */
-    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
+    protected function evalKey($key)
     {
         $segmentName = $this->userDefinedSegmentMatcherData;
 

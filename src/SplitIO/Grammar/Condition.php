@@ -10,6 +10,7 @@ use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Grammar\Condition\Matcher\AbstractMatcher;
 use SplitIO\Grammar\Condition\ConditionTypeEnum;
+use SplitIO\Grammar\Condition\Matcher\Dependency;
 
 class Condition
 {
@@ -65,7 +66,7 @@ class Condition
      * @param array|null $attributes
      * @return bool
      */
-    public function match($key, array $attributes = null, \SplitIO\Sdk\MatcherClient $client = null)
+    public function match($key, array $attributes = null)
     {
         $eval = array();
         foreach ($this->matcherGroup as $matcher) {
@@ -75,7 +76,7 @@ class Condition
                 if (!$matcher->hasAttribute()) {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
-                    $_evaluation = $matcher->evaluate($key, $client);
+                    $_evaluation = $matcher->evaluate($key);
                 } else {
                     // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                     // e.g. if user.age is >= 10 then split 100:on
@@ -84,12 +85,15 @@ class Condition
                     } else {
                         // instead of using the user id, we use the attribute value for evaluation
                         $attrValue = $attributes[$matcher->getAttribute()];
-                        $_evaluation = $matcher->evaluate($attrValue, $client);
+                        $_evaluation = $matcher->evaluate($attrValue);
                     }
                 }
 
                 //If matcher is Negate or not
                 $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
+            } elseif ($matcher instanceof Dependency) {
+                // TODO
+                $matcher->evalKey($key, $attributes);
             } else {
                 //Throwing catchable exception the SDK client will return CONTROL
                 throw new InvalidMatcherException("Invalid Matcher");

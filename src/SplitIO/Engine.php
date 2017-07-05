@@ -20,13 +20,8 @@ class Engine
      * @param array|null $attributes
      * @return array
      */
-    public static function getTreatment(
-        $matchingKey,
-        $bucketingKey,
-        SplitGrammar $split,
-        array $attributes = null,
-        \SplitIO\Sdk\MatcherClient $client = null
-    ) {
+    public static function getTreatment($matchingKey, $bucketingKey, SplitGrammar $split, array $attributes = null)
+    {
         if ($bucketingKey === null) {
             $bucketingKey = $matchingKey;
         }
@@ -55,13 +50,12 @@ class Engine
                     $inRollOut = true;
                 }
             }
-            if ($condition->match($matchingKey, $attributes, $client)) {
+            if ($condition->match($matchingKey, $attributes)) {
                 $result[self::EVALUATION_RESULT_TREATMENT] = Splitter::getTreatment(
                     $bucketingKey,
                     $split->getSeed(),
                     $condition->getPartitions(),
-                    $split->getAlgo(),
-                    $client
+                    $split->getAlgo()
                 );
 
                 $result[self::EVALUATION_RESULT_LABEL] = $condition->getLabel();

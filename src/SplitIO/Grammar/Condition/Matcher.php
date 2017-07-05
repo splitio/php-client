@@ -15,7 +15,7 @@ use SplitIO\Grammar\Condition\Matcher\ContainsAllOfSet;
 use SplitIO\Grammar\Condition\Matcher\ContainsAnyOfSet;
 use SplitIO\Grammar\Condition\Matcher\EqualToSet;
 use SplitIO\Grammar\Condition\Matcher\PartOfSet;
-use SplitIO\Grammar\Condition\Matcher\Depdendency;
+use SplitIO\Grammar\Condition\Matcher\Dependency;
 
 class Matcher
 {

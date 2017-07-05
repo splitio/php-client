@@ -3,22 +3,32 @@ namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
+use SplitIO\Component\Common\Di;
 
-class Dependency extends AbstractMatcher
+class Dependency
 {
     protected $dependencyMatcherData = null;
-    private $attribute = null;
+    protected $type = null;
+    protected $negate = false;
+    protected $attribute = null;
 
     public function __construct($data, $negate = false, $attribute = null)
     {
-        parent::__construct(Matcher::DEPENDENCY, $negate, $attribute);
+        $this->type = Matcher::IN_SPLIT_TREATMENT;
         $this->dependencyMatcherData = $data;
+        $this->negate = $negate;
         $this->attribute = $attribute;
     }
 
-    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
+    public function isNegate()
     {
-        $treatment = $client->getTreatment($key, $this->dependencyMatcherData['split'], $this->attribute);
+        return $this->negate;
+    }
+
+    public function evalKey($key, $attributes = null)
+    {
+        $client = Di::getMatcherClient();
+        $treatment = $client->getTreatment($key, $this->dependencyMatcherData['split'], $attributes);
         return (is_array($this->dependencyMatcherData['treatments']) &&
                 in_array($treatment, $this->dependencyMatcherData['treatments']));
     }

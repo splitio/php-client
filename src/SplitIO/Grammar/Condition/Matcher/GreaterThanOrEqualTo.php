@@ -23,7 +23,7 @@ class GreaterThanOrEqualTo extends AbstractMatcher
      * @param $key
      * @return bool
      */
-    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
+    protected function evalKey($key)
     {
         if (!is_long($key)) {
             return false;

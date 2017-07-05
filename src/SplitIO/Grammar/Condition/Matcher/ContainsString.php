@@ -15,7 +15,7 @@ class ContainsString extends AbstractMatcher
         $this->containsStringMatcherData = $data;
     }
 
-    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
+    protected function evalKey($key)
     {
         $keyLength = strlen($key);
         if (!is_array($this->containsStringMatcherData) || !is_string($key) || $keyLength == 0) {

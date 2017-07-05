@@ -8,6 +8,7 @@ use SplitIO\Component\Memory\Exception\ReadSharedMemoryException;
 use SplitIO\Component\Memory\Exception\SupportSharedMemoryException;
 use SplitIO\Component\Memory\Exception\WriteSharedMemoryException;
 use SplitIO\Component\Memory\SharedMemory;
+use SplitIO\Component\Common\Di;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
@@ -59,7 +60,6 @@ class Evaluator
         $this->smMode        = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
         $this->smTtl         = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
         $this->smKeySeed     = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
-        $this->matcherClient = new MatcherClient($this);
     }
 
     private function getSmKey($featureName)
@@ -152,13 +152,13 @@ class Evaluator
                 $result['impression']['label'] = ImpressionLabel::KILLED;
                 $result['impression']['changeNumber'] = $split->getChangeNumber();
             } else {
+                Di::setMatcherClient(new MatcherClient($this));
                 $timeStart = Metrics::startMeasuringLatency();
                 $evaluationResult = Engine::getTreatment(
                     $matchingKey,
                     $bucketingKey,
                     $split,
-                    $attributes,
-                    $this->matcherClient
+                    $attributes
                 );
                 $latency = Metrics::calculateLatency($timeStart);
     

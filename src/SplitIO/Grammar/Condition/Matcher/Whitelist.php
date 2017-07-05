@@ -15,7 +15,7 @@ class Whitelist extends AbstractMatcher
         $this->whitelistMatcherData = $data;
     }
 
-    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
+    protected function evalKey($key)
     {
         return (is_array($this->whitelistMatcherData)) ? in_array($key, $this->whitelistMatcherData) : false;
     }

@@ -22,12 +22,12 @@ abstract class AbstractMatcher
         $this->attribute = $attribute;
     }
 
-    public function evaluate($key, \SplitIO\Sdk\MatcherClient $client = null)
+    public function evaluate($key)
     {
         $printable = is_array($key) ? implode($key) : $key;
         SplitApp::logger()->info("Evaluating on {$this->type} the KEY $printable");
 
-        return $this->evalKey($key, $client);
+        return $this->evalKey($key);
     }
 
     public function isNegate()

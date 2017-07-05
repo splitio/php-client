@@ -16,7 +16,7 @@ class ContainsAnyOfSet extends AbstractMatcher
         $this->set = Set::fromArray($data);
     }
 
-    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
+    protected function evalKey($key)
     {
         if (!is_array($key)) {
             return false;

@@ -16,7 +16,7 @@ class EqualToSet extends AbstractMatcher
         $this->set = Set::fromArray($data);
     }
 
-    protected function evalKey($key, \SplitIO\Sdk\MatcherMatcherClient $client = null)
+    protected function evalKey($key)
     {
         if (!is_array($key)) {
             return false;
