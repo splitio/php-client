@@ -43,6 +43,14 @@ class Evaluator
     private $smKeySeed;
 
     /**
+     * Restricted client for matchers. Intended to be used by them to call getTreatment()
+     * without registering impressions or metrics and avoid passing around the client that the user
+     * interacts with.
+     * @var MatcherClient
+     */
+    private $matcherClient;
+
+    /**
      * @param array $options
      */
     public function __construct($options = array())
@@ -51,6 +59,7 @@ class Evaluator
         $this->smMode        = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
         $this->smTtl         = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
         $this->smKeySeed     = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
+        $this->matcherClient = new MatcherClient($this);
     }
 
     private function getSmKey($featureName)
@@ -144,7 +153,13 @@ class Evaluator
                 $result['impression']['changeNumber'] = $split->getChangeNumber();
             } else {
                 $timeStart = Metrics::startMeasuringLatency();
-                $evaluationResult = Engine::getTreatment($matchingKey, $bucketingKey, $split, $attributes);
+                $evaluationResult = Engine::getTreatment(
+                    $matchingKey,
+                    $bucketingKey,
+                    $split,
+                    $attributes,
+                    $this->matcherClient
+                );
                 $latency = Metrics::calculateLatency($timeStart);
     
                 $treatment = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
