@@ -23,7 +23,7 @@ class EqualTo extends AbstractMatcher
      * @param $key
      * @return bool
      */
-    protected function evalKey($key)
+    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
     {
         if (!is_long($key)) {
             return false;

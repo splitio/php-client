@@ -65,7 +65,7 @@ class Condition
      * @param array|null $attributes
      * @return bool
      */
-    public function match($key, array $attributes = null)
+    public function match($key, array $attributes = null, \SplitIO\Sdk\MatcherClient $client = null)
     {
         $eval = array();
         foreach ($this->matcherGroup as $matcher) {
@@ -75,7 +75,7 @@ class Condition
                 if (!$matcher->hasAttribute()) {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
-                    $_evaluation = $matcher->evaluate($key);
+                    $_evaluation = $matcher->evaluate($key, $client);
                 } else {
                     // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                     // e.g. if user.age is >= 10 then split 100:on
@@ -84,7 +84,7 @@ class Condition
                     } else {
                         // instead of using the user id, we use the attribute value for evaluation
                         $attrValue = $attributes[$matcher->getAttribute()];
-                        $_evaluation = $matcher->evaluate($attrValue);
+                        $_evaluation = $matcher->evaluate($attrValue, $client);
                     }
                 }
 

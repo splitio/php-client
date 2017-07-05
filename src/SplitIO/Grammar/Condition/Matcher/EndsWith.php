@@ -15,7 +15,7 @@ class EndsWith extends AbstractMatcher
         $this->endsWithMatcherData = $data;
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
     {
         $keyLength = strlen($key);
         if (!is_array($this->endsWithMatcherData) || !is_string($key) || $keyLength == 0) {

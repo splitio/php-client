@@ -15,7 +15,7 @@ class StartsWith extends AbstractMatcher
         $this->startsWithMatcherData = $data;
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, \SplitIO\Sdk\MatcherClient $client = null)
     {
         if (!is_array($this->startsWithMatcherData) || !is_string($key) || strlen($key) == 0) {
             return false;
