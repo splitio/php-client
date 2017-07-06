@@ -92,7 +92,10 @@ class Condition
                 //If matcher is Negate or not
                 $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
             } elseif ($matcher instanceof Dependency) {
-                // TODO
+                $printable = is_array($key) ? implode($key) : $key;
+                $printableAttributes = is_array($attributes) ? implode($attributes) : $attributes;
+                SplitApp::logger()->info("Evaluating on IN_SPLIT_TREATMENT the KEY $printable");
+                SplitApp::logger()->info("with the following attributes: $printableAttributes");
                 $matcher->evalKey($key, $attributes);
             } else {
                 //Throwing catchable exception the SDK client will return CONTROL

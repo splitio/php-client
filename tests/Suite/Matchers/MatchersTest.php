@@ -7,6 +7,8 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
+use SplitIO\Component\Common\Di;
+use SplitIO\Sdk\MatcherClient;
 
 class MatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -430,5 +432,35 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($matcher->evaluate(array('extra')));
         $this->assertFalse($matcher->evaluate(array()));
         $this->assertFalse($matcher->evaluate(null));
+    }
+
+    private function setDependencyMatcherTestMocks()
+    {
+        $client = $this
+            ->getMockBuilder('\SplitIO\Sdk\MatcherClient')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getTreatment'))
+            ->getMock();
+
+        $client->method('getTreatment')->willReturn('on');
+        $client->expects($this->once())
+            ->method('getTreatment')
+            ->with('test_key', 'test_feature', array('test_attribute1' => 'test_value1'));
+
+        Di::setMatcherClient($client);
+    }
+
+    public function testDependencyMatcherTrue()
+    {
+        $this->setDependencyMatcherTestMocks();
+        $matcher = new Matcher\Dependency(array('split' => 'test_feature', 'treatments' => array('on')));
+        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1')), true);
+    }
+
+    public function testDependencyMatcherFalse()
+    {
+        $this->setDependencyMatcherTestMocks();
+        $matcher = new Matcher\Dependency(array('split' => 'test_feature', 'treatments' => array('off')));
+        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1')), false);
     }
 }

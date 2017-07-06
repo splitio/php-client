@@ -44,14 +44,6 @@ class Evaluator
     private $smKeySeed;
 
     /**
-     * Restricted client for matchers. Intended to be used by them to call getTreatment()
-     * without registering impressions or metrics and avoid passing around the client that the user
-     * interacts with.
-     * @var MatcherClient
-     */
-    private $matcherClient;
-
-    /**
      * @param array $options
      */
     public function __construct($options = array())
