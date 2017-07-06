@@ -10,6 +10,7 @@ use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Grammar\Condition\Matcher\AbstractMatcher;
 use SplitIO\Grammar\Condition\ConditionTypeEnum;
+use SplitIO\Grammar\Condition\Matcher\Dependency;
 
 class Condition
 {
@@ -89,6 +90,13 @@ class Condition
                 }
 
                 //If matcher is Negate or not
+                $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
+            } elseif ($matcher instanceof Dependency) {
+                $printable = is_array($key) ? implode($key) : $key;
+                $printableAttributes = is_array($attributes) ? implode($attributes) : $attributes;
+                SplitApp::logger()->info("Evaluating on IN_SPLIT_TREATMENT the KEY $printable");
+                SplitApp::logger()->info("with the following attributes: $printableAttributes");
+                $_evaluation = $matcher->evalKey($key, $attributes);
                 $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
             } else {
                 //Throwing catchable exception the SDK client will return CONTROL

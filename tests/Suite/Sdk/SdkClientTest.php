@@ -11,6 +11,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     private function addSplitsInCache()
     {
         $splitChanges = file_get_contents(__DIR__."/files/splitChanges.json");
+        echo $splitChanges;
         $this->assertJson($splitChanges);
 
         $splitCache = new SplitCache();
@@ -20,6 +21,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         foreach ($splits as $split) {
             $splitName = $split['name'];
+            echo "NAME: $splitName\n";
             $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
         }
     }
@@ -29,7 +31,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $segmentCache = new SegmentCache();
 
         //Addinng Employees Segment.
-        $segmentEmployeesChanges = file_get_contents(__DIR__."/files/segmentEmployeesChanges.json");
+        $segmentEmployeesChanges = file_get_contents(__DIR__ . "/files/segmentEmployeesChanges.json");
         $this->assertJson($segmentEmployeesChanges);
         $segmentData = json_decode($segmentEmployeesChanges, true);
         $this->assertArrayHasKey('employee_1', $segmentCache->addToSegment($segmentData['name'], $segmentData['added']));
@@ -100,9 +102,10 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('off', $splitSdk->getTreatment('unwhitelisted_user', 'whitelist_feature'));
 
         // testing INVALID matcher
-        $this->assertEquals('control',$splitSdk->getTreatment('some_user_key','invalid_matcher_feature'));
+        $this->assertEquals('control', $splitSdk->getTreatment('some_user_key', 'invalid_matcher_feature'));
 
-
+        // testing Dependency matcher
+        $this->assertEquals('off', $splitSdk->getTreatment('somekey', 'dependency_test'));
     }
 
     /**
@@ -149,6 +152,5 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Initializing the SDK instance.
         \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
     }
 }
