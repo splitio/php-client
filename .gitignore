@@ -16,3 +16,4 @@ bin/splitio.ini
 php53test.php
 test.php
 .phpcd
+*.swp
