@@ -96,7 +96,8 @@ class Condition
                 $printableAttributes = is_array($attributes) ? implode($attributes) : $attributes;
                 SplitApp::logger()->info("Evaluating on IN_SPLIT_TREATMENT the KEY $printable");
                 SplitApp::logger()->info("with the following attributes: $printableAttributes");
-                $matcher->evalKey($key, $attributes);
+                $_evaluation = $matcher->evalKey($key, $attributes);
+                $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
             } else {
                 //Throwing catchable exception the SDK client will return CONTROL
                 throw new InvalidMatcherException("Invalid Matcher");
