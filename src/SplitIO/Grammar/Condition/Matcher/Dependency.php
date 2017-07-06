@@ -4,6 +4,7 @@ namespace SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Component\Common\Di;
+use SplitIO\Sdk\Key;
 
 class Dependency
 {
@@ -25,10 +26,11 @@ class Dependency
         return $this->negate;
     }
 
-    public function evalKey($key, $attributes = null)
+    public function evalKey($key, $attributes = null, $bucketingKey = null)
     {
         $client = Di::getMatcherClient();
-        $treatment = $client->getTreatment($key, $this->dependencyMatcherData['split'], $attributes);
+        $_key = ($bucketingKey == null) ? $key : new Key($key, $bucketingKey);
+        $treatment = $client->getTreatment($_key, $this->dependencyMatcherData['split'], $attributes);
         return (is_array($this->dependencyMatcherData['treatments']) &&
                 in_array($treatment, $this->dependencyMatcherData['treatments']));
     }

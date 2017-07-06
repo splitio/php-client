@@ -66,7 +66,7 @@ class Condition
      * @param array|null $attributes
      * @return bool
      */
-    public function match($key, array $attributes = null)
+    public function match($key, array $attributes = null, $bucketingKey = null)
     {
         $eval = array();
         foreach ($this->matcherGroup as $matcher) {
@@ -96,7 +96,7 @@ class Condition
                 $printableAttributes = is_array($attributes) ? implode($attributes) : $attributes;
                 SplitApp::logger()->info("Evaluating on IN_SPLIT_TREATMENT the KEY $printable");
                 SplitApp::logger()->info("with the following attributes: $printableAttributes");
-                $_evaluation = $matcher->evalKey($key, $attributes);
+                $_evaluation = $matcher->evalKey($key, $attributes, $bucketingKey);
                 $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
             } else {
                 //Throwing catchable exception the SDK client will return CONTROL
