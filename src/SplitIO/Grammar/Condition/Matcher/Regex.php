@@ -18,6 +18,6 @@ class Regex extends AbstractMatcher
     protected function evalKey($key)
     {
         return (is_string($this->regexMatcherData) &&
-            preg_match("/$this->regexMatcherData/", $key));
+            preg_match('/' . str_replace('\/', '\\/', $this->regexMatcherData) . '/', $key));
     }
 }
