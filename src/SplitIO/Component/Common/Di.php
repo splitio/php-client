@@ -20,6 +20,8 @@ class Di
 
     const KEY_SPLIT_SDK_CONFIG = 'SPLIT-SDK-CONFIG';
 
+    const KEY_MATCHER_CLIENT = 'MATCHER-CLIENT';
+
     /**
      * @var Singleton The reference to *Singleton* instance of this class
      */
@@ -141,5 +143,15 @@ class Di
     public static function getCache()
     {
         return self::get(self::KEY_CACHE);
+    }
+
+    public static function setMatcherClient(\SplitIO\Sdk\MatcherClient $matcherClient)
+    {
+        self::set(self::KEY_MATCHER_CLIENT, $matcherClient);
+    }
+
+    public static function getMatcherClient()
+    {
+        return self::get(self::KEY_MATCHER_CLIENT);
     }
 }

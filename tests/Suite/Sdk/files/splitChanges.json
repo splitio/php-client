@@ -248,6 +248,45 @@
                     ]
                 }
             ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "dependency_test",
+            "seed": 1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "IN_SPLIT_TREATMENT",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "dependencyMatcherData": {
+                                    "split": "all_feature",
+                                    "treatments": ["on"]
+                                }
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 0
+                        },
+                        {
+                            "treatment": "off",
+                            "size": 100
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "since": -1,
