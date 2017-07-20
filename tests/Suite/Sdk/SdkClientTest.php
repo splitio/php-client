@@ -106,6 +106,12 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         // testing Dependency matcher
         $this->assertEquals('off', $splitSdk->getTreatment('somekey', 'dependency_test'));
+
+        // testing boolean matcher
+        $this->assertEquals('on', $splitSdk->getTreatment('nn', 'boolean_test'));
+
+        // testing regex matcher
+        $this->assertEquals('on', $splitSdk->getTreatment('abc4', 'regex_test'));
     }
 
     /**
