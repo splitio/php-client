@@ -17,7 +17,18 @@ class Regex extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        return (is_string($this->regexMatcherData) &&
-            preg_match('/' . str_replace('\/', '\\/', $this->regexMatcherData) . '/', $key));
+        if (!is_string($this->regexMatcherData)) {
+            return false;
+        }
+
+        // If there are already escaped forwarded slashes, unescape them so that they don't get
+        // escaped twice
+        $unescaped = str_replace('\/', '/', $this->regexMatcherData);
+        
+        // Escape ALL forward slashes.
+        $reEscaped = str_replace('/', '\/', $unescaped);
+        echo $unescaped . "\n";
+        echo $reEscaped . "\n";
+        return preg_match('/' . $reEscaped . '/', $key);
     }
 }
