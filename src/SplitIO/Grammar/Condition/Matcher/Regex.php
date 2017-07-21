@@ -23,12 +23,15 @@ class Regex extends AbstractMatcher
 
         // If there are already escaped forwarded slashes, unescape them so that they don't get
         // escaped twice
-        $unescaped = str_replace('\/', '/', $this->regexMatcherData);
+        $unescaped = str_replace('\\/', '/', $this->regexMatcherData);
         
         // Escape ALL forward slashes.
-        $reEscaped = str_replace('/', '\/', $unescaped);
-        echo $unescaped . "\n";
-        echo $reEscaped . "\n";
-        return preg_match('/' . $reEscaped . '/', $key);
+        $reEscaped = str_replace('/', '\\/', $unescaped);
+
+        $res = preg_match('/' . $reEscaped . '/', $key);
+        if ($res == 1) {
+            return true;
+        }
+        return false;
     }
 }
