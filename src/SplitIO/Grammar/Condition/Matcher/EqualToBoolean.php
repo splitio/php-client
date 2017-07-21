@@ -17,6 +17,19 @@ class EqualToBoolean extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        return (is_bool($this->booleanMatcherData) && $this->booleanMatcherData);
+        if (is_string($key)) {
+            $decodedKey = json_decode(strtolower($key));
+        } elseif (is_bool($key)) {
+            $decodedKey = $key;
+        } else {
+            return false;
+        }
+
+        if (!is_bool($decodedKey)) {
+            return false;
+        }
+
+        $castedMatcherData = ((bool) $this->booleanMatcherData);
+        return ($decodedKey == $castedMatcherData);
     }
 }
