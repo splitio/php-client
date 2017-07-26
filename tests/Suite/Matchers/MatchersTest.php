@@ -487,9 +487,9 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $meth->setAccessible(true);
 
         $matcher1 = new Matcher\EqualToBoolean(true);
-        $this->assertEquals($meth->invoke($matcher1, 'asd'), true);
+        $this->assertEquals($meth->invoke($matcher1, 'True'), true);
 
         $matcher2 = new Matcher\EqualToBoolean(false);
-        $this->assertEquals($meth->invoke($matcher2, 'asd'), false);
+        $this->assertEquals($meth->invoke($matcher2, 'ff'), false);
     }
 }
