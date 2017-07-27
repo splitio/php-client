@@ -16,6 +16,8 @@ use SplitIO\Grammar\Condition\Matcher\ContainsAnyOfSet;
 use SplitIO\Grammar\Condition\Matcher\EqualToSet;
 use SplitIO\Grammar\Condition\Matcher\PartOfSet;
 use SplitIO\Grammar\Condition\Matcher\Dependency;
+use SplitIO\Grammar\Condition\Matcher\EqualToBoolean;
+use SplitIO\Grammar\Condition\Matcher\Regex;
 
 class Matcher
 {
@@ -35,6 +37,8 @@ class Matcher
     const EQUAL_TO_SET = 'EQUAL_TO_SET';
     const PART_OF_SET = 'PART_OF_SET';
     const IN_SPLIT_TREATMENT = 'IN_SPLIT_TREATMENT';
+    const EQUAL_TO_BOOLEAN = 'EQUAL_TO_BOOLEAN';
+    const MATCHES_STRING = 'MATCHES_STRING';
 
     public static function factory($matcher)
     {
@@ -115,7 +119,16 @@ class Matcher
                     is_array($matcher['dependencyMatcherData']) ?
                     $matcher['dependencyMatcherData'] : null;
                 return new Dependency($data, $negate, $attribute);
-
+            case self::EQUAL_TO_BOOLEAN:
+                $data = isset($matcher['booleanMatcherData'])
+                    && is_bool($matcher['booleanMatcherData']) ?
+                    $matcher['booleanMatcherData'] : null;
+                return new EqualToBoolean($data, $negate, $attribute);
+            case self::MATCHES_STRING:
+                $data = isset($matcher['stringMatcherData']) &&
+                    is_string($matcher['stringMatcherData']) ?
+                    $matcher['stringMatcherData'] : null;
+                return new Regex($data, $negate, $attribute);
             // @codeCoverageIgnoreStart
             default:
                 return null;
