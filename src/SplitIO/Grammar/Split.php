@@ -128,12 +128,19 @@ class Split
     {
         $treatments = array();
 
-        if ($this->conditions) {
-            $condition = $this->conditions[0];
-            $treatments = $condition->getTreatments();
+//        if ($this->conditions) {
+//            $condition = $this->conditions[0];
+//            $treatments = $condition->getTreatments();
+//        }
+
+        foreach ($this->conditions as $condition) {
+            $condTreatments = $condition->getTreatments();
+            foreach ($condTreatments as $treatment) {
+                $treatments[$treatment] = true;
+            }
         }
 
-        return $treatments;
+        return array_keys($treatments);
     }
 
     /**
