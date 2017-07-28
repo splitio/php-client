@@ -126,13 +126,11 @@ class Split
      */
     public function getTreatments()
     {
+        if (!$this->conditions) {
+            return array();
+        }
+
         $treatments = array();
-
-//        if ($this->conditions) {
-//            $condition = $this->conditions[0];
-//            $treatments = $condition->getTreatments();
-//        }
-
         foreach ($this->conditions as $condition) {
             $condTreatments = $condition->getTreatments();
             foreach ($condTreatments as $treatment) {
