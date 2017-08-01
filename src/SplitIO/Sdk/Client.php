@@ -150,7 +150,7 @@ class Client implements ClientInterface
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
-                "An error occured when attempting to log impression for " .
+                "An error occurred when attempting to log impression for " .
                 "feature: $featureName, key: $key"
             );
         }
