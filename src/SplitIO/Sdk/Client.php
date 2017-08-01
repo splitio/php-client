@@ -140,13 +140,20 @@ class Client implements ClientInterface
             SplitApp::logger()->critical($e->getTraceAsString());
         }
 
-        $this->logImpression(
-            $matchingKey,
-            $featureName,
-            TreatmentEnum::CONTROL,
-            $impressionLabel,
-            $bucketingKey
-        );
+        try {
+            $this->logImpression(
+                $matchingKey,
+                $featureName,
+                TreatmentEnum::CONTROL,
+                $impressionLabel,
+                $bucketingKey
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical(
+                "An error occurred when attempting to log impression for " .
+                "feature: $featureName, key: $key"
+            );
+        }
         return TreatmentEnum::CONTROL;
     }
 
