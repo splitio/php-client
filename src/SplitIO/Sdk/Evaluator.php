@@ -66,13 +66,13 @@ class Evaluator
         try {
             return SharedMemory::write($ikey, $split, $this->smTtl, $this->smMode, $this->smSize);
         } catch (SupportSharedMemoryException $se) {
-            SplitApp::logger()->warning($se->getMessage());
+            SplitApp::logger()->debug($se->getMessage());
         } catch (OpenSharedMemoryException $oe) {
-            SplitApp::logger()->error($oe->getMessage());
+            SplitApp::logger()->debug($oe->getMessage());
         } catch (WriteSharedMemoryException $we) {
-            SplitApp::logger()->error($we->getMessage());
+            SplitApp::logger()->debug($we->getMessage());
         } catch (\Exception $e) {
-            SplitApp::logger()->error($e->getMessage());
+            SplitApp::logger()->debug($e->getMessage());
         }
         return false;
     }
@@ -92,13 +92,13 @@ class Evaluator
                 return null;
             }
         } catch (SupportSharedMemoryException $se) {
-            SplitApp::logger()->warning($se->getMessage());
+            SplitApp::logger()->debug($se->getMessage());
         } catch (OpenSharedMemoryException $oe) {
-            SplitApp::logger()->warning($oe->getMessage());
+            SplitApp::logger()->debug($oe->getMessage());
         } catch (ReadSharedMemoryException $re) {
-            SplitApp::logger()->error($re->getMessage());
+            SplitApp::logger()->debug($re->getMessage());
         } catch (\Exception $e) {
-            SplitApp::logger()->error($e->getMessage());
+            SplitApp::logger()->debug($e->getMessage());
         }
 
         return $value;
