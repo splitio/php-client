@@ -1,3 +1,5 @@
+5.2.4: (Sep 13, 2017)
+ - Downgrade logging level for shared memory messages
 5.2.3: (Sep 5, 2017)
  - Adding hotfix to return empty splits array in SplitManager when redis is empty.
 5.2.2: (Aug 1, 2017)
