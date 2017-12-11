@@ -65,3 +65,17 @@ function parseSplitsFile($fileContent)
 
     return $result;
 }
+
+function getHostIpAddress()
+{
+    // TODO:
+    // 1: try config/IP
+    if (\SplitIO\Component\Common\Di::get('ipAddress')) {
+        return \SplitIO\Component\Common\Di::get('ipAddress');
+    } elseif (isset($_SERVER['SERVER_ADDR'])) {
+        return $_SERVER['SERVER_ADDR'];
+    } else {
+        return 'unknown';
+    }
+}
+

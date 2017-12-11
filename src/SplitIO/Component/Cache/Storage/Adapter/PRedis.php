@@ -26,6 +26,10 @@ class PRedis implements CacheStorageAdapterInterface
         $_parameters = (isset($options['parameters'])) ? $options['parameters'] : null;
         $_options = (isset($options['options'])) ? $options['options'] : null;
 
+        if ($_options && isset($_options['prefix'])) {
+            $_options['prefix'] = self::normalizePrefix($_options['prefix']);
+        }
+
         $this->client = new \Predis\Client($_parameters, $_options);
     }
 
@@ -205,5 +209,18 @@ class PRedis implements CacheStorageAdapterInterface
     public function getSet($key, $value)
     {
         return $this->client->getSet($key, $value);
+    }
+
+    private static function normalizePrefix($prefix)
+    {
+        if ($prefix && strlen($prefix)) {
+            if ($prefix[strlen($prefix) - 1] == '.') {
+                return $prefix;
+            } else {
+                return $prefix.'.';
+            }
+        } else {
+            return null;
+        }
     }
 }
