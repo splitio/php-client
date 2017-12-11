@@ -5,12 +5,14 @@ use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
+use SplitIO\Component\Common\Di;
 
 class SdkClientTest extends \PHPUnit_Framework_TestCase
 {
     private function addSplitsInCache()
     {
         $splitChanges = file_get_contents(__DIR__."/files/splitChanges.json");
+        echo $splitChanges;
         $this->assertJson($splitChanges);
 
         $splitCache = new SplitCache();
@@ -20,6 +22,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         foreach ($splits as $split) {
             $splitName = $split['name'];
+            echo "NAME: $splitName\n";
             $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
         }
     }
@@ -29,7 +32,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $segmentCache = new SegmentCache();
 
         //Addinng Employees Segment.
-        $segmentEmployeesChanges = file_get_contents(__DIR__."/files/segmentEmployeesChanges.json");
+        $segmentEmployeesChanges = file_get_contents(__DIR__ . "/files/segmentEmployeesChanges.json");
         $this->assertJson($segmentEmployeesChanges);
         $segmentData = json_decode($segmentEmployeesChanges, true);
         $this->assertArrayHasKey('employee_1', $segmentCache->addToSegment($segmentData['name'], $segmentData['added']));
@@ -39,7 +42,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertJson($segmentHumanBeignsChanges);
         $segmentData = json_decode($segmentHumanBeignsChanges, true);
         $this->assertArrayHasKey('user1', $segmentCache->addToSegment($segmentData['name'], $segmentData['added']));
-
     }
 
     public function testLocalClient()
@@ -100,9 +102,16 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('off', $splitSdk->getTreatment('unwhitelisted_user', 'whitelist_feature'));
 
         // testing INVALID matcher
-        $this->assertEquals('control',$splitSdk->getTreatment('some_user_key','invalid_matcher_feature'));
+        $this->assertEquals('control', $splitSdk->getTreatment('some_user_key', 'invalid_matcher_feature'));
 
+        // testing Dependency matcher
+        $this->assertEquals('off', $splitSdk->getTreatment('somekey', 'dependency_test'));
 
+        // testing boolean matcher
+        $this->assertEquals('on', $splitSdk->getTreatment('True', 'boolean_test'));
+
+        // testing regex matcher
+        $this->assertEquals('on', $splitSdk->getTreatment('abc4', 'regex_test'));
     }
 
     /**
@@ -149,6 +158,44 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Initializing the SDK instance.
         \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+    }
 
+    public function testCacheExceptionReturnsControl()
+    {
+        $log = new Logger('SplitIO');
+        $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
+
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $sdkConfig = array(
+            'log' => array('psr3-instance' => $log),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        $cachePoolMethods = array(
+            'getItem', 'getItems', 'hasItem', 'clear', 'deleteItem', 'deleteItems',
+            'save', 'saveDeferred', 'commit', 'saveItemOnList', 'removeItemOnList',
+            'getItemOnList', 'getItemsOnList', 'isItemOnList', 'getItemsRandomlyOnList',
+            'getKeys', 'incrementeKey', 'getSet'
+        );
+        $cachePool = $this
+            ->getMockBuilder('\SplitIO\Component\Cache\Pool')
+            ->disableOriginalConstructor()
+            ->setMethods($cachePoolMethods)
+            ->getMock();
+
+        foreach ($cachePoolMethods as $method) {
+            $cachePool->method($method)
+                ->will($this->throwException(new \Exception()));
+        }
+
+        Di::setCache($cachePool);
+
+        $treatment = $splitSdk->getTreatment('key1', 'feature1');
+        $this->assertEquals($treatment, 'control');
     }
 }

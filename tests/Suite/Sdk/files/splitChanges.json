@@ -248,6 +248,117 @@
                     ]
                 }
             ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "dependency_test",
+            "seed": 1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "IN_SPLIT_TREATMENT",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "dependencyMatcherData": {
+                                    "split": "all_feature",
+                                    "treatments": ["on"]
+                                }
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 0
+                        },
+                        {
+                            "treatment": "off",
+                            "size": 100
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "regex_test",
+            "seed": 1222652051,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "MATCHES_STRING",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "stringMatcherData": "abc[0-9]"
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "off",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "boolean_test",
+            "seed": 1222652052,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "EQUAL_TO_BOOLEAN",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "booleanMatcherData": true
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "off",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "since": -1,

@@ -7,7 +7,7 @@ class SegmentCache implements SegmentCacheInterface
 {
     const KEY_REGISTER_SEGMENTS = 'SPLITIO.segments.registered';
 
-    const KEY_SEGMENT_DATA = 'SPLITIO.segmentData.{segmentName}';
+    const KEY_SEGMENT_DATA = 'SPLITIO.segment.{segmentName}';
 
     const KEY_TILL_CACHED_ITEM = 'SPLITIO.segment.{segment_name}.till';
 

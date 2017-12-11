@@ -1,3 +1,17 @@
+5.2.4: (Sep 13, 2017)
+ - Downgrade logging level for shared memory messages
+5.2.3: (Sep 5, 2017)
+ - Adding hotfix to return empty splits array in SplitManager when redis is empty.
+5.2.2: (Aug 1, 2017)
+ - Adding hotfix to return CONTROL if redis is down instead of failing.
+5.2.1: (Jul 28, 2017)
+ - Adding hotfix for manager->getTreatments()
+5.2.0: (Jul 26, 2017)
+ - Adding support for regex & boolean matcher
+5.1.0: (Jul 20, 2017)
+ - Adding support for dependency matcher
+5.0.0 (Jun 13, 2017)
+ - Adding support for Split Synchronizer service
 4.1.0 (May 16, 2017)
  - Adding support for String and Set Matchers
 4.0.2 (May 8, 2017)

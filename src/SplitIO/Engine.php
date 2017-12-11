@@ -50,7 +50,7 @@ class Engine
                     $inRollOut = true;
                 }
             }
-            if ($condition->match($matchingKey, $attributes)) {
+            if ($condition->match($matchingKey, $attributes, $bucketingKey)) {
                 $result[self::EVALUATION_RESULT_TREATMENT] = Splitter::getTreatment(
                     $bucketingKey,
                     $split->getSeed(),

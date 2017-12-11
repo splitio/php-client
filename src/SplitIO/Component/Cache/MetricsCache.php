@@ -2,19 +2,23 @@
 namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Common\Di;
+use SplitIO\Component\Cache\KeyFactory;
 
 class MetricsCache
 {
-    const KEY_LATENCY_BUCKET = "SPLITIO.latency.{metricName}.bucket.{bucketNumber}";
+    const KEY_LATENCY_BUCKET =
+        "SPLITIO/{sdk-language-version}/{instance-id}/latency.{metricName}.bucket.{bucketNumber}";
 
     /**
      * @param $bucketNumber
      * @return mixed
      */
-    public static function getCacheKeyForLatencyButcket($metricName, $bucketNumber)
+    public static function getCacheKeyForLatencyBucket($metricName, $bucketNumber)
     {
-        $key = str_replace('{bucketNumber}', $bucketNumber, self::KEY_LATENCY_BUCKET);
-        return str_replace('{metricName}', $metricName, $key);
+        return KeyFactory::make(self::KEY_LATENCY_BUCKET, array(
+            '{bucketNumber}' => $bucketNumber,
+            '{metricName}' => $metricName
+        ));
     }
 
     /**
@@ -22,28 +26,34 @@ class MetricsCache
      */
     public static function getCacheKeySearchLatencyPattern()
     {
-        $key = str_replace('{bucketNumber}', '*', self::KEY_LATENCY_BUCKET);
-        return str_replace('{metricName}', '*', $key);
+        return KeyFactory::make(self::KEY_LATENCY_BUCKET, array(
+            '{bucketNumber}' => '*',
+            '{metricName}' => '*'
+        ));
     }
 
-    /**
+    /** TODO: metrics with a dot as part of name will fail.
      * @param $key
      * @return string
      */
     public static function getMetricNameFromKey($key)
     {
-        $shards = explode('.', $key);
-        return implode('.', array_slice($shards, 2, -2));
+        $explodeKey = explode('/', $key);
+        $lastShard = $explodeKey[3];
+        $explodeLastShard = explode('.', $lastShard);
+        return $explodeLastShard[1];
     }
 
-    /**
+    /** TODO: VERIFY AND REFACTOR
      * @param $key
      * @return int
      */
     public static function getBucketFromKey($key)
     {
-        $shards = explode('.', $key);
-        return (int) implode('.', array_slice($shards, -1));
+        $explodeKey = explode('/', $key);
+        $lastShard = $explodeKey[3];
+        $explodeLastShard = explode('.', $lastShard);
+        return $explodeLastShard[3];
     }
 
     /**
@@ -52,7 +62,7 @@ class MetricsCache
      */
     public static function addLatencyOnBucket($metricName, $bucketNumber)
     {
-        return Di::getCache()->incrementKey(self::getCacheKeyForLatencyButcket($metricName, $bucketNumber));
+        return Di::getCache()->incrementKey(self::getCacheKeyForLatencyBucket($metricName, $bucketNumber));
     }
 
     /**
