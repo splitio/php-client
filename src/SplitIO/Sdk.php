@@ -37,6 +37,10 @@ class Sdk
             //Register Cache
             self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
 
+            if (isset($options['ipAddress'])) {
+                self::setIP($options['ipAddress']);
+            }
+
             return new SplitFactory($apiKey, $options);
         }
     }
@@ -83,5 +87,10 @@ class Sdk
         }
 
         CacheTrait::addCache($cacheAdapter, $_options);
+    }
+
+    private static function setIP($ip)
+    {
+        \SplitIO\Component\Common\Di::set('ipAddress', $ip);
     }
 }

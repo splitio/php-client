@@ -4,7 +4,7 @@ This SDK is designed to work with [Split](https://www.split.io), the platform fo
 
 ### Quick setup
 
-For specific instructions on how to set up the PHP SDK refer to our [Detailed-README](Detailed-README.md) or our [official SDK documentation](http://docs.split.io/docs/sdk-overview).
+For specific instructions on how to set up the Split SDK refer to our [Detailed-README](Detailed-README.md) or our [official SDK documentation](http://docs.split.io/docs/sdk-overview).
 
 ### Commitment to Quality:
 
@@ -12,21 +12,14 @@ Split’s SDKs are in active development and are constantly tested for quality. 
 
 ### About Split:
 
-Split builds on feature flags to create the platform for controlled rollouts, so any team can target customers and release or revert new features without a deployment—or touching code. Get started quickly with SDKs in your language, then create on/off, percentage, and multivariate rollout plans in seconds. Integrations with the services you use to monitor, alert and track issues reduce time-to-resolution when things go wrong, and hotfixes are entirely avoided by killing problem features with a single click.
+Split is the leading platform for feature experimentation, empowering businesses of all sizes to make smarter product decisions. Companies like Vevo, Twilio, and LendingTree rely on Split to securely release new features, target them to customers, and measure the impact of features on their customer experience metrics. Founded in 2015, Split's team comes from some of the most innovative enterprises in Silicon Valley, including Google, LinkedIn, Salesforce and Databricks. Split is based in Redwood City, California and backed by Accel Partners and Lightspeed Venture Partners.
 
- * What you can do with Split. Split goes beyond the simple on/off capabilities of basic feature flagging to give your team the power to:
+Our platform is a unified solution for continuous delivery and full-stack experimentation. Split unifies DevOps and product management, helping agile engineering and product teams accelerate the pace of product delivery and make data-driven decisions, through our robust feature flagging and extensive experimentation capabilities. With Split, organizations can now accelerate time to value, mitigate risk, and drive better outcomes, all in a unified platform.
 
- 	* Create multivariate feature releases
-	* Create A/B feature releases
-	* Kill any feature, over the browser, with a single click
-	* Target releases to subsets of your audience, including percentage roll outs, whitelists,    attribute-based targeting, and individual user IDs 
-	* Integrate with the services your team uses to monitor, plan and communicate, like Datadog, JIRA and Slack 
-	* Manage team access, with features like two-factor authentication and role-based permissioning.
-
-
+To learn more about Split, contact hello@split.io, or start a 14-day trial at https://www.split.io/signup/.
 Split has built and maintains a SDKs for:
 
-* Java [Docs](http://docs.split.io/docs/java-sdk-guide)
+* Java [Github](https://github.com/splitio/java-client) [Docs](http://docs.split.io/docs/java-sdk-guide)
 * Javascript [Github](https://github.com/splitio/javascript-client) [Docs](http://docs.split.io/docs/javascript-sdk-overview)
 * Node [Github](https://github.com/splitio/javascript-client) [Docs](http://docs.split.io/docs/nodejs-sdk-overview)
 * .NET [Github](https://github.com/splitio/.net-client) [Docs](http://docs.split.io/docs/net-sdk-overview)
@@ -35,7 +28,7 @@ Split has built and maintains a SDKs for:
 * Python [Github](https://github.com/splitio/python-client) [Docs](http://docs.split.io/docs/python-sdk-overview)
 * GO [Github](https://github.com/splitio/go-client) [Docs](http://docs.split.io/docs/go-sdk-overview)
 
-For a comprenhensive list of opensource projects visit our [Github page](https://github.com/splitio?utf8=%E2%9C%93&query=%20only%3Apublic%20).
+For a comprehensive list of opensource projects visit our [Github page](https://github.com/splitio?utf8=%E2%9C%93&query=%20only%3Apublic%20).
 
 **Learn more about Split:** 
 
@@ -44,6 +37,3 @@ Visit [split.io/product](https://www.split.io/product) for an overview of Split,
 **System Status:**
 
 We use a status page to monitor the availability of Split’s various services. You can check the current status at [status.split.io](http://status.split.io).
-
-----
-

@@ -7,6 +7,9 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
+use SplitIO\Component\Common\Di;
+use SplitIO\Sdk\MatcherClient;
+use \ReflectionMethod;
 
 class MatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -430,5 +433,63 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($matcher->evaluate(array('extra')));
         $this->assertFalse($matcher->evaluate(array()));
         $this->assertFalse($matcher->evaluate(null));
+    }
+
+    private function setDependencyMatcherTestMocks()
+    {
+        $client = $this
+            ->getMockBuilder('\SplitIO\Sdk\MatcherClient')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getTreatment'))
+            ->getMock();
+
+        $client->method('getTreatment')->willReturn('on');
+        $client->expects($this->once())
+            ->method('getTreatment')
+            ->with('test_key', 'test_feature', array('test_attribute1' => 'test_value1'));
+
+        Di::setMatcherClient($client);
+    }
+
+    public function testDependencyMatcherTrue()
+    {
+        $this->setDependencyMatcherTestMocks();
+        $matcher = new Matcher\Dependency(array('split' => 'test_feature', 'treatments' => array('on')));
+        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1')), true);
+    }
+
+    public function testDependencyMatcherFalse()
+    {
+        $this->setDependencyMatcherTestMocks();
+        $matcher = new Matcher\Dependency(array('split' => 'test_feature', 'treatments' => array('off')));
+        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1')), false);
+    }
+
+    public function testRegexMatcher()
+    {
+        $refile = file_get_contents(__DIR__.'/files/regex.txt');
+        $cases = array_map(function ($i) {
+            return explode('#', $i);
+        }, explode("\n", $refile));
+        array_pop($cases); // remove latest (empty) case
+    
+        $meth = new ReflectionMethod('SplitIO\Grammar\Condition\Matcher\Regex', 'evalKey');
+        $meth->setAccessible(true);
+        foreach ($cases as $case) {
+            $matcher = new Matcher\Regex($case[0]);
+            $this->assertEquals($meth->invoke($matcher, $case[1]), json_decode($case[2]));
+        }
+    }
+
+    public function testBooleanMatcher()
+    {
+        $meth = new ReflectionMethod('SplitIO\Grammar\Condition\Matcher\EqualToBoolean', 'evalKey');
+        $meth->setAccessible(true);
+
+        $matcher1 = new Matcher\EqualToBoolean(true);
+        $this->assertEquals($meth->invoke($matcher1, 'True'), true);
+
+        $matcher2 = new Matcher\EqualToBoolean(false);
+        $this->assertEquals($meth->invoke($matcher2, 'ff'), false);
     }
 }
