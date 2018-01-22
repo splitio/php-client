@@ -5,6 +5,7 @@ use SplitIO\Exception\InvalidMatcherException;
 use SplitIO\Metrics;
 use SplitIO\Component\Cache\MetricsCache;
 use SplitIO\Sdk\Impressions\Impression;
+use SplitIO\Split;
 use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
@@ -190,5 +191,19 @@ class Client implements ClientInterface
         }
 
         return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function track($key, $trafficType, $eventType, $value=null)
+    {
+        //TODO:
+        //  - Create EventDTO
+        //  - Create Redis Event Message following spec.
+        //  - RPUSH event message
+        //Split::cache()->rightPushInList()
+
+        return true;
     }
 }
