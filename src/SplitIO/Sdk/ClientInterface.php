@@ -53,4 +53,15 @@ interface ClientInterface
      * @return bool
      */
     public function isTreatment($key, $featureName, $treatment);
+
+    /**
+     * Method to send events
+     *
+     * @param $key
+     * @param $trafficType
+     * @param $eventType
+     * @param null $value
+     * @return boolean
+     */
+    public function track($key, $trafficType, $eventType, $value=null);
 }
