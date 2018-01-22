@@ -66,19 +66,7 @@ class Sdk
         $cacheAdapter = isset($options['adapter']) ? $options['adapter'] : 'redis';
 
         if ($cacheAdapter == 'redis') {
-            if (isset($options['options']['url']) && !empty($options['options']['url'])) {
-                $uri = new Uri($options['options']['url']);
-
-                $_options['redis-host'] = $uri->getHost();
-                $_options['redis-port'] = $uri->getPort();
-                $_options['redis-pass'] = $uri->getPass();
-            } else {
-                $_options['redis-host'] = isset($options['options']['host']) ? $options['options']['host'] : null;
-                $_options['redis-port'] = isset($options['options']['port']) ? $options['options']['port'] : null;
-                $_options['redis-pass'] = isset($options['options']['pass']) ? $options['options']['pass'] : null;
-            }
-
-            $_options['redis-timeout'] = isset($options['options']['timeout']) ? $options['options']['timeout'] : null;
+            throw new Exception("'redis' adapter is not longer supported. Please use 'predis' instead");
         } elseif ($cacheAdapter == 'predis') {
             $_options['predis-options'] = isset($options['options']) ? $options['options'] : null;
             $_options['predis-parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
