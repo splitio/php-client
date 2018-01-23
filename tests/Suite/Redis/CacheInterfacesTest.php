@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Test\Suite\Redis;
 
+use SplitIO\Component\Cache\EventsCache;
 use SplitIO\Component\Cache\Pool;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
@@ -124,5 +125,23 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($segmentsTimestamp, $bur->getReadySegments());
 
         $this->assertEquals(min($splitsTimestamp, $segmentsTimestamp), $bur->getReadyCheckpoint());
+    }
+
+    /**
+     * @depends testDiLog
+     * @depends testDiCache
+     */
+    public function testEventsCache()
+    {
+        $key= "some_key";
+        $trafficType = "some_trafficType";
+        $eventType = "some_event_type";
+        $value = 0.0;
+
+        $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+        $eventMessageMetadata = new EventQueueMetadataMessage();
+        $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+
+        $this->assertTrue(EventsCache::addEvent($eventQueueMessage));
     }
 }
