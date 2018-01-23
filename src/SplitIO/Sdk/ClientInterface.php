@@ -63,5 +63,5 @@ interface ClientInterface
      * @param null $value
      * @return boolean
      */
-    public function track($key, $trafficType, $eventType, $value=null);
+    public function track($key, $trafficType, $eventType, $value = null);
 }

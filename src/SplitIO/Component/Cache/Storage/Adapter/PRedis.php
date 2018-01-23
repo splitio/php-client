@@ -231,6 +231,5 @@ class PRedis implements CacheStorageAdapterInterface
         } else {
             return (boolean) $this->client->rpush($queueName, $item);
         }
-
     }
 }
