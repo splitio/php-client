@@ -10,6 +10,9 @@ class EventsCache
 
     public static function addEvent(EventQueueMessage $message)
     {
-        return Di::getCache()->rightPushInList(self::KEY_EVENTS_LIST, json_encode($message->toArray()));
+        $queueJSONmessage =  json_encode($message->toArray());
+
+        Di::getLogger()->debug("Adding event item into queue: ". $queueJSONmessage);
+        return Di::getCache()->rightPushInList(self::KEY_EVENTS_LIST, $queueJSONmessage);
     }
 }
