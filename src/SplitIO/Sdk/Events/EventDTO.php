@@ -11,17 +11,17 @@ class EventDTO
     private $value;
     private $timestamp;
 
-    private function __construct($key, $trafficTypeName, $eventTypeId, $value)
+    public function __construct($key, $trafficTypeName, $eventTypeId, $value)
     {
-        if(empty($key)){
+        if (empty($key)) {
             throw new Exception("Key must not be empty");
         }
 
-        if(empty($trafficTypeName)){
+        if (empty($trafficTypeName)) {
             throw new Exception("TrafficTypeName must not be empty");
         }
 
-        if(empty($eventTypeId)){
+        if (empty($eventTypeId)) {
             throw new Exception("EventTypeId must not be empty");
         }
 
@@ -114,5 +114,14 @@ class EventDTO
     }
 
 
-
+    public function toArray()
+    {
+        return array(
+            'key' => $this->key,
+            'trafficTypeName' => $this->trafficTypeName,
+            'eventTypeId' => $this->eventTypeId,
+            'value' => $this->value,
+            'timestamp'=> $this->timestamp
+        );
+    }
 }
