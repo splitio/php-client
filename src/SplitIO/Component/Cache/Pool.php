@@ -263,4 +263,9 @@ class Pool extends CacheKeyTrait
     {
         return $this->adapter->getSet($key, $value);
     }
+
+    public function rightPushInList($queue, $item)
+    {
+        return $this->adapter->rightPushQueue($queue, $item);
+    }
 }
