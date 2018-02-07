@@ -1,3 +1,5 @@
+5.3.0: (Feb 8, 2018)
+ - Adding Events support into Split client
 5.0.0 (Jun 13, 2017)
  - BREAKING BACKWARD COMPATIBILITY
  - Adding support for Split Synchronizer service
