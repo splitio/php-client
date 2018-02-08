@@ -223,4 +223,13 @@ class PRedis implements CacheStorageAdapterInterface
             return null;
         }
     }
+
+    public function rightPushQueue($queueName, $item)
+    {
+        if (!is_array($item)) {
+            return (boolean) $this->client->rpush($queueName, array($item));
+        } else {
+            return (boolean) $this->client->rpush($queueName, $item);
+        }
+    }
 }
