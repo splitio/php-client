@@ -17,14 +17,28 @@ class Key
      */
     private $bucketingKey;
 
+
     /**
-     * @param $matchingKey
-     * @param $bucketingKey
+     * Key constructor.
+     * @param string $matchingKey
+     * @param string $bucketingKey
+     * @throws KeyException
      */
     public function __construct($matchingKey, $bucketingKey)
     {
-        $this->matchingKey = $matchingKey;
-        $this->bucketingKey = $bucketingKey;
+        $strMatchingKey = \SplitIO\toString($matchingKey);
+        if ($strMatchingKey !== false) {
+            $this->matchingKey = $matchingKey;
+        } else {
+            throw new KeyException("Invalid matchingKey type. Must be string");
+        }
+
+        $strBucketingKey = \SplitIO\toString($bucketingKey);
+        if ($strBucketingKey !== false) {
+            $this->bucketingKey = $bucketingKey;
+        } else {
+            throw new KeyException("Invalid bucketingKey type. Must be string");
+        }
     }
 
     /**
