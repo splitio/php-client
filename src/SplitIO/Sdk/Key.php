@@ -27,14 +27,14 @@ class Key
     public function __construct($matchingKey, $bucketingKey)
     {
         $strMatchingKey = \SplitIO\toString($matchingKey);
-        if($strMatchingKey !== false) {
+        if ($strMatchingKey !== false) {
             $this->matchingKey = $matchingKey;
         } else {
             throw new KeyException("Invalid matchingKey type. Must be string");
         }
 
         $strBucketingKey = \SplitIO\toString($bucketingKey);
-        if($strBucketingKey !== false) {
+        if ($strBucketingKey !== false) {
             $this->bucketingKey = $bucketingKey;
         } else {
             throw new KeyException("Invalid bucketingKey type. Must be string");

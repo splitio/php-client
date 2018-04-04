@@ -112,7 +112,7 @@ class Client implements ClientInterface
             $bucketingKey = $key->getBucketingKey();
         } else {
             $strKey = \SplitIO\toString($key);
-            if($strKey !== false) {
+            if ($strKey !== false) {
                 $matchingKey = $strKey;
                 $bucketingKey = null;
             } else {
@@ -210,7 +210,7 @@ class Client implements ClientInterface
     {
         try {
             $strKey = \SplitIO\toString($key);
-            if($strKey !== false) {
+            if ($strKey !== false) {
                 $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
                 $eventMessageMetadata = new EventQueueMetadataMessage();
                 $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
@@ -220,7 +220,6 @@ class Client implements ClientInterface
                 SplitApp::logger()->critical('Invalid key type. Must be "string"');
                 return false;
             }
-
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart
             SplitApp::logger()->error("Error happens trying aadd events");
