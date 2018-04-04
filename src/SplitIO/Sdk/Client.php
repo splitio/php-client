@@ -1,10 +1,15 @@
 <?php
 namespace SplitIO\Sdk;
 
+use SplitIO\Component\Cache\EventsCache;
 use SplitIO\Exception\InvalidMatcherException;
 use SplitIO\Metrics;
 use SplitIO\Component\Cache\MetricsCache;
+use SplitIO\Sdk\Events\EventDTO;
+use SplitIO\Sdk\Events\EventQueueMessage;
+use SplitIO\Sdk\Events\EventQueueMetadataMessage;
 use SplitIO\Sdk\Impressions\Impression;
+use SplitIO\Split;
 use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
@@ -106,8 +111,14 @@ class Client implements ClientInterface
             $matchingKey = $key->getMatchingKey();
             $bucketingKey = $key->getBucketingKey();
         } else {
-            $matchingKey = $key;
-            $bucketingKey = null;
+            $strKey = \SplitIO\toString($key);
+            if ($strKey !== false) {
+                $matchingKey = $strKey;
+                $bucketingKey = null;
+            } else {
+                SplitApp::logger()->critical('Invalid key type. Must be "SplitIO\Sdk\Key" or "string".');
+                return TreatmentEnum::CONTROL;
+            }
         }
 
         $impressionLabel = ImpressionLabel::EXCEPTION;
@@ -186,6 +197,33 @@ class Client implements ClientInterface
             SplitApp::logger()->critical("SDK Client on isTreatment is critical");
             SplitApp::logger()->critical($e->getMessage());
             SplitApp::logger()->critical($e->getTraceAsString());
+            // @codeCoverageIgnoreEnd
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function track($key, $trafficType, $eventType, $value = null)
+    {
+        try {
+            $strKey = \SplitIO\toString($key);
+            if ($strKey !== false) {
+                $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+                $eventMessageMetadata = new EventQueueMetadataMessage();
+                $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+
+                return EventsCache::addEvent($eventQueueMessage);
+            } else {
+                SplitApp::logger()->critical('Invalid key type. Must be "string"');
+                return false;
+            }
+        } catch (\Exception $exception) {
+            // @codeCoverageIgnoreStart
+            SplitApp::logger()->error("Error happens trying aadd events");
+            SplitApp::logger()->debug($exception->getTraceAsString());
             // @codeCoverageIgnoreEnd
         }
 

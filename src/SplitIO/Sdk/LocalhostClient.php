@@ -126,4 +126,12 @@ class LocalhostClient implements ClientInterface
 
         return false;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function track($key, $trafficType, $eventType, $value = null)
+    {
+        return true;
+    }
 }

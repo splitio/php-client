@@ -1,3 +1,7 @@
+5.3.1: (Apr 4, 2018)
+ - Force key data type to be a string
+5.3.0: (Feb 8, 2018)
+ - Split client supports .track method (events)
 5.2.4: (Sep 13, 2017)
  - Downgrade logging level for shared memory messages
 5.2.3: (Sep 5, 2017)

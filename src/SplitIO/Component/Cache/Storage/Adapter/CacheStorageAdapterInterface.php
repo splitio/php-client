@@ -96,4 +96,11 @@ interface CacheStorageAdapterInterface
      * @return mixed
      */
     public function getSet($key, $value);
+
+    /**
+     * @param $queueName
+     * @param $item
+     * @return boolean
+     */
+    public function rightPushQueue($queueName, $item);
 }

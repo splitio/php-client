@@ -68,8 +68,6 @@ function parseSplitsFile($fileContent)
 
 function getHostIpAddress()
 {
-    // TODO:
-    // 1: try config/IP
     if (\SplitIO\Component\Common\Di::get('ipAddress')) {
         return \SplitIO\Component\Common\Di::get('ipAddress');
     } elseif (isset($_SERVER['SERVER_ADDR'])) {
@@ -79,3 +77,22 @@ function getHostIpAddress()
     }
 }
 
+/**
+ * Try to convert primitive types to string, otherwise returns FALSE
+ * Example:
+ *     $stringVal = toString(34)
+ *     if ($stringVal !== false) {
+ *        //Do some stuff with your string val
+ *     }
+ *
+ * @param $var
+ * @return bool|string
+ * @deprecated primitive data conversion will be removed in future version.
+ */
+function toString($var){
+    if (is_string($var) || is_int($var) || is_float($var) || is_bool($var)) {
+        return "$var";
+    }
+
+    return false;
+}
