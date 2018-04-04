@@ -111,8 +111,14 @@ class Client implements ClientInterface
             $matchingKey = $key->getMatchingKey();
             $bucketingKey = $key->getBucketingKey();
         } else {
-            $matchingKey = $key;
-            $bucketingKey = null;
+            $strKey = \SplitIO\toString($key);
+            if ($strKey !== false) {
+                $matchingKey = $strKey;
+                $bucketingKey = null;
+            } else {
+                SplitApp::logger()->critical('Invalid key type. Must be "SplitIO\Sdk\Key" or "string".');
+                return TreatmentEnum::CONTROL;
+            }
         }
 
         $impressionLabel = ImpressionLabel::EXCEPTION;
@@ -203,11 +209,17 @@ class Client implements ClientInterface
     public function track($key, $trafficType, $eventType, $value = null)
     {
         try {
-            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
-            $eventMessageMetadata = new EventQueueMetadataMessage();
-            $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+            $strKey = \SplitIO\toString($key);
+            if ($strKey !== false) {
+                $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+                $eventMessageMetadata = new EventQueueMetadataMessage();
+                $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
 
-            return EventsCache::addEvent($eventQueueMessage);
+                return EventsCache::addEvent($eventQueueMessage);
+            } else {
+                SplitApp::logger()->critical('Invalid key type. Must be "string"');
+                return false;
+            }
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart
             SplitApp::logger()->error("Error happens trying aadd events");
