@@ -211,6 +211,13 @@ class PRedis implements CacheStorageAdapterInterface
         return $this->client->getSet($key, $value);
     }
 
+    public function pipeline($pipelinedFunc)
+    {
+        $redisPipe = $this->client->pipeline();
+        $pipelinedFunc(new PRedisPipe($redisPipe));
+        $redisPipe->execute();
+    }
+
     private static function normalizePrefix($prefix)
     {
         if ($prefix && strlen($prefix)) {

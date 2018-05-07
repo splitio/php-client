@@ -18,7 +18,7 @@ class Pool extends CacheKeyTrait
      */
     public function __construct(array $options = array())
     {
-        $adapterName = (isset($options['adapter']['name'])) ? $options['adapter']['name'] : 'redis';
+        $adapterName = (isset($options['adapter']['name'])) ? $options['adapter']['name'] : 'predis';
         $adapterOptions = (isset($options['adapter']['options'])
                             && is_array($options['adapter']['options'])) ? $options['adapter']['options'] : array();
 
@@ -262,5 +262,10 @@ class Pool extends CacheKeyTrait
     public function getSet($key, $value)
     {
         return $this->adapter->getSet($key, $value);
+    }
+
+    public function pipeline($pipelineFunction)
+    {
+        return $this->adapter->pipeline($pipelineFunction);
     }
 }

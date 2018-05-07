@@ -29,7 +29,7 @@ class CacheTrait
             case 'redis':
             default:
                 $adapter_config = array(
-                    'name' => 'redis',
+                    'name' => 'predis',
                     'options' => array(
                         'host'      => isset($options['redis-host']) ? $options['redis-host'] : null,
                         'port'      => isset($options['redis-port']) ? $options['redis-port'] : null,

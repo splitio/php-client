@@ -19,6 +19,15 @@ class ImpressionCache
     }
 
     /**
+     * @param $feature Name of the feature for which an impression is being registered.
+     * @return string
+     */
+    public static function getFeatureSetEntryFor($feature)
+    {
+        return KeyFactory::makeRegisteredValue($feature);
+    }
+
+    /**
      * @return mixed
      */
     public static function getCacheKeySearchPattern()
@@ -53,7 +62,10 @@ class ImpressionCache
             'bucketingKey' => $bucketingKey
         );
 
-        return Di::getCache()->saveItemOnList(self::getCacheKeyForImpressionData($featureName), json_encode($data));
+        return Di::getCache()->pipeline(function ($pipe) use ($data, $featureName) {
+            $pipe->saveItemOnList(self::getCacheKeyForImpressionData($featureName), json_encode($data));
+            $pipe->saveItemOnList(KeyFactory::getImpressionSetKey(), self::getFeatureSetEntryFor($featureName));
+        });
     }
 
     /**

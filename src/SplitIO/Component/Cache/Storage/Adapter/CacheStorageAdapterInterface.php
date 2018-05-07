@@ -96,4 +96,10 @@ interface CacheStorageAdapterInterface
      * @return mixed
      */
     public function getSet($key, $value);
+
+    /**
+     * @param $pipelinedFunc Function that receives a pipe argument that enabled pipelined arguments.
+     * @return mixed
+     */
+    public function pipeline($pipelinedFunc);
 }
