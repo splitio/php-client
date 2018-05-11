@@ -43,6 +43,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
     public function testMurmur3HashFunction()
     {
         $handles = array(
+            fopen(__DIR__."/../../files/murmur3-sample-double-treatment-users.csv", "r"),
             fopen(__DIR__."/../../files/murmur3-sample-data-v2.csv", "r"),
             fopen(__DIR__."/../../files/murmur3-sample-data-non-alpha-numeric-v2.csv", "r"),
         );
@@ -52,7 +53,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
                 while (($line = fgets($handle)) !== false) {
                     $_line = explode(',', $line);
     
-                    if ($_line[0] == '#seed') {
+                    if ($_line[0] == 'seed') {
                         continue;
                     }
 
