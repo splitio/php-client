@@ -153,7 +153,9 @@ class Client implements ClientInterface
             );
 
             // Provides logic to send data to Client
-            $this->impressionListener->sendDataToClient($impression, $attributes);
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
 
             // Register impression
             $this->logImpression($impression);
@@ -185,7 +187,9 @@ class Client implements ClientInterface
             );
 
             // Provides logic to send data to Client
-            $this->impressionListener->sendDataToClient($impression, $attributes);
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
 
             // Register impression
             $this->logImpression($impression);
