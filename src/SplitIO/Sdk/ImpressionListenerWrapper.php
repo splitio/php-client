@@ -47,15 +47,15 @@ class ImpressionListenerWrapper
      * NOTE: A try/catch has been placed here to avoid any issue that could break the Sdk logic.
      */
     public function sendDataToClient(Impression $impression, $attributes) {
-        // Builds data to send to client
-        $data = array(
-            'impression' => $impression,
-            'attributes' => $attributes,
-            'instance-id' => \SplitIO\getHostIpAddress(),
-            'sdk-language-version' => 'php-' . \SplitIO\version()
-        );
-
         try {
+            // Builds data to send to client
+            $data = array(
+                'impression' => $impression,
+                'attributes' => $attributes,
+                'instance-id' => \SplitIO\getHostIpAddress(),
+                'sdk-language-version' => 'php-' . \SplitIO\version()
+            );
+
             // Executes client's custom method
             $this->impressionListener->readImpression($data);
         } catch (\Throwable $e) {
