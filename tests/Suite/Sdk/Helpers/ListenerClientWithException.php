@@ -8,6 +8,6 @@ class ListenerClientWithException implements \SplitIO\Sdk\ImpressionListener
 
     public function logImpression($data)
     {
-        throw new Exception('Simulate an Exception.');
+        throw new \Exception('Simulate an Exception.');
     }
 }

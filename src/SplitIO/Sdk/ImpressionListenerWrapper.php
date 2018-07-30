@@ -51,7 +51,7 @@ class ImpressionListenerWrapper
 
             // Executes client's custom method
             $this->impressionListener->logImpression($data);
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             SplitApp::logger()->error('logImpression user\'s method is throwing exceptions');
             SplitApp::logger()->error($e->getMessage());
             SplitApp::logger()->error($e->getTraceAsString());

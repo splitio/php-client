@@ -53,7 +53,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 
-    public function testClientAndListenerThrownsException()
+    public function testClientThrowningExceptionInListener()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
