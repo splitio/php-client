@@ -42,9 +42,7 @@
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
             <directory suffix="Test.php">tests/Suite/Matchers/</directory>
             <directory suffix="Test.php">tests/Suite/Metrics/</directory>
-            <file suffix="Test.php">tests/Suite/Sdk/MatcherClientTest.php</file>
-            <file suffix="Test.php">tests/Suite/Sdk/SdkClientTest.php</file>
-            <file suffix="Test.php">tests/Suite/Sdk/ImpressionWrapperTest.php</file>
+            <directory suffix="Test.php">tests/Suite/Sdk/</directory>
             <directory suffix="Test.php">tests/Suite/Attributes/</directory>
         </testsuite>
 
