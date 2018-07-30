@@ -19,13 +19,13 @@ class ImpressionListenerWrapper
     public function __construct(ImpressionListener $impressionListener)
     {
         // Checks if the class method exists
-        if (method_exists($impressionListener, 'readImpression')) {
-            SplitApp::logger()->info('Method readImpression exists in custom '
+        if (method_exists($impressionListener, 'logImpression')) {
+            SplitApp::logger()->info('Method logImpression exists in custom '
                 .'user defined class for ImpressionListener.');
             // Sets client's class to impressionListener
             $this->impressionListener = $impressionListener;
         } else {
-            SplitApp::logger()->error('Method readImpression does not exist in custom '
+            SplitApp::logger()->error('Method logImpression does not exist in custom '
                 .'user defined class for ImpressionListener.');
         }
     }
@@ -57,9 +57,9 @@ class ImpressionListenerWrapper
             );
 
             // Executes client's custom method
-            $this->impressionListener->readImpression($data);
+            $this->impressionListener->logImpression($data);
         } catch (\Throwable $e) {
-            SplitApp::logger()->error('readImpression user\'s method is throwing exceptions');
+            SplitApp::logger()->error('logImpression user\'s method is throwing exceptions');
             SplitApp::logger()->error($e->getMessage());
             SplitApp::logger()->error($e->getTraceAsString());
         }

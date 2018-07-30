@@ -15,5 +15,5 @@ interface ImpressionListener
      *  $data['sdk-language-version']       =>  Sdk's version used
      *
      */
-    public function readImpression($data);
+    public function logImpression($data);
 }

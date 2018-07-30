@@ -3,18 +3,42 @@ namespace SplitIO\Test\Suite\Sdk;
 
 use SplitIO\Sdk\ImpressionListenerWrapper;
 use SplitIO\Sdk\Impressions\Impression;
+use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
+
+use SplitIO\Test\ImpressionWrapperStoring;
 
 global $assertReadImpression;
 
-class ListenerClientTest implements \SplitIO\Sdk\ImpressionListener {
-    public function readImpression($data) {
-        $assertReadImpression = "test";
+class ListenerClient implements \SplitIO\Sdk\ImpressionListener {
+
+    public $dataLogged;
+
+    public function logImpression($data) {
+        $this->dataLogged = $data;
     }
 }
 
 class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 {
+    private function addSplitsInCache()
+    {
+        $splitChanges = file_get_contents(__DIR__."/files/splitil.json");
+        echo $splitChanges;
+        $this->assertJson($splitChanges);
+
+        $splitCache = new SplitCache();
+
+        $splitChanges = json_decode($splitChanges, true);
+        $splits = $splitChanges['splits'];
+
+        foreach ($splits as $split) {
+            $splitName = $split['name'];
+            echo "NAME: $splitName\n";
+            $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
+        }
+    }
+
     public function testNoDefinedClassForWrapper()
     {
         $this->setExpectedException(\ArgumentCountError::class);
@@ -31,7 +55,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testDefinedClassWhichImplementsImpressionListener()
     {
-        $impressionClient = new ListenerClientTest();
+        $impressionClient = new ListenerClient();
         $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
     }
 
@@ -39,7 +63,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(\ArgumentCountError::class);
 
-        $impressionClient = new ListenerClientTest();
+        $impressionClient = new ListenerClient();
         $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
 
         $impressionWrapper->sendDataToClient();
@@ -49,7 +73,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(\TypeError::class);
         
-        $impressionClient = new ListenerClientTest();
+        $impressionClient = new ListenerClient();
         $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
 
         $impressionWrapper->sendDataToClient($something);
@@ -69,7 +93,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
             $bucketingKey = 'something'
         );
         
-        $impressionClient = new ListenerClientTest();
+        $impressionClient = new ListenerClient();
         $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
 
         $impressionWrapper->sendDataToClient($impression);
@@ -87,13 +111,17 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
             $bucketingKey = 'something'
         );
         
-        $impressionClient = new ListenerClientTest();
+        $impressionClient = new ListenerClient();
         $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
 
         $impressionWrapper->sendDataToClient($impression, $attributes);
 
-        // echo "And Here??????".$assertReadImpression['sdk-language-version']."\n";
-        echo "And Here??????".$assertReadImpression."\n";
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
+        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 
     public function testClient()
@@ -101,7 +129,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
-        $impressionClient = new ListenerClientTest();
+        $impressionClient = new ListenerClient();
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -113,12 +141,38 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
         $splitSdk = $splitFactory->client();
 
-        //Assertions
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'sample_feature'));
-        $this->assertEquals('off', $splitSdk->getTreatment('invalidKey', 'sample_feature'));
-        $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'invalid_feature'));
+        //Populating the cache.
+        $this->addSplitsInCache();
 
-        // echo "And Here??????".$assertReadImpression['sdk-language-version']."\n";
-        echo "And Here??????".$assertReadImpression."\n";
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('melograno', 'iltest'));
+
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'on');
+        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
+
+        $this->assertEquals('off', $splitSdk->getTreatment('invalidKey', 'iltest'));
+
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'off');
+        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
+
+        $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'iltestNotExistant'));
+
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'control');
+        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 }
