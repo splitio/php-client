@@ -6,10 +6,6 @@ use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
-use SplitIO\Test\ImpressionWrapperStoring;
-
-global $assertReadImpression;
-
 class ListenerClient implements \SplitIO\Sdk\ImpressionListener {
 
     public $dataLogged;

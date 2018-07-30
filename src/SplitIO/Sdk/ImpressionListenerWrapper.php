@@ -38,7 +38,7 @@ class ImpressionListenerWrapper
      *  $impression['feature']              =>  string   Identity's feature
      *  $impression['treatment']            =>  string   Identity's treatment result
      *  $impression['label']                =>  string   Identity's label
-     *  $impression['time']                 =>  integer  Identity's organization Id
+     *  $impression['time']                 =>  integer  Identity's time
      *  $impression['changeNumber']         =>  number   Identity's change number
      *  $impression['bucketingKey']         =>  string   Identity's bucketing key
      *
