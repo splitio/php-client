@@ -42,7 +42,7 @@ class Client implements ClientInterface
 
     /**
      * Builds new Impression object
-     * 
+     *
      * @param $matchingKey
      * @param $feature
      * @param $treatment
@@ -50,7 +50,7 @@ class Client implements ClientInterface
      * @param null $time
      * @param int $changeNumber
      * @param string $bucketingKey
-     * 
+     *
      * @return \SplitIO\Sdk\Impressions\Impression
      */
     private function createImpression(
@@ -82,7 +82,7 @@ class Client implements ClientInterface
     /**
      * @param $impression \SplitIO\Sdk\Impressions\Impression
      */
-    private function logImpression(Impression $impression) 
+    private function logImpression(Impression $impression)
     {
         TreatmentImpression::log($impression);
     }

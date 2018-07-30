@@ -1,6 +1,7 @@
 <?php
 
 namespace SplitIO\Sdk;
+
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Split as SplitApp;
 
@@ -46,7 +47,8 @@ class ImpressionListenerWrapper
      *
      * NOTE: A try/catch has been placed here to avoid any issue that could break the Sdk logic.
      */
-    public function sendDataToClient(Impression $impression, $attributes) {
+    public function sendDataToClient(Impression $impression, $attributes)
+    {
         try {
             // Builds data to send to client
             $data = array(
