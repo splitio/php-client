@@ -152,13 +152,13 @@ class Client implements ClientInterface
                 $result['impression']['changeNumber']
             );
 
+            // Register impression
+            $this->logImpression($impression);
+
             // Provides logic to send data to Client
             if (isset($this->impressionListener)) {
                 $this->impressionListener->sendDataToClient($impression, $attributes);
             }
-
-            // Register impression
-            $this->logImpression($impression);
 
             //Register latency value
             MetricsCache::addLatencyOnBucket(
@@ -186,13 +186,13 @@ class Client implements ClientInterface
                 $bucketingKey
             );
 
+            // Register impression
+            $this->logImpression($impression);
+
             // Provides logic to send data to Client
             if (isset($this->impressionListener)) {
                 $this->impressionListener->sendDataToClient($impression, $attributes);
             }
-
-            // Register impression
-            $this->logImpression($impression);
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .

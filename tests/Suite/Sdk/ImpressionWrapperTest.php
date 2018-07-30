@@ -5,22 +5,14 @@ use SplitIO\Sdk\ImpressionListenerWrapper;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
-
-class ListenerClient implements \SplitIO\Sdk\ImpressionListener {
-
-    public $dataLogged;
-
-    public function logImpression($data) {
-        $this->dataLogged = $data;
-    }
-}
+use SplitIO\Test\Suite\Sdk\Helpers\ListenerClient;
+use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
 
 class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 {
     private function addSplitsInCache()
     {
         $splitChanges = file_get_contents(__DIR__."/files/splitil.json");
-        echo $splitChanges;
         $this->assertJson($splitChanges);
 
         $splitCache = new SplitCache();
@@ -30,69 +22,8 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
         foreach ($splits as $split) {
             $splitName = $split['name'];
-            echo "NAME: $splitName\n";
             $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
         }
-    }
-
-    public function testNoDefinedClassForWrapper()
-    {
-        $this->setExpectedException(\ArgumentCountError::class);
-
-        $impressionWrapper = new ImpressionListenerWrapper();
-    }
-
-    public function testNoDefinedMethodForInterface()
-    {
-        $this->setExpectedException(\TypeError::class);
-
-        $impressionWrapper = new ImpressionListenerWrapper($something);
-    }
-
-    public function testDefinedClassWhichImplementsImpressionListener()
-    {
-        $impressionClient = new ListenerClient();
-        $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
-    }
-
-    public function testNoArgumentsProvidedToSendDataToClient()
-    {
-        $this->setExpectedException(\ArgumentCountError::class);
-
-        $impressionClient = new ListenerClient();
-        $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
-
-        $impressionWrapper->sendDataToClient();
-    }
-
-    public function testNoImpressionInstanceProvidedToSendDataToClient()
-    {
-        $this->setExpectedException(\TypeError::class);
-        
-        $impressionClient = new ListenerClient();
-        $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
-
-        $impressionWrapper->sendDataToClient($something);
-    }
-
-    public function testNoAttributesProvidedToSendDataToClient()
-    {
-        $this->setExpectedException(\ArgumentCountError::class);
-
-        $impression = new Impression(
-            $matchingKey = 'something',
-            $feature = 'something',
-            $treatment = TreatmentEnum::CONTROL,
-            $label = null,
-            $time = null,
-            $changeNumber = -1,
-            $bucketingKey = 'something'
-        );
-        
-        $impressionClient = new ListenerClient();
-        $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
-
-        $impressionWrapper->sendDataToClient($impression);
     }
 
     public function testSendDataToClient()
@@ -106,6 +37,8 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
             $changeNumber = -1,
             $bucketingKey = 'something'
         );
+
+        $attributes = null;
         
         $impressionClient = new ListenerClient();
         $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
@@ -118,6 +51,30 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
+    }
+
+    public function testClientAndListenerThrownsException()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+        
+        $impressionClient = new ListenerClientWithException();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'impressionListener' => $impressionClient,
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('melograno', 'iltest'));
     }
 
     public function testClient()
