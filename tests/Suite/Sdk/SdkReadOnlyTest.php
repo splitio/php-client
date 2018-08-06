@@ -46,12 +46,28 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
         $predis = new PRedis(array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options));
         Di::set(Di::KEY_CACHE, new PRedisReadOnlyMock($predis));
 
-        //Assertions
+        //Initialize mock logger
+        $logger = $this
+            ->getMockBuilder('\SplitIO\Component\Log\Logger')
+            ->disableOriginalConstructor()
+            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'write', 'log'))
+            ->getMock();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo('READONLY mode mocked.'),
+                $this->equalTo('Unable to write impression back to redis.'),
+                $this->equalTo('Unable to write metrics back to redis.'),
+                $this->equalTo('The SPLIT definition for \'mockedPRedisInvalid\' has not been found')
+            ));
+    
+        Di::set(Di::KEY_LOG, $logger);
+        
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'mockedPRedis'));
-
         $this->assertEquals('off', $splitSdk->getTreatment('invalid', 'mockedPRedis'));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('invalid', 'mockedPRedisNotExistant'));
+        $this->assertEquals('control', $splitSdk->getTreatment('valid', 'mockedPRedisInvalid'));
     }
 
     public function testException()
