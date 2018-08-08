@@ -136,8 +136,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinels()
     {
-        $this->setExpectedException(\Predis\Response\ServerException::class);
-
+        $this->setExpectedException(ServerException::class);
         $predis = new PRedis(array(
             'sentinels' => ['127.0.0.1'],
             'options' => [
@@ -145,5 +144,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
                 'service' => 'master'
             ]
         ));
+
+        $predis->getItem('this_is_a_test_key');
     }
 }

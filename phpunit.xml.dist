@@ -46,14 +46,6 @@
             <directory suffix="Test.php">tests/Suite/Adapter/</directory>
             <directory suffix="Test.php">tests/Suite/Attributes/</directory>
         </testsuite>
-
-                <testsuite name="redis">
-
-            <directory suffix="Test.php">tests/Suite/Adapter/</directory>
- 
-
-        </testsuite>
-
     </testsuites>
 
 </phpunit>
