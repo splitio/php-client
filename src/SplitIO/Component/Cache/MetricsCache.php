@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Component\Cache;
 
-use SplitIO\Split;
 use SplitIO\Component\Common\Di;
 use SplitIO\Component\Cache\KeyFactory;
 

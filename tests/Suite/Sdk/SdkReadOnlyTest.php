@@ -9,7 +9,6 @@ use SplitIO\Test\Suite\Redis\PRedisReadOnlyMock;
 use SplitIO\TreatmentImpression;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Sdk\Impressions\Impression;
-use SplitIO\Component\Log\LoggerTrait;
 
 class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
 {
