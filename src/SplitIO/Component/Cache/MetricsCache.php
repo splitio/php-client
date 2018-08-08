@@ -66,8 +66,8 @@ class MetricsCache
         try {
             return Di::getCache()->incrementKey(self::getCacheKeyForLatencyBucket($metricName, $bucketNumber));
         } catch (\Exception $e) {
-            Split::logger()->warning('Unable to write metrics back to redis.');
-            Split::logger()->warning($e->getMessage());
+            Di::getLogger()->warning('Unable to write metrics back to redis.');
+            Di::getLogger()->warning($e->getMessage());
         }
     }
 

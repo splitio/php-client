@@ -3,6 +3,7 @@ namespace SplitIO;
 
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Sdk\Impressions\Impression;
+use SplitIO\Component\Common\Di;
 
 class TreatmentImpression
 {
@@ -13,7 +14,7 @@ class TreatmentImpression
     public static function log(Impression $impression)
     {
         try {
-            Split::logger()->debug($impression);
+            Di::getLogger()->debug($impression);
 
             $impressionCache = new ImpressionCache();
             return $impressionCache->addDataToFeature(
@@ -26,8 +27,8 @@ class TreatmentImpression
                 $impression->getBucketingKey()
             );
         } catch (\Exception $e) {
-            Split::logger()->warning('Unable to write impression back to redis.');
-            Split::logger()->warning($e->getMessage());
+            Di::getLogger()->warning('Unable to write impression back to redis.');
+            Di::getLogger()->warning($e->getMessage());
         }
     }
 }
