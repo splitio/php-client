@@ -3,6 +3,7 @@ namespace SplitIO\Component\Cache\Storage\Adapter;
 
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use SplitIO\Component\Cache\Item;
+use SplitIO\Component\Utils as SplitIOUtils;
 
 /**
  * Class PRedis
@@ -24,13 +25,48 @@ class PRedis implements CacheStorageAdapterInterface
         }
 
         $_parameters = (isset($options['parameters'])) ? $options['parameters'] : null;
+        $_sentinels = (isset($options['sentinels'])) ? $options['sentinels'] : null;
         $_options = (isset($options['options'])) ? $options['options'] : null;
+
+        $_redisConfig = $this->getRedisConfiguration($_parameters, $_sentinels, $_options);
 
         if ($_options && isset($_options['prefix'])) {
             $_options['prefix'] = self::normalizePrefix($_options['prefix']);
         }
 
-        $this->client = new \Predis\Client($_parameters, $_options);
+        $this->client = new \Predis\Client($_redisConfig, $_options);
+    }
+
+    private function isValidSentinel($sentinels, $options)
+    {
+        if (count($sentinels) == 0) {
+            throw new AdapterException('At least one sentinel is required.');
+        }
+        if (!SplitIOUtils\isAssoc($sentinels)) {
+            if (!isset($options['replication'])) {
+                throw new AdapterException('Missing replication mode in options.');
+            } else {
+                if ($options['replication'] != 'sentinel') {
+                    throw new AdapterException('Wrong configuration of redis replication.');
+                }
+            }
+            if (!isset($options['service'])) {
+                throw new AdapterException('Master name is required in replication mode for sentinel.');
+            }
+        }
+        return true;
+    }
+
+    private function getRedisConfiguration($parameters, $sentinels, $options)
+    {
+        if (isset($parameters)) {
+            return $parameters;
+        } else {
+            if (isset($sentinels) && $this->isValidSentinel($sentinels, $options)) {
+                return $sentinels;
+            }
+        }
+        return null;
     }
 
     /**

@@ -43,7 +43,15 @@
             <directory suffix="Test.php">tests/Suite/Matchers/</directory>
             <directory suffix="Test.php">tests/Suite/Metrics/</directory>
             <directory suffix="Test.php">tests/Suite/Sdk/</directory>
+            <directory suffix="Test.php">tests/Suite/Adapter/</directory>
             <directory suffix="Test.php">tests/Suite/Attributes/</directory>
+        </testsuite>
+
+                <testsuite name="redis">
+
+            <directory suffix="Test.php">tests/Suite/Adapter/</directory>
+ 
+
         </testsuite>
 
     </testsuites>
