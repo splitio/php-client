@@ -37,12 +37,12 @@ class PRedis implements CacheStorageAdapterInterface
         $this->client = new \Predis\Client($_redisConfig, $_options);
     }
 
-    private function isValidSentinel($sentinels, $options)
+    private function isValidSentinelConfig($sentinels, $options)
     {
         if (count($sentinels) == 0) {
             throw new AdapterException('At least one sentinel is required.');
         }
-        if (!SplitIOUtils\isAssoc($sentinels)) {
+        if (!SplitIOUtils\isAssociativeArray($sentinels)) {
             if (!isset($options['replication'])) {
                 throw new AdapterException('Missing replication mode in options.');
             } else {
@@ -62,7 +62,7 @@ class PRedis implements CacheStorageAdapterInterface
         if (isset($parameters)) {
             return $parameters;
         } else {
-            if (isset($sentinels) && $this->isValidSentinel($sentinels, $options)) {
+            if (isset($sentinels) && $this->isValidSentinelConfig($sentinels, $options)) {
                 return $sentinels;
             }
         }
