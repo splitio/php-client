@@ -62,7 +62,12 @@ class MetricsCache
      */
     public static function addLatencyOnBucket($metricName, $bucketNumber)
     {
-        return Di::getCache()->incrementKey(self::getCacheKeyForLatencyBucket($metricName, $bucketNumber));
+        try {
+            return Di::getCache()->incrementKey(self::getCacheKeyForLatencyBucket($metricName, $bucketNumber));
+        } catch (\Exception $e) {
+            Di::getLogger()->warning('Unable to write metrics back to redis.');
+            Di::getLogger()->warning($e->getMessage());
+        }
     }
 
     /**
