@@ -80,14 +80,6 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param $impression \SplitIO\Sdk\Impressions\Impression
-     */
-    private function logImpression(Impression $impression)
-    {
-        TreatmentImpression::log($impression);
-    }
-
-    /**
      * Returns the treatment to show this id for this feature.
      * The set of treatments for a feature can be configured
      * on the Split web console.
@@ -153,7 +145,7 @@ class Client implements ClientInterface
             );
 
             // Register impression
-            $this->logImpression($impression);
+            TreatmentImpression::log($impression);
 
             // Provides logic to send data to Client
             if (isset($this->impressionListener)) {
@@ -187,7 +179,7 @@ class Client implements ClientInterface
             );
 
             // Register impression
-            $this->logImpression($impression);
+            TreatmentImpression::log($impression);
 
             // Provides logic to send data to Client
             if (isset($this->impressionListener)) {
