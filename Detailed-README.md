@@ -258,7 +258,8 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $sdkOptions);
 #### Provided PRedis Cache Adapter - sample code for Sentinel Support
 ```php
 /*** PRedis sentinel array */
-//The array below, will corresponds to a list of sentinels. It will be loaded as $client = new Predis\Client($sentinels, $options);
+//The array below, will corresponds to a list of sentinels.
+//It will be loaded as $client = new Predis\Client($sentinels, $options);
 
 $sentinels = array(
     'tcp://IP:PORT?timeout=NUMBER',
