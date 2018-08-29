@@ -23,6 +23,7 @@ class CacheTrait
                     'options' => array(
                         'options'      => isset($options['predis-options']) ? $options['predis-options'] : null,
                         'parameters'   => isset($options['predis-parameters']) ? $options['predis-parameters'] : null,
+                        'sentinels'    => isset($options['predis-sentinels']) ? $options['predis-sentinels'] : null,
                     )
                 );
                 break;

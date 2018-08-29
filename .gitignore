@@ -16,6 +16,7 @@ bin/splitio.ini
 php53test.php
 test.php
 .phpcd
+.vscode
 
 #vim backup files
 *.swp
