@@ -1,6 +1,8 @@
 <?php
 namespace SplitIO\Test\Suite\Common;
 
+use SplitIO\Component\Utils as SplitIOUtils;
+
 class FunctionsTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -19,5 +21,25 @@ SFC;
         $this->assertEquals('treatment_1', $parsed['feature_A']);
         $this->assertEquals('treatment_2', $parsed['feature_B']);
         $this->assertEquals('treatment_1', $parsed['feature_C']);
+    }
+
+    public function testIsAssociativeArrayWithEmptyAssociativeArray()
+    {
+        $this->assertTrue(SplitIOUtils\isAssociativeArray(array()));
+    }
+
+    public function testIsAssociativeArrayWithEmptyArray()
+    {
+        $this->assertTrue(SplitIOUtils\isAssociativeArray([]));
+    }
+
+    public function testIsAssociativeArrayWithIndexedArray()
+    {
+        $this->assertFalse(SplitIOUtils\isAssociativeArray([1, 2, 3, 4]));
+    }
+
+    public function testIsAssociativeArrayWithAssociativeArray()
+    {
+        $this->assertTrue(SplitIOUtils\isAssociativeArray(['one' => 'one', 'two' => null]));
     }
 }

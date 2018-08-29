@@ -12,7 +12,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     private function addSplitsInCache()
     {
         $splitChanges = file_get_contents(__DIR__."/files/splitChanges.json");
-        echo $splitChanges;
         $this->assertJson($splitChanges);
 
         $splitCache = new SplitCache();
@@ -22,7 +21,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         foreach ($splits as $split) {
             $splitName = $split['name'];
-            echo "NAME: $splitName\n";
             $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
         }
     }

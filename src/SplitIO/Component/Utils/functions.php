@@ -30,9 +30,7 @@ function getEnvironment()
 function environment($env = null, $set = false)
 {
     if ($env !== null && $set) {
-
         setEnvironment($env);
-
     } elseif ($env !== null && ! $set) {
         if ($env == getEnvironment()) {
             return true;
@@ -96,4 +94,9 @@ function getSplitEventsUrl()
         default:
             return SPLITIO_EVENTS_URL;
     }
+}
+
+function isAssociativeArray($arr)
+{
+    return array_keys($arr) !== range(0, count($arr) - 1);
 }
