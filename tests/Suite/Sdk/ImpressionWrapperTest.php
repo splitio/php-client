@@ -47,7 +47,6 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
-        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
@@ -74,7 +73,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
 
         //Assertions
-        $this->assertEquals('on', $splitSdk->getTreatment('melograno', 'iltest'));
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
     }
 
     public function testClient()
@@ -98,11 +97,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
 
         //Assertions
-        $this->assertEquals('on', $splitSdk->getTreatment('melograno', 'iltest'));
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
 
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
-        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'on');
         $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
@@ -112,7 +110,6 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
-        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'off');
         $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
@@ -122,7 +119,6 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
-        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'control');
         $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);

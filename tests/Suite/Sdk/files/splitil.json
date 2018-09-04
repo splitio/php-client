@@ -21,7 +21,7 @@
                                 "userDefinedSegmentMatcherData": null,
                                 "whitelistMatcherData": {
                                     "whitelist": [
-                                        "melograno"
+                                        "valid"
                                     ]
                                 }
                             }
