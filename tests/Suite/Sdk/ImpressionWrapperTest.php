@@ -7,6 +7,7 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClient;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
+use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
 
 class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -123,5 +124,52 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'control');
         $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
+    }
+
+    public function testClientWithoutImpressionListener()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $impressionClient = new ListenerClient();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
+    }
+
+    public function testClientWithNullImpressionListener()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $impressionClient = new ListenerClient();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'impressionListener' => null,
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
     }
 }
