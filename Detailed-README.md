@@ -316,7 +316,7 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 
 
 ## Impression Listener
-Split SDKs send impression data back to Split servers periodically and as a result of evaluating splits. In order to addittionally send this information to a location of your choice, you could define and attach an Impression Listener. For that purpose, SDK's options have a parameter called `impressionListener` where an implementation of `ImpressionListener` could be added. This implementation **must** define the `logImpression` method and it will receive data in the following schema:
+Split SDKs send impression data back to Split servers periodically and as a result of evaluating splits. In order to additionally send this information to a location of your choice, you could define and attach an Impression Listener. For that purpose, SDK's options have a parameter called `impressionListener` where an implementation of `ImpressionListener` could be added. This implementation **must** define the `logImpression` method and it will receive data in the following schema:
 
 | Name | Type | Description |
 | --- | --- | --- |
