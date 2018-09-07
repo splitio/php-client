@@ -316,7 +316,7 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 
 
 ## Impression Listener
-In order to handling the result of a `getTreatment`(a.k.a. `Impression`) for own purposes, client is able to access it by using a custom `Impression Listener`. Sdk options have a parameter called `impressionListener` where you could add an implementation of `ImpressionListener`. You **must** implement the `logImpression` method. This method in particular receives a paramater that has data in the following schema:
+In order to handle the result of a `getTreatment`(a.k.a. `Impression`) for own purposes, client is able to access it by using a custom `Impression Listener`. Sdk options have a parameter called `impressionListener` where you could add an implementation of `ImpressionListener`. You **must** implement the `logImpression` method. This method in particular receives a paramater that has data in the following schema:
 
 | Name | Type | Description |
 | --- | --- | --- |
