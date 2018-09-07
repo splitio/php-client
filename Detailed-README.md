@@ -350,6 +350,8 @@ $splitFactory = \SplitIO\Sdk::factory('YOUR_API_KEY', $sdkConfig);
 $splitClient = $splitFactory->client();
 ```
 
+
+
 # Testing the SDK
 Within tests folder you can find different test suites in order to run the Split SDK tests. The most important test suite is: **integration** that wrap the others test suites.
 
