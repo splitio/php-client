@@ -106,17 +106,34 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
+        // Key Validation
+        if (is_null($key)) {
+            SplitApp::logger()->critical('getTreatment: key cannot be null.');
+            return TreatmentEnum::CONTROL;
+        }
+
+        // Feature Name Validation
+        if (is_null($featureName)) {
+            SplitApp::logger()->critical('getTreatment: featureName cannot be null.');
+            return TreatmentEnum::CONTROL;
+        }
+        if (!is_string($featureName)) {
+            SplitApp::logger()->critical('getTreatment: featureName ' .json_encode($featureName)
+                . ' has to be of type "string".');
+            return TreatmentEnum::CONTROL;
+        }
+
         //Getting Matching key and Bucketing key
         if ($key instanceof Key) {
             $matchingKey = $key->getMatchingKey();
             $bucketingKey = $key->getBucketingKey();
         } else {
-            $strKey = \SplitIO\toString($key);
+            $strKey = \SplitIO\toString($key, 'key', 'getTreatment:');
             if ($strKey !== false) {
                 $matchingKey = $strKey;
                 $bucketingKey = null;
             } else {
-                SplitApp::logger()->critical('Invalid key type. Must be "SplitIO\Sdk\Key" or "string".');
+                SplitApp::logger()->critical('getTreatment: key has to be of type "string" or "SplitIO\Sdk\Key".');
                 return TreatmentEnum::CONTROL;
             }
         }
@@ -208,8 +225,49 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null)
     {
+        // Key Validation
+        if (is_null($key)) {
+            SplitApp::logger()->critical('track: key cannot be null.');
+            return false;
+        }
+
+        // Event Type Validation
+        if (is_null($eventType)) {
+            SplitApp::logger()->critical('track: eventType cannot be null.');
+            return false;
+        }
+        if (!is_string($eventType)) {
+            SplitApp::logger()->critical('track: eventType must be a string.');
+            return false;
+        }
+        if (!preg_match('/[a-zA-Z0-9][-_\.a-zA-Z0-9]{0,62}/', $eventType)) {
+            SplitApp::logger()->critical('track: eventType must adhere to the regular expression '
+                . '[a-zA-Z0-9][-_\.a-zA-Z0-9]{0,62}.');
+            return false;
+        }
+
+        // Trafic Type Validation
+        if (is_null($trafficType)) {
+            SplitApp::logger()->critical('track: trafficType cannot be null.');
+            return false;
+        }
+        if (!is_string($trafficType)) {
+            SplitApp::logger()->critical('track: trafficType must be a string.');
+            return false;
+        }
+        if (empty($trafficType)) {
+            SplitApp::logger()->critical('track: trafficType must not be an empty string.');
+            return false;
+        }
+
+        // Value Validation
+        if (is_null($value) || !(is_int($value) || is_float($value))) {
+            SplitApp::logger()->critical('track: value must be a number.');
+            return false;
+        }
+
         try {
-            $strKey = \SplitIO\toString($key);
+            $strKey = \SplitIO\toString($key, 'key', 'track:');
             if ($strKey !== false) {
                 $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
                 $eventMessageMetadata = new EventQueueMetadataMessage();
@@ -217,7 +275,7 @@ class Client implements ClientInterface
 
                 return EventsCache::addEvent($eventQueueMessage);
             } else {
-                SplitApp::logger()->critical('Invalid key type. Must be "string"');
+                SplitApp::logger()->critical('track: key must be a string.');
                 return false;
             }
         } catch (\Exception $exception) {

@@ -51,6 +51,15 @@ class SplitManager implements SplitManagerInterface
      */
     public function split($featureName)
     {
+        if (is_null($featureName)) {
+            SplitApp::logger()->critical('split: featureName cannot be null.');
+            return null;
+        }
+        if (!is_string($featureName)) {
+            SplitApp::logger()->critical('split: featureName ' . json_encode($featureName) . ' must be a string.');
+            return null;
+        }
+
         $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
         $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
 
