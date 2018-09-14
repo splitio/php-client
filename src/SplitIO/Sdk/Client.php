@@ -14,6 +14,7 @@ use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Split as SplitApp;
+use SplitIO\Sdk\Validator\InputValidator;
 
 class Client implements ClientInterface
 {
@@ -106,20 +107,7 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        // Key Validation
-        if (is_null($key)) {
-            SplitApp::logger()->critical('getTreatment: key cannot be null.');
-            return TreatmentEnum::CONTROL;
-        }
-
-        // Feature Name Validation
-        if (is_null($featureName)) {
-            SplitApp::logger()->critical('getTreatment: featureName cannot be null.');
-            return TreatmentEnum::CONTROL;
-        }
-        if (!is_string($featureName)) {
-            SplitApp::logger()->critical('getTreatment: featureName ' .json_encode($featureName)
-                . ' has to be of type "string".');
+        if (!InputValidator::validGetTreatmentInputs($key, $featureName)) {
             return TreatmentEnum::CONTROL;
         }
 
@@ -225,44 +213,7 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null)
     {
-        // Key Validation
-        if (is_null($key)) {
-            SplitApp::logger()->critical('track: key cannot be null.');
-            return false;
-        }
-
-        // Event Type Validation
-        if (is_null($eventType)) {
-            SplitApp::logger()->critical('track: eventType cannot be null.');
-            return false;
-        }
-        if (!is_string($eventType)) {
-            SplitApp::logger()->critical('track: eventType must be a string.');
-            return false;
-        }
-        if (!preg_match('/[a-zA-Z0-9][-_\.a-zA-Z0-9]{0,62}/', $eventType)) {
-            SplitApp::logger()->critical('track: eventType must adhere to the regular expression '
-                . '[a-zA-Z0-9][-_\.a-zA-Z0-9]{0,62}.');
-            return false;
-        }
-
-        // Trafic Type Validation
-        if (is_null($trafficType)) {
-            SplitApp::logger()->critical('track: trafficType cannot be null.');
-            return false;
-        }
-        if (!is_string($trafficType)) {
-            SplitApp::logger()->critical('track: trafficType must be a string.');
-            return false;
-        }
-        if (empty($trafficType)) {
-            SplitApp::logger()->critical('track: trafficType must not be an empty string.');
-            return false;
-        }
-
-        // Value Validation
-        if (is_null($value) || !(is_int($value) || is_float($value))) {
-            SplitApp::logger()->critical('track: value must be a number.');
+        if (!InputValidator::validTrackInputs($key, $trafficType, $eventType, $value)) {
             return false;
         }
 

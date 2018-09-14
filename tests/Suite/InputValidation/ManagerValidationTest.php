@@ -58,7 +58,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('split: featureName true must be a string.'));
+            ->with($this->equalTo('split: featureName true has to be of type "string".'));
 
         $this->assertEquals(null, $splitSdk->split(true));
     }
@@ -71,7 +71,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('split: featureName [] must be a string.'));
+            ->with($this->equalTo('split: featureName [] has to be of type "string".'));
 
         $this->assertEquals(null, $splitSdk->split(array()));
     }
@@ -84,7 +84,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('split: featureName 1 must be a string.'));
+            ->with($this->equalTo('split: featureName 1 has to be of type "string".'));
 
         $this->assertEquals(null, $splitSdk->split(1));
     }

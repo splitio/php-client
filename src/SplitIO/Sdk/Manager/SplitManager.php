@@ -6,6 +6,7 @@ use SplitIO\Grammar\Condition;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;
 use SplitIO\Component\Cache\SplitCache;
+use SplitIO\Sdk\Validator\InputValidator;
 
 class SplitManager implements SplitManagerInterface
 {
@@ -51,12 +52,7 @@ class SplitManager implements SplitManagerInterface
      */
     public function split($featureName)
     {
-        if (is_null($featureName)) {
-            SplitApp::logger()->critical('split: featureName cannot be null.');
-            return null;
-        }
-        if (!is_string($featureName)) {
-            SplitApp::logger()->critical('split: featureName ' . json_encode($featureName) . ' must be a string.');
+        if (!InputValidator::validManagerInputs($featureName)) {
             return null;
         }
 
