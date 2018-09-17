@@ -54,96 +54,114 @@ class InputValidator
 
     /**
      * @param $key
-     * @param $featureName
-     * @return true|false
+     * @return mixed|null
      */
-    public static function validGetTreatmentInputs($key, $featureName)
+    public static function validateKey($key)
     {
-        if (!self::checkNotNull($key, 'key', 'getTreatment') ||
-            !self::checkNotNull($featureName, 'featureName', 'getTreatment') ||
-            !self::checkIsString($featureName, 'featureName', 'getTreatment')) {
-            return false;
+        if (!self::checkNotNull($key, 'key', 'getTreatment')) {
+            return null;
         }
-        return true;
+        if ($key instanceof Key) {
+            return array(
+                'matchingKey' => $key->getMatchingKey(),
+                'bucketingKey' => $key->getBucketingKey()
+            );
+        } else {
+            $strKey = \SplitIO\toString($key, 'key', 'getTreatment');
+            if ($strKey !== false) {
+                return array(
+                    'matchingKey' => $strKey,
+                    'bucketingKey' => null
+                );
+            } else {
+                SplitApp::logger()->critical('getTreatment: key has to be of type "string" or "SplitIO\Sdk\Key".');
+                return null;
+            }
+        }
+        return null;
     }
 
     /**
-     * @param $trafficType
-     * @return true|false
+     * @param $value
+     * @param $name
+     * @param $operation
+     * @return string|null
      */
-    private static function isValidTrafficType($trafficType)
+    public static function validateSimpleKey($key, $name, $operation)
     {
-        if (!self::checkNotNull($trafficType, 'trafficType', 'track') ||
-            !self::checkIsString($trafficType, 'trafficType', 'track') ||
-            !self::checkNotEmpty($trafficType, 'trafficType', 'track')) {
-            return false;
+        if (!self::checkNotNull($key, $name, $operation)) {
+            return null;
         }
-        return true;
+        $strKey = \SplitIO\toString($key, $name, $operation);
+        if ($strKey !== false) {
+            return $strKey;
+        } else {
+            SplitApp::logger()->critical($operation . ': ' . $name . ' ' .json_encode($key)
+                . ' has to be of type "string".');
+        }
+        return null;
+    }
+
+    /**
+     * @param $value
+     * @param $name
+     * @param $operation
+     * @return string|null
+     */
+    public static function validateString($value, $name, $operation)
+    {
+        if (!self::checkNotNull($value, $name, $operation) ||
+            !self::checkIsString($value, $name, $operation)) {
+            return null;
+        }
+        return $value;
+    }
+
+    /**
+     * @param $value
+     * @param $name
+     * @param $operation
+     * @return string|null
+     */
+    public static function validateStringParameter($value, $name, $operation)
+    {
+        if (is_null(self::validateString($value, $name, $operation)) ||
+            !self::checkNotEmpty($value, $name, $operation)) {
+            return null;
+        }
+        return $value;
     }
 
     /**
      * @param $eventType
-     * @return true|false
+     * @return string|null
      */
-    private static function isValidEventType($eventType)
+    public static function validateEventType($eventType)
     {
-        if (!self::checkNotNull($eventType, 'eventType', 'track') ||
-            !self::checkIsString($eventType, 'eventType', 'track') ||
-            !self::checkNotEmpty($eventType, 'eventType', 'track')) {
-            return false;
+        if (is_null(self::validateStringParameter($eventType, 'eventType', 'track'))) {
+            return null;
         }
         if (!preg_match('/[a-zA-Z0-9][-_\.a-zA-Z0-9]{0,62}/', $eventType)) {
             SplitApp::logger()->critical('track: eventType must adhere to the regular expression '
                 . '[a-zA-Z0-9][-_\.a-zA-Z0-9]{0,62}.');
-            return false;
+            return null;
         }
-        return true;
+        return $eventType;
     }
 
     /**
      * @param $value
-     * @return true|false
+     * @return number|null
      */
-    private static function isValidValue($value)
+    public static function validateValue($value)
     {
         if (!self::checkNotNull($value, 'value', 'track')) {
-            return false;
+            return null;
         }
         if (!(is_int($value) || is_float($value))) {
             SplitApp::logger()->critical('track: value must be a number.');
-            return false;
+            return null;
         }
-        return true;
-    }
-
-    /**
-     * @param $key
-     * @param $trafficType
-     * @param $eventType
-     * @param $value
-     * @return true|false
-     */
-    public static function validTrackInputs($key, $trafficType, $eventType, $value)
-    {
-        if (!self::checkNotNull($key, 'key', 'track') ||
-            !self::isValidTrafficType($trafficType) ||
-            !self::isValidEventType($eventType) ||
-            !self::isValidValue($value)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @param $featureName
-     * @return true|false
-     */
-    public static function validManagerInputs($featureName)
-    {
-        if (!self::checkNotNull($featureName, 'featureName', 'split') ||
-            !self::checkIsString($featureName, 'featureName', 'split')) {
-            return false;
-        }
-        return true;
+        return $value;
     }
 }

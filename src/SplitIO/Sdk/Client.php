@@ -107,24 +107,15 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        if (!InputValidator::validGetTreatmentInputs($key, $featureName)) {
+        $key = InputValidator::validateKey($key);
+        $featureName = InputValidator::validateString($featureName, 'featureName', 'getTreatment');
+
+        if (is_null($key) || is_null($featureName)) {
             return TreatmentEnum::CONTROL;
         }
 
-        //Getting Matching key and Bucketing key
-        if ($key instanceof Key) {
-            $matchingKey = $key->getMatchingKey();
-            $bucketingKey = $key->getBucketingKey();
-        } else {
-            $strKey = \SplitIO\toString($key, 'key', 'getTreatment:');
-            if ($strKey !== false) {
-                $matchingKey = $strKey;
-                $bucketingKey = null;
-            } else {
-                SplitApp::logger()->critical('getTreatment: key has to be of type "string" or "SplitIO\Sdk\Key".');
-                return TreatmentEnum::CONTROL;
-            }
-        }
+        $matchingKey = $key['matchingKey'];
+        $bucketingKey = $key['bucketingKey'];
 
         $impressionLabel = ImpressionLabel::EXCEPTION;
 
@@ -213,22 +204,20 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null)
     {
-        if (!InputValidator::validTrackInputs($key, $trafficType, $eventType, $value)) {
+        $key = InputValidator::validateSimpleKey($key, 'key', 'track');
+        $trafficType = InputValidator::validateStringParameter($trafficType, 'trafficType', 'track');
+        $eventType = InputValidator::validateEventType($eventType);
+        $value = InputValidator::validateValue($value);
+
+        if (is_null($key) || is_null($trafficType) || is_null($eventType) || is_null($value)) {
             return false;
         }
 
         try {
-            $strKey = \SplitIO\toString($key, 'key', 'track:');
-            if ($strKey !== false) {
-                $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
-                $eventMessageMetadata = new EventQueueMetadataMessage();
-                $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
-
-                return EventsCache::addEvent($eventQueueMessage);
-            } else {
-                SplitApp::logger()->critical('track: key must be a string.');
-                return false;
-            }
+            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+            $eventMessageMetadata = new EventQueueMetadataMessage();
+            $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+            return EventsCache::addEvent($eventQueueMessage);
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart
             SplitApp::logger()->error("Error happens trying aadd events");

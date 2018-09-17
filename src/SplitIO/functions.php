@@ -96,7 +96,7 @@ function toString($var, $name = null, $operation = null)
 {
     if (is_string($var) || is_int($var) || is_float($var)) {
         if (!is_null($name) && !is_null($operation) && (is_int($var) || is_float($var))) {
-            SplitApp::logger()->warning($operation . ' ' . $name . ' ' . json_encode($var)
+            SplitApp::logger()->warning($operation . ': ' . $name . ' ' . json_encode($var)
                 . ' is not of type string, converting.');
         }
         return "$var";

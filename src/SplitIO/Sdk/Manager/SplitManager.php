@@ -52,7 +52,8 @@ class SplitManager implements SplitManagerInterface
      */
     public function split($featureName)
     {
-        if (!InputValidator::validManagerInputs($featureName)) {
+        $featureName = InputValidator::validateString($featureName, 'featureName', 'split');
+        if (is_null($featureName)) {
             return null;
         }
 

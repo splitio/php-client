@@ -73,7 +73,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('track: key must be a string.'));
+            ->with($this->equalTo('track: key true has to be of type "string".'));
 
         $this->assertEquals(false, $splitSdk->track(true, 'some_traffic', 'some_event', 1));
     }
