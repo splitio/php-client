@@ -3,6 +3,7 @@
 namespace SplitIO\Sdk\Validator;
 
 use SplitIO\Split as SplitApp;
+use SplitIO\Sdk\Key;
 
 class InputValidator
 {
