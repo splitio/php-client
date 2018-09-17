@@ -54,6 +54,36 @@ class InputValidator
     }
 
     /**
+     * @param $value
+     * @param $name
+     * @param $operation
+     * @return string|null
+     */
+    private static function validateString($value, $name, $operation)
+    {
+        if (!self::checkNotNull($value, $name, $operation) ||
+            !self::checkIsString($value, $name, $operation)) {
+            return null;
+        }
+        return $value;
+    }
+
+    /**
+     * @param $value
+     * @param $name
+     * @param $operation
+     * @return string|null
+     */
+    private static function validateStringParameter($value, $name, $operation)
+    {
+        if (is_null(self::validateString($value, $name, $operation)) ||
+            !self::checkNotEmpty($value, $name, $operation)) {
+            return null;
+        }
+        return $value;
+    }
+
+    /**
      * @param $key
      * @return mixed|null
      */
@@ -83,54 +113,40 @@ class InputValidator
     }
 
     /**
-     * @param $value
-     * @param $name
-     * @param $operation
+     * @param $featureName
      * @return string|null
      */
-    public static function validateSimpleKey($key, $name, $operation)
+    public static function validateFeatureName($featureName)
     {
-        if (!self::checkNotNull($key, $name, $operation)) {
+        return self::validateString($featureName, 'featureName', 'getTreatment');
+    }
+
+    /**
+     * @param $key
+     * @return string|null
+     */
+    public static function validateTrackKey($key)
+    {
+        if (!self::checkNotNull($key, 'key', 'track')) {
             return null;
         }
-        $strKey = \SplitIO\toString($key, $name, $operation);
+        $strKey = \SplitIO\toString($key, 'key', 'track');
         if ($strKey !== false) {
             return $strKey;
         } else {
-            SplitApp::logger()->critical($operation . ': ' . $name . ' ' .json_encode($key)
+            SplitApp::logger()->critical('track: key ' .json_encode($key)
                 . ' has to be of type "string".');
         }
         return null;
     }
 
     /**
-     * @param $value
-     * @param $name
-     * @param $operation
+     * @param $trafficType
      * @return string|null
      */
-    public static function validateString($value, $name, $operation)
+    public static function validateTrafficType($trafficType)
     {
-        if (!self::checkNotNull($value, $name, $operation) ||
-            !self::checkIsString($value, $name, $operation)) {
-            return null;
-        }
-        return $value;
-    }
-
-    /**
-     * @param $value
-     * @param $name
-     * @param $operation
-     * @return string|null
-     */
-    public static function validateStringParameter($value, $name, $operation)
-    {
-        if (is_null(self::validateString($value, $name, $operation)) ||
-            !self::checkNotEmpty($value, $name, $operation)) {
-            return null;
-        }
-        return $value;
+        return self::validateStringParameter($trafficType, 'trafficType', 'track');
     }
 
     /**
@@ -164,5 +180,14 @@ class InputValidator
             return null;
         }
         return $value;
+    }
+
+    /**
+     * @param $featureName
+     * @return string|null
+     */
+    public static function validateSplitFeatureName($featureName)
+    {
+        return self::validateString($featureName, 'featureName', 'split');
     }
 }

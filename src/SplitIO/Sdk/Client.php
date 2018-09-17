@@ -108,7 +108,7 @@ class Client implements ClientInterface
     public function getTreatment($key, $featureName, array $attributes = null)
     {
         $key = InputValidator::validateKey($key);
-        $featureName = InputValidator::validateString($featureName, 'featureName', 'getTreatment');
+        $featureName = InputValidator::validateFeatureName($featureName);
 
         if (is_null($key) || is_null($featureName)) {
             return TreatmentEnum::CONTROL;
@@ -204,8 +204,8 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null)
     {
-        $key = InputValidator::validateSimpleKey($key, 'key', 'track');
-        $trafficType = InputValidator::validateStringParameter($trafficType, 'trafficType', 'track');
+        $key = InputValidator::validateTrackKey($key);
+        $trafficType = InputValidator::validateTrafficType($trafficType);
         $eventType = InputValidator::validateEventType($eventType);
         $value = InputValidator::validateValue($value);
 
