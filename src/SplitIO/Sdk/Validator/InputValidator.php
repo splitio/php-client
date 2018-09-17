@@ -12,7 +12,7 @@ class InputValidator
      * @param $operation
      * @return true|false
      */
-    private function checkIsString($value, $name, $operation)
+    private static function checkIsString($value, $name, $operation)
     {
         if (!is_string($value)) {
             SplitApp::logger()->critical($operation . ': ' . $name . ' ' .json_encode($value)
@@ -28,7 +28,7 @@ class InputValidator
      * @param $operation
      * @return true|false
      */
-    private function checkNotNull($value, $name, $operation)
+    private static function checkNotNull($value, $name, $operation)
     {
         if (is_null($value)) {
             SplitApp::logger()->critical($operation . ': ' . $name . ' cannot be null.');
@@ -43,7 +43,7 @@ class InputValidator
      * @param $operation
      * @return true|false
      */
-    private function checkNotEmpty($value, $name, $operation)
+    private static function checkNotEmpty($value, $name, $operation)
     {
         if (empty($value)) {
             SplitApp::logger()->critical($operation . ': ' . $name . ' must not be an empty string.');
@@ -71,7 +71,7 @@ class InputValidator
      * @param $trafficType
      * @return true|false
      */
-    private function isValidTrafficType($trafficType)
+    private static function isValidTrafficType($trafficType)
     {
         if (!self::checkNotNull($trafficType, 'trafficType', 'track') ||
             !self::checkIsString($trafficType, 'trafficType', 'track') ||
@@ -85,7 +85,7 @@ class InputValidator
      * @param $eventType
      * @return true|false
      */
-    private function isValidEventType($eventType)
+    private static function isValidEventType($eventType)
     {
         if (!self::checkNotNull($eventType, 'eventType', 'track') ||
             !self::checkIsString($eventType, 'eventType', 'track') ||
@@ -104,7 +104,7 @@ class InputValidator
      * @param $value
      * @return true|false
      */
-    private function isValidValue($value)
+    private static function isValidValue($value)
     {
         if (!self::checkNotNull($value, 'value', 'track')) {
             return false;
