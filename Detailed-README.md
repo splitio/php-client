@@ -128,36 +128,6 @@ $attributes = ['suscription' => (new \DateTime("2016/03/17 07:54PM", new \DateTi
 
 ```
 
-### Block Until Ready
-Due to nature of the SDK, for different reasons the cached information of Splits definitions could be absent at the first evaluations since at the initialization process a pulling action of the information is performed and the fetched data are saved into the cache system (Redis). To prevent this behaviour, the SDK Factory has been provided with a blocking mechanism named "Blocki Until Ready" or BUR. The idea is pretty simple, as developer you'll be able to set a timeout value and if the provided timeout is reached, the SDK going to throw an exception, avoiding its execution.
-
-```php
-/** SDK options */
-$options = [
-    'ready' => 100, //Time in milliseconds
-    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
-    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
-];
-
-/** Create the Split Factory instance using BUR. */
-try {
-   $splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
-} catch (\SplitIO\Exception\TimeOutException $e) {
-    //Do something to avoid evaluation errors 
-    exit;
-}
-
-$splitClient = $splitFactory->client();
-
-$treatment = $splitClient->getTreatment('key', 'sample_feature');
-
-if ($treatment == 'on') {
-    //Code for on feature
-} else {
-    //Code for another feature 
-}
-```
-
 ### Manager API
 The Manager API is a class created for debugging purpose. Using this class, as developer, you will be able to fetch a view of the cached data.
 The view class is described below:
@@ -285,6 +255,36 @@ $sdkOptions = [
 $splitClient = \SplitIO\Sdk::factory('API_KEY', $sdkOptions);
 ```
 
+#### Provided PRedis Cache Adapter - sample code for Sentinel Support
+```php
+/*** PRedis sentinel array */
+//The array below, will corresponds to a list of sentinels.
+//It will be loaded as $client = new Predis\Client($sentinels, $options);
+
+$sentinels = array(
+    'tcp://IP:PORT?timeout=NUMBER',
+    'tcp://IP:PORT?timeout=NUMBER',
+    'tcp://IP:PORT?timeout=NUMBER'
+);
+
+$options = array(
+    'replication' => 'sentinel',
+    'service' => 'SERVICE_MASTER_NAME',
+    'prefix' => ''
+);
+
+/** SDK options */
+$sdkConfig = array(
+    'cache' => array('adapter' => 'predis',
+                     'sentinels' => $sentinels,
+                     'options' => $options
+                    )
+);
+
+/** Create the Split Client instance. */
+$splitFactory = \SplitIO\Sdk::factory('YOUR_API_KEY', $sdkConfig);
+$splitClient = $splitFactory->client();
+```
 
 ## Memory
 In order to improve the evaluation performance, the Features are saved in shared memory. If your PHP instance has been compiled with **--enable-shmop** parameter, the SDK will use the **shmop** functions.
