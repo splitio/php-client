@@ -315,6 +315,43 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 
 
 
+## Impression Listener
+Split SDKs send impression data back to Split servers periodically and as a result of evaluating splits. In order to additionally send this information to a location of your choice, you could define and attach an Impression Listener. For that purpose, SDK's options have a parameter called `impressionListener` where an implementation of `ImpressionListener` could be added. This implementation **must** define the `logImpression` method and it will receive data in the following schema:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| impression | Impression | Impression object that has the featureName, treatment result, label, etc. |
+| attributes | Array | A list of attributes passed by the client. |
+| instance-id | String | Corresponds to the IP of the machine where the SDK is running. |
+| sdk-language-version | String | Indicates the version of the sdk. In this case the language will be php plus the version of it. |
+
+### Implementing custom Impression Listener
+Below you could find an example of how implement a custom Impression Listener:
+```php
+// Implementation Sample for a Custom Impression Listener
+class CustomImpressionListener implements \SplitIO\Sdk\ImpressionListener
+{
+    public function logImpression($data)
+    {
+        // Custom Behavior
+    }
+}
+```
+
+### Attaching custom Impression Listener
+```php
+$sdkConfig = array(
+    'log' => ...
+    'cache' => ...
+    'impressionListener' => new CustomImpressionListener(),
+);
+
+$splitFactory = \SplitIO\Sdk::factory('YOUR_API_KEY', $sdkConfig);
+$splitClient = $splitFactory->client();
+```
+
+
+
 # Testing the SDK
 Within tests folder you can find different test suites in order to run the Split SDK tests. The most important test suite is: **integration** that wrap the others test suites.
 

@@ -19,6 +19,7 @@ class Client implements ClientInterface
 {
 
     private $evaluator = null;
+    private $impressionListener = null;
 
     /**
      * Flag to get Impression's labels feature enabled
@@ -33,10 +34,15 @@ class Client implements ClientInterface
     {
         $this->labelsEnabled = isset($options['labelsEnabled']) ? $options['labelsEnabled'] : true;
         $this->evaluator = new Evaluator($options);
+
+        if (isset($options['impressionListener'])) {
+            $this->impressionListener = new \SplitIO\Sdk\ImpressionListenerWrapper($options['impressionListener']);
+        }
     }
 
-
     /**
+     * Builds new Impression object
+     *
      * @param $matchingKey
      * @param $feature
      * @param $treatment
@@ -44,8 +50,10 @@ class Client implements ClientInterface
      * @param null $time
      * @param int $changeNumber
      * @param string $bucketingKey
+     *
+     * @return \SplitIO\Sdk\Impressions\Impression
      */
-    private function logImpression(
+    private function createImpression(
         $matchingKey,
         $feature,
         $treatment,
@@ -54,7 +62,6 @@ class Client implements ClientInterface
         $changeNumber = -1,
         $time = null
     ) {
-
         if (!$this->labelsEnabled) {
             $label = null;
         }
@@ -68,7 +75,8 @@ class Client implements ClientInterface
             $changeNumber,
             $bucketingKey
         );
-        TreatmentImpression::log($impression);
+
+        return $impression;
     }
 
     /**
@@ -126,8 +134,8 @@ class Client implements ClientInterface
         try {
             $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
 
-            // Register impression
-            $this->logImpression(
+            // Creates impression
+            $impression = $this->createImpression(
                 $matchingKey,
                 $featureName,
                 $result['treatment'],
@@ -135,6 +143,15 @@ class Client implements ClientInterface
                 $bucketingKey,
                 $result['impression']['changeNumber']
             );
+
+            // Register impression
+            TreatmentImpression::log($impression);
+
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
+
             //Register latency value
             MetricsCache::addLatencyOnBucket(
                 Metrics::MNAME_SDK_GET_TREATMENT,
@@ -152,13 +169,22 @@ class Client implements ClientInterface
         }
 
         try {
-            $this->logImpression(
+            // Creates impression
+            $impression = $this->createImpression(
                 $matchingKey,
                 $featureName,
                 TreatmentEnum::CONTROL,
                 $impressionLabel,
                 $bucketingKey
             );
+
+            // Register impression
+            TreatmentImpression::log($impression);
+
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .
