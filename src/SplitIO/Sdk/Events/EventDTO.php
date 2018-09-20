@@ -18,7 +18,7 @@ class EventDTO
         }
 
         if (empty($trafficTypeName)) {
-            throw new Exception("TrafficTypeName must not be empty");
+            throw new Exception("track: trafficType must not be an empty String");
         }
 
         if (empty($eventTypeId)) {

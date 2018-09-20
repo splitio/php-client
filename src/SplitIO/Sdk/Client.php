@@ -14,6 +14,7 @@ use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Split as SplitApp;
+use SplitIO\Sdk\Validator\InputValidator;
 
 class Client implements ClientInterface
 {
@@ -114,20 +115,15 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        //Getting Matching key and Bucketing key
-        if ($key instanceof Key) {
-            $matchingKey = $key->getMatchingKey();
-            $bucketingKey = $key->getBucketingKey();
-        } else {
-            $strKey = \SplitIO\toString($key);
-            if ($strKey !== false) {
-                $matchingKey = $strKey;
-                $bucketingKey = null;
-            } else {
-                SplitApp::logger()->critical('Invalid key type. Must be "SplitIO\Sdk\Key" or "string".');
-                return TreatmentEnum::CONTROL;
-            }
+        $key = InputValidator::validateKey($key);
+        $featureName = InputValidator::validateFeatureName($featureName);
+
+        if (is_null($key) || is_null($featureName)) {
+            return TreatmentEnum::CONTROL;
         }
+
+        $matchingKey = $key['matchingKey'];
+        $bucketingKey = $key['bucketingKey'];
 
         $impressionLabel = ImpressionLabel::EXCEPTION;
 
@@ -234,18 +230,20 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null)
     {
-        try {
-            $strKey = \SplitIO\toString($key);
-            if ($strKey !== false) {
-                $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
-                $eventMessageMetadata = new EventQueueMetadataMessage();
-                $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+        $key = InputValidator::validateTrackKey($key);
+        $trafficType = InputValidator::validateTrafficType($trafficType);
+        $eventType = InputValidator::validateEventType($eventType);
+        $value = InputValidator::validateValue($value);
 
-                return EventsCache::addEvent($eventQueueMessage);
-            } else {
-                SplitApp::logger()->critical('Invalid key type. Must be "string"');
-                return false;
-            }
+        if (is_null($key) || is_null($trafficType) || is_null($eventType) || is_null($value)) {
+            return false;
+        }
+
+        try {
+            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+            $eventMessageMetadata = new EventQueueMetadataMessage();
+            $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+            return EventsCache::addEvent($eventQueueMessage);
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart
             SplitApp::logger()->error("Error happens trying aadd events");

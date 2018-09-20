@@ -1,6 +1,8 @@
 <?php
 namespace SplitIO;
 
+use SplitIO\Split as SplitApp;
+
 function version()
 {
     return Version::CURRENT;
@@ -12,7 +14,8 @@ function ToInteger($x)
     return $x < 0 ? ceil($x) : floor($x);
 }
 
-function modulo($a, $b) {
+function modulo($a, $b)
+{
     return $a - floor($a/$b)*$b;
 }
 
@@ -89,8 +92,13 @@ function getHostIpAddress()
  * @return bool|string
  * @deprecated primitive data conversion will be removed in future version.
  */
-function toString($var){
-    if (is_string($var) || is_int($var) || is_float($var) || is_bool($var)) {
+function toString($var, $name = null, $operation = null)
+{
+    if (is_string($var) || is_int($var) || is_float($var)) {
+        if (!is_null($name) && !is_null($operation) && (is_int($var) || is_float($var))) {
+            SplitApp::logger()->warning($operation . ': ' . $name . ' ' . json_encode($var)
+                . ' is not of type string, converting.');
+        }
         return "$var";
     }
 

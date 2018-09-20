@@ -6,6 +6,7 @@ use SplitIO\Grammar\Condition;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;
 use SplitIO\Component\Cache\SplitCache;
+use SplitIO\Sdk\Validator\InputValidator;
 
 class SplitManager implements SplitManagerInterface
 {
@@ -51,6 +52,11 @@ class SplitManager implements SplitManagerInterface
      */
     public function split($featureName)
     {
+        $featureName = InputValidator::validateSplitFeatureName($featureName);
+        if (is_null($featureName)) {
+            return null;
+        }
+
         $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
         $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
 
