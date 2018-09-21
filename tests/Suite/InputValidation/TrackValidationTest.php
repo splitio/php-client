@@ -215,11 +215,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger = $this->getMockedLogger();
 
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo('track: value cannot be null.'));
-
-        $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', 'some_event', null));
+        $this->assertEquals(true, $splitSdk->track('some_key', 'some_traffic', 'some_event', null));
     }
 
     public function testTrackWithBooleanValue()
