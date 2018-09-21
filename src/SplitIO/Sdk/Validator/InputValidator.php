@@ -172,12 +172,12 @@ class InputValidator
      */
     public static function validateValue($value)
     {
-        if (!self::checkNotNull($value, 'value', 'track')) {
+        if (is_null($value)) {
             return null;
         }
         if (!(is_int($value) || is_float($value))) {
             SplitApp::logger()->critical('track: value must be a number.');
-            return null;
+            return false;
         }
         return $value;
     }

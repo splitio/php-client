@@ -235,7 +235,7 @@ class Client implements ClientInterface
         $eventType = InputValidator::validateEventType($eventType);
         $value = InputValidator::validateValue($value);
 
-        if (is_null($key) || is_null($trafficType) || is_null($eventType) || is_null($value)) {
+        if (is_null($key) || is_null($trafficType) || is_null($eventType) || ($value === false)) {
             return false;
         }
 
