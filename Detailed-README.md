@@ -128,36 +128,6 @@ $attributes = ['suscription' => (new \DateTime("2016/03/17 07:54PM", new \DateTi
 
 ```
 
-### Block Until Ready
-Due to nature of the SDK, for different reasons the cached information of Splits definitions could be absent at the first evaluations since at the initialization process a pulling action of the information is performed and the fetched data are saved into the cache system (Redis). To prevent this behaviour, the SDK Factory has been provided with a blocking mechanism named "Blocki Until Ready" or BUR. The idea is pretty simple, as developer you'll be able to set a timeout value and if the provided timeout is reached, the SDK going to throw an exception, avoiding its execution.
-
-```php
-/** SDK options */
-$options = [
-    'ready' => 100, //Time in milliseconds
-    'log'   => ['adapter' => 'syslog', 'level' => 'error'],
-    'cache' => [ 'adapter' => 'redis', 'options' => ['host' => '172.17.0.2', 'port' => 6379]]
-];
-
-/** Create the Split Factory instance using BUR. */
-try {
-   $splitFactory = \SplitIO\Sdk::factory('API_KEY', $options);
-} catch (\SplitIO\Exception\TimeOutException $e) {
-    //Do something to avoid evaluation errors 
-    exit;
-}
-
-$splitClient = $splitFactory->client();
-
-$treatment = $splitClient->getTreatment('key', 'sample_feature');
-
-if ($treatment == 'on') {
-    //Code for on feature
-} else {
-    //Code for another feature 
-}
-```
-
 ### Manager API
 The Manager API is a class created for debugging purpose. Using this class, as developer, you will be able to fetch a view of the cached data.
 The view class is described below:
@@ -285,6 +255,36 @@ $sdkOptions = [
 $splitClient = \SplitIO\Sdk::factory('API_KEY', $sdkOptions);
 ```
 
+#### Provided PRedis Cache Adapter - sample code for Sentinel Support
+```php
+/*** PRedis sentinel array */
+//The array below, will corresponds to a list of sentinels.
+//It will be loaded as $client = new Predis\Client($sentinels, $options);
+
+$sentinels = array(
+    'tcp://IP:PORT?timeout=NUMBER',
+    'tcp://IP:PORT?timeout=NUMBER',
+    'tcp://IP:PORT?timeout=NUMBER'
+);
+
+$options = array(
+    'replication' => 'sentinel',
+    'service' => 'SERVICE_MASTER_NAME',
+    'prefix' => ''
+);
+
+/** SDK options */
+$sdkConfig = array(
+    'cache' => array('adapter' => 'predis',
+                     'sentinels' => $sentinels,
+                     'options' => $options
+                    )
+);
+
+/** Create the Split Client instance. */
+$splitFactory = \SplitIO\Sdk::factory('YOUR_API_KEY', $sdkConfig);
+$splitClient = $splitFactory->client();
+```
 
 ## Memory
 In order to improve the evaluation performance, the Features are saved in shared memory. If your PHP instance has been compiled with **--enable-shmop** parameter, the SDK will use the **shmop** functions.
@@ -312,6 +312,43 @@ $splitClient = \SplitIO\Sdk::factory('API_KEY', $options);
 | mode | The permissions that you wish to assign to your memory segment, those are the same as permission for a file. Permissions need to be passed in octal form | 0644 |
 | ttl | The time to live for the value added into the shared memory block **in seconds** | 60 |
 | seed | An integer value used to generate the system's id for the shared memory block | 123123 |
+
+
+
+## Impression Listener
+Split SDKs send impression data back to Split servers periodically and as a result of evaluating splits. In order to additionally send this information to a location of your choice, you could define and attach an Impression Listener. For that purpose, SDK's options have a parameter called `impressionListener` where an implementation of `ImpressionListener` could be added. This implementation **must** define the `logImpression` method and it will receive data in the following schema:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| impression | Impression | Impression object that has the featureName, treatment result, label, etc. |
+| attributes | Array | A list of attributes passed by the client. |
+| instance-id | String | Corresponds to the IP of the machine where the SDK is running. |
+| sdk-language-version | String | Indicates the version of the sdk. In this case the language will be php plus the version of it. |
+
+### Implementing custom Impression Listener
+Below you could find an example of how implement a custom Impression Listener:
+```php
+// Implementation Sample for a Custom Impression Listener
+class CustomImpressionListener implements \SplitIO\Sdk\ImpressionListener
+{
+    public function logImpression($data)
+    {
+        // Custom Behavior
+    }
+}
+```
+
+### Attaching custom Impression Listener
+```php
+$sdkConfig = array(
+    'log' => ...
+    'cache' => ...
+    'impressionListener' => new CustomImpressionListener(),
+);
+
+$splitFactory = \SplitIO\Sdk::factory('YOUR_API_KEY', $sdkConfig);
+$splitClient = $splitFactory->client();
+```
 
 
 

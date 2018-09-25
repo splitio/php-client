@@ -154,7 +154,7 @@ class PRedisReadOnlyMock
         return $this->predis->getSet($key, $value);
     }
 
-    private static function normalizePrefix($prefix)
+    private function normalizePrefix($prefix)
     {
         return $this->predis->normalizePrefix($prefix);
     }

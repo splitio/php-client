@@ -14,11 +14,13 @@ use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Split as SplitApp;
+use SplitIO\Sdk\Validator\InputValidator;
 
 class Client implements ClientInterface
 {
 
     private $evaluator = null;
+    private $impressionListener = null;
 
     /**
      * Flag to get Impression's labels feature enabled
@@ -33,10 +35,15 @@ class Client implements ClientInterface
     {
         $this->labelsEnabled = isset($options['labelsEnabled']) ? $options['labelsEnabled'] : true;
         $this->evaluator = new Evaluator($options);
+
+        if (isset($options['impressionListener'])) {
+            $this->impressionListener = new \SplitIO\Sdk\ImpressionListenerWrapper($options['impressionListener']);
+        }
     }
 
-
     /**
+     * Builds new Impression object
+     *
      * @param $matchingKey
      * @param $feature
      * @param $treatment
@@ -44,8 +51,10 @@ class Client implements ClientInterface
      * @param null $time
      * @param int $changeNumber
      * @param string $bucketingKey
+     *
+     * @return \SplitIO\Sdk\Impressions\Impression
      */
-    private function logImpression(
+    private function createImpression(
         $matchingKey,
         $feature,
         $treatment,
@@ -54,7 +63,6 @@ class Client implements ClientInterface
         $changeNumber = -1,
         $time = null
     ) {
-
         if (!$this->labelsEnabled) {
             $label = null;
         }
@@ -68,7 +76,8 @@ class Client implements ClientInterface
             $changeNumber,
             $bucketingKey
         );
-        TreatmentImpression::log($impression);
+
+        return $impression;
     }
 
     /**
@@ -106,28 +115,23 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        //Getting Matching key and Bucketing key
-        if ($key instanceof Key) {
-            $matchingKey = $key->getMatchingKey();
-            $bucketingKey = $key->getBucketingKey();
-        } else {
-            $strKey = \SplitIO\toString($key);
-            if ($strKey !== false) {
-                $matchingKey = $strKey;
-                $bucketingKey = null;
-            } else {
-                SplitApp::logger()->critical('Invalid key type. Must be "SplitIO\Sdk\Key" or "string".');
-                return TreatmentEnum::CONTROL;
-            }
+        $key = InputValidator::validateKey($key);
+        $featureName = InputValidator::validateFeatureName($featureName);
+
+        if (is_null($key) || is_null($featureName)) {
+            return TreatmentEnum::CONTROL;
         }
+
+        $matchingKey = $key['matchingKey'];
+        $bucketingKey = $key['bucketingKey'];
 
         $impressionLabel = ImpressionLabel::EXCEPTION;
 
         try {
             $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
 
-            // Register impression
-            $this->logImpression(
+            // Creates impression
+            $impression = $this->createImpression(
                 $matchingKey,
                 $featureName,
                 $result['treatment'],
@@ -135,6 +139,15 @@ class Client implements ClientInterface
                 $bucketingKey,
                 $result['impression']['changeNumber']
             );
+
+            // Register impression
+            TreatmentImpression::log($impression);
+
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
+
             //Register latency value
             MetricsCache::addLatencyOnBucket(
                 Metrics::MNAME_SDK_GET_TREATMENT,
@@ -152,13 +165,22 @@ class Client implements ClientInterface
         }
 
         try {
-            $this->logImpression(
+            // Creates impression
+            $impression = $this->createImpression(
                 $matchingKey,
                 $featureName,
                 TreatmentEnum::CONTROL,
                 $impressionLabel,
                 $bucketingKey
             );
+
+            // Register impression
+            TreatmentImpression::log($impression);
+
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .
@@ -208,18 +230,20 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null)
     {
-        try {
-            $strKey = \SplitIO\toString($key);
-            if ($strKey !== false) {
-                $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
-                $eventMessageMetadata = new EventQueueMetadataMessage();
-                $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+        $key = InputValidator::validateTrackKey($key);
+        $trafficType = InputValidator::validateTrafficType($trafficType);
+        $eventType = InputValidator::validateEventType($eventType);
+        $value = InputValidator::validateValue($value);
 
-                return EventsCache::addEvent($eventQueueMessage);
-            } else {
-                SplitApp::logger()->critical('Invalid key type. Must be "string"');
-                return false;
-            }
+        if (is_null($key) || is_null($trafficType) || is_null($eventType) || ($value === false)) {
+            return false;
+        }
+
+        try {
+            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+            $eventMessageMetadata = new EventQueueMetadataMessage();
+            $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+            return EventsCache::addEvent($eventQueueMessage);
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart
             SplitApp::logger()->error("Error happens trying aadd events");
