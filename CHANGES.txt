@@ -1,3 +1,5 @@
+5.6.0 ()
+ - Add getTreatments method.
 5.5.0 (Sep 25, 2018)
  - Add custom impression listener feature.
  - Input Sanitization for track, getTreatment and split.
