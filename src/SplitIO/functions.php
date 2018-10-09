@@ -72,7 +72,7 @@ function parseSplitsFile($fileContent)
 function getHostIpAddress()
 {
     $diIpAddress = \SplitIO\Component\Common\Di::get('ipAddress');
-    if ($diIpAddress && is_string($diIpAddress) && !empty(trim($diIpAddress))) {
+    if (!is_null($diIpAddress) && is_string($diIpAddress) && !empty(trim($diIpAddress))) {
         return $diIpAddress;
     } elseif (isset($_SERVER['SERVER_ADDR']) && is_string($_SERVER['SERVER_ADDR']) &&
         !empty(trim($_SERVER['SERVER_ADDR']))) {
