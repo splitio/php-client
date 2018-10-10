@@ -223,25 +223,19 @@ class Client implements ClientInterface
      * @param $attributes
      * @return string
      */
-    public function getTreatments($key, array $featureNames, array $attributes = null)
+    public function getTreatments($key, $featureNames, array $attributes = null)
     {
-        #$key = InputValidator::validateKey($key);
-        #$featureName = InputValidator::validateFeatureName($featureName);
+        $splitNames = InputValidator::validateGetTreatments($featureNames);
 
-        #if (is_null($key) || is_null($featureName)) {
-            #return TreatmentEnum::CONTROL;
-        #}
-
-        #$matchingKey = $key['matchingKey'];
-        #$bucketingKey = $key['bucketingKey'];
+        if (is_null($splitNames)) {
+            return TreatmentEnum::CONTROL;
+        }
 
         try {
-            $featureNames = array_values(array_filter($featureNames));
-            echo $featureNames . "\n";
             $result = array();
 
-            for ($i = 0; $i < count($featureNames); $i++) {
-                $featureName = $featureNames[$i];
+            for ($i = 0; $i < count($splitNames); $i++) {
+                $featureName = $splitNames[$i];
                 $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
             }
 

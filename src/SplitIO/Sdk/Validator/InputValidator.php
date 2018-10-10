@@ -190,4 +190,24 @@ class InputValidator
     {
         return self::validateString($featureName, 'featureName', 'split');
     }
+
+    /**
+     * @param $featureNames
+     * @return array|null
+     */
+    public static function validateGetTreatments($featureNames)
+    {
+        if (!self::checkNotNull($featureNames, 'featureNames', 'getTreatments')) {
+            return null;
+        }
+        if (!is_array($featureNames)) {
+            SplitApp::logger()->critical('getTreatments: featureNames must be an array.');
+            return null;
+        }
+        $filteredArray = array_values(array_unique(array_filter($featureNames)));
+        if (count($filteredArray) == 0) {
+            SplitApp::logger()->warning('getTreatments: featureNames is an empty array or has null values.');
+        }
+        return $filteredArray;
+    }
 }
