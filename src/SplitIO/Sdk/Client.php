@@ -191,15 +191,13 @@ class Client implements ClientInterface
     }
 
     /**
-     * Returns the treatment to show this id for this feature.
+     * Returns the an associative array which each key will be
+     * the treatment result for each feature passed as parameter.
      * The set of treatments for a feature can be configured
      * on the Split web console.
      * This method returns the string 'control' if:
      * <ol>
-     *     <li>Any of the parameters were null</li>
-     *     <li>There was an exception</li>
-     *     <li>The SDK does not know this feature</li>
-     *     <li>The feature was deleted through the web console.</li>
+     *     <li>featureNames is invalid/li>
      * </ol>
      * 'control' is a reserved treatment, to highlight these
      * exceptional circumstances.
@@ -216,12 +214,12 @@ class Client implements ClientInterface
      *
      * <p>
      * This method does not throw any exceptions.
-     * It also never  returns null.
+     * It also never returns null.
      *
      * @param $key
-     * @param $featureName
+     * @param $featureNames
      * @param $attributes
-     * @return string
+     * @return array|control
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
