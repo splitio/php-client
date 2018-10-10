@@ -1,10 +1,12 @@
-5.6.0 ()
- - Add getTreatments method.
+5.6.0 (Oct 19, 2018)
+ - Added getTreatments method.
+5.5.1 (Oct 9, 2018)
+ - Added validation for ipAddress.
 5.5.0 (Sep 25, 2018)
- - Add custom impression listener feature.
+ - Added custom impression listener feature.
  - Input Sanitization for track, getTreatment and split.
 5.4.0 (Aug 29, 2018)
- - Add support for redis with sentinel replication
+ - Added support for redis with sentinel replication
 5.3.1: (Apr 4, 2018)
  - Force key data type to be a string
 5.3.0: (Feb 8, 2018)
