@@ -77,17 +77,17 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
     }
 
-    public function testClient()
+    public function testClientWithNullIpAddress()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
-        $impressionClient = new ListenerClient();
+        $impressionClient2 = new ListenerClient();
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
-            'impressionListener' => $impressionClient,
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'impressionListener' => $impressionClient2,
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
         );
 
         //Initializing the SDK instance.
@@ -100,7 +100,40 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
 
+        $this->assertArrayHasKey('instance-id', $impressionClient2->dataLogged);
+        $this->assertEquals($impressionClient2->dataLogged['instance-id'], 'unknown');
+        $this->assertEquals($impressionClient2->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('impression', $impressionClient2->dataLogged);
+        $this->assertEquals($impressionClient2->dataLogged['impression']->getTreatment(), 'on');
+        $this->assertInstanceOf(Impression::class, $impressionClient2->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient2->dataLogged);
+    }
+
+    public function testClient()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $impressionClient = new ListenerClient();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'impressionListener' => $impressionClient,
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => '1.2.3.4'
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['instance-id'], '1.2.3.4');
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'on');
@@ -110,6 +143,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('off', $splitSdk->getTreatment('invalidKey', 'iltest'));
 
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['instance-id'], '1.2.3.4');
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'off');
@@ -119,6 +153,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'iltestNotExistant'));
 
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
+        $this->assertEquals($impressionClient->dataLogged['instance-id'], '1.2.3.4');
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'control');
@@ -126,12 +161,112 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 
+    public function testClientWithEmptyIpAddress()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $impressionClient3 = new ListenerClient();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'impressionListener' => $impressionClient3,
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => ""
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
+
+        $this->assertArrayHasKey('instance-id', $impressionClient3->dataLogged);
+        $this->assertEquals($impressionClient3->dataLogged['instance-id'], 'unknown');
+        $this->assertEquals($impressionClient3->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('impression', $impressionClient3->dataLogged);
+        $this->assertEquals($impressionClient3->dataLogged['impression']->getTreatment(), 'on');
+        $this->assertInstanceOf(Impression::class, $impressionClient3->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient3->dataLogged);
+    }
+
+    public function testClientWithEmptyStringIpAddress()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $impressionClient4 = new ListenerClient();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'impressionListener' => $impressionClient4,
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => "     "
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
+
+        $this->assertArrayHasKey('instance-id', $impressionClient4->dataLogged);
+        $this->assertEquals($impressionClient4->dataLogged['instance-id'], 'unknown');
+        $this->assertEquals($impressionClient4->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('impression', $impressionClient4->dataLogged);
+        $this->assertEquals($impressionClient4->dataLogged['impression']->getTreatment(), 'on');
+        $this->assertInstanceOf(Impression::class, $impressionClient4->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient4->dataLogged);
+    }
+
+    public function testClientErasingServer()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $impressionClient4 = new ListenerClient();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'impressionListener' => $impressionClient4,
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        $_SERVER['SERVER_ADDR'] = "";
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+
+        //Assertions
+        $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
+
+        $this->assertArrayHasKey('instance-id', $impressionClient4->dataLogged);
+        $this->assertEquals($impressionClient4->dataLogged['instance-id'], 'unknown');
+        $this->assertEquals($impressionClient4->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
+        $this->assertArrayHasKey('impression', $impressionClient4->dataLogged);
+        $this->assertEquals($impressionClient4->dataLogged['impression']->getTreatment(), 'on');
+        $this->assertInstanceOf(Impression::class, $impressionClient4->dataLogged['impression']);
+        $this->assertArrayHasKey('attributes', $impressionClient4->dataLogged);
+    }
+
     public function testClientWithoutImpressionListener()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
-        $impressionClient = new ListenerClient();
+        $impressionClient5 = new ListenerClient();
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -154,7 +289,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
-        $impressionClient = new ListenerClient();
+        $impressionClient6 = new ListenerClient();
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
