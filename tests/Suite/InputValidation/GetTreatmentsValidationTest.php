@@ -47,7 +47,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo('getTreatments: featureNames cannot be null.'));
 
-        $this->assertEquals('control', $splitSdk->getTreatments('some_key', null, null));
+        $this->assertEquals(null, $splitSdk->getTreatments('some_key', null, null));
     }
 
     public function testGetTreatmentsWithFeaturesNotArray()
@@ -60,7 +60,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo('getTreatments: featureNames must be an array.'));
 
-        $this->assertEquals('control', $splitSdk->getTreatments('some_key', true, null));
+        $this->assertEquals(null, $splitSdk->getTreatments('some_key', true, null));
     }
 
     public function testGetTreatmentsWithEmptyFeatures()

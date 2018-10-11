@@ -226,7 +226,7 @@ class Client implements ClientInterface
         $splitNames = InputValidator::validateGetTreatments($featureNames);
 
         if (is_null($splitNames)) {
-            return TreatmentEnum::CONTROL;
+            return null;
         }
 
         try {
@@ -244,7 +244,7 @@ class Client implements ClientInterface
             SplitApp::logger()->critical($e->getTraceAsString());
         }
 
-        return TreatmentEnum::CONTROL;
+        return null;
     }
 
     /**
