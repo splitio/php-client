@@ -191,7 +191,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * Returns the an associative array which each key will be
+     * Returns an associative array which each key will be
      * the treatment result for each feature passed as parameter.
      * The set of treatments for a feature can be configured
      * on the Split web console.
