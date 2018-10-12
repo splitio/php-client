@@ -88,4 +88,17 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([], $splitSdk->getTreatments('some_key', [null, null], null));
     }
+
+    public function testGetTreatmentsWitInvalidFeaturesNames()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: featureName true has to be of type "string".'));
+
+        $this->assertEquals([], $splitSdk->getTreatments('some_key', [true], null));
+    }
 }

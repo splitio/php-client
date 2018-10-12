@@ -231,10 +231,11 @@ class Client implements ClientInterface
 
         try {
             $result = array();
-
             for ($i = 0; $i < count($splitNames); $i++) {
-                $featureName = $splitNames[$i];
-                $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
+                $featureName = InputValidator::validateFeatureNameTreatments($splitNames[$i]);
+                if (!is_null($featureName)) {
+                    $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
+                }
             }
 
             return $result;

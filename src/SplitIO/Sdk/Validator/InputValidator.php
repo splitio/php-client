@@ -210,4 +210,16 @@ class InputValidator
         }
         return $filteredArray;
     }
+
+    /**
+     * @param $featureName
+     * @return string|null
+     */
+    public static function validateFeatureNameTreatments($featureName)
+    {
+        if (!self::checkIsString($featureName, 'featureName', 'getTreatments')) {
+            return null;
+        }
+        return $featureName;
+    }
 }
