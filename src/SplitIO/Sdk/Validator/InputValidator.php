@@ -16,8 +16,7 @@ class InputValidator
     private static function checkIsString($value, $name, $operation)
     {
         if (!is_string($value)) {
-            SplitApp::logger()->critical($operation . ': ' . $name . ' ' .json_encode($value)
-                . ' has to be of type "string".');
+            SplitApp::logger()->critical($operation . ': ' . $name . ' has to be of type "string".');
             return false;
         }
         return true;

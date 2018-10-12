@@ -99,7 +99,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('getTreatment: featureName 12345 has to be of type "string".'));
+            ->with($this->equalTo('getTreatment: featureName has to be of type "string".'));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', 12345));
     }
@@ -112,7 +112,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('getTreatment: featureName true has to be of type "string".'));
+            ->with($this->equalTo('getTreatment: featureName has to be of type "string".'));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', true));
     }
@@ -125,7 +125,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('getTreatment: featureName [] has to be of type "string".'));
+            ->with($this->equalTo('getTreatment: featureName has to be of type "string".'));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', array()));
     }

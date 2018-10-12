@@ -99,7 +99,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('track: trafficType true has to be of type "string".'));
+            ->with($this->equalTo('track: trafficType has to be of type "string".'));
 
         $this->assertEquals(false, $splitSdk->track('some_key', true, 'some_event', 1));
     }
@@ -112,7 +112,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('track: trafficType [] has to be of type "string".'));
+            ->with($this->equalTo('track: trafficType has to be of type "string".'));
 
         $this->assertEquals(false, $splitSdk->track('some_key', array(), 'some_event', 1));
     }
@@ -125,7 +125,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('track: trafficType 12345 has to be of type "string".'));
+            ->with($this->equalTo('track: trafficType has to be of type "string".'));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 12345, 'some_event', 1));
     }
@@ -164,7 +164,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('track: eventType true has to be of type "string".'));
+            ->with($this->equalTo('track: eventType has to be of type "string".'));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', true, 1));
     }
@@ -177,7 +177,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('track: eventType [] has to be of type "string".'));
+            ->with($this->equalTo('track: eventType has to be of type "string".'));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', array(), 1));
     }
@@ -190,7 +190,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('track: eventType 12345 has to be of type "string".'));
+            ->with($this->equalTo('track: eventType has to be of type "string".'));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', 12345, 1));
     }
