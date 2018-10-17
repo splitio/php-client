@@ -191,6 +191,23 @@ class InputValidator
     }
 
     /**
+     * @param $featureName
+     * @return true|false
+     */
+    private static function validFeatureNameFromTreatments($featureName)
+    {
+        if (is_null($featureName)) {
+            SplitApp::logger()->warning('getTreatments: null featureName was filtered.');
+            return false;
+        }
+        if (!is_string($featureName)) {
+            SplitApp::logger()->warning('getTreatments: filtered featureName for not being string.');
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @param $featureNames
      * @return array|null
      */
@@ -203,22 +220,14 @@ class InputValidator
             SplitApp::logger()->critical('getTreatments: featureNames must be an array.');
             return null;
         }
-        $filteredArray = array_values(array_unique(array_filter($featureNames)));
+        $filteredArray = array_values(
+            array_unique(
+                array_filter($featureNames, "self::validFeatureNameFromTreatments")
+            )
+        );
         if (count($filteredArray) == 0) {
             SplitApp::logger()->warning('getTreatments: featureNames is an empty array or has null values.');
         }
         return $filteredArray;
-    }
-
-    /**
-     * @param $featureName
-     * @return string|null
-     */
-    public static function validateFeatureNameTreatments($featureName)
-    {
-        if (!self::checkIsString($featureName, 'featureName', 'getTreatments')) {
-            return null;
-        }
-        return $featureName;
     }
 }

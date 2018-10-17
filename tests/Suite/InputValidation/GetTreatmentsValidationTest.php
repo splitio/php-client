@@ -82,23 +82,29 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger = $this->getMockedLogger();
 
-        $logger->expects($this->once())
+        $logger->expects($this->any())
             ->method('warning')
-            ->with($this->equalTo('getTreatments: featureNames is an empty array or has null values.'));
+            ->with($this->logicalOr(
+                $this->equalTo('getTreatments: featureNames is an empty array or has null values.'),
+                $this->equalTo('getTreatments: null featureName was filtered.')
+            ));
 
         $this->assertEquals([], $splitSdk->getTreatments('some_key', [null, null], null));
     }
 
-    public function testGetTreatmentsWitInvalidFeaturesNames()
+    public function testGetTreatmentsWithOneWrongTypeOfFeaturesNames()
     {
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
 
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: featureName has to be of type "string".'));
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo('getTreatments: featureNames is an empty array or has null values.'),
+                $this->equalTo('getTreatments: filtered featureName for not being string.')
+            ));
 
-        $this->assertEquals([], $splitSdk->getTreatments('some_key', [true], null));
+        $this->assertEquals([], $splitSdk->getTreatments('some_key', [true, array()], null));
     }
 }

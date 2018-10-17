@@ -223,21 +223,18 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
-        $splitNames = InputValidator::validateGetTreatments($featureNames);
-
-        if (is_null($splitNames)) {
-            return null;
-        }
-
         try {
-            $result = array();
-            for ($i = 0; $i < count($splitNames); $i++) {
-                $featureName = InputValidator::validateFeatureNameTreatments($splitNames[$i]);
-                if (!is_null($featureName)) {
-                    $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
-                }
+            $splitNames = InputValidator::validateGetTreatments($featureNames);
+
+            if (is_null($splitNames)) {
+                return null;
             }
 
+            $result = array();
+            for ($i = 0; $i < count($splitNames); $i++) {
+                $featureName = $splitNames[$i];
+                $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
+            }
             return $result;
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatments method is throwing exceptions');
