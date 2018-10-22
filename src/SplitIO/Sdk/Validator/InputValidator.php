@@ -16,8 +16,7 @@ class InputValidator
     private static function checkIsString($value, $name, $operation)
     {
         if (!is_string($value)) {
-            SplitApp::logger()->critical($operation . ': ' . $name . ' ' .json_encode($value)
-                . ' has to be of type "string".');
+            SplitApp::logger()->critical($operation . ': ' . $name . ' has to be of type "string".');
             return false;
         }
         return true;
@@ -189,5 +188,46 @@ class InputValidator
     public static function validateSplitFeatureName($featureName)
     {
         return self::validateString($featureName, 'featureName', 'split');
+    }
+
+    /**
+     * @param $featureName
+     * @return true|false
+     */
+    private static function validFeatureNameFromTreatments($featureName)
+    {
+        if (is_null($featureName)) {
+            SplitApp::logger()->warning('getTreatments: null featureName was filtered.');
+            return false;
+        }
+        if (!is_string($featureName)) {
+            SplitApp::logger()->warning('getTreatments: filtered featureName for not being string.');
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param $featureNames
+     * @return array|null
+     */
+    public static function validateGetTreatments($featureNames)
+    {
+        if (!self::checkNotNull($featureNames, 'featureNames', 'getTreatments')) {
+            return null;
+        }
+        if (!is_array($featureNames)) {
+            SplitApp::logger()->critical('getTreatments: featureNames must be an array.');
+            return null;
+        }
+        $filteredArray = array_values(
+            array_unique(
+                array_filter($featureNames, "self::validFeatureNameFromTreatments")
+            )
+        );
+        if (count($filteredArray) == 0) {
+            SplitApp::logger()->warning('getTreatments: featureNames is an empty array or has null values.');
+        }
+        return $filteredArray;
     }
 }

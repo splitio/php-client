@@ -37,7 +37,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         return $logger;
     }
 
-    public function testGetTreatmentWithNullKey()
+    public function testGetTreatmentsWithNullFeatures()
     {
         $splitSdk = $this->getFactoryClient();
 
@@ -45,12 +45,38 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('getTreatment: key cannot be null.'));
+            ->with($this->equalTo('getTreatments: featureNames cannot be null.'));
 
-        $this->assertEquals('control', $splitSdk->getTreatment(null, 'some_feature'));
+        $this->assertEquals(null, $splitSdk->getTreatments('some_key', null, null));
     }
 
-    public function testGetTreatmentWitNumberKey()
+    public function testGetTreatmentsWithFeaturesNotArray()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: featureNames must be an array.'));
+
+        $this->assertEquals(null, $splitSdk->getTreatments('some_key', true, null));
+    }
+
+    public function testGetTreatmentsWithEmptyFeatures()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('warning')
+            ->with($this->equalTo('getTreatments: featureNames is an empty array or has null values.'));
+
+        $this->assertEquals([], $splitSdk->getTreatments('some_key', [], null));
+    }
+
+    public function testGetTreatmentsWithNullFeaturesNames()
     {
         $splitSdk = $this->getFactoryClient();
 
@@ -59,81 +85,26 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo('getTreatment: key 123456 is not of type string, converting.')
+                $this->equalTo('getTreatments: featureNames is an empty array or has null values.'),
+                $this->equalTo('getTreatments: null featureName was filtered.')
             ));
 
-        $this->assertEquals('control', $splitSdk->getTreatment(123456, 'some_feature'));
+        $this->assertEquals([], $splitSdk->getTreatments('some_key', [null, null], null));
     }
 
-    public function testGetTreatmentWitKeyDifferentFromNumberObjectOrString()
+    public function testGetTreatmentsWithOneWrongTypeOfFeaturesNames()
     {
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
 
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo('getTreatment: key has to be of type "string" or "SplitIO\Sdk\Key".'));
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo('getTreatments: featureNames is an empty array or has null values.'),
+                $this->equalTo('getTreatments: filtered featureName for not being string.')
+            ));
 
-        $this->assertEquals('control', $splitSdk->getTreatment(true, 'some_feature'));
-    }
-
-    public function testGetTreatmentWithNullFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo('getTreatment: featureName cannot be null.'));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', null));
-    }
-
-    public function testGetTreatmentWithNumericFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo('getTreatment: featureName 12345 has to be of type "string".'));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', 12345));
-    }
-
-    public function testGetTreatmentWitBooleanFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo('getTreatment: featureName true has to be of type "string".'));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', true));
-    }
-
-    public function testGetTreatmentWitArrayFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo('getTreatment: featureName [] has to be of type "string".'));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', array()));
-    }
-
-    public function testGetTreatmentWithValidInputs()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key_non_existant', 'some_feature_non_existant'));
+        $this->assertEquals([], $splitSdk->getTreatments('some_key', [true, array()], null));
     }
 }

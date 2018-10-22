@@ -33,7 +33,10 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $segmentEmployeesChanges = file_get_contents(__DIR__ . "/files/segmentEmployeesChanges.json");
         $this->assertJson($segmentEmployeesChanges);
         $segmentData = json_decode($segmentEmployeesChanges, true);
-        $this->assertArrayHasKey('employee_1', $segmentCache->addToSegment($segmentData['name'], $segmentData['added']));
+        $this->assertArrayHasKey('employee_1', $segmentCache->addToSegment(
+            $segmentData['name'],
+            $segmentData['added']
+        ));
 
         //Adding Human Beigns Segment.
         $segmentHumanBeignsChanges = file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json");
@@ -195,5 +198,100 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         $treatment = $splitSdk->getTreatment('key1', 'feature1');
         $this->assertEquals($treatment, 'control');
+    }
+
+    public function testGetTreatmentsWithDistinctFeatures()
+    {
+
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+        $this->addSegmentsInCache();
+
+        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', 'invalid_feature'], null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['sample_feature']);
+        $this->assertEquals('control', $treatmentResult['invalid_feature']);
+    }
+
+    public function testGetTreatmentsWithRepeteadedFeatures()
+    {
+
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+        $this->addSegmentsInCache();
+
+        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', 'invalid_feature', 'sample_feature',
+        'sample_feature'], null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['sample_feature']);
+        $this->assertEquals('control', $treatmentResult['invalid_feature']);
+    }
+
+    public function testGetTreatmentsWithRepeteadedAndNullFeatures()
+    {
+
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        $this->addSplitsInCache();
+        $this->addSegmentsInCache();
+
+        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', null, 'invalid_feature',
+        'sample_feature', null, 'sample_feature'], null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['sample_feature']);
+        $this->assertEquals('control', $treatmentResult['invalid_feature']);
     }
 }
