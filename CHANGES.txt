@@ -1,3 +1,5 @@
+5.6.0 (Oct 23, 2018)
+ - Added getTreatments method.
 5.5.1 (Oct 9, 2018)
  - Added validation for ipAddress.
 5.5.0 (Sep 25, 2018)

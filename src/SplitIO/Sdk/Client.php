@@ -191,6 +191,61 @@ class Client implements ClientInterface
     }
 
     /**
+     * Returns an associative array which each key will be
+     * the treatment result for each feature passed as parameter.
+     * The set of treatments for a feature can be configured
+     * on the Split web console.
+     * This method returns the string 'control' if:
+     * <ol>
+     *     <li>featureNames is invalid/li>
+     * </ol>
+     * 'control' is a reserved treatment, to highlight these
+     * exceptional circumstances.
+     *
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     *
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     * @return array|control
+     */
+    public function getTreatments($key, $featureNames, array $attributes = null)
+    {
+        try {
+            $splitNames = InputValidator::validateGetTreatments($featureNames);
+
+            if (is_null($splitNames)) {
+                return null;
+            }
+
+            $result = array();
+            for ($i = 0; $i < count($splitNames); $i++) {
+                $featureName = $splitNames[$i];
+                $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
+            }
+            return $result;
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatments method is throwing exceptions');
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
+        }
+
+        return null;
+    }
+
+    /**
      * A short-hand for
      * <pre>
      *     (getTreatment(key, feature) == treatment) ? true : false;
