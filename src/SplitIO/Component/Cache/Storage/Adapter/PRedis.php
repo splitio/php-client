@@ -29,53 +29,62 @@ class PRedis implements CacheStorageAdapterInterface
         $this->client = new \Predis\Client($_redisConfig['redis'], $_redisConfig['options']);
     }
 
+    /**
+     * @param array $nodes
+     * @param string $type
+     * @return string|null
+     */
+    private function isValidConfigArray($nodes, $type)
+    {
+        if (!is_array($nodes)) {
+            return $type . "s must be an array.";
+        }
+        if (count($nodes) == 0) {
+            return "At least one " . $type . " is required.";
+        }
+        if (SplitIOUtils\isAssociativeArray($nodes)) {
+            return $type . "s must not be an associative array.";
+        }
+        return null;
+    }
+
+    /**
+     * @param array $sentinels
+     * @param array $options
+     * @return bool
+     * @throws AdapterException
+     */
     private function isValidSentinelConfig($sentinels, $options)
     {
-        if (!is_array($sentinels)) {
-            throw new AdapterException('sentinels must be an array.');
+        $msg = $this->isValidConfigArray($sentinels, 'sentinel');
+        if (!is_null($msg)) {
+            throw new AdapterException($msg);
         }
-        if (count($sentinels) == 0) {
-            throw new AdapterException('At least one sentinel is required.');
-        }
-        if (SplitIOUtils\isAssociativeArray($sentinels)) {
-            throw new AdapterException('sentinels must not be an associative array.');
-        } else {
-            if (!isset($options['replication']) && !isset($options['distributedStrategy'])) {
-                throw new AdapterException("Missing 'distributedStrategy' in options.");
-            }
-            if (!isset($options['replication']) && isset($options['distributedStrategy']) &&
-                $options['distributedStrategy'] != 'sentinel') {
-                throw new AdapterException("Wrong configuration of redis 'distributedStrategy'.");
-            }
-            if (isset($options['replication']) && !isset($options['distributedStrategy'])) {
-                Di::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
-                if ($options['replication'] != 'sentinel') {
-                    throw new AdapterException('Wrong configuration of redis replication.');
-                } else {
-                    $options['distributedStrategy'] = 'sentinel';
-                }
-            }
-            if (!isset($options['service'])) {
-                throw new AdapterException('Master name is required in replication mode for sentinel.');
-            }
+        if (!isset($options['service'])) {
+            throw new AdapterException('Master name is required in replication mode for sentinel.');
         }
         return true;
     }
 
-    private function isValidClusterConfig($clusters, $options)
+    /**
+     * @param array $clusters
+     * @return bool
+     * @throws AdapterException
+     */
+    private function isValidClusterConfig($clusters)
     {
-        if (!is_array($clusters)) {
-            throw new AdapterException('clusterNodes must be an array.');
-        }
-        if (count($clusters) == 0) {
-            throw new AdapterException('At least one node is required.');
-        }
-        if (SplitIOUtils\isAssociativeArray($clusters)) {
-            throw new AdapterException('clusterNodes must not be an associative array.');
+        $msg = $this->isValidConfigArray($clusters, 'clusterNode');
+        if (!is_null($msg)) {
+            throw new AdapterException($msg);
         }
         return true;
     }
 
+    /**
+     * @param mixed $options
+     * @return array
+     * @throws AdapterException
+     */
     private function getRedisConfiguration($options)
     {
         $redisConfigutation = array(
@@ -95,15 +104,32 @@ class PRedis implements CacheStorageAdapterInterface
         if (isset($parameters)) {
             $redisConfigutation['redis'] = $parameters;
         } else {
-            // @TODO change statements when we deprecate replication => sentinel
-            if (isset($sentinels) && $this->isValidSentinelConfig($sentinels, $_options)) {
-                $_options['replication'] = 'sentinel';
-                $redisConfigutation['redis'] = $sentinels;
+            // @TODO remove this statement when replication will be deprecated
+            if (isset($_options['replication'])) {
+                Di::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
+                if (!isset($_options['distributedStrategy'])) {
+                    $_options['distributedStrategy'] = $_options['replication'];
+                }
             }
-            if (isset($_options['distributedStrategy']) && $_options['distributedStrategy'] == 'cluster' &&
-                $this->isValidClusterConfig($clusters, $_options)) {
-                $_options['cluster'] = 'redis';
-                $redisConfigutation['redis'] = $clusters;
+            if (isset($_options['distributedStrategy'])) {
+                switch ($_options['distributedStrategy']) {
+                    case 'cluster':
+                        if ($this->isValidClusterConfig($clusters)) {
+                            $_options['cluster'] = 'redis';
+                            $redisConfigutation['redis'] = $clusters;
+                        }
+                        break;
+                    case 'sentinel':
+                        if ($this->isValidSentinelConfig($sentinels, $_options)) {
+                            $_options['replication'] = 'sentinel';
+                            $redisConfigutation['redis'] = $sentinels;
+                        }
+                        break;
+                    default:
+                        throw new AdapterException("Wrong configuration of redis 'distributedStrategy'.");
+                }
+            } else {
+                throw new AdapterException("Wrong configuration of redis.");
             }
         }
         $redisConfigutation['options'] = $_options;
