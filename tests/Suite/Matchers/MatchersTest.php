@@ -15,12 +15,13 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 {
     private function setupSplitApp()
     {
-        $parameters = ['scheme' => 'redis',
+        $parameters = array(
+            'scheme' => 'redis',
             'host' => "localhost",
             'port' => 6379,
             'timeout' => 881
-        ];
-        $options = ['prefix' => ''];
+        );
+        $options = array('prefix' => '');
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout', 'level' => 'info'),
             'cache' => array('adapter' => 'predis',

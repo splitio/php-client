@@ -35,13 +35,13 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisWithOnlyParameters()
     {
         $predis = new PRedis(array(
-            'parameters' => [
+            'parameters' => array(
                 'scheme' => 'tcp',
                 'host' => 'localhost',
                 'port' => 6379,
                 'timeout' => 881,
                 'database' => 0
-            ]
+            )
         ));
         $predis->addItem('this_is_a_test_key', 'this-is-a-test-value');
         $value = $predis->getItem('this_is_a_test_key');
@@ -53,16 +53,16 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisWithParametersAndPrefix()
     {
         $predis = new PRedis(array(
-            'parameters' => [
+            'parameters' => array(
                 'scheme' => 'tcp',
                 'host' => 'localhost',
                 'port' => 6379,
                 'timeout' => 881,
                 'database' => 0
-            ],
-            'options' => [
+            ),
+            'options' => array(
                 'prefix' => 'test-redis-assertion'
-            ]
+            )
         ));
         $predis->addItem('this_is_a_test_key', 'this-is-a-test-value');
         $value = $predis->getItem('this_is_a_test_key');
@@ -74,17 +74,17 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisWithParametersPrefixAndSentinels()
     {
         $predis = new PRedis(array(
-            'parameters' => [
+            'parameters' => array(
                 'scheme' => 'tcp',
                 'host' => 'localhost',
                 'port' => 6379,
                 'timeout' => 881,
                 'database' => 0
-            ],
-            'sentinels' => ['something', 'other'],
-            'options' => [
+            ),
+            'sentinels' => array('something', 'other'),
+            'options' => array(
                 'prefix' => 'test-redis-assertion'
-            ]
+            )
         ));
         $predis->addItem('this_is_a_test_key', 'this-is-a-test-value');
         $value = $predis->getItem('this_is_a_test_key');
@@ -99,9 +99,9 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
         $predis = new PRedis(array(
             'sentinels' => array(),
-            'options' => [
+            'options' => array(
                 'distributedStrategy' => 'sentinel'
-            ]
+            )
         ));
     }
 
@@ -110,7 +110,9 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(AdapterException::class, "Wrong configuration of redis.");
 
         $predis = new PRedis(array(
-            'sentinels' => ['127.0.0.1'],
+            'sentinels' => array(
+                '127.0.0.1'
+            ),
         ));
     }
 
@@ -118,9 +120,10 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(AdapterException::class, "Wrong configuration of redis.");
         $predis = new PRedis(array(
-            'sentinels' => ['127.0.0.1'],
-            'options' => [
-            ]
+            'sentinels' => array(
+                '127.0.0.1'
+            ),
+            'options' => array()
         ));
     }
 
@@ -134,10 +137,12 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(AdapterException::class, "Wrong configuration of redis 'distributedStrategy'.");
 
         $predis = new PRedis(array(
-            'sentinels' => ['127.0.0.1'],
-            'options' => [
+            'sentinels' => array(
+                '127.0.0.1'
+            ),
+            'options' => array(
                 'replication' => 'test'
-            ]
+            )
         ));
     }
 
@@ -154,10 +159,12 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         );
 
         $predis = new PRedis(array(
-            'sentinels' => ['127.0.0.1'],
-            'options' => [
+            'sentinels' => array(
+                '127.0.0.1'
+            ),
+            'options' => array(
                 'replication' => 'sentinel'
-            ]
+            )
         ));
     }
 
@@ -169,9 +176,9 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
         $predis = new PRedis(array(
             'sentinels' => "test",
-            'options' => [
+            'options' => array(
                 'replication' => 'sentinel'
-            ]
+            )
         ));
     }
 
@@ -183,10 +190,12 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         );
 
         $predis = new PRedis(array(
-            'sentinels' => ['127.0.0.1'],
-            'options' => [
+            'sentinels' => array(
+                '127.0.0.1'
+            ),
+            'options' => array(
                 'distributedStrategy' => 'test'
-            ]
+            )
         ));
     }
 
@@ -196,16 +205,16 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->once())
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
-            
+
         $this->setExpectedException(ClientException::class);
         $predis = new PRedis(array(
             'sentinels' => array(
                 'tcp://MYIP:26379?timeout=3'
             ),
-            'options' => [
+            'options' => array(
                 'replication' => 'sentinel',
                 'service' => 'master'
-            ]
+            )
         ));
 
         $predis->getItem('this_is_a_test_key');
@@ -218,10 +227,10 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             'sentinels' => array(
                 'tcp:/MYIP:26379?timeout=3'
             ),
-            'options' => [
+            'options' => array(
                 'service' => 'master',
                 'distributedStrategy' => 'sentinel'
-            ]
+            )
         ));
 
         $predis->getItem('this_is_a_test_key');
@@ -233,9 +242,9 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
         $predis = new PRedis(array(
             'clusterNodes' => array(),
-            'options' => [
+            'options' => array(
                 'distributedStrategy' => 'cluster'
-            ]
+            )
         ));
     }
 
@@ -244,7 +253,9 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(AdapterException::class, "Wrong configuration of redis.");
 
         $predis = new PRedis(array(
-            'clusterNodes' => ['127.0.0.1'],
+            'clusterNodes' => array(
+                '127.0.0.1'
+            ),
         ));
     }
 
@@ -254,9 +265,9 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
         $predis = new PRedis(array(
             'clusterNodes' => "test",
-            'options' => [
+            'options' => array(
                 'distributedStrategy' => 'cluster'
-            ]
+            )
         ));
     }
 
@@ -268,10 +279,12 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         );
 
         $predis = new PRedis(array(
-            'clusterNodes' => ['127.0.0.1'],
-            'options' => [
+            'clusterNodes' => array(
+                '127.0.0.1'
+            ),
+            'options' => array(
                 'distributedStrategy' => 'test'
-            ]
+            )
         ));
     }
 
@@ -282,9 +295,9 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
             ),
-            'options' => [
+            'options' => array(
                 'distributedStrategy' => 'cluster'
-            ]
+            )
         ));
 
         $predis->getItem('this_is_a_test_key');
