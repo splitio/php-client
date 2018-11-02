@@ -98,7 +98,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(AdapterException::class, 'At least one sentinel is required.');
 
         $predis = new PRedis(array(
-            'sentinels' => [],
+            'sentinels' => array(),
             'options' => [
                 'distributedStrategy' => 'sentinel'
             ]
@@ -192,6 +192,11 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinels()
     {
+        $logger = $this->getMockedLogger();
+        $logger->expects($this->once())
+            ->method('warning')
+            ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
+            
         $this->setExpectedException(ClientException::class);
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -227,7 +232,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(AdapterException::class, 'At least one clusterNode is required.');
 
         $predis = new PRedis(array(
-            'clusterNodes' => [],
+            'clusterNodes' => array(),
             'options' => [
                 'distributedStrategy' => 'cluster'
             ]
