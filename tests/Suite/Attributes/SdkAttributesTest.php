@@ -39,7 +39,6 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         $this->assertJson($segmentHumanBeignsChanges);
         $segmentData = json_decode($segmentHumanBeignsChanges, true);
         $this->assertArrayHasKey('user1', $segmentCache->addToSegment($segmentData['name'], $segmentData['added']));
-
     }
 
     public function testClient()
@@ -52,10 +51,10 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
-        $sdkConfig = [
-            'log' => ['adapter' => 'stdout', 'level' => 'info'],
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout', 'level' => 'info'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
-        ];
+        );
 
         //Initializing the SDK instance.
         $splitFactory = \SplitIO\Sdk::factory('some-api-key', $sdkConfig);
@@ -71,8 +70,6 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         $this->greaterThanOrEqualToOperator($splitSdk);
         $this->lessThanOrEqualToOperator($splitSdk);
         $this->betweenOperator($splitSdk);
-
-
     }
 
     private function inOperator(\SplitIO\Sdk\ClientInterface $splitSdk)
@@ -144,7 +141,6 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/18 00:00:00", new \DateTimeZone("UTC")))->getTimestamp()]));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', []));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', null));
-
     }
 
     private function greaterThanOrEqualToOperator(\SplitIO\Sdk\ClientInterface $splitSdk)
@@ -183,7 +179,6 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', ['attr' => (new \DateTime("2025/04/17 09:56:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
 
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:54:22PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-
     }
 
     private function lessThanOrEqualToOperator(\SplitIO\Sdk\ClientInterface $splitSdk)
@@ -222,7 +217,6 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', ['attr' => (new \DateTime("2016/02/10 09:24:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
 
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:56:22PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-
     }
 
     private function betweenOperator(\SplitIO\Sdk\ClientInterface $splitSdk)
@@ -253,7 +247,5 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', ['attr' => (new \DateTime("2016/03/31 07:35:48PM", new \DateTimeZone("UTC")))->getTimestamp()]));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', []));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', null));
-
-
     }
 }

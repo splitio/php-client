@@ -31,17 +31,16 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
     public function testDiCache()
     {
         try {
-            $cachePoolAdapter = [
+            $cachePoolAdapter = array(
                 'name' => 'redis',
-                'options' => [
+                'options' => array(
                     'host' => REDIS_HOST,
                     'port' => REDIS_PORT,
-                ]
-            ];
+                )
+            );
 
-            $cachePool = new Pool([ 'adapter' => $cachePoolAdapter ]);
+            $cachePool = new Pool(array( 'adapter' => $cachePoolAdapter ));
             Di::getInstance()->setCache($cachePool);
-
         } catch (\Exception $e) {
             $this->assertTrue(false, "Error setting cache on Di");
         }
@@ -75,7 +74,6 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($splitCache->setChangeNumber($splitChanges['till']));
 
         $this->assertEquals($splitChanges['till'], $splitCache->getChangeNumber());
-
     }
 
     /**
@@ -101,7 +99,6 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($segmentCache->setChangeNumber($segmentName, $segmentData['till']));
 
         $this->assertEquals($segmentData['till'], $segmentCache->getChangeNumber($segmentName));
-
     }
 
     /**

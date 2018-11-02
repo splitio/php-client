@@ -1,3 +1,5 @@
+5.7.0 (Oct 30, 2018)
+ - Added support for redis cluster.
 5.6.0 (Oct 23, 2018)
  - Added getTreatments method.
 5.5.1 (Oct 9, 2018)

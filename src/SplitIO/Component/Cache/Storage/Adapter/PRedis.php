@@ -4,6 +4,7 @@ namespace SplitIO\Component\Cache\Storage\Adapter;
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use SplitIO\Component\Cache\Item;
 use SplitIO\Component\Utils as SplitIOUtils;
+use SplitIO\Component\Common\Di;
 
 /**
  * Class PRedis
@@ -23,50 +24,116 @@ class PRedis implements CacheStorageAdapterInterface
         if (!class_exists('\Predis\Client')) {
             throw new AdapterException("PRedis class is not loaded");
         }
+        $_redisConfig = $this->getRedisConfiguration($options);
 
-        $_parameters = (isset($options['parameters'])) ? $options['parameters'] : null;
-        $_sentinels = (isset($options['sentinels'])) ? $options['sentinels'] : null;
+        $this->client = new \Predis\Client($_redisConfig['redis'], $_redisConfig['options']);
+    }
+
+    /**
+     * @param array $nodes
+     * @param string $type
+     * @return string|null
+     */
+    private function isValidConfigArray($nodes, $type)
+    {
+        if (!is_array($nodes)) {
+            return $type . "s must be an array.";
+        }
+        if (count($nodes) == 0) {
+            return "At least one " . $type . " is required.";
+        }
+        if (SplitIOUtils\isAssociativeArray($nodes)) {
+            return $type . "s must not be an associative array.";
+        }
+        return null;
+    }
+
+    /**
+     * @param array $sentinels
+     * @param array $options
+     * @return bool
+     * @throws AdapterException
+     */
+    private function isValidSentinelConfig($sentinels, $options)
+    {
+        $msg = $this->isValidConfigArray($sentinels, 'sentinel');
+        if (!is_null($msg)) {
+            throw new AdapterException($msg);
+        }
+        if (!isset($options['service'])) {
+            throw new AdapterException('Master name is required in replication mode for sentinel.');
+        }
+        return true;
+    }
+
+    /**
+     * @param array $clusters
+     * @return bool
+     * @throws AdapterException
+     */
+    private function isValidClusterConfig($clusters)
+    {
+        $msg = $this->isValidConfigArray($clusters, 'clusterNode');
+        if (!is_null($msg)) {
+            throw new AdapterException($msg);
+        }
+        return true;
+    }
+
+    /**
+     * @param mixed $options
+     * @return array
+     * @throws AdapterException
+     */
+    private function getRedisConfiguration($options)
+    {
+        $redisConfigutation = array(
+            'redis' => null,
+            'options' => null
+        );
+        
+        $parameters = (isset($options['parameters'])) ? $options['parameters'] : null;
+        $sentinels = (isset($options['sentinels'])) ? $options['sentinels'] : null;
+        $clusters = (isset($options['clusterNodes'])) ? $options['clusterNodes'] : null;
         $_options = (isset($options['options'])) ? $options['options'] : null;
-
-        $_redisConfig = $this->getRedisConfiguration($_parameters, $_sentinels, $_options);
 
         if ($_options && isset($_options['prefix'])) {
             $_options['prefix'] = self::normalizePrefix($_options['prefix']);
         }
 
-        $this->client = new \Predis\Client($_redisConfig, $_options);
-    }
-
-    private function isValidSentinelConfig($sentinels, $options)
-    {
-        if (count($sentinels) == 0) {
-            throw new AdapterException('At least one sentinel is required.');
-        }
-        if (!SplitIOUtils\isAssociativeArray($sentinels)) {
-            if (!isset($options['replication'])) {
-                throw new AdapterException('Missing replication mode in options.');
-            } else {
-                if ($options['replication'] != 'sentinel') {
-                    throw new AdapterException('Wrong configuration of redis replication.');
+        if (isset($parameters)) {
+            $redisConfigutation['redis'] = $parameters;
+        } else {
+            // @TODO remove this statement when replication will be deprecated
+            if (isset($_options['replication'])) {
+                Di::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
+                if (!isset($_options['distributedStrategy'])) {
+                    $_options['distributedStrategy'] = $_options['replication'];
                 }
             }
-            if (!isset($options['service'])) {
-                throw new AdapterException('Master name is required in replication mode for sentinel.');
+            if (isset($_options['distributedStrategy'])) {
+                switch ($_options['distributedStrategy']) {
+                    case 'cluster':
+                        if ($this->isValidClusterConfig($clusters)) {
+                            $_options['cluster'] = 'redis';
+                            $redisConfigutation['redis'] = $clusters;
+                        }
+                        break;
+                    case 'sentinel':
+                        if ($this->isValidSentinelConfig($sentinels, $_options)) {
+                            $_options['replication'] = 'sentinel';
+                            $redisConfigutation['redis'] = $sentinels;
+                        }
+                        break;
+                    default:
+                        throw new AdapterException("Wrong configuration of redis 'distributedStrategy'.");
+                }
+            } else {
+                throw new AdapterException("Wrong configuration of redis.");
             }
         }
-        return true;
-    }
-
-    private function getRedisConfiguration($parameters, $sentinels, $options)
-    {
-        if (isset($parameters)) {
-            return $parameters;
-        } else {
-            if (isset($sentinels) && $this->isValidSentinelConfig($sentinels, $options)) {
-                return $sentinels;
-            }
-        }
-        return null;
+        $redisConfigutation['options'] = $_options;
+        return $redisConfigutation;
     }
 
     /**
