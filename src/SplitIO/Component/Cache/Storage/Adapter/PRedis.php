@@ -296,7 +296,7 @@ class PRedis implements CacheStorageAdapterInterface
             $keys = array();
             foreach ($this->client as $nodeClient) {
                 $nodeClientKeys = $nodeClient->keys($pattern);
-                array_merge($keys, $nodeClientKeys);
+                $keys = array_merge($keys, $nodeClientKeys);
             }
         } else {
             $keys = $this->client->keys($pattern);
