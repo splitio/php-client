@@ -15,8 +15,6 @@ class PRedis implements CacheStorageAdapterInterface
     /** @var \Predis\Client|null  */
     private $client = null;
 
-    private $options = null;
-
     /**
      * @param array $options
      * @throws AdapterException
@@ -29,7 +27,6 @@ class PRedis implements CacheStorageAdapterInterface
         $_redisConfig = $this->getRedisConfiguration($options);
 
         $this->client = new \Predis\Client($_redisConfig['redis'], $_redisConfig['options']);
-        $this->options = $_redisConfig['options'];
     }
 
     /**
@@ -175,7 +172,17 @@ class PRedis implements CacheStorageAdapterInterface
      */
     public function getItems(array $keys = array())
     {
-        return $this->client->mget($keys);
+        if ($this->client->getOptions()->__isset("distributedStrategy") &&
+            $this->client->getOptions()->__get("distributedStrategy") == "cluster") {
+            $items = array();
+            foreach ($keys as $key) {
+                $item = $this->client->get($key);
+                array_push($items, $item);
+            }
+            return $items;
+        } else {
+            return $this->client->mget($keys);
+        }
     }
 
     /**
@@ -292,7 +299,8 @@ class PRedis implements CacheStorageAdapterInterface
             $prefix = $this->client->getOptions()->__get("prefix")->getPrefix();
         }
 
-        if (isset($this->options['distributedStrategy']) && $this->options['distributedStrategy'] == 'cluster') {
+        if ($this->client->getOptions()->__isset("distributedStrategy") &&
+            $this->client->getOptions()->__get("distributedStrategy") == "cluster") {
             $keys = array();
             foreach ($this->client as $nodeClient) {
                 $nodeClientKeys = $nodeClient->keys($pattern);
