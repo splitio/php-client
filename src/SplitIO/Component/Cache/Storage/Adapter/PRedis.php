@@ -15,6 +15,8 @@ class PRedis implements CacheStorageAdapterInterface
     /** @var \Predis\Client|null  */
     private $client = null;
 
+    private $options = null;
+
     /**
      * @param array $options
      * @throws AdapterException
@@ -27,6 +29,7 @@ class PRedis implements CacheStorageAdapterInterface
         $_redisConfig = $this->getRedisConfiguration($options);
 
         $this->client = new \Predis\Client($_redisConfig['redis'], $_redisConfig['options']);
+        $this->options = $_redisConfig['options'];
     }
 
     /**
@@ -289,7 +292,15 @@ class PRedis implements CacheStorageAdapterInterface
             $prefix = $this->client->getOptions()->__get("prefix")->getPrefix();
         }
 
-        $keys = $this->client->keys($pattern);
+        if (isset($this->options['distributedStrategy']) && $this->options['distributedStrategy'] == 'cluster') {
+            $keys = array();
+            foreach ($this->client as $nodeClient) {
+                $nodeClientKeys = $nodeClient->keys($pattern);
+                array_merge($keys, $nodeClientKeys);
+            }
+        } else {
+            $keys = $this->client->keys($pattern);
+        }
 
         if ($prefix) {
             if (is_array($keys)) {
