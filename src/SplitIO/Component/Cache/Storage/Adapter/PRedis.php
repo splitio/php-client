@@ -71,11 +71,23 @@ class PRedis implements CacheStorageAdapterInterface
      * @return bool
      * @throws AdapterException
      */
-    private function isValidClusterConfig($clusters)
+    private function isValidClusterConfig($clusters, $options)
     {
         $msg = $this->isValidConfigArray($clusters, 'clusterNode');
         if (!is_null($msg)) {
             throw new AdapterException($msg);
+        }
+        if (!isset($options['hashtag'])) {
+            throw new AdapterException("Hashtag is mandatory for redis cluster.");
+        }
+        if (!is_string($options['hashtag'])) {
+            throw new AdapterException("Hashtag must be string.");
+        } else {
+            $tag = $options['hashtag'];
+            if ((strlen($tag) < 2) || ($tag[0] != "{") || (substr($tag, -1) != "}") || (substr_count($tag, "{") != 1)
+                || (substr_count($tag, "}") != 1)) {
+                throw new AdapterException("Hashtag is not valid.");
+            }
         }
         return true;
     }
@@ -114,9 +126,11 @@ class PRedis implements CacheStorageAdapterInterface
             if (isset($_options['distributedStrategy'])) {
                 switch ($_options['distributedStrategy']) {
                     case 'cluster':
-                        if ($this->isValidClusterConfig($clusters)) {
+                        if ($this->isValidClusterConfig($clusters, $_options)) {
                             $_options['cluster'] = 'redis';
                             $redisConfigutation['redis'] = $clusters;
+                            $prefix = isset($_options['prefix']) ? $_options['prefix'] : '';
+                            $_options['prefix'] = $_options['hashtag'] . $prefix;
                         }
                         break;
                     case 'sentinel':
@@ -172,17 +186,7 @@ class PRedis implements CacheStorageAdapterInterface
      */
     public function getItems(array $keys = array())
     {
-        if ($this->client->getOptions()->__isset("distributedStrategy") &&
-            $this->client->getOptions()->__get("distributedStrategy") == "cluster") {
-            $items = array();
-            foreach ($keys as $key) {
-                $item = $this->client->get($key);
-                array_push($items, $item);
-            }
-            return $items;
-        } else {
-            return $this->client->mget($keys);
-        }
+        return $this->client->mget($keys);
     }
 
     /**
@@ -309,7 +313,6 @@ class PRedis implements CacheStorageAdapterInterface
         } else {
             $keys = $this->client->keys($pattern);
         }
-
         if ($prefix) {
             if (is_array($keys)) {
                 for ($i=0; $i < count($keys); $i++) {
@@ -319,7 +322,6 @@ class PRedis implements CacheStorageAdapterInterface
                 $keys = str_replace($prefix, '', $keys);
             }
         }
-
         return $keys;
     }
 

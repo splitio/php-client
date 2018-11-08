@@ -243,7 +243,8 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $predis = new PRedis(array(
             'clusterNodes' => array(),
             'options' => array(
-                'distributedStrategy' => 'cluster'
+                'distributedStrategy' => 'cluster',
+                'hashtag' => '{TEST}'
             )
         ));
     }
@@ -266,7 +267,8 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $predis = new PRedis(array(
             'clusterNodes' => "test",
             'options' => array(
-                'distributedStrategy' => 'cluster'
+                'distributedStrategy' => 'cluster',
+                'hashtag' => '{TEST}'
             )
         ));
     }
@@ -288,6 +290,105 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
+    public function testRedisWithoutHashtagInClusters()
+    {
+        $this->setExpectedException(
+            AdapterException::class,
+            "Hashtag is mandatory for redis cluster."
+        );
+
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster'
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithInvalidHashtagInClusters()
+    {
+        $this->setExpectedException(
+            AdapterException::class,
+            "Hashtag is not valid."
+        );
+
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'hashtag' => '{TEST'
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithInvalidBeginingHashtagInClusters()
+    {
+        $this->setExpectedException(
+            AdapterException::class,
+            "Hashtag is not valid."
+        );
+
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'hashtag' => 'TEST}'
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithWrongTypeHashtagInClusters()
+    {
+        $this->setExpectedException(
+            AdapterException::class,
+            "Hashtag must be string."
+        );
+
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'hashtag' => array()
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithWrongLengthHashtagInClusters()
+    {
+        $this->setExpectedException(
+            AdapterException::class,
+            "Hashtag is not valid."
+        );
+        
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'hashtag' => ""
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
     public function testRedisWithClusters()
     {
         $this->setExpectedException(ClientException::class);
@@ -296,7 +397,8 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
                 'tcp://MYIP:26379?timeout=3'
             ),
             'options' => array(
-                'distributedStrategy' => 'cluster'
+                'distributedStrategy' => 'cluster',
+                'hashtag' => '{TEST}'
             )
         ));
 
