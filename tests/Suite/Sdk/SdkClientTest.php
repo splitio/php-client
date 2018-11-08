@@ -74,7 +74,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testClient()
     {
-
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 

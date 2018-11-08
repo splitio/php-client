@@ -225,23 +225,64 @@ class Client implements ClientInterface
     {
         try {
             $splitNames = InputValidator::validateGetTreatments($featureNames);
-
             if (is_null($splitNames)) {
                 return null;
             }
 
-            $result = array();
-            for ($i = 0; $i < count($splitNames); $i++) {
-                $featureName = $splitNames[$i];
-                $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
+            $key = InputValidator::validateKey($key);
+            if (is_null($key)) {
+                return null;
             }
+
+            $matchingKey = $key['matchingKey'];
+            $bucketingKey = $key['bucketingKey'];
+
+            $result = array();
+            $impressions = array();
+            foreach ($splitNames as $splitName) {
+                try {
+                    $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
+                    $result[$splitName] = $evalResult['treatment'];
+
+                    // Creates impression
+                    $impressions[] = $this->createImpression(
+                        $matchingKey,
+                        $splitName,
+                        $evalResult['treatment'],
+                        $evalResult['impression']['label'],
+                        $bucketingKey,
+                        $evalResult['impression']['changeNumber']
+                    );
+                } catch (\Exception $e) {
+                    SplitApp::logger()->critical(
+                        'getTreatments: An exception occured when evaluating feature: '. $splitName . '. skipping it'
+                    );
+                    continue;
+                }
+            }
+
+            // Register impressions
+            try {
+                if (!empty($impressions)) {
+                    TreatmentImpression::log($impressions);
+                    if (isset($this->impressionListener)) {
+                        foreach ($impressions as $impression) {
+                            $this->impressionListener->sendDataToClient($impression, $attributes);
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                SplitApp::logger()->critical(
+                    'getTreatments: An exception occured when trying to store impressions.'
+                );
+            }
+
             return $result;
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatments method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
             SplitApp::logger()->critical($e->getTraceAsString());
         }
-
         return null;
     }
 

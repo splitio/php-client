@@ -8,17 +8,18 @@ use SplitIO\Component\Common\Di;
 class TreatmentImpression
 {
     /**
-     * @param \SplitIO\Sdk\Impressions\Impression $impression
+     * @param \SplitIO\Sdk\Impressions\Impression $impressions
      * @return bool
      */
-    public static function log(Impression $impression)
+    public static function log($impressions)
     {
         try {
-            Di::getLogger()->debug($impression);
+            Di::getLogger()->debug($impressions);
 
             $impressionCache = new ImpressionCache();
+            $toStore = (is_array($impressions)) ? $impressions : array($impressions);
             return $impressionCache->logImpressions(
-                array($impression),
+                $toStore,
                 array(
                     'sdkVersion' => 'php-' . \SplitIO\version(),
                     'machineIp' => \SplitIO\getHostIpAddress(),
