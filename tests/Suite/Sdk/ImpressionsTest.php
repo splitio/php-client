@@ -24,7 +24,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
 
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
 
-        $redisClient->del("SPLITIO.impressions");
+        $redisClient->del(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
 
         TreatmentImpression::log(new Impression(
             'someMatchingKey',
@@ -37,11 +37,11 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
         ));
 
         // Assert that the TTL is within a 10-second range (between it was set and retrieved).
-        $ttl = $redisClient->ttl('SPLITIO.impressions');
+        $ttl = $redisClient->ttl(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $this->assertLessThanOrEqual(ImpressionCache::IMPRESSION_KEY_DEFAULT_TTL, $ttl);
         $this->assertGreaterThanOrEqual(ImpressionCache::IMPRESSION_KEY_DEFAULT_TTL - 10, $ttl);
 
-        $imp = $redisClient->rpop('SPLITIO.impressions');
+        $imp = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $decoded = json_decode($imp, true);
 
         $this->assertEquals($decoded['m']['s'], 'php-'.\Splitio\version());
@@ -69,7 +69,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
         \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
 
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $redisClient->del("SPLITIO.impressions");
+        $redisClient->del(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
 
         TreatmentImpression::log(new Impression(
             'someMatchingKey',

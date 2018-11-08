@@ -7,6 +7,7 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
+use SplitIO\Component\Cache\ImpressionCache;
 
 class SdkClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,7 +65,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     private function validateLastImpression($redisClient, $feature, $key, $treatment)
     {
-        $raw = $redisClient->rpop('SPLITIO.impressions');
+        $raw = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $parsed = json_decode($raw, true);
         $this->assertEquals($parsed['i']['f'], $feature);
         $this->assertEquals($parsed['i']['k'], $key);
