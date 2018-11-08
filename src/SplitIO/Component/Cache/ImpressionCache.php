@@ -6,77 +6,38 @@ use SplitIO\Component\Cache\KeyFactory;
 
 class ImpressionCache
 {
-    const KEY_IMPRESSION_DATA = "SPLITIO/{sdk-language-version}/{instance-id}/impressions.{featureName}";
+    const IMPRESSIONS_QUEUE_KEY = "SPLITIO.impressions";
+    const IMPRESSION_KEY_DEFAULT_TTL = 3600;
 
-    /**
-     * @param $key
-     * @return string
-     */
-    public static function getFeatureNameFromKey($key)
+    public function logImpressions($impressions, $metadata)
     {
-        $prefixLen = strlen(KeyFactory::make(self::KEY_IMPRESSION_DATA, array('{featureName}' => '')));
-        return substr($key, $prefixLen);
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getCacheKeySearchPattern()
-    {
-        return KeyFactory::make(self::KEY_IMPRESSION_DATA, array('{featureName}' => '*'));
-    }
-
-    /**
-     * @param $featureName
-     * @return mixed
-     */
-    public static function getCacheKeyForImpressionData($featureName)
-    {
-        return KeyFactory::make(self::KEY_IMPRESSION_DATA, array('{featureName}' => $featureName));
-    }
-
-    /**
-     * @param $featureName
-     * @param $key
-     * @param $treatment
-     * @param $time
-     * @return bool
-     */
-    public function addDataToFeature($featureName, $key, $treatment, $time, $changeNumber, $label, $bucketingKey)
-    {
-        $data = array(
-            'keyName' => $key,
-            'treatment' => $treatment,
-            'time' => $time,
-            'changeNumber' => $changeNumber,
-            'label' => $label,
-            'bucketingKey' => $bucketingKey
+        $toStore = array_map(
+            function ($imp) use ($metadata) {
+                return json_encode(array(
+                    "m" => array(
+                        "s" => $metadata['sdkVersion'],
+                        "i" => $metadata['machineIp'],
+                        "n" => $metadata['machineName'],
+                    ),
+                    "i" => array(
+                        "k" => $imp->getId(),
+                        "b" => $imp->getBucketingKey(),
+                        "f" => $imp->getFeature(),
+                        "t" => $imp->getTreatment(),
+                        "r" => $imp->getLabel(),
+                        "c" => $imp->getChangeNumber(),
+                        "m" => $imp->getTime(),
+                    ),
+                ));
+            },
+            $impressions
         );
 
-        return Di::getCache()->saveItemOnList(self::getCacheKeyForImpressionData($featureName), json_encode($data));
-    }
-
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public function getAllImpressions($key)
-    {
-        return Di::getCache()->getItemsOnList($key);
-    }
-
-    public function getRandomImpressions($key, $count)
-    {
-        return Di::getCache()->getItemsRandomlyOnList($key, $count);
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     * @return mixed
-     */
-    public function removeImpression($key, $value)
-    {
-        return Di::getCache()->removeItemOnList($key, $value);
+        Di::getLogger()->debug("Adding impressions into queue: ". $toStore);
+        $count = Di::getCache()->rightPushInList(self::IMPRESSIONS_QUEUE_KEY, $toStore);
+        if ($count == count($impressions)) {
+            Di::getCache()->expireKey(self::IMPRESSIONS_QUEUE_KEY, self::IMPRESSION_KEY_DEFAULT_TTL);
+        }
+        return ($count >= count($impressions));
     }
 }

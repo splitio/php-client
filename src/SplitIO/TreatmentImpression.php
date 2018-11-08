@@ -17,14 +17,13 @@ class TreatmentImpression
             Di::getLogger()->debug($impression);
 
             $impressionCache = new ImpressionCache();
-            return $impressionCache->addDataToFeature(
-                $impression->getFeature(),
-                $impression->getId(),
-                $impression->getTreatment(),
-                $impression->getTime(),
-                $impression->getChangeNumber(),
-                $impression->getLabel(),
-                $impression->getBucketingKey()
+            return $impressionCache->logImpressions(
+                array($impression),
+                array(
+                    'sdkVersion' => 'php-' . \SplitIO\version(),
+                    'machineIp' => \SplitIO\getHostIpAddress(),
+                    'machineName' => null, // TODO
+                )
             );
         } catch (\Exception $e) {
             Di::getLogger()->warning('Unable to write impression back to redis.');
