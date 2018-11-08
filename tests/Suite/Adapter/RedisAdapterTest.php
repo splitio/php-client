@@ -382,7 +382,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ),
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'keyHashTag' => ""
+                'keyHashTag' => "{}"
             )
         ));
 

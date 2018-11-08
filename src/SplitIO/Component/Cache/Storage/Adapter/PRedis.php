@@ -85,7 +85,7 @@ class PRedis implements CacheStorageAdapterInterface
             throw new AdapterException("keyHashTag must be string.");
         } else {
             $tag = $options['keyHashTag'];
-            if ((strlen($tag) < 2) || ($tag[0] != "{") || (substr($tag, -1) != "}") || (substr_count($tag, "{") != 1)
+            if ((strlen($tag) < 3) || ($tag[0] != "{") || (substr($tag, -1) != "}") || (substr_count($tag, "{") != 1)
                 || (substr_count($tag, "}") != 1)) {
                 throw new AdapterException("keyHashTag is not valid.");
             }
