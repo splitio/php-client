@@ -68,6 +68,7 @@ class PRedis implements CacheStorageAdapterInterface
 
     /**
      * @param array $clusters
+     * @param mixed $options
      * @return bool
      * @throws AdapterException
      */
@@ -77,16 +78,16 @@ class PRedis implements CacheStorageAdapterInterface
         if (!is_null($msg)) {
             throw new AdapterException($msg);
         }
-        if (!isset($options['hashtag'])) {
-            throw new AdapterException("Hashtag is mandatory for redis cluster.");
+        if (!isset($options['keyHashTag'])) {
+            throw new AdapterException("keyHashTag is mandatory for redis cluster.");
         }
-        if (!is_string($options['hashtag'])) {
-            throw new AdapterException("Hashtag must be string.");
+        if (!is_string($options['keyHashTag'])) {
+            throw new AdapterException("keyHashTag must be string.");
         } else {
-            $tag = $options['hashtag'];
+            $tag = $options['keyHashTag'];
             if ((strlen($tag) < 2) || ($tag[0] != "{") || (substr($tag, -1) != "}") || (substr_count($tag, "{") != 1)
                 || (substr_count($tag, "}") != 1)) {
-                throw new AdapterException("Hashtag is not valid.");
+                throw new AdapterException("keyHashTag is not valid.");
             }
         }
         return true;
@@ -130,7 +131,7 @@ class PRedis implements CacheStorageAdapterInterface
                             $_options['cluster'] = 'redis';
                             $redisConfigutation['redis'] = $clusters;
                             $prefix = isset($_options['prefix']) ? $_options['prefix'] : '';
-                            $_options['prefix'] = $_options['hashtag'] . $prefix;
+                            $_options['prefix'] = $_options['keyHashTag'] . $prefix;
                         }
                         break;
                     case 'sentinel':

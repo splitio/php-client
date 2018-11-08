@@ -244,7 +244,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             'clusterNodes' => array(),
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'hashtag' => '{TEST}'
+                'keyHashTag' => '{TEST}'
             )
         ));
     }
@@ -268,7 +268,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             'clusterNodes' => "test",
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'hashtag' => '{TEST}'
+                'keyHashTag' => '{TEST}'
             )
         ));
     }
@@ -290,11 +290,11 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
-    public function testRedisWithoutHashtagInClusters()
+    public function testRedisWithoutKeyHashtagInClusters()
     {
         $this->setExpectedException(
             AdapterException::class,
-            "Hashtag is mandatory for redis cluster."
+            "keyHashTag is mandatory for redis cluster."
         );
 
         $predis = new PRedis(array(
@@ -309,11 +309,11 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         $predis->getItem('this_is_a_test_key');
     }
 
-    public function testRedisWithInvalidHashtagInClusters()
+    public function testRedisWithInvalidKeyHashtagInClusters()
     {
         $this->setExpectedException(
             AdapterException::class,
-            "Hashtag is not valid."
+            "keyHashTag is not valid."
         );
 
         $predis = new PRedis(array(
@@ -322,18 +322,18 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ),
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'hashtag' => '{TEST'
+                'keyHashTag' => '{TEST'
             )
         ));
 
         $predis->getItem('this_is_a_test_key');
     }
 
-    public function testRedisWithInvalidBeginingHashtagInClusters()
+    public function testRedisWithInvalidBeginingKeyHashtagInClusters()
     {
         $this->setExpectedException(
             AdapterException::class,
-            "Hashtag is not valid."
+            "keyHashTag is not valid."
         );
 
         $predis = new PRedis(array(
@@ -342,18 +342,18 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ),
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'hashtag' => 'TEST}'
+                'keyHashTag' => 'TEST}'
             )
         ));
 
         $predis->getItem('this_is_a_test_key');
     }
 
-    public function testRedisWithWrongTypeHashtagInClusters()
+    public function testRedisWithWrongTypeKeyHashtagInClusters()
     {
         $this->setExpectedException(
             AdapterException::class,
-            "Hashtag must be string."
+            "keyHashTag must be string."
         );
 
         $predis = new PRedis(array(
@@ -362,18 +362,18 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ),
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'hashtag' => array()
+                'keyHashTag' => array()
             )
         ));
 
         $predis->getItem('this_is_a_test_key');
     }
 
-    public function testRedisWithWrongLengthHashtagInClusters()
+    public function testRedisWithWrongLengthKeyHashtagInClusters()
     {
         $this->setExpectedException(
             AdapterException::class,
-            "Hashtag is not valid."
+            "keyHashTag is not valid."
         );
         
         $predis = new PRedis(array(
@@ -382,7 +382,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ),
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'hashtag' => ""
+                'keyHashTag' => ""
             )
         ));
 
@@ -398,7 +398,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ),
             'options' => array(
                 'distributedStrategy' => 'cluster',
-                'hashtag' => '{TEST}'
+                'keyHashTag' => '{TEST}'
             )
         ));
 

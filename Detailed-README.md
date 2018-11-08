@@ -303,7 +303,7 @@ $clusterNodes = array(
 $options = array(
     'distributedStrategy' => 'cluster',
     'prefix' => ''
-    'hashtag' => '{MYTAG}'
+    'keyHashTag' => '{MYTAG}'
 );
 
 /** SDK options */
