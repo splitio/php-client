@@ -184,8 +184,9 @@ class Client implements ClientInterface
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .
-                "feature: $featureName, key: $key"
+                "feature: $featureName, key: $matchingKey"
             );
+            SplitApp::logger()->critical($e);
         }
         return TreatmentEnum::CONTROL;
     }
