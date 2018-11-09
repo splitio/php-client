@@ -67,28 +67,38 @@ class PRedis implements CacheStorageAdapterInterface
     }
 
     /**
-     * @param array $clusters
      * @param mixed $options
+     * @return string
+     * @throws AdapterException
+     */
+    private function getDefaultKeyHashTag($options)
+    {
+        if (!isset($options['keyHashTag'])) {
+            return "{SPLITIO}";
+        }
+        $keyHashTag = $options['keyHashTag'];
+        if (!is_string($keyHashTag)) {
+            throw new AdapterException("keyHashTag must be string.");
+        } else {
+            if ((strlen($keyHashTag) < 3) || ($keyHashTag[0] != "{") ||
+                (substr($keyHashTag, -1) != "}") || (substr_count($keyHashTag, "{") != 1) ||
+                (substr_count($keyHashTag, "}") != 1)) {
+                throw new AdapterException("keyHashTag is not valid.");
+            }
+        }
+        return $keyHashTag;
+    }
+
+    /**
+     * @param array $clusters
      * @return bool
      * @throws AdapterException
      */
-    private function isValidClusterConfig($clusters, $options)
+    private function isValidClusterConfig($clusters)
     {
         $msg = $this->isValidConfigArray($clusters, 'clusterNode');
         if (!is_null($msg)) {
             throw new AdapterException($msg);
-        }
-        if (!isset($options['keyHashTag'])) {
-            throw new AdapterException("keyHashTag is mandatory for redis cluster.");
-        }
-        if (!is_string($options['keyHashTag'])) {
-            throw new AdapterException("keyHashTag must be string.");
-        } else {
-            $tag = $options['keyHashTag'];
-            if ((strlen($tag) < 3) || ($tag[0] != "{") || (substr($tag, -1) != "}") || (substr_count($tag, "{") != 1)
-                || (substr_count($tag, "}") != 1)) {
-                throw new AdapterException("keyHashTag is not valid.");
-            }
         }
         return true;
     }
@@ -127,11 +137,12 @@ class PRedis implements CacheStorageAdapterInterface
             if (isset($_options['distributedStrategy'])) {
                 switch ($_options['distributedStrategy']) {
                     case 'cluster':
-                        if ($this->isValidClusterConfig($clusters, $_options)) {
+                        if ($this->isValidClusterConfig($clusters)) {
+                            $keyHashTag = $this->getDefaultKeyHashTag($_options);
                             $_options['cluster'] = 'redis';
                             $redisConfigutation['redis'] = $clusters;
                             $prefix = isset($_options['prefix']) ? $_options['prefix'] : '';
-                            $_options['prefix'] = $_options['keyHashTag'] . $prefix;
+                            $_options['prefix'] = $keyHashTag . $prefix;
                         }
                         break;
                     case 'sentinel':

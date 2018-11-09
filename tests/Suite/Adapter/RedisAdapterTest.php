@@ -290,25 +290,6 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
-    public function testRedisWithoutKeyHashtagInClusters()
-    {
-        $this->setExpectedException(
-            AdapterException::class,
-            "keyHashTag is mandatory for redis cluster."
-        );
-
-        $predis = new PRedis(array(
-            'clusterNodes' => array(
-                'tcp://MYIP:26379?timeout=3'
-            ),
-            'options' => array(
-                'distributedStrategy' => 'cluster'
-            )
-        ));
-
-        $predis->getItem('this_is_a_test_key');
-    }
-
     public function testRedisWithInvalidKeyHashtagInClusters()
     {
         $this->setExpectedException(
@@ -399,6 +380,21 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             'options' => array(
                 'distributedStrategy' => 'cluster',
                 'keyHashTag' => '{TEST}'
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithoutCustomKeyHashtagClusters()
+    {
+        $this->setExpectedException(ClientException::class);
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
             )
         ));
 
