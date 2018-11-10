@@ -33,7 +33,7 @@ class ImpressionCache
             $impressions
         );
 
-        Di::getLogger()->debug("Adding impressions into queue: ". $toStore);
+        Di::getLogger()->debug("Adding impressions into queue: ". implode(",", $toStore));
         $count = Di::getCache()->rightPushInList(self::IMPRESSIONS_QUEUE_KEY, $toStore);
         if ($count == count($impressions)) {
             Di::getCache()->expireKey(self::IMPRESSIONS_QUEUE_KEY, self::IMPRESSION_KEY_DEFAULT_TTL);

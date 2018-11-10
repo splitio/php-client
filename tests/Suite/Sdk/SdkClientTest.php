@@ -177,7 +177,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidCacheAdapter()
     {
-        $this->setExpectedException(\SplitIO\Exception\Exception::class);
+        $this->setExpectedException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),

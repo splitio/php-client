@@ -27,7 +27,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithNullValues()
     {
-        $this->setExpectedException(AdapterException::class, "Wrong configuration of redis.");
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
 
         $predis = new PRedis(array());
     }
@@ -95,7 +95,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithEmptySentinels()
     {
-        $this->setExpectedException(AdapterException::class, 'At least one sentinel is required.');
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one sentinel is required.');
 
         $predis = new PRedis(array(
             'sentinels' => array(),
@@ -107,7 +107,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinelsWithoutOptions()
     {
-        $this->setExpectedException(AdapterException::class, "Wrong configuration of redis.");
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -118,7 +118,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinelsWithoutReplicationOption()
     {
-        $this->setExpectedException(AdapterException::class, "Wrong configuration of redis.");
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
         $predis = new PRedis(array(
             'sentinels' => array(
                 '127.0.0.1'
@@ -134,7 +134,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
-        $this->setExpectedException(AdapterException::class, "Wrong configuration of redis 'distributedStrategy'.");
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis 'distributedStrategy'.");
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -154,7 +154,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
         $this->setExpectedException(
-            AdapterException::class,
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             'Master name is required in replication mode for sentinel.'
         );
 
@@ -172,7 +172,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $logger = $this->getMockedLogger();
 
-        $this->setExpectedException(AdapterException::class, 'sentinels must be an array.');
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'sentinels must be an array.');
 
         $predis = new PRedis(array(
             'sentinels' => "test",
@@ -185,7 +185,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisSentinelWithWrongRedisDistributedStrategy()
     {
         $this->setExpectedException(
-            AdapterException::class,
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "Wrong configuration of redis 'distributedStrategy'."
         );
 
@@ -206,7 +206,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
-        $this->setExpectedException(ClientException::class);
+        $this->setExpectedException('\Predis\ClientException');
         $predis = new PRedis(array(
             'sentinels' => array(
                 'tcp://MYIP:26379?timeout=3'
@@ -222,7 +222,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinelsAndDistributedStrategy()
     {
-        $this->setExpectedException(ServerException::class);
+        $this->setExpectedException('\Predis\Response\ServerException');
         $predis = new PRedis(array(
             'sentinels' => array(
                 'tcp:/MYIP:26379?timeout=3'
@@ -238,7 +238,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithEmptyClusters()
     {
-        $this->setExpectedException(AdapterException::class, 'At least one clusterNode is required.');
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one clusterNode is required.');
 
         $predis = new PRedis(array(
             'clusterNodes' => array(),
@@ -250,7 +250,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithClustersWithoutOptions()
     {
-        $this->setExpectedException(AdapterException::class, "Wrong configuration of redis.");
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -261,7 +261,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithWrongTypeOfClusters()
     {
-        $this->setExpectedException(AdapterException::class, 'clusterNodes must be an array.');
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'clusterNodes must be an array.');
 
         $predis = new PRedis(array(
             'clusterNodes' => "test",
@@ -274,7 +274,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisClusterWithWrongRedisDistributedStrategy()
     {
         $this->setExpectedException(
-            AdapterException::class,
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "Wrong configuration of redis 'distributedStrategy'."
         );
 
@@ -290,7 +290,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithClusters()
     {
-        $this->setExpectedException(ClientException::class);
+        $this->setExpectedException('\Predis\ClientException');
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
