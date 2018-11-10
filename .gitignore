@@ -20,3 +20,6 @@ test.php
 
 #vim backup files
 *.swp
+
+# phpenv
+.php-version
