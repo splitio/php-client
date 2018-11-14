@@ -268,7 +268,7 @@ $sentinels = array(
 );
 
 $options = array(
-    'replication' => 'sentinel',
+    'distributedStrategy' => 'sentinel',
     'service' => 'SERVICE_MASTER_NAME',
     'prefix' => ''
 );
@@ -277,6 +277,39 @@ $options = array(
 $sdkConfig = array(
     'cache' => array('adapter' => 'predis',
                      'sentinels' => $sentinels,
+                     'options' => $options
+                    )
+);
+
+/** Create the Split Client instance. */
+$splitFactory = \SplitIO\Sdk::factory('YOUR_API_KEY', $sdkConfig);
+$splitClient = $splitFactory->client();
+```
+
+Note: We have deprecated `replication` option and replaced it for `distributedStrategy`.
+
+#### Provided PRedis Cache Adapter - sample code for Cluster Support
+```php
+/*** PRedis clusterNodes array */
+//The array below, will corresponds to a list of cluster nodes.
+//It will be loaded as $client = new Predis\Client($clusterNodes, $options);
+
+$clusterNodes = array(
+    'tcp://IP:PORT?timeout=NUMBER',
+    'tcp://IP:PORT?timeout=NUMBER',
+    'tcp://IP:PORT?timeout=NUMBER'
+);
+
+$options = array(
+    'distributedStrategy' => 'cluster',
+    'prefix' => ''
+    'keyHashTag' => '{MYTAG}'
+);
+
+/** SDK options */
+$sdkConfig = array(
+    'cache' => array('adapter' => 'predis',
+                     'clusterNodes' => $clusterNodes,
                      'options' => $options
                     )
 );
