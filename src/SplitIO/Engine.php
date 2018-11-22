@@ -6,6 +6,7 @@ use SplitIO\Grammar\Condition;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\ConditionTypeEnum;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
+use SplitIO\Component\Common\Di;
 
 class Engine
 {
@@ -37,12 +38,12 @@ class Engine
         foreach ($conditions as $condition) {
             if (!$inRollOut  && $condition->getConditionType() == ConditionTypeEnum::ROLLOUT) {
                 if ($split->getTrafficAllocation() < 100) {
-                    $bucket = Splitter::getBucket(
+                    $bucket = Di::get('splitter')->getBucket(
                         $split->getAlgo(),
                         $bucketingKey,
                         $split->getTrafficAllocationSeed()
                     );
-                    if ($bucket >= $split->getTrafficAllocation()) {
+                    if ($bucket > $split->getTrafficAllocation()) {
                         $result[self::EVALUATION_RESULT_LABEL] = ImpressionLabel::NOT_IN_SPLIT;
                         $result[self::EVALUATION_RESULT_TREATMENT] = $split->getDefaultTratment();
                         return $result;
@@ -51,7 +52,7 @@ class Engine
                 }
             }
             if ($condition->match($matchingKey, $attributes, $bucketingKey)) {
-                $result[self::EVALUATION_RESULT_TREATMENT] = Splitter::getTreatment(
+                $result[self::EVALUATION_RESULT_TREATMENT] = Di::get('splitter')->getTreatment(
                     $bucketingKey,
                     $split->getSeed(),
                     $condition->getPartitions(),
@@ -59,12 +60,10 @@ class Engine
                 );
 
                 $result[self::EVALUATION_RESULT_LABEL] = $condition->getLabel();
-
                 //Return the first condition that match.
                 return $result;
             }
         }
-
         return $result;
     }
 }
