@@ -10,7 +10,6 @@ use SplitIO\Component\Memory\Exception\WriteSharedMemoryException;
 use SplitIO\Component\Memory\SharedMemory;
 use SplitIO\Component\Common\Di;
 use SplitIO\Engine;
-use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Metrics;
@@ -146,7 +145,6 @@ class Evaluator
                 $result['impression']['changeNumber'] = $split->getChangeNumber();
             } else {
                 Di::setMatcherClient(new MatcherClient($this));
-                Di::set('splitter', new Splitter());
                 $timeStart = Metrics::startMeasuringLatency();
                 $evaluationResult = Engine::getTreatment(
                     $matchingKey,
