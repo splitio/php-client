@@ -7,6 +7,8 @@ use SplitIO\Component\Initialization\LoggerTrait;
 use SplitIO\Exception\Exception;
 use SplitIO\Sdk\Factory\LocalhostSplitFactory;
 use SplitIO\Sdk\Factory\SplitFactory;
+use SplitIO\Component\Common\Di;
+use SplitIO\Engine\Splitter;
 
 class Sdk
 {
@@ -40,6 +42,8 @@ class Sdk
             if (isset($options['ipAddress'])) {
                 self::setIP($options['ipAddress']);
             }
+
+            Di::set('splitter', new Splitter());
 
             return new SplitFactory($apiKey, $options);
         }
