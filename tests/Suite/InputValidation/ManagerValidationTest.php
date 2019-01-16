@@ -45,9 +45,22 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('split: featureName cannot be null.'));
+            ->with($this->equalTo("split: you passed 'null', split must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(null));
+    }
+
+    public function testManagerWithEmptySplitName()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("split: you passed '\"\"', split must be a non-empty string."));
+
+        $this->assertEquals(null, $splitSdk->split(''));
     }
 
     public function testManagerWithBooleanSplitName()
@@ -58,7 +71,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('split: featureName has to be of type "string".'));
+            ->with($this->equalTo("split: you passed 'true', split must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(true));
     }
@@ -71,7 +84,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('split: featureName has to be of type "string".'));
+            ->with($this->equalTo("split: you passed '[]', split must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(array()));
     }
@@ -84,7 +97,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('split: featureName has to be of type "string".'));
+            ->with($this->equalTo("split: you passed '1', split must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(1));
     }
