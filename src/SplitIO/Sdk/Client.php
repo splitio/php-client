@@ -115,7 +115,7 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        $key = InputValidator::validateKey($key);
+        $key = InputValidator::validateKey($key, 'getTreatment');
         if (is_null($key)) {
             return TreatmentEnum::CONTROL;
         }
@@ -228,13 +228,13 @@ class Client implements ClientInterface
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
         try {
-            $splitNames = InputValidator::validateGetTreatments($featureNames);
-            if (is_null($splitNames)) {
+            $key = InputValidator::validateKey($key, 'getTreatments');
+            if (is_null($key)) {
                 return null;
             }
 
-            $key = InputValidator::validateKey($key);
-            if (is_null($key)) {
+            $splitNames = InputValidator::validateGetTreatments($featureNames);
+            if (is_null($splitNames)) {
                 return null;
             }
 
@@ -258,6 +258,7 @@ class Client implements ClientInterface
                         $evalResult['impression']['changeNumber']
                     );
                 } catch (\Exception $e) {
+                    $result[$splitName] = TreatmentEnum::CONTROL;
                     SplitApp::logger()->critical(
                         'getTreatments: An exception occured when evaluating feature: '. $splitName . '. skipping it'
                     );

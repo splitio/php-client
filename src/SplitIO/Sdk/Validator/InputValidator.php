@@ -86,10 +86,10 @@ class InputValidator
      * @param $key
      * @return mixed|null
      */
-    public static function validateKey($key)
+    public static function validateKey($key, $operation)
     {
         if (is_null($key)) {
-            SplitApp::logger()->critical("getTreatment: you passed 'null', key must be a non-empty string.");
+            SplitApp::logger()->critical($operation . ": you passed 'null', key must be a non-empty string.");
             return null;
         }
         if ($key instanceof Key) {
@@ -98,14 +98,14 @@ class InputValidator
                 'bucketingKey' => $key->getBucketingKey()
             );
         } else {
-            $strKey = \SplitIO\toString($key, 'key', 'getTreatment');
+            $strKey = \SplitIO\toString($key, 'key', $operation);
             if ($strKey && !empty($strKey)) {
                 return array(
                     'matchingKey' => $strKey,
                     'bucketingKey' => null
                 );
             } else {
-                SplitApp::logger()->critical('getTreatment: you passed ' . \SplitIO\converToString($key) .
+                SplitApp::logger()->critical($operation . ': you passed ' . \SplitIO\converToString($key) .
                     ', key must be a non-empty string.');
             }
         }
