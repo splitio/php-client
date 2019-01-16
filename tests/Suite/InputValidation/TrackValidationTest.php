@@ -59,7 +59,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo('track: key 123456 is not of type string, converting.')
+                $this->equalTo("track: key '123456' is not of type string, converting.")
             ));
 
         $this->assertEquals(true, $splitSdk->track(123456, 'some_traffic', 'some_event', 1));

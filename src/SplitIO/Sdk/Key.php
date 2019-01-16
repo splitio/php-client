@@ -1,6 +1,9 @@
 <?php
 namespace SplitIO\Sdk;
 
+use SplitIO\Sdk\Validator\InputValidator;
+use SplitIO\Exception\KeyException;
+
 /**
  * Class Key
  * @package SplitIO\Sdk
@@ -26,19 +29,18 @@ class Key
      */
     public function __construct($matchingKey, $bucketingKey)
     {
-        $strMatchingKey = \SplitIO\toString($matchingKey);
-        if ($strMatchingKey !== false) {
-            $this->matchingKey = $matchingKey;
-        } else {
-            throw new KeyException("Invalid matchingKey type. Must be string");
+        $strMatchingKey = \SplitIO\toString($matchingKey, "matchingKey", "getTreatment");
+        if ((!$strMatchingKey) || (empty($strMatchingKey))) {
+            throw new KeyException("getTreatment: you passed " . \SplitIO\converToString($matchingKey) .
+                ", matchingKey must be a non-empty string.");
         }
-
-        $strBucketingKey = \SplitIO\toString($bucketingKey);
-        if ($strBucketingKey !== false) {
-            $this->bucketingKey = $bucketingKey;
-        } else {
-            throw new KeyException("Invalid bucketingKey type. Must be string");
+        $this->matchingKey = $strMatchingKey;
+        $strBucketingKey = \SplitIO\toString($bucketingKey, "bucketingKey", "getTreatment");
+        if ((!$strBucketingKey) || (empty($strBucketingKey))) {
+            throw new KeyException("getTreatment: you passed " . \SplitIO\converToString($bucketingKey) .
+                ", bucketingKey must be a non-empty string.");
         }
+        $this->bucketingKey = $bucketingKey;
     }
 
     /**

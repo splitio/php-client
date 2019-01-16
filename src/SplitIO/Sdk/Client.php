@@ -116,9 +116,12 @@ class Client implements ClientInterface
     public function getTreatment($key, $featureName, array $attributes = null)
     {
         $key = InputValidator::validateKey($key);
-        $featureName = InputValidator::validateFeatureName($featureName);
+        if (is_null($key)) {
+            return TreatmentEnum::CONTROL;
+        }
 
-        if (is_null($key) || is_null($featureName)) {
+        $featureName = InputValidator::validateFeatureName($featureName);
+        if (is_null($featureName)) {
             return TreatmentEnum::CONTROL;
         }
 

@@ -88,7 +88,8 @@ class InputValidator
      */
     public static function validateKey($key)
     {
-        if (!self::checkNotNull($key, 'key', 'getTreatment')) {
+        if (is_null($key)) {
+            SplitApp::logger()->critical("getTreatment: you passed 'null', key must be a non-empty string.");
             return null;
         }
         if ($key instanceof Key) {
@@ -98,14 +99,14 @@ class InputValidator
             );
         } else {
             $strKey = \SplitIO\toString($key, 'key', 'getTreatment');
-            if ($strKey !== false) {
+            if ($strKey && !empty($strKey)) {
                 return array(
                     'matchingKey' => $strKey,
                     'bucketingKey' => null
                 );
             } else {
-                SplitApp::logger()->critical('getTreatment: key has to be of type "string" or "SplitIO\Sdk\Key".');
-                return null;
+                SplitApp::logger()->critical('getTreatment: you passed ' . \SplitIO\converToString($key) .
+                    ', key must be a non-empty string.');
             }
         }
         return null;
@@ -117,7 +118,12 @@ class InputValidator
      */
     public static function validateFeatureName($featureName)
     {
-        return self::validateString($featureName, 'featureName', 'getTreatment');
+        if (is_null($featureName) || !is_string($featureName) || empty($featureName)) {
+            SplitApp::logger()->critical('getTreatment: you passed ' . \SplitIO\converToString($featureName) .
+                ', split must be a non-empty string.');
+            return null;
+        }
+        return $featureName;
     }
 
     /**
@@ -130,7 +136,7 @@ class InputValidator
             return null;
         }
         $strKey = \SplitIO\toString($key, 'key', 'track');
-        if ($strKey !== false) {
+        if ($strKey) {
             return $strKey;
         } else {
             SplitApp::logger()->critical('track: key ' .json_encode($key)
@@ -213,11 +219,8 @@ class InputValidator
      */
     public static function validateGetTreatments($featureNames)
     {
-        if (!self::checkNotNull($featureNames, 'featureNames', 'getTreatments')) {
-            return null;
-        }
-        if (!is_array($featureNames)) {
-            SplitApp::logger()->critical('getTreatments: featureNames must be an array.');
+        if (is_null($featureNames) || !is_array($featureNames)) {
+            SplitApp::logger()->critical('getTreatments: featureNames must be a non-empty array.');
             return null;
         }
         $filteredArray = array_values(
@@ -226,7 +229,8 @@ class InputValidator
             )
         );
         if (count($filteredArray) == 0) {
-            SplitApp::logger()->warning('getTreatments: featureNames is an empty array or has null values.');
+            SplitApp::logger()->critical('getTreatments: featureNames must be a non-empty array.');
+            return null;
         }
         return $filteredArray;
     }

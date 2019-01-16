@@ -1,5 +1,5 @@
 <?php
-namespace SplitIO\Sdk;
+namespace SplitIO\Exception;
 
 class KeyException extends \LogicException
 {
