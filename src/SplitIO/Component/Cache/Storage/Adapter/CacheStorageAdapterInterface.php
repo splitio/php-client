@@ -100,7 +100,14 @@ interface CacheStorageAdapterInterface
     /**
      * @param $queueName
      * @param $item
-     * @return boolean
+     * @return integer
      */
     public function rightPushQueue($queueName, $item);
+
+    /**
+     * @param $key
+     * @param $ttl
+     * @return boolean
+     */
+    public function expireKey($key, $ttl);
 }
