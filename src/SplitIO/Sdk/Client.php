@@ -125,6 +125,10 @@ class Client implements ClientInterface
             return TreatmentEnum::CONTROL;
         }
 
+        if (!InputValidator::validAttributes($attributes, 'getTreatment')) {
+            return TreatmentEnum::CONTROL;
+        }
+
         $matchingKey = $key['matchingKey'];
         $bucketingKey = $key['bucketingKey'];
 
@@ -235,6 +239,10 @@ class Client implements ClientInterface
 
             $splitNames = InputValidator::validateGetTreatments($featureNames);
             if (is_null($splitNames)) {
+                return null;
+            }
+
+            if (!InputValidator::validAttributes($attributes, 'getTreatments')) {
                 return null;
             }
 

@@ -74,7 +74,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("getTreatment: matchingKey '12345' is not of type string, converting.")
+                $this->equalTo("Key: matchingKey '12345' is not of type string, converting.")
             ));
 
             $this->assertEquals(
@@ -119,7 +119,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("getTreatment: bucketingKey '12345' is not of type string, converting.")
+                $this->equalTo("Key: bucketingKey '12345' is not of type string, converting.")
             ));
 
             $this->assertEquals(
@@ -136,9 +136,25 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed 'null', key must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed a null key, the key must be a non-empty string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment(null, 'some_feature'));
+    }
+
+    public function testGetTreatmentKeyLong()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: key too long - must be 250 characters or less."));
+
+        $this->assertEquals('control', $splitSdk->getTreatment('somekeysomekeysomekeysomekey' .
+            'somekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekey' .
+            'somekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekey' .
+            'somekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysom', 'some_feature'));
     }
 
     public function testGetTreatmentWithEmptyKey()
@@ -149,7 +165,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed '\"\"', key must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed an empty key, key must be a non-empty string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('', 'some_feature'));
     }
@@ -177,7 +193,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed 'true', key must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed an invalid key type, key must be a non-empty string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment(true, 'some_feature'));
     }
@@ -190,7 +206,8 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed 'null', split must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed a null split name, split name must be a non-empty"
+                . " string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', null));
     }
@@ -203,7 +220,8 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed '\"\"', split must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed an empty split name, split name must be a non-empty"
+                . " string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', ''));
     }
@@ -216,7 +234,8 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed '12345', split must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed an invalid split name, split name must be a non-empty"
+                . " string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', 12345));
     }
@@ -229,7 +248,8 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed 'true', split must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed an invalid split name, split name must be a non-empty"
+                . " string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', true));
     }
@@ -242,8 +262,9 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed '[]', split must be a non-empty string."));
-
+            ->with($this->equalTo("getTreatment: you passed an invalid split name, split name must be a non-empty"
+                . " string."));
+        
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', array()));
     }
 

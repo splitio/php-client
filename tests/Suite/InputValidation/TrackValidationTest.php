@@ -45,9 +45,25 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed 'null', key must be a non-empty string."));
+            ->with($this->equalTo("track: you passed a null key, key must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track(null, 'some_traffic', 'some_event', 1));
+    }
+
+    public function testTrackKeyLong()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("track: key too long - must be 250 characters or less."));
+
+        $this->assertEquals(false, $splitSdk->track('somekeysomekeysomekeysomekey' .
+            'somekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekey' .
+            'somekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekey' .
+            'somekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysomekeysom', '1', '1', 1));
     }
 
     public function testTrackWitNumberKey()
@@ -73,7 +89,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed '\"\"', key must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an empty key, key must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track('', 'some_traffic', 'some_event', 1));
     }
@@ -86,7 +102,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed 'true', key must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an invalid key type, key must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track(true, 'some_traffic', 'some_event', 1));
     }
@@ -99,7 +115,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed 'null', trafficType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed a null traffic type, traffic type must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', null, 'some_event', 1));
     }
@@ -112,7 +128,8 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed 'true', trafficType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an invalid traffic type, traffic type must be a non-empty "
+                . "string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', true, 'some_event', 1));
     }
@@ -125,8 +142,9 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed '[]', trafficType must be a non-empty string."));
-
+            ->with($this->equalTo("track: you passed an invalid traffic type, traffic type must be a non-empty "
+                . "string."));
+        
         $this->assertEquals(false, $splitSdk->track('some_key', array(), 'some_event', 1));
     }
 
@@ -138,8 +156,9 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed '12345', trafficType must be a non-empty string."));
-
+            ->with($this->equalTo("track: you passed an invalid traffic type, traffic type must be a non-empty "
+                . "string."));
+        
         $this->assertEquals(false, $splitSdk->track('some_key', 12345, 'some_event', 1));
     }
 
@@ -151,7 +170,8 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed '\"\"', trafficType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an empty traffic type, traffic type must be a non-empty "
+                . "string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', '', 'some_event', 1));
     }
@@ -177,7 +197,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed 'null', eventType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed a null event type, event type must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', null, 1));
     }
@@ -190,7 +210,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed '\"\"', eventType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an empty event type, event type must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', '', 1));
     }
@@ -203,7 +223,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed 'true', eventType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an invalid event type, event type must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', true, 1));
     }
@@ -216,7 +236,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed '[]', eventType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an invalid event type, event type must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', array(), 1));
     }
@@ -229,7 +249,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("track: you passed '12345', eventType must be a non-empty string."));
+            ->with($this->equalTo("track: you passed an invalid event type, event type must be a non-empty string."));
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', 12345, 1));
     }

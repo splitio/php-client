@@ -29,16 +29,23 @@ class Key
      */
     public function __construct($matchingKey, $bucketingKey)
     {
-        $strMatchingKey = \SplitIO\toString($matchingKey, "matchingKey", "getTreatment");
-        if ((!$strMatchingKey) || (empty($strMatchingKey))) {
-            throw new KeyException("getTreatment: you passed " . \SplitIO\converToString($matchingKey) .
-                ", matchingKey must be a non-empty string.");
+        $strMatchingKey = \SplitIO\toString($matchingKey, "matchingKey", "Key");
+        if ($strMatchingKey === false) {
+            throw new KeyException('Key: you passed an invalid matchingKey type, matchingKey '
+                . 'must be a non-empty string.');
+        }
+        if (empty($strMatchingKey)) {
+            throw new KeyException('Key: you passed an empty string, matchingKey must be a non-empty string.');
         }
         $this->matchingKey = $strMatchingKey;
-        $strBucketingKey = \SplitIO\toString($bucketingKey, "bucketingKey", "getTreatment");
-        if ((!$strBucketingKey) || (empty($strBucketingKey))) {
-            throw new KeyException("getTreatment: you passed " . \SplitIO\converToString($bucketingKey) .
-                ", bucketingKey must be a non-empty string.");
+        $strBucketingKey = \SplitIO\toString($bucketingKey, "bucketingKey", "Key");
+        if ($strBucketingKey === false) {
+            throw new KeyException('Key: you passed an invalid bucketingKey type, bucketingKey '
+                . 'must be a non-empty string.');
+        }
+        if (empty($strBucketingKey)) {
+            throw new KeyException('Key: you passed an empty string, bucketingKey must be a non-empty '
+                . 'string.');
         }
         $this->bucketingKey = $bucketingKey;
     }

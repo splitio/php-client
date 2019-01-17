@@ -4,17 +4,45 @@ namespace SplitIO\Sdk\Validator;
 
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
+use SplitIO\Component\Utils as SplitIOUtils;
 
 class InputValidator
 {
     /**
+     * @param $value
+     * @param $name
+     * @param $operation
+     * @return true|false
+     */
+    private static function validString($value, $name, $operation)
+    {
+        if (is_null($value)) {
+            SplitApp::logger()->critical($operation . ": you passed a null " . $name . ", " . $name .
+                " must be a non-empty string.");
+            return false;
+        }
+        if (!is_string($value)) {
+            SplitApp::logger()->critical($operation . ": you passed an invalid " . $name . ", " . $name .
+                " must be a non-empty string.");
+            return false;
+        }
+        if (empty($value)) {
+            SplitApp::logger()->critical($operation . ": you passed an empty " . $name . ", " . $name .
+                " must be a non-empty string.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @param $key
+     * @param $operation
      * @return mixed|null
      */
     public static function validateKey($key, $operation)
     {
         if (is_null($key)) {
-            SplitApp::logger()->critical($operation . ": you passed 'null', key must be a non-empty string.");
+            SplitApp::logger()->critical($operation . ": you passed a null key, the key must be a non-empty string.");
             return null;
         }
         if ($key instanceof Key) {
@@ -22,19 +50,25 @@ class InputValidator
                 'matchingKey' => $key->getMatchingKey(),
                 'bucketingKey' => $key->getBucketingKey()
             );
-        } else {
-            $strKey = \SplitIO\toString($key, 'key', $operation);
-            if ($strKey && !empty($strKey)) {
-                return array(
-                    'matchingKey' => $strKey,
-                    'bucketingKey' => null
-                );
-            } else {
-                SplitApp::logger()->critical($operation . ': you passed ' . \SplitIO\converToString($key) .
-                    ', key must be a non-empty string.');
-            }
         }
-        return null;
+        $strKey = \SplitIO\toString($key, 'key', $operation);
+        if ($strKey === false) {
+            SplitApp::logger()->critical($operation . ': you passed an invalid key type,'
+                . ' key must be a non-empty string.');
+            return null;
+        }
+        if (empty($strKey)) {
+            SplitApp::logger()->critical($operation . ": you passed an empty key, key must be a non-empty string.");
+            return null;
+        }
+        if (strlen($strKey) > 250) {
+            SplitApp::logger()->critical($operation . ": key too long - must be 250 characters or less.");
+            return null;
+        }
+        return array(
+            'matchingKey' => $strKey,
+            'bucketingKey' => null
+        );
     }
 
     /**
@@ -43,12 +77,7 @@ class InputValidator
      */
     public static function validateFeatureName($featureName)
     {
-        if (is_null($featureName) || !is_string($featureName) || empty($featureName)) {
-            SplitApp::logger()->critical('getTreatment: you passed ' . \SplitIO\converToString($featureName) .
-                ', split must be a non-empty string.');
-            return null;
-        }
-        return $featureName;
+        return self::validString($featureName, 'split name', 'getTreatment') ? $featureName : null;
     }
 
     /**
@@ -58,17 +87,23 @@ class InputValidator
     public static function validateTrackKey($key)
     {
         if (is_null($key)) {
-            SplitApp::logger()->critical("track: you passed 'null', key must be a non-empty string.");
+            SplitApp::logger()->critical("track: you passed a null key, key must be a non-empty string.");
             return null;
         }
         $strKey = \SplitIO\toString($key, 'key', 'track');
-        if ($strKey && !empty($strKey)) {
-            return $strKey;
-        } else {
-            SplitApp::logger()->critical('track: you passed ' . \SplitIO\converToString($key) .
-                ', key must be a non-empty string.');
+        if ($strKey === false) {
+            SplitApp::logger()->critical('track: you passed an invalid key type, key must be a non-empty string.');
+            return null;
         }
-        return null;
+        if (empty($strKey)) {
+            SplitApp::logger()->critical('track: you passed an empty key, key must be a non-empty string.');
+            return null;
+        }
+        if (strlen($strKey) > 250) {
+            SplitApp::logger()->critical('track: key too long - must be 250 characters or less.');
+            return null;
+        }
+        return $strKey;
     }
 
     /**
@@ -77,9 +112,7 @@ class InputValidator
      */
     public static function validateTrafficType($trafficType)
     {
-        if (is_null($trafficType) || !is_string($trafficType) || empty($trafficType)) {
-            SplitApp::logger()->critical('track: you passed ' . \SplitIO\converToString($trafficType) .
-                ', trafficType must be a non-empty string.');
+        if (!self::validString($trafficType, 'traffic type', 'track')) {
             return null;
         }
         $toLowercase = strtolower($trafficType);
@@ -96,9 +129,7 @@ class InputValidator
      */
     public static function validateEventType($eventType)
     {
-        if (is_null($eventType) || !is_string($eventType) || empty($eventType)) {
-            SplitApp::logger()->critical('track: you passed ' . \SplitIO\converToString($eventType) .
-                ', eventType must be a non-empty string.');
+        if (!self::validString($eventType, 'event type', 'track')) {
             return null;
         }
         if (!preg_match('/[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}/', $eventType)) {
@@ -167,16 +198,27 @@ class InputValidator
     }
 
     /**
-     * @param $featureNames
+     * @param $featureName
      * @return string|null
      */
     public static function validateManager($featureName)
     {
-        if (is_null($featureName) || !is_string($featureName) || empty($featureName)) {
-            SplitApp::logger()->critical('split: you passed ' . \SplitIO\converToString($featureName) .
-            ', split must be a non-empty string.');
-            return null;
+        return self::validString($featureName, 'split name', 'split') ? $featureName : null;
+    }
+
+    /**
+     * @param $attributes
+     * @return true|false
+     */
+    public static function validAttributes($attributes, $operation)
+    {
+        if (is_null($attributes)) {
+            return true;
         }
-        return $featureName;
+        if (!SplitIOUtils\isAssociativeArray($attributes)) {
+            SplitApp::logger()->critical($operation . ': attributes must be of type dictionary.');
+            return false;
+        }
+        return true;
     }
 }

@@ -74,7 +74,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("getTreatment: matchingKey '12345' is not of type string, converting.")
+                $this->equalTo("Key: matchingKey '12345' is not of type string, converting.")
             ));
 
         $treatmentResult = $splitSdk->getTreatments(new Key(12345, 'some_bucketing_key'), ['some_feature']);
@@ -120,7 +120,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("getTreatment: bucketingKey '12345' is not of type string, converting.")
+                $this->equalTo("Key: bucketingKey '12345' is not of type string, converting.")
             ));
 
         $treatmentResult = $splitSdk->getTreatments(new Key('some_matching_key', 12345), ['some_feature']);
@@ -138,7 +138,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatments: you passed 'null', key must be a non-empty string."));
+            ->with($this->equalTo("getTreatments: you passed a null key, the key must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->getTreatments(null, ['some_feature']));
     }
@@ -151,7 +151,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatments: you passed '\"\"', key must be a non-empty string."));
+            ->with($this->equalTo("getTreatments: you passed an empty key, key must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->getTreatments('', ['some_feature']));
     }
@@ -183,7 +183,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatments: you passed 'true', key must be a non-empty string."));
+            ->with($this->equalTo("getTreatments: you passed an invalid key type, key must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->getTreatments(true, ['some_feature']));
     }

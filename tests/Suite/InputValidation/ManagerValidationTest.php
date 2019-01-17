@@ -45,7 +45,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed 'null', split must be a non-empty string."));
+            ->with($this->equalTo("split: you passed a null split name, split name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(null));
     }
@@ -58,7 +58,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed '\"\"', split must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an empty split name, split name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(''));
     }
@@ -71,7 +71,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed 'true', split must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an invalid split name, split name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(true));
     }
@@ -84,7 +84,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed '[]', split must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an invalid split name, split name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(array()));
     }
@@ -97,7 +97,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed '1', split must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an invalid split name, split name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(1));
     }
