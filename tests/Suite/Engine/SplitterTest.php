@@ -8,6 +8,7 @@ use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Engine;
+use SplitIO\Component\Common\Di;
 
 class SplitterTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,6 +25,7 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWorks()
     {
+        Di::set('splitter', new Splitter());
         $partitions = array();
         for ($i = 1; $i <= 100; $i++) {
             $partitions[$i] = new Partition(array('treatment' => "$i", 'size' => 1));
@@ -39,7 +41,7 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
 
         for ($i = 0; $i < $n; $i++) {
             $key = uniqid('', true);
-            $treatment = Splitter::getTreatment($key, 32126754, $partitions, HashAlgorithmEnum::LEGACY);
+            $treatment = Di::get('splitter')->getTreatment($key, 32126754, $partitions, HashAlgorithmEnum::LEGACY);
             $treatments[(int)$treatment - 1]++;
         }
 
@@ -65,7 +67,7 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
         $partition = new Partition(array('treatment' => "on", 'size' => -1));
 
         $this->assertNull(
-            Splitter::getTreatment('someValidKey', 123123545, array($partition), HashAlgorithmEnum::LEGACY)
+            Di::get('splitter')->getTreatment('someValidKey', 123123545, array($partition), HashAlgorithmEnum::LEGACY)
         );
     }
 
@@ -124,5 +126,39 @@ class SplitterTest extends \PHPUnit_Framework_TestCase
         $split3 = new Split($rawSplit);
         $treatment3 = Engine::getTreatment('testKey', null, $split3);
         $this->assertEquals('default', $treatment3[Engine::EVALUATION_RESULT_TREATMENT]);
+
+        // Set bucket to 1 with low traffic allocation.
+        $splitterMocked = $this
+            ->getMockBuilder('\SplitIO\Engine\Splitter')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBucket'))
+            ->getMock();
+
+        $splitterMocked->method('getBucket')->willReturn(1);
+
+        Di::set('splitter', $splitterMocked);
+
+        $rawSplit['trafficAllocation'] = 1;
+        $rawSplit['trafficAllocationSeed'] = -1;
+        $split4 = new Split($rawSplit);
+        $treatment4 = Engine::getTreatment('testKey', null, $split4);
+        $this->assertEquals('on', $treatment4[Engine::EVALUATION_RESULT_TREATMENT]);
+
+        // Set bucket to 100 with high traffic allocation.
+        $splitterMocked2 = $this
+            ->getMockBuilder('\SplitIO\Engine\Splitter')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBucket'))
+            ->getMock();
+
+        $splitterMocked2->method('getBucket')->willReturn(100);
+
+        Di::set('splitter', $splitterMocked2);
+
+        $rawSplit['trafficAllocation'] = 99;
+        $rawSplit['trafficAllocationSeed'] = -1;
+        $split5 = new Split($rawSplit);
+        $treatment5 = Engine::getTreatment('testKey', null, $split5);
+        $this->assertEquals('default', $treatment5[Engine::EVALUATION_RESULT_TREATMENT]);
     }
 }

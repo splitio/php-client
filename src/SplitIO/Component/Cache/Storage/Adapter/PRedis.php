@@ -67,6 +67,29 @@ class PRedis implements CacheStorageAdapterInterface
     }
 
     /**
+     * @param mixed $options
+     * @return string
+     * @throws AdapterException
+     */
+    private function getDefaultKeyHashTag($options)
+    {
+        if (!isset($options['keyHashTag'])) {
+            return "{SPLITIO}";
+        }
+        $keyHashTag = $options['keyHashTag'];
+        if (!is_string($keyHashTag)) {
+            throw new AdapterException("keyHashTag must be string.");
+        } else {
+            if ((strlen($keyHashTag) < 3) || ($keyHashTag[0] != "{") ||
+                (substr($keyHashTag, -1) != "}") || (substr_count($keyHashTag, "{") != 1) ||
+                (substr_count($keyHashTag, "}") != 1)) {
+                throw new AdapterException("keyHashTag is not valid.");
+            }
+        }
+        return $keyHashTag;
+    }
+
+    /**
      * @param array $clusters
      * @return bool
      * @throws AdapterException
@@ -115,8 +138,11 @@ class PRedis implements CacheStorageAdapterInterface
                 switch ($_options['distributedStrategy']) {
                     case 'cluster':
                         if ($this->isValidClusterConfig($clusters)) {
+                            $keyHashTag = $this->getDefaultKeyHashTag($_options);
                             $_options['cluster'] = 'redis';
                             $redisConfigutation['redis'] = $clusters;
+                            $prefix = isset($_options['prefix']) ? $_options['prefix'] : '';
+                            $_options['prefix'] = $keyHashTag . $prefix;
                         }
                         break;
                     case 'sentinel':
@@ -289,8 +315,16 @@ class PRedis implements CacheStorageAdapterInterface
             $prefix = $this->client->getOptions()->__get("prefix")->getPrefix();
         }
 
-        $keys = $this->client->keys($pattern);
-
+        if ($this->client->getOptions()->__isset("distributedStrategy") &&
+            $this->client->getOptions()->__get("distributedStrategy") == "cluster") {
+            $keys = array();
+            foreach ($this->client as $nodeClient) {
+                $nodeClientKeys = $nodeClient->keys($pattern);
+                $keys = array_merge($keys, $nodeClientKeys);
+            }
+        } else {
+            $keys = $this->client->keys($pattern);
+        }
         if ($prefix) {
             if (is_array($keys)) {
                 for ($i=0; $i < count($keys); $i++) {
@@ -300,7 +334,6 @@ class PRedis implements CacheStorageAdapterInterface
                 $keys = str_replace($prefix, '', $keys);
             }
         }
-
         return $keys;
     }
 
