@@ -65,6 +65,15 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('control', $splitSdk->getTreatment(new Key(true, 'some_bucketing_key'), 'some_feature'));
     }
 
+    public function testGetTreatmentWithNonFiniteMatchingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $this->assertEquals('control', $splitSdk->getTreatment(new Key(log(0), 'some_bucketing_key'), 'some_feature'));
+    }
+
     public function testGetTreatmentWitNumberMatchingKey()
     {
         $splitSdk = $this->getFactoryClient();
@@ -107,7 +116,16 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $splitSdk = $this->getFactoryClient();
 
-        $this->assertEquals('control', $splitSdk->getTreatment(new Key('', array()), 'some_feature'));
+        $this->assertEquals('control', $splitSdk->getTreatment(new Key('some_matching_key', array()), 'some_feature'));
+    }
+
+    public function testGetTreatmentWitNonFiniteBucketingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $this->assertEquals('control', $splitSdk->getTreatment(new Key('some_matching_key', log(0)), 'some_feature'));
     }
 
     public function testGetTreatmentWitNumberBucketingKey()
@@ -136,7 +154,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed a null key, the key must be a non-empty string."));
+            ->with($this->equalTo("getTreatment: you passed a null key, key must be a non-empty string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment(null, 'some_feature'));
     }
@@ -168,6 +186,19 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo("getTreatment: you passed an empty key, key must be a non-empty string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('', 'some_feature'));
+    }
+
+    public function testGetTreatmentWitNonFiniteKey()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: you passed an invalid key type, key must be a non-empty string."));
+
+        $this->assertEquals('control', $splitSdk->getTreatment(log(0), 'some_feature'));
     }
 
     public function testGetTreatmentWitNumberKey()
@@ -238,6 +269,36 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
                 . " string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', 12345));
+    }
+
+    public function testGetTreatmentWithFeatureNameWithWhitespaces()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo('getTreatment: split name "some_feature  " has extra whitespace, trimming.')
+            ));
+
+        $this->assertEquals('control', $splitSdk->getTreatment("some_key", 'some_feature  '));
+    }
+
+    public function testGetTreatmentWithFeatureNameWithWhitespaces2()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo('getTreatment: split name "   some_feature  " has extra whitespace, trimming.')
+            ));
+
+        $this->assertEquals('control', $splitSdk->getTreatment("some_key", '   some_feature  '));
     }
 
     public function testGetTreatmentWitBooleanFeatureName()

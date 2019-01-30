@@ -231,24 +231,24 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
+        $key = InputValidator::validateKey($key, 'getTreatments');
+        if (is_null($key)) {
+            return null;
+        }
+
+        $splitNames = InputValidator::validateGetTreatments($featureNames);
+        if (is_null($splitNames)) {
+            return null;
+        }
+
+        if (!InputValidator::validAttributes($attributes, 'getTreatments')) {
+            return null;
+        }
+
+        $matchingKey = $key['matchingKey'];
+        $bucketingKey = $key['bucketingKey'];
+        
         try {
-            $key = InputValidator::validateKey($key, 'getTreatments');
-            if (is_null($key)) {
-                return null;
-            }
-
-            $splitNames = InputValidator::validateGetTreatments($featureNames);
-            if (is_null($splitNames)) {
-                return null;
-            }
-
-            if (!InputValidator::validAttributes($attributes, 'getTreatments')) {
-                return null;
-            }
-
-            $matchingKey = $key['matchingKey'];
-            $bucketingKey = $key['bucketingKey'];
-
             $result = array();
             $impressions = array();
             foreach ($splitNames as $splitName) {

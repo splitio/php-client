@@ -29,7 +29,7 @@ class Key
      */
     public function __construct($matchingKey, $bucketingKey)
     {
-        $strMatchingKey = \SplitIO\toString($matchingKey, "matchingKey", "Key");
+        $strMatchingKey = InputValidator::toString($matchingKey, "matchingKey", "Key");
         if ($strMatchingKey === false) {
             throw new KeyException('Key: you passed an invalid matchingKey type, matchingKey '
                 . 'must be a non-empty string.');
@@ -38,7 +38,7 @@ class Key
             throw new KeyException('Key: you passed an empty string, matchingKey must be a non-empty string.');
         }
         $this->matchingKey = $strMatchingKey;
-        $strBucketingKey = \SplitIO\toString($bucketingKey, "bucketingKey", "Key");
+        $strBucketingKey = InputValidator::toString($bucketingKey, "bucketingKey", "Key");
         if ($strBucketingKey === false) {
             throw new KeyException('Key: you passed an invalid bucketingKey type, bucketingKey '
                 . 'must be a non-empty string.');

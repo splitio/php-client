@@ -16,22 +16,75 @@ class InputValidator
      */
     private static function validString($value, $name, $operation)
     {
-        if (is_null($value)) {
-            SplitApp::logger()->critical($operation . ": you passed a null " . $name . ", " . $name .
-                " must be a non-empty string.");
-            return false;
-        }
-        if (!is_string($value)) {
-            SplitApp::logger()->critical($operation . ": you passed an invalid " . $name . ", " . $name .
-                " must be a non-empty string.");
-            return false;
-        }
-        if (empty($value)) {
-            SplitApp::logger()->critical($operation . ": you passed an empty " . $name . ", " . $name .
-                " must be a non-empty string.");
+        if (self::checkIsNull($value, $name, $operation) or self::checkIsNotString($value, $name, $operation)
+        or self::checkIsEmpty($value, $name, $operation)) {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Try to convert primitive types to string, otherwise returns FALSE
+     * Example:
+     *     $stringVal = toString(34)
+     *     if ($stringVal !== false) {
+     *        //Do some stuff with your string val
+     *     }
+     *
+     * @param $var
+     * @return bool|string
+     * @deprecated primitive data conversion will be removed in future version.
+     */
+    public static function toString($var, $name, $operation)
+    {
+        if (is_string($var)) {
+            return $var;
+        }
+        if (is_int($var) || (is_float($var) && is_finite($var))) {
+            SplitApp::logger()->warning($operation . ": " . $name . " '" . json_encode($var)
+                . "' is not of type string, converting.");
+            return "$var";
+        }
+        return false;
+    }
+
+    private static function checkIsNull($value, $name, $operation)
+    {
+        if (is_null($value)) {
+            SplitApp::logger()->critical($operation . ": you passed a null " . $name . ", " . $name .
+                " must be a non-empty string.");
+            return true;
+        }
+        return false;
+    }
+
+    private static function checkIsEmpty($value, $name, $operation)
+    {
+        if (empty($value)) {
+            SplitApp::logger()->critical($operation . ": you passed an empty " . $name . ", " . $name .
+                " must be a non-empty string.");
+            return true;
+        }
+        return false;
+    }
+
+    private static function checkIsNotString($value, $name, $operation)
+    {
+        if (!is_string($value)) {
+            SplitApp::logger()->critical($operation . ": you passed an invalid " . $name . ", " . $name .
+                " must be a non-empty string.");
+            return true;
+        }
+        return false;
+    }
+
+    private static function checkNotProperLength($value, $name, $operation)
+    {
+        if (strlen($value) > 250) {
+            SplitApp::logger()->critical($operation . ": " . $name . " too long - must be 250 characters or less.");
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -41,8 +94,7 @@ class InputValidator
      */
     public static function validateKey($key, $operation)
     {
-        if (is_null($key)) {
-            SplitApp::logger()->critical($operation . ": you passed a null key, the key must be a non-empty string.");
+        if (self::checkIsNull($key, "key", $operation)) {
             return null;
         }
         if ($key instanceof Key) {
@@ -51,24 +103,30 @@ class InputValidator
                 'bucketingKey' => $key->getBucketingKey()
             );
         }
-        $strKey = \SplitIO\toString($key, 'key', $operation);
+        $strKey = self::toString($key, 'key', $operation);
         if ($strKey === false) {
             SplitApp::logger()->critical($operation . ': you passed an invalid key type,'
                 . ' key must be a non-empty string.');
             return null;
         }
-        if (empty($strKey)) {
-            SplitApp::logger()->critical($operation . ": you passed an empty key, key must be a non-empty string.");
+        if (self::checkIsEmpty($strKey, "key", $operation) or self::checkNotProperLength($strKey, "key", $operation)) {
             return null;
         }
-        if (strlen($strKey) > 250) {
-            SplitApp::logger()->critical($operation . ": key too long - must be 250 characters or less.");
-            return null;
-        }
+        
         return array(
             'matchingKey' => $strKey,
             'bucketingKey' => null
         );
+    }
+
+    private static function trimFeatureName($featureName, $operation = "getTreatments")
+    {
+        $trimmed = trim($featureName);
+        if ($trimmed !== $featureName) {
+            SplitApp::logger()->warning($operation . ": split name " . json_encode($featureName) . " has extra " .
+            "whitespace, trimming.");
+        }
+        return $trimmed;
     }
 
     /**
@@ -77,7 +135,8 @@ class InputValidator
      */
     public static function validateFeatureName($featureName)
     {
-        return self::validString($featureName, 'split name', 'getTreatment') ? $featureName : null;
+        return self::validString($featureName, 'split name', 'getTreatment') ?
+            self::trimFeatureName($featureName, 'getTreatment') : null;
     }
 
     /**
@@ -86,21 +145,15 @@ class InputValidator
      */
     public static function validateTrackKey($key)
     {
-        if (is_null($key)) {
-            SplitApp::logger()->critical("track: you passed a null key, key must be a non-empty string.");
+        if (self::checkIsNull($key, "key", "track")) {
             return null;
         }
-        $strKey = \SplitIO\toString($key, 'key', 'track');
+        $strKey = self::toString($key, 'key', 'track');
         if ($strKey === false) {
             SplitApp::logger()->critical('track: you passed an invalid key type, key must be a non-empty string.');
             return null;
         }
-        if (empty($strKey)) {
-            SplitApp::logger()->critical('track: you passed an empty key, key must be a non-empty string.');
-            return null;
-        }
-        if (strlen($strKey) > 250) {
-            SplitApp::logger()->critical('track: key too long - must be 250 characters or less.');
+        if (self::checkIsEmpty($strKey, "key", "track") or self::checkNotProperLength($strKey, "key", "track")) {
             return null;
         }
         return $strKey;
@@ -164,15 +217,7 @@ class InputValidator
      */
     private static function validFeatureNameFromTreatments($featureName)
     {
-        if (is_null($featureName)) {
-            SplitApp::logger()->warning('getTreatments: null featureName was filtered.');
-            return false;
-        }
-        if (!is_string($featureName)) {
-            SplitApp::logger()->warning('getTreatments: filtered featureName for not being string.');
-            return false;
-        }
-        return true;
+        return self::validString($featureName, 'split name', 'getTreatments');
     }
 
     /**
@@ -186,8 +231,14 @@ class InputValidator
             return null;
         }
         $filteredArray = array_values(
-            array_unique(
-                array_filter($featureNames, "self::validFeatureNameFromTreatments")
+            array_map(
+                "self::trimFeatureName",
+                array_unique(
+                    array_filter(
+                        $featureNames,
+                        "self::validFeatureNameFromTreatments"
+                    )
+                )
             )
         );
         if (count($filteredArray) == 0) {
