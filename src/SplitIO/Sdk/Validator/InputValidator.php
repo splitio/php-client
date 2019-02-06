@@ -6,6 +6,8 @@ use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
 use SplitIO\Component\Utils as SplitIOUtils;
 
+const MAX_LENGTH = 250;
+
 class InputValidator
 {
     /**
@@ -80,8 +82,9 @@ class InputValidator
 
     private static function checkNotProperLength($value, $name, $operation)
     {
-        if (strlen($value) > 250) {
-            SplitApp::logger()->critical($operation . ": " . $name . " too long - must be 250 characters or less.");
+        if (strlen($value) > MAX_LENGTH) {
+            SplitApp::logger()->critical($operation . ": " . $name . " too long - must be " . MAX_LENGTH .
+                " characters or less.");
             return true;
         }
         return false;
@@ -131,12 +134,13 @@ class InputValidator
 
     /**
      * @param $featureName
+     * @param $operation
      * @return string|null
      */
-    public static function validateFeatureName($featureName)
+    public static function validateFeatureName($featureName, $operation)
     {
-        return self::validString($featureName, 'split name', 'getTreatment') ?
-            self::trimFeatureName($featureName, 'getTreatment') : null;
+        return self::validString($featureName, 'split name', $operation) ?
+            self::trimFeatureName($featureName, $operation) : null;
     }
 
     /**
@@ -224,7 +228,7 @@ class InputValidator
      * @param $featureNames
      * @return array|null
      */
-    public static function validateGetTreatments($featureNames)
+    public static function validateFeatureNames($featureNames)
     {
         if (is_null($featureNames) || !is_array($featureNames)) {
             SplitApp::logger()->critical('getTreatments: featureNames must be a non-empty array.');
@@ -246,15 +250,6 @@ class InputValidator
             return null;
         }
         return $filteredArray;
-    }
-
-    /**
-     * @param $featureName
-     * @return string|null
-     */
-    public static function validateManager($featureName)
-    {
-        return self::validString($featureName, 'split name', 'split') ? $featureName : null;
     }
 
     /**

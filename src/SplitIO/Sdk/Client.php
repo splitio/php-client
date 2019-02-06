@@ -120,7 +120,7 @@ class Client implements ClientInterface
             return TreatmentEnum::CONTROL;
         }
 
-        $featureName = InputValidator::validateFeatureName($featureName);
+        $featureName = InputValidator::validateFeatureName($featureName, 'getTreatment');
         if (is_null($featureName)) {
             return TreatmentEnum::CONTROL;
         }
@@ -236,7 +236,7 @@ class Client implements ClientInterface
             return null;
         }
 
-        $splitNames = InputValidator::validateGetTreatments($featureNames);
+        $splitNames = InputValidator::validateFeatureNames($featureNames);
         if (is_null($splitNames)) {
             return null;
         }
