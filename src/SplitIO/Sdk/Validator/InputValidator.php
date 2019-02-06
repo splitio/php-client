@@ -185,9 +185,9 @@ class InputValidator
         if (!self::validString($eventType, 'event type', 'track')) {
             return null;
         }
-        if (!preg_match('/[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}/', $eventType)) {
+        if (!preg_match('/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/', $eventType)) {
             SplitApp::logger()->critical('track: eventType must adhere to the regular expression '
-                . '[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}. This means an event name must be alphanumeric, '
+                . '^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$. This means an event name must be alphanumeric, '
                 . 'cannot be more than 80 characters long, and can only include a dash, underscore, '
                 . 'period, or colon as separators of alphanumeric characters.');
             return null;
