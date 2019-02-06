@@ -115,10 +115,17 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        $key = InputValidator::validateKey($key);
-        $featureName = InputValidator::validateFeatureName($featureName);
+        $key = InputValidator::validateKey($key, 'getTreatment');
+        if (is_null($key)) {
+            return TreatmentEnum::CONTROL;
+        }
 
-        if (is_null($key) || is_null($featureName)) {
+        $featureName = InputValidator::validateFeatureName($featureName, 'getTreatment');
+        if (is_null($featureName)) {
+            return TreatmentEnum::CONTROL;
+        }
+
+        if (!InputValidator::validAttributes($attributes, 'getTreatment')) {
             return TreatmentEnum::CONTROL;
         }
 
@@ -224,20 +231,24 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
+        $key = InputValidator::validateKey($key, 'getTreatments');
+        if (is_null($key)) {
+            return null;
+        }
+
+        $splitNames = InputValidator::validateFeatureNames($featureNames);
+        if (is_null($splitNames)) {
+            return null;
+        }
+
+        if (!InputValidator::validAttributes($attributes, 'getTreatments')) {
+            return null;
+        }
+
+        $matchingKey = $key['matchingKey'];
+        $bucketingKey = $key['bucketingKey'];
+        
         try {
-            $splitNames = InputValidator::validateGetTreatments($featureNames);
-            if (is_null($splitNames)) {
-                return null;
-            }
-
-            $key = InputValidator::validateKey($key);
-            if (is_null($key)) {
-                return null;
-            }
-
-            $matchingKey = $key['matchingKey'];
-            $bucketingKey = $key['bucketingKey'];
-
             $result = array();
             $impressions = array();
             foreach ($splitNames as $splitName) {
@@ -255,6 +266,7 @@ class Client implements ClientInterface
                         $evalResult['impression']['changeNumber']
                     );
                 } catch (\Exception $e) {
+                    $result[$splitName] = TreatmentEnum::CONTROL;
                     SplitApp::logger()->critical(
                         'getTreatments: An exception occured when evaluating feature: '. $splitName . '. skipping it'
                     );

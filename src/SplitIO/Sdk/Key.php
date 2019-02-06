@@ -1,6 +1,9 @@
 <?php
 namespace SplitIO\Sdk;
 
+use SplitIO\Sdk\Validator\InputValidator;
+use SplitIO\Exception\KeyException;
+
 /**
  * Class Key
  * @package SplitIO\Sdk
@@ -26,19 +29,25 @@ class Key
      */
     public function __construct($matchingKey, $bucketingKey)
     {
-        $strMatchingKey = \SplitIO\toString($matchingKey);
-        if ($strMatchingKey !== false) {
-            $this->matchingKey = $matchingKey;
-        } else {
-            throw new KeyException("Invalid matchingKey type. Must be string");
+        $strMatchingKey = InputValidator::toString($matchingKey, "matchingKey", "Key");
+        if ($strMatchingKey === false) {
+            throw new KeyException('Key: you passed an invalid matchingKey type, matchingKey '
+                . 'must be a non-empty string.');
         }
-
-        $strBucketingKey = \SplitIO\toString($bucketingKey);
-        if ($strBucketingKey !== false) {
-            $this->bucketingKey = $bucketingKey;
-        } else {
-            throw new KeyException("Invalid bucketingKey type. Must be string");
+        if (empty($strMatchingKey)) {
+            throw new KeyException('Key: you passed an empty string, matchingKey must be a non-empty string.');
         }
+        $this->matchingKey = $strMatchingKey;
+        $strBucketingKey = InputValidator::toString($bucketingKey, "bucketingKey", "Key");
+        if ($strBucketingKey === false) {
+            throw new KeyException('Key: you passed an invalid bucketingKey type, bucketingKey '
+                . 'must be a non-empty string.');
+        }
+        if (empty($strBucketingKey)) {
+            throw new KeyException('Key: you passed an empty string, bucketingKey must be a non-empty '
+                . 'string.');
+        }
+        $this->bucketingKey = $bucketingKey;
     }
 
     /**
