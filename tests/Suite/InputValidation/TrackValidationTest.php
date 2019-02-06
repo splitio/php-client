@@ -263,7 +263,7 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->once())
             ->method('critical')
             ->with($this->equalTo('track: eventType must adhere to the regular expression '
-                . '^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$. This means an event name must be alphanumeric, '
+                . '/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/. This means an event name must be alphanumeric, '
                 . 'cannot be more than 80 characters long, and can only include a dash, underscore, '
                 . 'period, or colon as separators of alphanumeric characters.'));
 
