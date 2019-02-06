@@ -114,7 +114,7 @@ class PRedis implements CacheStorageAdapterInterface
             'redis' => null,
             'options' => null
         );
-        
+
         $parameters = (isset($options['parameters'])) ? $options['parameters'] : null;
         $sentinels = (isset($options['sentinels'])) ? $options['sentinels'] : null;
         $clusters = (isset($options['clusterNodes'])) ? $options['clusterNodes'] : null;
@@ -363,9 +363,14 @@ class PRedis implements CacheStorageAdapterInterface
     public function rightPushQueue($queueName, $item)
     {
         if (!is_array($item)) {
-            return (boolean) $this->client->rpush($queueName, array($item));
+            return $this->client->rpush($queueName, array($item));
         } else {
-            return (boolean) $this->client->rpush($queueName, $item);
+            return $this->client->rpush($queueName, $item);
         }
+    }
+
+    public function expireKey($key, $ttl)
+    {
+        return $this->client->expire($key, $ttl);
     }
 }

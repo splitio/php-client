@@ -6,6 +6,8 @@ use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
+use SplitIO\Component\Cache\ImpressionCache;
 
 class SdkClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,10 +63,17 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($splitSdk->isTreatment('someKey', 'feature_C', 'invalid_treatment'));
     }
 
+    private function validateLastImpression($redisClient, $feature, $key, $treatment)
+    {
+        $raw = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
+        $parsed = json_decode($raw, true);
+        $this->assertEquals($parsed['i']['f'], $feature);
+        $this->assertEquals($parsed['i']['k'], $key);
+        $this->assertEquals($parsed['i']['t'], $treatment);
+    }
 
     public function testClient()
     {
-
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -84,35 +93,53 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('user1', 'sample_feature'));
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
         $this->assertEquals('off', $splitSdk->getTreatment('invalidKey', 'sample_feature'));
+        $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
+
         $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'invalid_feature'));
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         $this->assertTrue($splitSdk->isTreatment('user1', 'sample_feature', 'on'));
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
         $this->assertFalse($splitSdk->isTreatment('user1', 'sample_feature', 'invalid_treatment'));
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
 
         //testing a killed feature. No matter what the key, must return default treatment
         $this->assertEquals('defTreatment', $splitSdk->getTreatment('invalidKey', 'killed_feature'));
+        $this->validateLastImpression($redisClient, 'killed_feature', 'invalidKey', 'defTreatment');
 
         //testing ALL matcher
         $this->assertEquals('on', $splitSdk->getTreatment('invalidKey', 'all_feature'));
+        $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
 
         //testing WHITELIST matcher
         $this->assertEquals('on', $splitSdk->getTreatment('whitelisted_user', 'whitelist_feature'));
+        $this->validateLastImpression($redisClient, 'whitelist_feature', 'whitelisted_user', 'on');
         $this->assertEquals('off', $splitSdk->getTreatment('unwhitelisted_user', 'whitelist_feature'));
+        $this->validateLastImpression($redisClient, 'whitelist_feature', 'unwhitelisted_user', 'off');
 
         // testing INVALID matcher
         $this->assertEquals('control', $splitSdk->getTreatment('some_user_key', 'invalid_matcher_feature'));
+        $this->validateLastImpression($redisClient, 'invalid_matcher_feature', 'some_user_key', 'control');
 
         // testing Dependency matcher
         $this->assertEquals('off', $splitSdk->getTreatment('somekey', 'dependency_test'));
+        $this->validateLastImpression($redisClient, 'dependency_test', 'somekey', 'off');
 
         // testing boolean matcher
         $this->assertEquals('on', $splitSdk->getTreatment('True', 'boolean_test'));
+        $this->validateLastImpression($redisClient, 'boolean_test', 'True', 'on');
 
         // testing regex matcher
         $this->assertEquals('on', $splitSdk->getTreatment('abc4', 'regex_test'));
+        $this->validateLastImpression($redisClient, 'regex_test', 'abc4', 'on');
     }
 
     /**
@@ -150,7 +177,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidCacheAdapter()
     {
-        $this->setExpectedException(\SplitIO\Exception\Exception::class);
+        $this->setExpectedException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -181,7 +208,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
             'getItem', 'getItems', 'hasItem', 'clear', 'deleteItem', 'deleteItems',
             'save', 'saveDeferred', 'commit', 'saveItemOnList', 'removeItemOnList',
             'getItemOnList', 'getItemsOnList', 'isItemOnList', 'getItemsRandomlyOnList',
-            'getKeys', 'incrementeKey', 'getSet'
+            'getKeys', 'incrementeKey', 'getSet', 'rightPushInList'
         );
         $cachePool = $this
             ->getMockBuilder('\SplitIO\Component\Cache\Pool')
@@ -229,6 +256,11 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('on', $treatmentResult['sample_feature']);
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
+
+        //Check impressions generated
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
     public function testGetTreatmentsWithRepeteadedFeatures()
@@ -261,6 +293,11 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('on', $treatmentResult['sample_feature']);
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
+
+        // Check impressions
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
     public function testGetTreatmentsWithRepeteadedAndNullFeatures()
@@ -293,5 +330,10 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('on', $treatmentResult['sample_feature']);
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
+
+        //Check impressions
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 }

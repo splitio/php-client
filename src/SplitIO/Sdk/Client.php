@@ -115,10 +115,17 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        $key = InputValidator::validateKey($key);
-        $featureName = InputValidator::validateFeatureName($featureName);
+        $key = InputValidator::validateKey($key, 'getTreatment');
+        if (is_null($key)) {
+            return TreatmentEnum::CONTROL;
+        }
 
-        if (is_null($key) || is_null($featureName)) {
+        $featureName = InputValidator::validateFeatureName($featureName, 'getTreatment');
+        if (is_null($featureName)) {
+            return TreatmentEnum::CONTROL;
+        }
+
+        if (!InputValidator::validAttributes($attributes, 'getTreatment')) {
             return TreatmentEnum::CONTROL;
         }
 
@@ -184,8 +191,9 @@ class Client implements ClientInterface
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .
-                "feature: $featureName, key: $key"
+                "feature: $featureName, key: $matchingKey"
             );
+            SplitApp::logger()->critical($e);
         }
         return TreatmentEnum::CONTROL;
     }
@@ -223,25 +231,71 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
+        $key = InputValidator::validateKey($key, 'getTreatments');
+        if (is_null($key)) {
+            return null;
+        }
+
+        $splitNames = InputValidator::validateFeatureNames($featureNames);
+        if (is_null($splitNames)) {
+            return null;
+        }
+
+        if (!InputValidator::validAttributes($attributes, 'getTreatments')) {
+            return null;
+        }
+
+        $matchingKey = $key['matchingKey'];
+        $bucketingKey = $key['bucketingKey'];
+        
         try {
-            $splitNames = InputValidator::validateGetTreatments($featureNames);
-
-            if (is_null($splitNames)) {
-                return null;
-            }
-
             $result = array();
-            for ($i = 0; $i < count($splitNames); $i++) {
-                $featureName = $splitNames[$i];
-                $result[$featureName] = $this->getTreatment($key, $featureName, $attributes);
+            $impressions = array();
+            foreach ($splitNames as $splitName) {
+                try {
+                    $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
+                    $result[$splitName] = $evalResult['treatment'];
+
+                    // Creates impression
+                    $impressions[] = $this->createImpression(
+                        $matchingKey,
+                        $splitName,
+                        $evalResult['treatment'],
+                        $evalResult['impression']['label'],
+                        $bucketingKey,
+                        $evalResult['impression']['changeNumber']
+                    );
+                } catch (\Exception $e) {
+                    $result[$splitName] = TreatmentEnum::CONTROL;
+                    SplitApp::logger()->critical(
+                        'getTreatments: An exception occured when evaluating feature: '. $splitName . '. skipping it'
+                    );
+                    continue;
+                }
             }
+
+            // Register impressions
+            try {
+                if (!empty($impressions)) {
+                    TreatmentImpression::log($impressions);
+                    if (isset($this->impressionListener)) {
+                        foreach ($impressions as $impression) {
+                            $this->impressionListener->sendDataToClient($impression, $attributes);
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                SplitApp::logger()->critical(
+                    'getTreatments: An exception occured when trying to store impressions.'
+                );
+            }
+
             return $result;
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatments method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
             SplitApp::logger()->critical($e->getTraceAsString());
         }
-
         return null;
     }
 
