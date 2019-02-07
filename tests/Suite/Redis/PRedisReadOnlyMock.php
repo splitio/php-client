@@ -159,12 +159,12 @@ class PRedisReadOnlyMock
         return $this->predis->normalizePrefix($prefix);
     }
 
-    public function rightPushQueue($queueName, $item)
+    public function saveItemOnList($key, $value)
     {
         throw new \Exception('READONLY mode mocked.');
     }
 
-    public function saveItemOnList($key, $value)
+    public function rightPushInList($key, $value)
     {
         throw new \Exception('READONLY mode mocked.');
     }

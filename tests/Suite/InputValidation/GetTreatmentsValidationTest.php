@@ -2,6 +2,7 @@
 namespace SplitIO\Test\Suite\InputValidation;
 
 use SplitIO\Component\Common\Di;
+use SplitIO\Sdk\Key;
 
 class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,6 +38,197 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         return $logger;
     }
 
+    public function testGetTreatmentsWithNullMatchingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $key = new Key(null, 'some_bucketing_key');
+
+        $this->assertEquals('control', $splitSdk->getTreatments($key, array('some_feature')));
+    }
+
+    public function testGetTreatmentsWithEmptyMatchingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $key = new Key('', 'some_bucketing_key');
+
+        $this->assertEquals('control', $splitSdk->getTreatments($key, array('some_feature')));
+    }
+
+    public function testGetTreatmentsWithWrongTypeMatchingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $key = new Key(true, 'some_bucketing_key');
+
+        $this->assertEquals('control', $splitSdk->getTreatments($key, array('some_feature')));
+    }
+
+    public function testGetTreatmentsWitNumberMatchingKey()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo("Key: matchingKey '12345' is not of type string, converting.")
+            ));
+
+        $treatmentResult = $splitSdk->getTreatments(new Key(12345, 'some_bucketing_key'), array('some_feature'));
+
+        $this->assertEquals(1, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('control', $treatmentResult['some_feature']);
+    }
+
+    public function testGetTreatmentsWithNullBucketingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $key = new Key('some_matching_key', null);
+
+        $this->assertEquals('control', $splitSdk->getTreatments($key, array('some_feature')));
+    }
+
+    public function testGetTreatmentsWithEmptyBucketingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $key = new Key('some_matching_key', '');
+
+        $this->assertEquals('control', $splitSdk->getTreatments($key, array('some_feature')));
+    }
+
+    public function testGetTreatmentsWithWrongTypeBucketingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $this->assertEquals('control', $splitSdk->getTreatments(new Key('', array()), array('some_feature')));
+    }
+
+    public function testGetTreatmentsWitNumberBucketingKey()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo("Key: bucketingKey '12345' is not of type string, converting.")
+            ));
+
+        $treatmentResult = $splitSdk->getTreatments(new Key('some_matching_key', 12345), array('some_feature'));
+
+        $this->assertEquals(1, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('control', $treatmentResult['some_feature']);
+    }
+
+    public function testGetTreatmentsWithNullKey()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatments: you passed a null key, key must be a non-empty string."));
+
+        $this->assertEquals(null, $splitSdk->getTreatments(null, array('some_feature')));
+    }
+
+    public function testGetTreatmentsWithEmptyKey()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatments: you passed an empty key, key must be a non-empty string."));
+
+        $this->assertEquals(null, $splitSdk->getTreatments('', array('some_feature')));
+    }
+
+    public function testGetTreatmenstWitNonFiniteKey()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('critical')
+            ->with($this->equalTo("getTreatments: you passed an invalid key type, key must be a non-empty string."));
+
+        $this->assertEquals(null, $splitSdk->getTreatments(log(0), array('some_feature')));
+    }
+
+    public function testGetTreatmentsWitNumberKey()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo("getTreatments: key '123456' is not of type string, converting.")
+            ));
+
+        $treatmentResult = $splitSdk->getTreatments(123456, array('some_feature'));
+
+        $this->assertEquals(1, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('control', $treatmentResult['some_feature']);
+    }
+
+    public function testGetTreatmentsWithNonFiniteMatchingKeyObject()
+    {
+        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+
+        $splitSdk = $this->getFactoryClient();
+
+        $this->assertEquals(
+            'control',
+            $splitSdk->getTreatment(
+                new Key(
+                    log(0),
+                    'some_bucketing_key'
+                ),
+                ['some_feature']
+            )
+        );
+    }
+
+    public function testGetTreatmentsWitKeyDifferentFromNumberObjectOrString()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatments: you passed an invalid key type, key must be a non-empty string."));
+
+        $this->assertEquals(null, $splitSdk->getTreatments(true, array('some_feature')));
+    }
+
     public function testGetTreatmentsWithNullFeatures()
     {
         $splitSdk = $this->getFactoryClient();
@@ -45,7 +237,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('getTreatments: featureNames cannot be null.'));
+            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
         $this->assertEquals(null, $splitSdk->getTreatments('some_key', null, null));
     }
@@ -58,7 +250,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo('getTreatments: featureNames must be an array.'));
+            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
         $this->assertEquals(null, $splitSdk->getTreatments('some_key', true, null));
     }
@@ -70,10 +262,10 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $logger = $this->getMockedLogger();
 
         $logger->expects($this->once())
-            ->method('warning')
-            ->with($this->equalTo('getTreatments: featureNames is an empty array or has null values.'));
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
-        $this->assertEquals([], $splitSdk->getTreatments('some_key', [], null));
+        $this->assertEquals(null, $splitSdk->getTreatments('some_key', array(), null));
     }
 
     public function testGetTreatmentsWithNullFeaturesNames()
@@ -81,18 +273,42 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
+        $logger->expects($this->at(0))
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: you passed a null split name, split name must be a non-empty '
+                . 'string.'));
+        $logger->expects($this->at(1))
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: you passed a null split name, split name must be a non-empty '
+                . 'string.'));
+        $logger->expects($this->at(2))
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
-        $logger->expects($this->any())
-            ->method('warning')
-            ->with($this->logicalOr(
-                $this->equalTo('getTreatments: featureNames is an empty array or has null values.'),
-                $this->equalTo('getTreatments: null featureName was filtered.')
-            ));
-
-        $this->assertEquals([], $splitSdk->getTreatments('some_key', [null, null], null));
+        $this->assertEquals(null, $splitSdk->getTreatments('some_key', array(null, null), null));
     }
 
     public function testGetTreatmentsWithOneWrongTypeOfFeaturesNames()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+        $logger->expects($this->at(0))
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: you passed an invalid split name, split name must be a non-empty '
+            . 'string.'));
+        $logger->expects($this->at(1))
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: you passed an invalid split name, split name must be a non-empty '
+            . 'string.'));
+        $logger->expects($this->at(2))
+            ->method('critical')
+            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
+        
+        $this->assertEquals(null, $splitSdk->getTreatments('some_key', array(true, array()), null));
+    }
+
+    public function testGetTreatmenstWithFeatureNameWithWhitespaces()
     {
         $splitSdk = $this->getFactoryClient();
 
@@ -101,10 +317,32 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo('getTreatments: featureNames is an empty array or has null values.'),
-                $this->equalTo('getTreatments: filtered featureName for not being string.')
+                $this->equalTo('getTreatments: split name "some_feature  " has extra whitespace, trimming.')
             ));
 
-        $this->assertEquals([], $splitSdk->getTreatments('some_key', [true, array()], null));
+        $treatmentResult = $splitSdk->getTreatments("some_key", array('some_feature  '));
+
+        $this->assertEquals(1, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('control', $treatmentResult['some_feature']);
+    }
+
+    public function testGetTreatmenstWithFeatureNameWithWhitespaces2()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo('getTreatments: split name "   some_feature  " has extra whitespace, trimming.')
+            ));
+
+        $treatmentResult = $splitSdk->getTreatments("some_key", array('   some_feature  '));
+
+        $this->assertEquals(1, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('control', $treatmentResult['some_feature']);
     }
 }

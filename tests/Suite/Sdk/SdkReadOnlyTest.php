@@ -61,9 +61,9 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
                 $this->equalTo('Unable to write metrics back to redis.'),
                 $this->equalTo('The SPLIT definition for \'mockedPRedisInvalid\' has not been found')
             ));
-    
+
         Di::set(Di::KEY_LOG, $logger);
-        
+
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'mockedPRedis'));
         $this->assertEquals('off', $splitSdk->getTreatment('invalid', 'mockedPRedis'));
         $this->assertEquals('control', $splitSdk->getTreatment('valid', 'mockedPRedisInvalid'));
@@ -79,8 +79,7 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -96,11 +95,15 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array('warning', 'debug'))
             ->getMock();
 
+        // Discard (ignore) first logging statement
         $logger->expects($this->at(1))
+            ->method('debug');
+
+        $logger->expects($this->at(2))
             ->method('warning')
             ->with('Unable to write impression back to redis.');
 
-        $logger->expects($this->at(2))
+        $logger->expects($this->at(3))
             ->method('warning')
             ->with('READONLY mode mocked.');
 
@@ -110,13 +113,13 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
         Di::set(Di::KEY_LOG, $logger);
 
         $impression = new Impression(
-            $matchingKey = 'something',
-            $feature = 'something',
-            $treatment = TreatmentEnum::CONTROL,
-            $label = null,
-            $time = null,
-            $changeNumber = -1,
-            $bucketingKey = 'something'
+            'something',
+            'something',
+            TreatmentEnum::CONTROL,
+            null,
+            null,
+            -1,
+            'something'
         );
 
         TreatmentImpression::log($impression);
