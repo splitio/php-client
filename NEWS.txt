@@ -1,3 +1,5 @@
+6.0.1 (March , 2019)
+ - Added validation for TrafficType in track calls.
 6.0.0 (Feb 8, 2019)
  - Updated Input Sanitization.
  - BREAKING CHANGE: Moved Impressions to single queue approach.

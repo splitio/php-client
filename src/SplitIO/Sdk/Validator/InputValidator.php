@@ -5,6 +5,7 @@ namespace SplitIO\Sdk\Validator;
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
 use SplitIO\Component\Utils as SplitIOUtils;
+use SplitIO\Component\Cache\TrafficTypeCache;
 
 const MAX_LENGTH = 250;
 const REG_EXP_EVENT_TYPE = "/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/";
@@ -178,6 +179,12 @@ class InputValidator
         if ($toLowercase !== $trafficType) {
             SplitApp::logger()->warning("track: '" . $trafficType . "' should be all lowercase - converting string to "
                 . "lowercase.");
+        }
+        $trafficCache = new TrafficTypeCache();
+        if ($trafficCache->getTrafficType($trafficType) == 0) {
+            SplitApp::logger()->warning("track: Traffic Type '". $toLowercase . "' does not have any corresponding "
+                . "Splits in this environment, make sure you’re tracking your events to a valid traffic type "
+                . "defined in the Split console.");
         }
         return $toLowercase;
     }
