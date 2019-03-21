@@ -253,18 +253,27 @@ class Client implements ClientInterface
             $impressions = array();
             foreach ($splitNames as $splitName) {
                 try {
-                    $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
-                    $result[$splitName] = $evalResult['treatment'];
-
-                    // Creates impression
-                    $impressions[] = $this->createImpression(
-                        $matchingKey,
-                        $splitName,
-                        $evalResult['treatment'],
-                        $evalResult['impression']['label'],
-                        $bucketingKey,
-                        $evalResult['impression']['changeNumber']
-                    );
+                    if (!InputValidator::isSplitInCache($splitName, 'getTreatments')) {
+                        $result[$splitName] = TreatmentEnum::CONTROL;
+                    } else {
+                        $evalResult = $this->evaluator->evalTreatment(
+                            $matchingKey,
+                            $bucketingKey,
+                            $splitName,
+                            $attributes
+                        );
+                        $result[$splitName] = $evalResult['treatment'];
+    
+                        // Creates impression
+                        $impressions[] = $this->createImpression(
+                            $matchingKey,
+                            $splitName,
+                            $evalResult['treatment'],
+                            $evalResult['impression']['label'],
+                            $bucketingKey,
+                            $evalResult['impression']['changeNumber']
+                        );
+                    }
                 } catch (\Exception $e) {
                     $result[$splitName] = TreatmentEnum::CONTROL;
                     SplitApp::logger()->critical(

@@ -106,6 +106,13 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
     {
         $splitSdk = $this->getFactoryClient();
 
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("split: you passed 'this_is_a_non_existing_split' that does not exist in this environment, "
+                . "please double check what Splits exist in the web console."));
+
         $this->assertEquals(null, $splitSdk->split('this_is_a_non_existing_split'));
     }
 }

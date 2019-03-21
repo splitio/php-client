@@ -103,7 +103,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
 
         $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'invalid_feature'));
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         $this->assertTrue($splitSdk->isTreatment('user1', 'sample_feature', 'on'));
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
@@ -259,7 +258,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions generated
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
@@ -296,7 +294,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         // Check impressions
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
@@ -333,7 +330,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 }

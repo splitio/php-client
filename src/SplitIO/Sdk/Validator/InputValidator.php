@@ -5,6 +5,7 @@ namespace SplitIO\Sdk\Validator;
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
 use SplitIO\Component\Utils as SplitIOUtils;
+use SplitIO\Component\Cache\SplitCache;
 
 const MAX_LENGTH = 250;
 const REG_EXP_EVENT_TYPE = "/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/";
@@ -134,6 +135,24 @@ class InputValidator
         return $trimmed;
     }
 
+    public static function isSplitInCache($featureName, $operation)
+    {
+        try {
+            $splitCache = new SplitCache();
+            if (empty($splitCache->getSplit($featureName))) {
+                SplitApp::logger()->critical($operation . ": you passed '" . $featureName .
+                "' that does not exist in this environment, please double check what Splits exist in the web console.");
+                return false;
+            }
+            return true;
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical($operation . ' method is throwing exceptions');
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
+            return false;
+        }
+    }
+
     /**
      * @param $featureName
      * @param $operation
@@ -141,7 +160,8 @@ class InputValidator
      */
     public static function validateFeatureName($featureName, $operation)
     {
-        return self::validString($featureName, 'split name', $operation) ?
+        return self::validString($featureName, 'split name', $operation) &&
+            self::isSplitInCache(self::trimFeatureName($featureName, $operation), $operation) ?
             self::trimFeatureName($featureName, $operation) : null;
     }
 

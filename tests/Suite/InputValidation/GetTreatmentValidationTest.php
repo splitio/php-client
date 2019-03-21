@@ -86,10 +86,15 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
                 $this->equalTo("Key: matchingKey '12345' is not of type string, converting.")
             ));
 
-            $this->assertEquals(
-                'control',
-                $splitSdk->getTreatment(new Key(12345, 'some_bucketing_key'), 'some_feature')
-            );
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: you passed 'some_feature' that does not exist in this environment, "
+                . "please double check what Splits exist in the web console."));
+
+        $this->assertEquals(
+            'control',
+            $splitSdk->getTreatment(new Key(12345, 'some_bucketing_key'), 'some_feature')
+        );
     }
 
     public function testGetTreatmentWithNullBucketingKeyObject()
@@ -139,11 +144,16 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
             ->with($this->logicalOr(
                 $this->equalTo("Key: bucketingKey '12345' is not of type string, converting.")
             ));
+    
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: you passed 'some_feature' that does not exist in this environment, "
+                . "please double check what Splits exist in the web console."));
 
-            $this->assertEquals(
-                'control',
-                $splitSdk->getTreatment(new Key('some_matching_key', 12345), 'some_feature')
-            );
+        $this->assertEquals(
+            'control',
+            $splitSdk->getTreatment(new Key('some_matching_key', 12345), 'some_feature')
+        );
     }
 
     public function testGetTreatmentWithNullKey()
@@ -212,6 +222,11 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
             ->with($this->logicalOr(
                 $this->equalTo("getTreatment: key '123456' is not of type string, converting.")
             ));
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: you passed 'some_feature' that does not exist in this environment, "
+                . "please double check what Splits exist in the web console."));
 
         $this->assertEquals('control', $splitSdk->getTreatment(123456, 'some_feature'));
     }
@@ -283,6 +298,11 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
                 $this->equalTo('getTreatment: split name "some_feature  " has extra whitespace, trimming.')
             ));
 
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: you passed 'some_feature' that does not exist in this environment, "
+                . "please double check what Splits exist in the web console."));
+
         $this->assertEquals('control', $splitSdk->getTreatment("some_key", 'some_feature  '));
     }
 
@@ -333,6 +353,13 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
     {
         $splitSdk = $this->getFactoryClient();
 
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key_non_existant', 'some_feature_non_existant'));
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: you passed 'sf' that does not exist in this environment, "
+            . "please double check what Splits exist in the web console."));
+
+        $this->assertEquals('control', $splitSdk->getTreatment('some_key_non_existant', 'sf'));
     }
 }
