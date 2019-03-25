@@ -1,12 +1,12 @@
 language: php
 
 php:
-  - '5.6'
+  - "5.6"
 
 services:
   - redis-server
 
-before_script:
+install:
   - composer install --prefer-source --no-interaction
   - composer update
   - composer dumpautoload
