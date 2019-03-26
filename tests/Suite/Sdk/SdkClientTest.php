@@ -140,6 +140,34 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         // testing regex matcher
         $this->assertEquals('on', $splitSdk->getTreatment('abc4', 'regex_test'));
         $this->validateLastImpression($redisClient, 'regex_test', 'abc4', 'on');
+
+        //Assertions
+        $result = $splitSdk->getTreatmentWithConfig('user1', 'sample_feature');
+        $this->assertEquals('on', $result['treatment']);
+        $this->assertEquals('{"size":15,"test":20}', $result['configurations']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'sample_feature');
+        $this->assertEquals('off', $result['treatment']);
+        $this->assertEquals(null, $result['configurations']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
+
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'invalid_feature');
+        $this->assertEquals('control', $result['treatment']);
+        $this->assertEquals(null, $result['configurations']);
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
+
+        //testing a killed feature. No matter what the key, must return default treatment
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'killed_feature');
+        $this->assertEquals('defTreatment', $result['treatment']);
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result['configurations']);
+        $this->validateLastImpression($redisClient, 'killed_feature', 'invalidKey', 'defTreatment');
+
+        //testing ALL matcher
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'all_feature');
+        $this->assertEquals('on', $result['treatment']);
+        $this->assertEquals(null, $result['configurations']);
+        $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
     }
 
     /**
