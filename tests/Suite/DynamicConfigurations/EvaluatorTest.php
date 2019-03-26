@@ -10,7 +10,7 @@ use SplitIO\Sdk\Evaluator;
 
 class EvaluatorTest extends \PHPUnit_Framework_TestCase
 {
-    public $split1 = '{"trafficTypeName":"user","name":"mysplittest","trafficAllocation":100,'
+    private $split1 = '{"trafficTypeName":"user","name":"mysplittest","trafficAllocation":100,'
         . '"trafficAllocationSeed":-285565213,"seed":-1992295819,"status":"ACTIVE","killed":false,"'
         . 'defaultTreatment":"off","changeNumber":1494593336752,"algo":2,"conditions":[{"conditionType"'
         . ':"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"'
@@ -19,7 +19,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         . ':null,"dependencyMatcherData":null,"stringMatcherData":null}]},"partitions":[{"treatment":"on","size":0}'
         . ',{"treatment":"off","size":100}],"label":"default rule"}]}';
 
-    public $split2 = '{"trafficTypeName":"user","name":"mysplittest2","trafficAllocation":100,"'
+    private $split2 = '{"trafficTypeName":"user","name":"mysplittest2","trafficAllocation":100,"'
         . 'trafficAllocationSeed":1252392550,"seed":971538037,"status":"ACTIVE","killed":false,'
         . '"defaultTreatment":"off","changeNumber":1494593352077,"algo":2,"conditions":[{"conditionType"'
         . ':"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"'
@@ -29,7 +29,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         . ':[{"treatment":"on","size":100},{"treatment":"off","size":0}],"label":"default rule"}'
         . '],"configurations":{"on":"{\"color\": \"blue\",\"size\": 13}"}}';
 
-    public $split3 = '{"trafficTypeName":"user","name":"mysplittest3","trafficAllocation":100,"'
+    private $split3 = '{"trafficTypeName":"user","name":"mysplittest3","trafficAllocation":100,"'
         . 'trafficAllocationSeed":1252392550,"seed":971538037,"status":"ACTIVE","killed":true,'
         . '"defaultTreatment":"killed","changeNumber":1494593352077,"algo":2,"conditions":[{"conditionType"'
         . ':"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"'
@@ -39,7 +39,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         . ':[{"treatment":"on","size":100},{"treatment":"off","size":0}],"label":"default rule"}'
         . '],"configurations":{"on":"{\"color\": \"blue\",\"size\": 13}"}}';
 
-    public $split4 = '{"trafficTypeName":"user","name":"mysplittest3","trafficAllocation":100,"'
+    private $split4 = '{"trafficTypeName":"user","name":"mysplittest4","trafficAllocation":100,"'
         . 'trafficAllocationSeed":1252392550,"seed":971538037,"status":"ACTIVE","killed":true,'
         . '"defaultTreatment":"killed","changeNumber":1494593352077,"algo":2,"conditions":[{"conditionType"'
         . ':"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"'
