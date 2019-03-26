@@ -144,6 +144,9 @@ class Evaluator
                 $result['treatment'] = $split->getDefaultTratment();
                 $result['impression']['label'] = ImpressionLabel::KILLED;
                 $result['impression']['changeNumber'] = $split->getChangeNumber();
+                if ((!is_null($split->getConfigurations())) && isset($split->getConfigurations()[$split->getDefaultTratment()])) {
+                    $result['configurations'] = $split->getConfigurations()[$split->getDefaultTratment()];
+                }
             } else {
                 Di::setMatcherClient(new MatcherClient($this));
                 $timeStart = Metrics::startMeasuringLatency();
@@ -170,7 +173,9 @@ class Evaluator
                 $result['metadata']['latency'] = $latency;
                 $result['impression']['label'] = $impressionLabel;
                 $result['impression']['changeNumber'] = $split->getChangeNumber();
-                $result['configurations'] = $split->getConfigurations();
+                if ((!is_null($split->getConfigurations())) && isset($split->getConfigurations()[$treatment])) {
+                    $result['configurations'] = $split->getConfigurations()[$treatment];
+                }
             }
         } else {
             SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");
