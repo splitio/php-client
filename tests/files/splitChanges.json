@@ -9,6 +9,9 @@
       "seed": 301711069,
       "status": "ACTIVE",
       "killed": false,
+      "configurations": {
+        "on": "{\"size\":15,\"test\":20}"
+      },
       "conditions": [
         {
           "matcherGroup": {

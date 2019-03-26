@@ -6,6 +6,7 @@ use SplitIO\Component\Stats\Latency;
 class Metrics
 {
     const MNAME_SDK_GET_TREATMENT = 'sdk.getTreatment';
+    const MNAME_SDK_GET_TREATMENT_WITH_CONFIG = 'sdk.getTreatmentWithConfig';
 
     public static function startMeasuringLatency()
     {
