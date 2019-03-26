@@ -135,6 +135,7 @@ class Evaluator
             'metadata' => array(
                 'latency' => null,
             ),
+            'configurations' => null
         );
 
         $split = $this->fetchSplit($featureName);
@@ -169,6 +170,7 @@ class Evaluator
                 $result['metadata']['latency'] = $latency;
                 $result['impression']['label'] = $impressionLabel;
                 $result['impression']['changeNumber'] = $split->getChangeNumber();
+                $result['configurations'] = $split->getConfigurations();
             }
         } else {
             SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");
