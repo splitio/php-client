@@ -283,14 +283,16 @@ class Client implements ClientInterface
 
     private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
     {
-        $key = InputValidator::validateKey($key, $operation);
-        if (is_null($key)) {
+        $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
+        if (is_null($splitNames)) {
             return null;
         }
 
-        $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
-        if (is_null($splitNames) || !InputValidator::validAttributes($attributes, $operation)) {
-            return null;
+        $key = InputValidator::validateKey($key, $operation);
+        if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
+            return array(
+                'controlTreatments' => InputValidator::generateControlTreatments($splitNames),
+            );
         }
 
         return array(
@@ -336,6 +338,9 @@ class Client implements ClientInterface
         $inputValidation = $this->doInputValidationForTreatments($key, $featureNames, $attributes, 'getTreatments');
         if (is_null($inputValidation)) {
             return null;
+        }
+        if (isset($inputValidation['controlTreatments'])) {
+            return $inputValidation['controlTreatments'];
         }
 
         $matchingKey = $inputValidation['matchingKey'];

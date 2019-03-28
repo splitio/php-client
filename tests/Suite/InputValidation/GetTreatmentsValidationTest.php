@@ -150,7 +150,9 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo("getTreatments: you passed a null key, key must be a non-empty string."));
 
-        $this->assertEquals(null, $splitSdk->getTreatments(null, array('some_feature')));
+        $result = $splitSdk->getTreatments(null, array('some_feature'));
+        $this->assertEquals(count($result), 1);
+        $this->assertEquals('control', $result['some_feature']);
     }
 
     public function testGetTreatmentsWithEmptyKey()
@@ -163,7 +165,9 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo("getTreatments: you passed an empty key, key must be a non-empty string."));
 
-        $this->assertEquals(null, $splitSdk->getTreatments('', array('some_feature')));
+        $result = $splitSdk->getTreatments('', array('some_feature'));
+        $this->assertEquals(count($result), 1);
+        $this->assertEquals('control', $result['some_feature']);
     }
 
     public function testGetTreatmenstWitNonFiniteKey()
@@ -176,7 +180,9 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo("getTreatments: you passed an invalid key type, key must be a non-empty string."));
 
-        $this->assertEquals(null, $splitSdk->getTreatments(log(0), array('some_feature')));
+        $result = $splitSdk->getTreatments(log(0), array('some_feature'));
+        $this->assertEquals(count($result), 1);
+        $this->assertEquals('control', $result['some_feature']);
     }
 
     public function testGetTreatmentsWitNumberKey()
@@ -226,7 +232,9 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo("getTreatments: you passed an invalid key type, key must be a non-empty string."));
 
-        $this->assertEquals(null, $splitSdk->getTreatments(true, array('some_feature')));
+        $result = $splitSdk->getTreatments(true, array('some_feature'));
+        $this->assertEquals(count($result), 1);
+        $this->assertEquals('control', $result['some_feature']);
     }
 
     public function testGetTreatmentsWithNullFeatures()
@@ -286,6 +294,24 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
         $this->assertEquals(null, $splitSdk->getTreatments('some_key', array(null, null), null));
+    }
+
+    public function testMultipleControlResultsGetTreatments()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatments: you passed an invalid key type, key must be a non-empty string."));
+
+        $result = $splitSdk->getTreatments(true, array('some_feature', 'some_feature_3', 'some_feature',
+            'some_feature_2'));
+        $this->assertEquals(count($result), 3);
+        $this->assertEquals('control', $result['some_feature']);
+        $this->assertEquals('control', $result['some_feature_2']);
+        $this->assertEquals('control', $result['some_feature_3']);
     }
 
     public function testGetTreatmentsWithOneWrongTypeOfFeaturesNames()

@@ -5,6 +5,7 @@ namespace SplitIO\Sdk\Validator;
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
 use SplitIO\Component\Utils as SplitIOUtils;
+use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 const MAX_LENGTH = 250;
 const REG_EXP_EVENT_TYPE = "/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/";
