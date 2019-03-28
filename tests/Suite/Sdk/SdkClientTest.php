@@ -141,7 +141,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('on', $splitSdk->getTreatment('abc4', 'regex_test'));
         $this->validateLastImpression($redisClient, 'regex_test', 'abc4', 'on');
 
-        //Assertions
+        //Assertions GET_TREATMENT_WITH_CONFIG
         $result = $splitSdk->getTreatmentWithConfig('user1', 'sample_feature');
         $this->assertEquals('on', $result['treatment']);
         $this->assertEquals('{"size":15,"test":20}', $result['configurations']);
@@ -168,6 +168,97 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('on', $result['treatment']);
         $this->assertEquals(null, $result['configurations']);
         $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
+
+        //Assertions GET_TREATMENTS
+        $result = $splitSdk->getTreatments('user1', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['sample_feature']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
+        $result = $splitSdk->getTreatments('invalidKey', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('off', $result['sample_feature']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
+
+        $result = $splitSdk->getTreatments('invalidKey', array('invalid_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('control', $result['invalid_feature']);
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
+
+        //testing a killed feature. No matter what the key, must return default treatment
+        $result = $splitSdk->getTreatments('invalidKey', array('killed_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('defTreatment', $result['killed_feature']);
+        $this->validateLastImpression($redisClient, 'killed_feature', 'invalidKey', 'defTreatment');
+
+        //testing ALL matcher
+        $result = $splitSdk->getTreatments('invalidKey', array('all_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['all_feature']);
+        $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
+
+        //testing multiple splitNames
+        $result = $splitSdk->getTreatments('invalidKey', array(
+            'all_feature',
+            'killed_feature',
+            'invalid_feature',
+            'sample_feature'
+        ));
+        $this->assertEquals(4, count($result));
+        $this->assertEquals('on', $result['all_feature']);
+        $this->assertEquals('defTreatment', $result['killed_feature']);
+        $this->assertEquals('control', $result['invalid_feature']);
+        $this->assertEquals('off', $result['sample_feature']);
+
+        //Assertions GET_TREATMENTS_WITH_CONFIG
+        $result = $splitSdk->getTreatmentsWithConfig('user1', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['sample_feature']['treatment']);
+        $this->assertEquals('{"size":15,"test":20}', $result['sample_feature']['configurations']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('off', $result['sample_feature']['treatment']);
+        $this->assertEquals(null, $result['sample_feature']['configurations']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
+
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('invalid_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('control', $result['invalid_feature']['treatment']);
+        $this->assertEquals(null, $result['invalid_feature']['configurations']);
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
+
+        //testing a killed feature. No matter what the key, must return default treatment
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('killed_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('defTreatment', $result['killed_feature']['treatment']);
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result['killed_feature']['configurations']);
+        $this->validateLastImpression($redisClient, 'killed_feature', 'invalidKey', 'defTreatment');
+
+        //testing ALL matcher
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('all_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['all_feature']['treatment']);
+        $this->assertEquals(null, $result['all_feature']['configurations']);
+        $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
+
+        //testing multiple splitNames
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array(
+            'all_feature',
+            'killed_feature',
+            'invalid_feature',
+            'sample_feature'
+        ));
+        $this->assertEquals(4, count($result));
+        $this->assertEquals('on', $result['all_feature']['treatment']);
+        $this->assertEquals(null, $result['all_feature']['configurations']);
+        $this->assertEquals('defTreatment', $result['killed_feature']['treatment']);
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result['killed_feature']['configurations']);
+        $this->assertEquals('control', $result['invalid_feature']['treatment']);
+        $this->assertEquals(null, $result['invalid_feature']['configurations']);
+        $this->assertEquals('off', $result['sample_feature']['treatment']);
+        $this->assertEquals(null, $result['sample_feature']['configurations']);
     }
 
     /**

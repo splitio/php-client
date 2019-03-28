@@ -322,7 +322,10 @@ class Client implements ClientInterface
             foreach ($splitNames as $splitName) {
                 try {
                     $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
-                    $result[$splitName] = $evalResult['treatment'];
+                    $result[$splitName] = array(
+                        'treatment' => $evalResult['treatment'],
+                        'configurations' => $evalResult['configurations'],
+                    );
 
                     // Creates impression
                     $impressions[] = $this->createImpression(
@@ -334,7 +337,10 @@ class Client implements ClientInterface
                         $evalResult['impression']['changeNumber']
                     );
                 } catch (\Exception $e) {
-                    $result[$splitName] = TreatmentEnum::CONTROL;
+                    $result[$splitName] = array(
+                        'treatment' => TreatmentEnum::CONTROL,
+                        'configurations' => null,
+                    );
                     SplitApp::logger()->critical(
                         $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
                     );
@@ -399,6 +405,49 @@ class Client implements ClientInterface
      * @return array|control
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
+    {
+        return array_map(
+            function ($feature) {
+                return $feature['treatment'];
+            },
+            $this->doEvaluationForTreatments('getTreatments', '', $key, $featureNames, $attributes)
+        );
+    }
+
+    /**
+     * Returns an associative array which each key will be
+     * the treatment result and the configurations for each
+     * feature passed as parameter.
+     * The set of treatments for a feature can be configured
+     * on the Split web console and the configurations for
+     * that treatment.
+     * This method returns the string 'control' if:
+     * <ol>
+     *     <li>featureNames is invalid/li>
+     * </ol>
+     * 'control' is a reserved treatment, to highlight these
+     * exceptional circumstances.
+     *
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     *
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     * @return array|control
+     */
+    public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
     {
         return $this->doEvaluationForTreatments('getTreatments', '', $key, $featureNames, $attributes);
     }
