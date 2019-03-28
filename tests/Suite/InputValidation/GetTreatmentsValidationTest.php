@@ -247,7 +247,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
-        $this->assertEquals(null, $splitSdk->getTreatments('some_key', null, null));
+        $this->assertEquals(array(), $splitSdk->getTreatments('some_key', null, null));
     }
 
     public function testGetTreatmentsWithFeaturesNotArray()
@@ -260,7 +260,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
-        $this->assertEquals(null, $splitSdk->getTreatments('some_key', true, null));
+        $this->assertEquals(array(), $splitSdk->getTreatments('some_key', true, null));
     }
 
     public function testGetTreatmentsWithEmptyFeatures()
@@ -273,7 +273,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
-        $this->assertEquals(null, $splitSdk->getTreatments('some_key', array(), null));
+        $this->assertEquals(array(), $splitSdk->getTreatments('some_key', array(), null));
     }
 
     public function testGetTreatmentsWithNullFeaturesNames()
@@ -293,7 +293,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
 
-        $this->assertEquals(null, $splitSdk->getTreatments('some_key', array(null, null), null));
+        $this->assertEquals(array(), $splitSdk->getTreatments('some_key', array(null, null), null));
     }
 
     public function testMultipleControlResultsGetTreatments()
@@ -331,7 +331,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
         
-        $this->assertEquals(null, $splitSdk->getTreatments('some_key', array(true, array()), null));
+        $this->assertEquals(array(), $splitSdk->getTreatments('some_key', array(true, array()), null));
     }
 
     public function testGetTreatmenstWithFeatureNameWithWhitespaces()

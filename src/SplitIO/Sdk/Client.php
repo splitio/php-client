@@ -302,6 +302,71 @@ class Client implements ClientInterface
         );
     }
 
+    private function doEvaluationForTreatments($operation, $metricName, $key, $featureNames, $attributes)
+    {
+        $inputValidation = $this->doInputValidationForTreatments($key, $featureNames, $attributes, $operation);
+        if (is_null($inputValidation)) {
+            return array();
+        }
+        if (isset($inputValidation['controlTreatments'])) {
+            return $inputValidation['controlTreatments'];
+        }
+
+        $matchingKey = $inputValidation['matchingKey'];
+        $bucketingKey = $inputValidation['bucketingKey'];
+        $splitNames = $inputValidation['featureNames'];
+        
+        try {
+            $result = array();
+            $impressions = array();
+            foreach ($splitNames as $splitName) {
+                try {
+                    $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
+                    $result[$splitName] = $evalResult['treatment'];
+
+                    // Creates impression
+                    $impressions[] = $this->createImpression(
+                        $matchingKey,
+                        $splitName,
+                        $evalResult['treatment'],
+                        $evalResult['impression']['label'],
+                        $bucketingKey,
+                        $evalResult['impression']['changeNumber']
+                    );
+                } catch (\Exception $e) {
+                    $result[$splitName] = TreatmentEnum::CONTROL;
+                    SplitApp::logger()->critical(
+                        $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
+                    );
+                    continue;
+                }
+            }
+
+            // Register impressions
+            try {
+                if (!empty($impressions)) {
+                    TreatmentImpression::log($impressions);
+                    if (isset($this->impressionListener)) {
+                        foreach ($impressions as $impression) {
+                            $this->impressionListener->sendDataToClient($impression, $attributes);
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                SplitApp::logger()->critical(
+                    $operation . ': An exception occured when trying to store impressions.'
+                );
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical($operation . ' method is throwing exceptions');
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
+        }
+        return array();
+    }
+
     /**
      * Returns an associative array which each key will be
      * the treatment result for each feature passed as parameter.
@@ -335,67 +400,7 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
-        $inputValidation = $this->doInputValidationForTreatments($key, $featureNames, $attributes, 'getTreatments');
-        if (is_null($inputValidation)) {
-            return null;
-        }
-        if (isset($inputValidation['controlTreatments'])) {
-            return $inputValidation['controlTreatments'];
-        }
-
-        $matchingKey = $inputValidation['matchingKey'];
-        $bucketingKey = $inputValidation['bucketingKey'];
-        $splitNames = $inputValidation['featureNames'];
-        
-        try {
-            $result = array();
-            $impressions = array();
-            foreach ($splitNames as $splitName) {
-                try {
-                    $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
-                    $result[$splitName] = $evalResult['treatment'];
-
-                    // Creates impression
-                    $impressions[] = $this->createImpression(
-                        $matchingKey,
-                        $splitName,
-                        $evalResult['treatment'],
-                        $evalResult['impression']['label'],
-                        $bucketingKey,
-                        $evalResult['impression']['changeNumber']
-                    );
-                } catch (\Exception $e) {
-                    $result[$splitName] = TreatmentEnum::CONTROL;
-                    SplitApp::logger()->critical(
-                        'getTreatments: An exception occured when evaluating feature: '. $splitName . '. skipping it'
-                    );
-                    continue;
-                }
-            }
-
-            // Register impressions
-            try {
-                if (!empty($impressions)) {
-                    TreatmentImpression::log($impressions);
-                    if (isset($this->impressionListener)) {
-                        foreach ($impressions as $impression) {
-                            $this->impressionListener->sendDataToClient($impression, $attributes);
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-                SplitApp::logger()->critical(
-                    'getTreatments: An exception occured when trying to store impressions.'
-                );
-            }
-
-            return $result;
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical('getTreatments method is throwing exceptions');
-            SplitApp::logger()->critical($e->getMessage());
-            SplitApp::logger()->critical($e->getTraceAsString());
-        }
-        return null;
+        return $this->doEvaluationForTreatments('getTreatments', '', $key, $featureNames, $attributes);
     }
 
     /**
