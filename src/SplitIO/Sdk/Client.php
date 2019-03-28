@@ -104,9 +104,36 @@ class Client implements ClientInterface
         );
     }
 
-    private function processTreatment($impression, $attributes, $result, $operation)
+    private function doEvaluation($operation, $metricName, $key, $featureName, $attributes)
     {
+        $default = array(
+            'treatment' => TreatmentEnum::CONTROL,
+            'configurations' => null
+        );
+
+        $inputValidation = $this->doInputValidationForTreatment($key, $featureName, $attributes, $operation);
+        if (is_null($inputValidation)) {
+            return $default;
+        }
+
+        $matchingKey = $inputValidation['matchingKey'];
+        $bucketingKey = $inputValidation['bucketingKey'];
+        $featureName = $inputValidation['featureName'];
+        $impressionLabel = $inputValidation['impressionLabel'];
+
         try {
+            $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
+
+            // Creates impression
+            $impression = $this->createImpression(
+                $matchingKey,
+                $featureName,
+                $result['treatment'],
+                $result['impression']['label'],
+                $bucketingKey,
+                $result['impression']['changeNumber']
+            );
+
             // Register impression
             TreatmentImpression::log($impression);
 
@@ -117,14 +144,48 @@ class Client implements ClientInterface
 
             //Register latency value
             MetricsCache::addLatencyOnBucket(
-                $operation,
+                $metricName,
                 Metrics::getBucketForLatencyMicros($result['metadata']['latency'])
             );
+
+            return array(
+                'treatment' => $result['treatment'],
+                'configurations' => $result['configurations'],
+            );
         } catch (InvalidMatcherException $ie) {
-            throw($ie);
+            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
+            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
         } catch (\Exception $e) {
-            throw($e);
+            SplitApp::logger()->critical($operation . ' method is throwing exceptions');
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
         }
+
+        try {
+            // Creates impression
+            $impression = $this->createImpression(
+                $matchingKey,
+                $featureName,
+                TreatmentEnum::CONTROL,
+                $impressionLabel,
+                $bucketingKey
+            );
+
+            // Register impression
+            TreatmentImpression::log($impression);
+
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical(
+                "An error occurred when attempting to log impression for " .
+                "feature: $featureName, key: $matchingKey"
+            );
+            SplitApp::logger()->critical($e);
+        }
+        return $default;
     }
 
     /**
@@ -162,66 +223,13 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        $inputValidation = $this->doInputValidationForTreatment($key, $featureName, $attributes, 'getTreatment');
-        if (is_null($inputValidation)) {
-            return TreatmentEnum::CONTROL;
-        }
-
-        $matchingKey = $inputValidation['matchingKey'];
-        $bucketingKey = $inputValidation['bucketingKey'];
-        $featureName = $inputValidation['featureName'];
-        $impressionLabel = $inputValidation['impressionLabel'];
-
-        try {
-            $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
-
-            // Creates impression
-            $impression = $this->createImpression(
-                $matchingKey,
-                $featureName,
-                $result['treatment'],
-                $result['impression']['label'],
-                $bucketingKey,
-                $result['impression']['changeNumber']
-            );
-
-            $this->processTreatment($impression, $attributes, $result, Metrics::MNAME_SDK_GET_TREATMENT);
-
-            return $result['treatment'];
-        } catch (InvalidMatcherException $ie) {
-            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
-            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical('getTreatment method is throwing exceptions');
-            SplitApp::logger()->critical($e->getMessage());
-            SplitApp::logger()->critical($e->getTraceAsString());
-        }
-
-        try {
-            // Creates impression
-            $impression = $this->createImpression(
-                $matchingKey,
-                $featureName,
-                TreatmentEnum::CONTROL,
-                $impressionLabel,
-                $bucketingKey
-            );
-
-            // Register impression
-            TreatmentImpression::log($impression);
-
-            // Provides logic to send data to Client
-            if (isset($this->impressionListener)) {
-                $this->impressionListener->sendDataToClient($impression, $attributes);
-            }
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical(
-                "An error occurred when attempting to log impression for " .
-                "feature: $featureName, key: $matchingKey"
-            );
-            SplitApp::logger()->critical($e);
-        }
-        return TreatmentEnum::CONTROL;
+        return $this->doEvaluation(
+            'getTreatment',
+            Metrics::MNAME_SDK_GET_TREATMENT,
+            $key,
+            $featureName,
+            $attributes
+        )['treatment'];
     }
 
     /**
@@ -264,79 +272,12 @@ class Client implements ClientInterface
      */
     public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
     {
-        $inputValidation = $this->doInputValidationForTreatment(
+        return $this->doEvaluation(
+            'getTreatmentWithConfig',
+            Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
             $key,
             $featureName,
-            $attributes,
-            'getTreatmentWithConfig'
-        );
-        if (is_null($inputValidation)) {
-            return array(
-                'treatment' => TreatmentEnum::CONTROL,
-                'configurations' => null
-            );
-        }
-
-        $matchingKey = $inputValidation['matchingKey'];
-        $bucketingKey = $inputValidation['bucketingKey'];
-        $featureName = $inputValidation['featureName'];
-        $impressionLabel = $inputValidation['impressionLabel'];
-
-        try {
-            $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
-
-            // Creates impression
-            $impression = $this->createImpression(
-                $matchingKey,
-                $featureName,
-                $result['treatment'],
-                $result['impression']['label'],
-                $bucketingKey,
-                $result['impression']['changeNumber']
-            );
-
-            $this->processTreatment($impression, $attributes, $result, Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG);
-
-            return array(
-                'treatment' => $result['treatment'],
-                'configurations' => $result['configurations']
-            );
-        } catch (InvalidMatcherException $ie) {
-            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
-            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical('getTreatmentWithConfig method is throwing exceptions');
-            SplitApp::logger()->critical($e->getMessage());
-            SplitApp::logger()->critical($e->getTraceAsString());
-        }
-
-        try {
-            // Creates impression
-            $impression = $this->createImpression(
-                $matchingKey,
-                $featureName,
-                TreatmentEnum::CONTROL,
-                $impressionLabel,
-                $bucketingKey
-            );
-
-            // Register impression
-            TreatmentImpression::log($impression);
-
-            // Provides logic to send data to Client
-            if (isset($this->impressionListener)) {
-                $this->impressionListener->sendDataToClient($impression, $attributes);
-            }
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical(
-                "An error occurred when attempting to log impression for " .
-                "feature: $featureName, key: $matchingKey"
-            );
-            SplitApp::logger()->critical($e);
-        }
-        return array(
-            'treatment' => TreatmentEnum::CONTROL,
-            'configurations' => null
+            $attributes
         );
     }
 
