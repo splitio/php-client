@@ -281,6 +281,25 @@ class Client implements ClientInterface
         );
     }
 
+    private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
+    {
+        $key = InputValidator::validateKey($key, $operation);
+        if (is_null($key)) {
+            return null;
+        }
+
+        $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
+        if (is_null($splitNames) || !InputValidator::validAttributes($attributes, $operation)) {
+            return null;
+        }
+
+        return array(
+            'matchingKey' => $key['matchingKey'],
+            'bucketingKey' => $key['bucketingKey'],
+            'featureNames' => $splitNames,
+        );
+    }
+
     /**
      * Returns an associative array which each key will be
      * the treatment result for each feature passed as parameter.
@@ -314,22 +333,14 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
-        $key = InputValidator::validateKey($key, 'getTreatments');
-        if (is_null($key)) {
+        $inputValidation = $this->doInputValidationForTreatments($key, $featureNames, $attributes, 'getTreatments');
+        if (is_null($inputValidation)) {
             return null;
         }
 
-        $splitNames = InputValidator::validateFeatureNames($featureNames);
-        if (is_null($splitNames)) {
-            return null;
-        }
-
-        if (!InputValidator::validAttributes($attributes, 'getTreatments')) {
-            return null;
-        }
-
-        $matchingKey = $key['matchingKey'];
-        $bucketingKey = $key['bucketingKey'];
+        $matchingKey = $inputValidation['matchingKey'];
+        $bucketingKey = $inputValidation['bucketingKey'];
+        $splitNames = $inputValidation['featureNames'];
         
         try {
             $result = array();
