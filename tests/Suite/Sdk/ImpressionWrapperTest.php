@@ -40,7 +40,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         $attributes = null;
-        
+
         $impressionClient = new ListenerClient();
         $impressionWrapper = new ImpressionListenerWrapper($impressionClient);
 
@@ -49,7 +49,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
-        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 
@@ -57,7 +57,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
-        
+
         $impressionClient = new ListenerClientWithException();
 
         $sdkConfig = array(
@@ -105,7 +105,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient2->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient2->dataLogged);
         $this->assertEquals($impressionClient2->dataLogged['impression']->getTreatment(), 'on');
-        $this->assertInstanceOf(Impression::class, $impressionClient2->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient2->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient2->dataLogged);
     }
 
@@ -137,7 +137,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'on');
-        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
 
         $this->assertEquals('off', $splitSdk->getTreatment('invalidKey', 'iltest'));
@@ -147,7 +147,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'off');
-        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
 
         $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'iltestNotExistant'));
@@ -157,7 +157,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'control');
-        $this->assertInstanceOf(Impression::class, $impressionClient->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 
@@ -190,7 +190,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient3->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient3->dataLogged);
         $this->assertEquals($impressionClient3->dataLogged['impression']->getTreatment(), 'on');
-        $this->assertInstanceOf(Impression::class, $impressionClient3->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient3->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient3->dataLogged);
     }
 
@@ -223,7 +223,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient4->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient4->dataLogged);
         $this->assertEquals($impressionClient4->dataLogged['impression']->getTreatment(), 'on');
-        $this->assertInstanceOf(Impression::class, $impressionClient4->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient4->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient4->dataLogged);
     }
 
@@ -257,7 +257,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient4->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
         $this->assertArrayHasKey('impression', $impressionClient4->dataLogged);
         $this->assertEquals($impressionClient4->dataLogged['impression']->getTreatment(), 'on');
-        $this->assertInstanceOf(Impression::class, $impressionClient4->dataLogged['impression']);
+        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient4->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient4->dataLogged);
     }
 

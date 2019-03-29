@@ -268,4 +268,9 @@ class Pool extends CacheKeyTrait
     {
         return $this->adapter->rightPushQueue($queue, $item);
     }
+
+    public function expireKey($key, $ttl)
+    {
+        return $this->adapter->expireKey($key, $ttl);
+    }
 }

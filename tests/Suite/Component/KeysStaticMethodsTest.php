@@ -9,32 +9,6 @@ use SplitIO\Component\Cache\SegmentCache;
 
 class KeyTest extends \PHPUnit_Framework_TestCase
 {
-    public function testImpressionGetFeatureFromKey()
-    {
-        $featureName = ImpressionCache::getFeatureNameFromKey(
-            "SPLITIO/php-" . \SplitIO\version() . "/" . \SplitIO\getHostIpAddress() . '/impressions.featureABC'
-        );
-        $this->assertEquals($featureName, 'featureABC');
-    }
-
-    public function testImpressionGetCacheKeySearchPattern()
-    {
-        $searchPattern = ImpressionCache::getCacheKeySearchPattern();
-        $this->assertEquals(
-            $searchPattern,
-            "SPLITIO/php-" . \SplitIO\version() . "/" . \SplitIO\getHostIpAddress() . '/impressions.*'
-        );
-    }
-
-    public function testImpressionGetCacheKeyForImpressionData()
-    {
-        $key = ImpressionCache::getCacheKeyForImpressionData('featureABC');
-        $this->assertEquals(
-            $key,
-            "SPLITIO/php-" . \SplitIO\version() . "/" . \SplitIO\getHostIpAddress() . '/impressions.featureABC'
-        );
-    }
-
     public function testMetricsGetCacheKeyForLatencyButcket()
     {
         $key = MetricsCache::getCacheKeyForLatencyBucket('abc', 'def');
