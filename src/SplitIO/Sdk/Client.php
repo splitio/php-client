@@ -315,6 +315,16 @@ class Client implements ClientInterface
         }
     }
 
+    /**
+     * Verifies inputs for getTreatments and getTreatmentsWithConfig methods
+     *
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     * @param $operation
+     *
+     * @return null|mixed
+     */
     private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
     {
         $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
@@ -336,6 +346,17 @@ class Client implements ClientInterface
         );
     }
 
+    /**
+     * Executes evaluation for getTreatments or getTreatmentsWithConfig
+     *
+     * @param $operation
+     * @param $metricName
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     *
+     * @return mixed
+     */
     private function doEvaluationForTreatments($operation, $metricName, $key, $featureNames, $attributes)
     {
         $latency = 0;
@@ -449,18 +470,36 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
-        return array_map(
-            function ($feature) {
-                return $feature['treatment'];
-            },
-            $this->doEvaluationForTreatments(
-                'getTreatments',
-                Metrics::MNAME_SDK_GET_TREATMENTS,
-                $key,
-                $featureNames,
-                $attributes
-            )
-        );
+        try {
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                $this->doEvaluationForTreatments(
+                    'getTreatments',
+                    Metrics::MNAME_SDK_GET_TREATMENTS,
+                    $key,
+                    $featureNames,
+                    $attributes
+                )
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmens method is throwing exceptions');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                InputValidator::generateControlTreatments($splitNames)
+            );
+            return !is_null($splitNames) ?
+            array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                InputValidator::generateControlTreatments($splitNames)
+            ) : array();
+        }
     }
 
     /**
@@ -498,13 +537,19 @@ class Client implements ClientInterface
      */
     public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
     {
-        return $this->doEvaluationForTreatments(
-            'getTreatments',
-            Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
-            $key,
-            $featureNames,
-            $attributes
-        );
+        try {
+            return $this->doEvaluationForTreatments(
+                'getTreatmentsWithConfig',
+                Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
+                $key,
+                $featureNames,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
+            return !is_null($splitNames) ? InputValidator::generateControlTreatments($splitNames) : array();
+        }
     }
 
     /**
