@@ -46,6 +46,7 @@
             <directory suffix="Test.php">tests/Suite/Adapter/</directory>
             <directory suffix="Test.php">tests/Suite/Attributes/</directory>
             <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
+            <directory suffix="Test.php">tests/Suite/DynamicConfigurations/</directory>
         </testsuite>
     </testsuites>
 

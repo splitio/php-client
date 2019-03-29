@@ -135,14 +135,20 @@ class Evaluator
             'metadata' => array(
                 'latency' => null,
             ),
+            'configurations' => null
         );
 
         $split = $this->fetchSplit($featureName);
         if ($split != null) {
+            $configurations = $split->getConfigurations();
             if ($split->killed()) {
-                $result['treatment'] = $split->getDefaultTratment();
+                $defaultTreatment = $split->getDefaultTratment();
+                $result['treatment'] = $defaultTreatment;
                 $result['impression']['label'] = ImpressionLabel::KILLED;
                 $result['impression']['changeNumber'] = $split->getChangeNumber();
+                if (!is_null($configurations) && isset($configurations[$defaultTreatment])) {
+                    $result['configurations'] = $configurations[$defaultTreatment];
+                }
             } else {
                 Di::setMatcherClient(new MatcherClient($this));
                 $timeStart = Metrics::startMeasuringLatency();
@@ -156,7 +162,11 @@ class Evaluator
     
                 $treatment = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
                 $impressionLabel = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];
-    
+
+                $result['metadata']['latency'] = $latency;
+                $result['impression']['label'] = $impressionLabel;
+                $result['impression']['changeNumber'] = $split->getChangeNumber();
+
                 //If the given key doesn't match on any condition, default treatment is returned
                 if ($treatment == null) {
                     $treatment = $split->getDefaultTratment();
@@ -166,9 +176,9 @@ class Evaluator
                 SplitApp::logger()->info("*Treatment for $matchingKey in {$split->getName()} is: $treatment");
 
                 $result['treatment'] = $treatment;
-                $result['metadata']['latency'] = $latency;
-                $result['impression']['label'] = $impressionLabel;
-                $result['impression']['changeNumber'] = $split->getChangeNumber();
+                if (!is_null($configurations) && isset($configurations[$treatment])) {
+                    $result['configurations'] = $configurations[$treatment];
+                }
             }
         } else {
             SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");

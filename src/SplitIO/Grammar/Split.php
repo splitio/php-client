@@ -30,6 +30,8 @@ class Split
 
     private $trafficAllocationSeed = null;
 
+    private $configurations = null;
+
     public function __construct(array $split)
     {
         SplitApp::logger()->debug(print_r($split, true));
@@ -46,7 +48,9 @@ class Split
             $split['trafficAllocation'] : self::DEFAULT_TRAFFIC_ALLOCATION;
         $this->trafficAllocationSeed = isset($split['trafficAllocationSeed']) ?
             $split['trafficAllocationSeed'] : null;
-
+        $this->configurations = isset($split['configurations']) && count($split['configurations']) > 0 ?
+            $split['configurations'] : null;
+        
         SplitApp::logger()->info("Constructing Split: ".$this->name);
 
         if (isset($split['conditions']) && is_array($split['conditions'])) {
@@ -157,5 +161,10 @@ class Split
     public function getTrafficAllocationSeed()
     {
         return $this->trafficAllocationSeed;
+    }
+
+    public function getConfigurations()
+    {
+        return $this->configurations;
     }
 }
