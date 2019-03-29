@@ -80,6 +80,16 @@ class Client implements ClientInterface
         return $impression;
     }
 
+    /**
+     * Verifies inputs for getTreatment and getTreatmentWithConfig methods
+     *
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     * @param $operation
+     *
+     * @return null|mixed
+     */
     private function doInputValidationForTreatment($key, $featureName, array $attributes = null, $operation)
     {
         $key = InputValidator::validateKey($key, $operation);
@@ -104,6 +114,17 @@ class Client implements ClientInterface
         );
     }
 
+    /**
+     * Executes evaluation for getTreatment or getTreatmentWithConfig
+     *
+     * @param $operation
+     * @param $metricName
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     *
+     * @return mixed
+     */
     private function doEvaluation($operation, $metricName, $key, $featureName, $attributes)
     {
         $default = array(
@@ -223,13 +244,18 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        return $this->doEvaluation(
-            'getTreatment',
-            Metrics::MNAME_SDK_GET_TREATMENT,
-            $key,
-            $featureName,
-            $attributes
-        )['treatment'];
+        try {
+            return $this->doEvaluation(
+                'getTreatment',
+                Metrics::MNAME_SDK_GET_TREATMENT,
+                $key,
+                $featureName,
+                $attributes
+            )['treatment'];
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatment method is throwing exceptions');
+            return TreatmentEnum::CONTROL;
+        }
     }
 
     /**
@@ -272,13 +298,21 @@ class Client implements ClientInterface
      */
     public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
     {
-        return $this->doEvaluation(
-            'getTreatmentWithConfig',
-            Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
-            $key,
-            $featureName,
-            $attributes
-        );
+        try {
+            return $this->doEvaluation(
+                'getTreatmentWithConfig',
+                Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
+                $key,
+                $featureName,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentWithConfig method is throwing exceptions');
+            return array(
+                'treatment' => TreatmentEnum::CONTROL,
+                'configurations' => null,
+            );
+        }
     }
 
     private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
