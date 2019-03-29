@@ -307,7 +307,7 @@ class Client implements ClientInterface
                 $attributes
             );
         } catch (\Exception $e) {
-            SplitApp::logger()->critical('getTreatment method is throwing exceptions');
+            SplitApp::logger()->critical('getTreatmentWithConfig method is throwing exceptions');
             return array(
                 'treatment' => TreatmentEnum::CONTROL,
                 'configurations' => null,
