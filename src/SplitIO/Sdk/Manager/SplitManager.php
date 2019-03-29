@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Sdk\Manager;
 
+use \stdClass;
 use SplitIO\Component\Common\Di;
 use SplitIO\Grammar\Condition;
 use SplitIO\Grammar\Split;
@@ -79,12 +80,20 @@ class SplitManager implements SplitManagerInterface
 
         $split = new Split(json_decode($splitRepresentation, true));
 
+        $configurations = array();
+        foreach ($split->getTreatments() as $treatment) {
+            $treatmentConfig = !is_null($split->getConfigurations()) && isset($split->getConfigurations()[$treatment]) ?
+            $split->getConfigurations()[$treatment] : new StdClass;
+            $configurations[$treatment] = $treatmentConfig;
+        }
+
         return new SplitView(
             $split->getName(),
             $split->getTrafficTypeName(),
             $split->killed(),
             $split->getTreatments(),
-            $split->getChangeNumber()
+            $split->getChangeNumber(),
+            $configurations
         );
     }
 }
