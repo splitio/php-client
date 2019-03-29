@@ -304,6 +304,7 @@ class Client implements ClientInterface
 
     private function doEvaluationForTreatments($operation, $metricName, $key, $featureNames, $attributes)
     {
+        $latency = 0;
         $inputValidation = $this->doInputValidationForTreatments($key, $featureNames, $attributes, $operation);
         if (is_null($inputValidation)) {
             return array();
@@ -326,6 +327,8 @@ class Client implements ClientInterface
                         'treatment' => $evalResult['treatment'],
                         'configurations' => $evalResult['configurations'],
                     );
+
+                    $latency += $evalResult['metadata']['latency'];
 
                     // Creates impression
                     $impressions[] = $this->createImpression(
@@ -358,6 +361,12 @@ class Client implements ClientInterface
                         }
                     }
                 }
+
+                //Register latency value
+                MetricsCache::addLatencyOnBucket(
+                    $metricName,
+                    Metrics::getBucketForLatencyMicros($latency)
+                );
             } catch (\Exception $e) {
                 SplitApp::logger()->critical(
                     $operation . ': An exception occured when trying to store impressions.'
@@ -410,7 +419,13 @@ class Client implements ClientInterface
             function ($feature) {
                 return $feature['treatment'];
             },
-            $this->doEvaluationForTreatments('getTreatments', '', $key, $featureNames, $attributes)
+            $this->doEvaluationForTreatments(
+                'getTreatments',
+                Metrics::MNAME_SDK_GET_TREATMENTS,
+                $key,
+                $featureNames,
+                $attributes
+            )
         );
     }
 
@@ -449,7 +464,13 @@ class Client implements ClientInterface
      */
     public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
     {
-        return $this->doEvaluationForTreatments('getTreatments', '', $key, $featureNames, $attributes);
+        return $this->doEvaluationForTreatments(
+            'getTreatments',
+            Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
+            $key,
+            $featureNames,
+            $attributes
+        );
     }
 
     /**
