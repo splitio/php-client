@@ -244,13 +244,18 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        return $this->doEvaluation(
-            'getTreatment',
-            Metrics::MNAME_SDK_GET_TREATMENT,
-            $key,
-            $featureName,
-            $attributes
-        )['treatment'];
+        try {
+            return $this->doEvaluation(
+                'getTreatment',
+                Metrics::MNAME_SDK_GET_TREATMENT,
+                $key,
+                $featureName,
+                $attributes
+            )['treatment'];
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatment method is throwing exceptions');
+            return TreatmentEnum::CONTROL;
+        }
     }
 
     /**
@@ -293,13 +298,21 @@ class Client implements ClientInterface
      */
     public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
     {
-        return $this->doEvaluation(
-            'getTreatmentWithConfig',
-            Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
-            $key,
-            $featureName,
-            $attributes
-        );
+        try {
+            return $this->doEvaluation(
+                'getTreatmentWithConfig',
+                Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
+                $key,
+                $featureName,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatment method is throwing exceptions');
+            return array(
+                'treatment' => TreatmentEnum::CONTROL,
+                'configurations' => null,
+            );
+        }
     }
 
     /**
