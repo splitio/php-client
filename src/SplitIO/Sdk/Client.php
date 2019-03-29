@@ -80,6 +80,16 @@ class Client implements ClientInterface
         return $impression;
     }
 
+    /**
+     * Verifies inputs for getTreatment and getTreatmentWithConfig methods
+     *
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     * @param $operation
+     *
+     * @return null|mixed
+     */
     private function doInputValidationForTreatment($key, $featureName, array $attributes = null, $operation)
     {
         $key = InputValidator::validateKey($key, $operation);
@@ -104,6 +114,17 @@ class Client implements ClientInterface
         );
     }
 
+    /**
+     * Executes evaluation for getTreatment or getTreatmentWithConfig
+     *
+     * @param $operation
+     * @param $metricName
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     *
+     * @return mixed
+     */
     private function doEvaluation($operation, $metricName, $key, $featureName, $attributes)
     {
         $default = array(
