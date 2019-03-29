@@ -165,7 +165,7 @@
             "killed": true,
             "defaultTreatment": "defTreatment",
             "configurations": {
-                "on": "{\"size\":15,\"test\":20}",
+                "off": "{\"size\":15,\"test\":20}",
                 "defTreatment": "{\"size\":15,\"defTreatment\":true}"
             },
             "conditions": [

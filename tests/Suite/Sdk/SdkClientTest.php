@@ -269,8 +269,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
-        $this->assertEquals(new StdClass, $result->getConfigurations()['on']);
-        $this->assertEquals(new StdClass, $result->getConfigurations()['off']);
+        $this->assertEquals(new StdClass, $result->getConfigurations());
 
         $result = $splitManager->split('killed_feature');
         $this->assertEquals('killed_feature', $result->getName());
@@ -278,8 +277,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
-        $this->assertEquals(new StdClass, $result->getConfigurations()['off']);
         $this->assertEquals('{"size":15,"defTreatment":true}', $result->getConfigurations()['defTreatment']);
+        $this->assertEquals('{"size":15,"test":20}', $result->getConfigurations()['off']);
 
         $result = $splitManager->split('sample_feature');
         $this->assertEquals('sample_feature', $result->getName());
@@ -287,7 +286,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
-        $this->assertEquals(new StdClass, $result->getConfigurations()['off']);
         $this->assertEquals('{"size":15,"test":20}', $result->getConfigurations()['on']);
 
         $this->assertEquals(41, count($splitManager->splitNames()));
