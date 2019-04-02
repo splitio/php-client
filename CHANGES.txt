@@ -1,4 +1,4 @@
-6.0.1 (,2019)
+6.1.0 (,2019)
  - Added getTreatmentWithConfig method.
 6.0.0 (Feb 8, 2019)
  - Updated Input Sanitization.
