@@ -486,12 +486,6 @@ class Client implements ClientInterface
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmens method is throwing exceptions');
             $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
-            return array_map(
-                function ($feature) {
-                    return $feature['treatment'];
-                },
-                InputValidator::generateControlTreatments($splitNames)
-            );
             return !is_null($splitNames) ?
             array_map(
                 function ($feature) {
