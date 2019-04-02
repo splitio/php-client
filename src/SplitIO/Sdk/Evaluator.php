@@ -141,11 +141,11 @@ class Evaluator
         $split = $this->fetchSplit($featureName);
         if ($split != null) {
             $configurations = $split->getConfigurations();
+            $result['impression']['changeNumber'] = $split->getChangeNumber();
             if ($split->killed()) {
                 $defaultTreatment = $split->getDefaultTratment();
                 $result['treatment'] = $defaultTreatment;
                 $result['impression']['label'] = ImpressionLabel::KILLED;
-                $result['impression']['changeNumber'] = $split->getChangeNumber();
                 if (!is_null($configurations) && isset($configurations[$defaultTreatment])) {
                     $result['configurations'] = $configurations[$defaultTreatment];
                 }
@@ -165,8 +165,7 @@ class Evaluator
 
                 $result['metadata']['latency'] = $latency;
                 $result['impression']['label'] = $impressionLabel;
-                $result['impression']['changeNumber'] = $split->getChangeNumber();
-
+                
                 //If the given key doesn't match on any condition, default treatment is returned
                 if ($treatment == null) {
                     $treatment = $split->getDefaultTratment();
