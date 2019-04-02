@@ -541,7 +541,7 @@ class Client implements ClientInterface
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
-            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
             return !is_null($splitNames) ? InputValidator::generateControlTreatments($splitNames) : array();
         }
     }
