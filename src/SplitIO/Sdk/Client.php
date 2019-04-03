@@ -129,7 +129,7 @@ class Client implements ClientInterface
     {
         $default = array(
             'treatment' => TreatmentEnum::CONTROL,
-            'configurations' => null
+            'config' => null
         );
 
         $inputValidation = $this->doInputValidationForTreatment($key, $featureName, $attributes, $operation);
@@ -171,7 +171,7 @@ class Client implements ClientInterface
 
             return array(
                 'treatment' => $result['treatment'],
-                'configurations' => $result['configurations'],
+                'config' => $result['config'],
             );
         } catch (InvalidMatcherException $ie) {
             SplitApp::logger()->critical('Exception due an INVALID MATCHER');
@@ -260,8 +260,8 @@ class Client implements ClientInterface
 
     /**
      * Returns an object with the treatment to show this id for this feature
-     * and the configurations provided.
-     * The set of treatments and configurations for a feature can be configured
+     * and the config provided.
+     * The set of treatments and config for a feature can be configured
      * on the Split web console.
      * This method returns the string 'control' if:
      * <ol>
@@ -289,7 +289,7 @@ class Client implements ClientInterface
      *
      * This method returns null configuration if:
      * <ol>
-     *     <li>Configurations was not set up</li>
+     *     <li>config was not set up</li>
      * </ol>
      * @param $key
      * @param $featureName
@@ -310,7 +310,7 @@ class Client implements ClientInterface
             SplitApp::logger()->critical('getTreatmentWithConfig method is throwing exceptions');
             return array(
                 'treatment' => TreatmentEnum::CONTROL,
-                'configurations' => null,
+                'config' => null,
             );
         }
     }
@@ -380,7 +380,7 @@ class Client implements ClientInterface
                     $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
                     $result[$splitName] = array(
                         'treatment' => $evalResult['treatment'],
-                        'configurations' => $evalResult['configurations'],
+                        'config' => $evalResult['config'],
                     );
 
                     $latency += $evalResult['metadata']['latency'];
@@ -397,7 +397,7 @@ class Client implements ClientInterface
                 } catch (\Exception $e) {
                     $result[$splitName] = array(
                         'treatment' => TreatmentEnum::CONTROL,
-                        'configurations' => null,
+                        'config' => null,
                     );
                     SplitApp::logger()->critical(
                         $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
@@ -498,10 +498,10 @@ class Client implements ClientInterface
 
     /**
      * Returns an associative array which each key will be
-     * the treatment result and the configurations for each
+     * the treatment result and the config for each
      * feature passed as parameter.
      * The set of treatments for a feature can be configured
-     * on the Split web console and the configurations for
+     * on the Split web console and the config for
      * that treatment.
      * This method returns the string 'control' if:
      * <ol>

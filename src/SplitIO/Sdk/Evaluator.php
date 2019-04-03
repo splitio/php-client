@@ -135,19 +135,19 @@ class Evaluator
             'metadata' => array(
                 'latency' => null,
             ),
-            'configurations' => null
+            'config' => null
         );
 
         $split = $this->fetchSplit($featureName);
         if ($split != null) {
-            $configurations = $split->getConfigurations();
+            $configs = $split->getConfigurations();
             $result['impression']['changeNumber'] = $split->getChangeNumber();
             if ($split->killed()) {
                 $defaultTreatment = $split->getDefaultTratment();
                 $result['treatment'] = $defaultTreatment;
                 $result['impression']['label'] = ImpressionLabel::KILLED;
-                if (!is_null($configurations) && isset($configurations[$defaultTreatment])) {
-                    $result['configurations'] = $configurations[$defaultTreatment];
+                if (!is_null($configs) && isset($configs[$defaultTreatment])) {
+                    $result['config'] = $configs[$defaultTreatment];
                 }
             } else {
                 Di::setMatcherClient(new MatcherClient($this));
@@ -175,8 +175,8 @@ class Evaluator
                 SplitApp::logger()->info("*Treatment for $matchingKey in {$split->getName()} is: $treatment");
 
                 $result['treatment'] = $treatment;
-                if (!is_null($configurations) && isset($configurations[$treatment])) {
-                    $result['configurations'] = $configurations[$treatment];
+                if (!is_null($configs) && isset($configs[$treatment])) {
+                    $result['config'] = $configs[$treatment];
                 }
             }
         } else {
