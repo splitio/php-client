@@ -8,7 +8,7 @@ class SplitView
     private $killed;
     private $treatments;
     private $changeNumber;
-    private $configurations;
+    private $configs;
 
     /**
      * SplitView constructor.
@@ -19,14 +19,14 @@ class SplitView
      * @param $changeNumber
      * @param $configurations
      */
-    public function __construct($name, $trafficType, $killed, $treatments, $changeNumber, $configurations)
+    public function __construct($name, $trafficType, $killed, $treatments, $changeNumber, $configs)
     {
         $this->name = $name;
         $this->trafficType = $trafficType;
         $this->killed = $killed;
         $this->treatments = $treatments;
         $this->changeNumber = $changeNumber;
-        $this->configurations = $configurations;
+        $this->configs = $configs;
     }
 
 
@@ -113,16 +113,16 @@ class SplitView
     /**
      * @return mixed
      */
-    public function getConfigurations()
+    public function getConfigs()
     {
-        return $this->configurations;
+        return $this->configs;
     }
 
     /**
-     * @param mixed $changeNumber
+     * @param mixed $configs
      */
-    public function setConfigurations($configurations)
+    public function setConfigs($configs)
     {
-        $this->configurations = $configurations;
+        $this->configs = $configs;
     }
 }

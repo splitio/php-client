@@ -165,7 +165,7 @@ echo $splitView->getTrafficType();
 echo $splitView->getKilled();
 echo $splitView->getTreatments();
 echo $splitView->getChangeNumber();
-echo $splitView->getConfigurations();
+echo $splitView->getConfigs();
 
 /** Resturn an array of views for all cached splits */
 $splitViews = $splitManager->splits(); 
@@ -176,7 +176,7 @@ foreach ($splitViews as $splitView) {
     echo $splitView->getKilled();
     echo $splitView->getTreatments();
     echo $splitView->getChangeNumber();
-    echo $splitView->getConfigurations();
+    echo $splitView->getConfigs();
 }
 
 ```

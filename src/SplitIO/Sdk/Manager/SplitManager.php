@@ -80,7 +80,7 @@ class SplitManager implements SplitManagerInterface
 
         $split = new Split(json_decode($splitRepresentation, true));
 
-        $configurations = !is_null($split->getConfigurations()) ? $split->getConfigurations() : new StdClass;
+        $configs = !is_null($split->getConfigurations()) ? $split->getConfigurations() : new StdClass;
 
         return new SplitView(
             $split->getName(),
@@ -88,7 +88,7 @@ class SplitManager implements SplitManagerInterface
             $split->killed(),
             $split->getTreatments(),
             $split->getChangeNumber(),
-            $configurations
+            $configs
         );
     }
 }

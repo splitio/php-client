@@ -274,6 +274,6 @@ class InputValidator
 
     public static function generateControlTreatments($splitNames)
     {
-        return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'configurations' => null));
+        return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
     }
 }

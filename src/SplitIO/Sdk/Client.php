@@ -80,6 +80,16 @@ class Client implements ClientInterface
         return $impression;
     }
 
+    /**
+     * Verifies inputs for getTreatment and getTreatmentWithConfig methods
+     *
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     * @param $operation
+     *
+     * @return null|mixed
+     */
     private function doInputValidationForTreatment($key, $featureName, array $attributes = null, $operation)
     {
         $key = InputValidator::validateKey($key, $operation);
@@ -104,11 +114,22 @@ class Client implements ClientInterface
         );
     }
 
+    /**
+     * Executes evaluation for getTreatment or getTreatmentWithConfig
+     *
+     * @param $operation
+     * @param $metricName
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     *
+     * @return mixed
+     */
     private function doEvaluation($operation, $metricName, $key, $featureName, $attributes)
     {
         $default = array(
             'treatment' => TreatmentEnum::CONTROL,
-            'configurations' => null
+            'config' => null
         );
 
         $inputValidation = $this->doInputValidationForTreatment($key, $featureName, $attributes, $operation);
@@ -150,7 +171,7 @@ class Client implements ClientInterface
 
             return array(
                 'treatment' => $result['treatment'],
-                'configurations' => $result['configurations'],
+                'config' => $result['config'],
             );
         } catch (InvalidMatcherException $ie) {
             SplitApp::logger()->critical('Exception due an INVALID MATCHER');
@@ -223,19 +244,24 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        return $this->doEvaluation(
-            'getTreatment',
-            Metrics::MNAME_SDK_GET_TREATMENT,
-            $key,
-            $featureName,
-            $attributes
-        )['treatment'];
+        try {
+            return $this->doEvaluation(
+                'getTreatment',
+                Metrics::MNAME_SDK_GET_TREATMENT,
+                $key,
+                $featureName,
+                $attributes
+            )['treatment'];
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatment method is throwing exceptions');
+            return TreatmentEnum::CONTROL;
+        }
     }
 
     /**
      * Returns an object with the treatment to show this id for this feature
-     * and the configurations provided.
-     * The set of treatments and configurations for a feature can be configured
+     * and the config provided.
+     * The set of treatments and config for a feature can be configured
      * on the Split web console.
      * This method returns the string 'control' if:
      * <ol>
@@ -263,7 +289,7 @@ class Client implements ClientInterface
      *
      * This method returns null configuration if:
      * <ol>
-     *     <li>Configurations was not set up</li>
+     *     <li>config was not set up</li>
      * </ol>
      * @param $key
      * @param $featureName
@@ -272,15 +298,33 @@ class Client implements ClientInterface
      */
     public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
     {
-        return $this->doEvaluation(
-            'getTreatmentWithConfig',
-            Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
-            $key,
-            $featureName,
-            $attributes
-        );
+        try {
+            return $this->doEvaluation(
+                'getTreatmentWithConfig',
+                Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
+                $key,
+                $featureName,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentWithConfig method is throwing exceptions');
+            return array(
+                'treatment' => TreatmentEnum::CONTROL,
+                'config' => null,
+            );
+        }
     }
 
+    /**
+     * Verifies inputs for getTreatments and getTreatmentsWithConfig methods
+     *
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     * @param $operation
+     *
+     * @return null|mixed
+     */
     private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
     {
         $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
@@ -302,6 +346,17 @@ class Client implements ClientInterface
         );
     }
 
+    /**
+     * Executes evaluation for getTreatments or getTreatmentsWithConfig
+     *
+     * @param $operation
+     * @param $metricName
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     *
+     * @return mixed
+     */
     private function doEvaluationForTreatments($operation, $metricName, $key, $featureNames, $attributes)
     {
         $latency = 0;
@@ -325,7 +380,7 @@ class Client implements ClientInterface
                     $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
                     $result[$splitName] = array(
                         'treatment' => $evalResult['treatment'],
-                        'configurations' => $evalResult['configurations'],
+                        'config' => $evalResult['config'],
                     );
 
                     $latency += $evalResult['metadata']['latency'];
@@ -342,7 +397,7 @@ class Client implements ClientInterface
                 } catch (\Exception $e) {
                     $result[$splitName] = array(
                         'treatment' => TreatmentEnum::CONTROL,
-                        'configurations' => null,
+                        'config' => null,
                     );
                     SplitApp::logger()->critical(
                         $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
@@ -415,26 +470,38 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
-        return array_map(
-            function ($feature) {
-                return $feature['treatment'];
-            },
-            $this->doEvaluationForTreatments(
-                'getTreatments',
-                Metrics::MNAME_SDK_GET_TREATMENTS,
-                $key,
-                $featureNames,
-                $attributes
-            )
-        );
+        try {
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                $this->doEvaluationForTreatments(
+                    'getTreatments',
+                    Metrics::MNAME_SDK_GET_TREATMENTS,
+                    $key,
+                    $featureNames,
+                    $attributes
+                )
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmens method is throwing exceptions');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
+            return !is_null($splitNames) ?
+            array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                InputValidator::generateControlTreatments($splitNames)
+            ) : array();
+        }
     }
 
     /**
      * Returns an associative array which each key will be
-     * the treatment result and the configurations for each
+     * the treatment result and the config for each
      * feature passed as parameter.
      * The set of treatments for a feature can be configured
-     * on the Split web console and the configurations for
+     * on the Split web console and the config for
      * that treatment.
      * This method returns the string 'control' if:
      * <ol>
@@ -464,13 +531,19 @@ class Client implements ClientInterface
      */
     public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
     {
-        return $this->doEvaluationForTreatments(
-            'getTreatments',
-            Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
-            $key,
-            $featureNames,
-            $attributes
-        );
+        try {
+            return $this->doEvaluationForTreatments(
+                'getTreatmentsWithConfig',
+                Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
+                $key,
+                $featureNames,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
+            return !is_null($splitNames) ? InputValidator::generateControlTreatments($splitNames) : array();
+        }
     }
 
     /**
