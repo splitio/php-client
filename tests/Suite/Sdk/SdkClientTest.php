@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Test\Suite\Sdk;
 
+use \stdClass;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Cache\SegmentCache;
@@ -88,6 +89,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         //Initializing the SDK instance.
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
         $splitSdk = $splitFactory->client();
+        $splitManager = $splitFactory->manager();
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -259,6 +261,36 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $result['invalid_feature']['config']);
         $this->assertEquals('off', $result['sample_feature']['treatment']);
         $this->assertEquals(null, $result['sample_feature']['config']);
+
+        //Assertions Manager
+        $result = $splitManager->split('all_feature');
+        $this->assertEquals('all_feature', $result->getName());
+        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals(false, $result->getKilled());
+        $this->assertEquals(2, count($result->getTreatments()));
+        $this->assertEquals(-1, $result->getChangeNumber());
+        $this->assertEquals(new StdClass, $result->getConfigs());
+
+        $result = $splitManager->split('killed_feature');
+        $this->assertEquals('killed_feature', $result->getName());
+        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals(true, $result->getKilled());
+        $this->assertEquals(2, count($result->getTreatments()));
+        $this->assertEquals(-1, $result->getChangeNumber());
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result->getConfigs()['defTreatment']);
+        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['off']);
+
+        $result = $splitManager->split('sample_feature');
+        $this->assertEquals('sample_feature', $result->getName());
+        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals(false, $result->getKilled());
+        $this->assertEquals(2, count($result->getTreatments()));
+        $this->assertEquals(-1, $result->getChangeNumber());
+        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['on']);
+
+        $this->assertEquals(41, count($splitManager->splitNames()));
+
+        $this->assertEquals(41, count($splitManager->splits()));
     }
 
     /**
