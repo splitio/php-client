@@ -73,7 +73,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         $result = $evaluator->evalTreatment('test', '', 'mysplittest', null);
 
         $this->assertEquals('off', $result['treatment']);
-        $this->assertEquals(null, $result['configurations']);
+        $this->assertEquals(null, $result['config']);
 
         $redisClient->del('SPLITIO.split.mysplittest');
     }
@@ -101,7 +101,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         $result = $evaluator->evalTreatment('test', '', 'mysplittest2', null);
 
         $this->assertEquals('on', $result['treatment']);
-        $this->assertEquals($result['configurations'], '{"color": "blue","size": 13}');
+        $this->assertEquals($result['config'], '{"color": "blue","size": 13}');
 
         $redisClient->del('SPLITIO.split.mysplittest2');
     }
@@ -129,7 +129,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         $result = $evaluator->evalTreatment('test', '', 'mysplittest3', null);
 
         $this->assertEquals('killed', $result['treatment']);
-        $this->assertEquals($result['configurations'], null);
+        $this->assertEquals($result['config'], null);
 
         $redisClient->del('SPLITIO.split.mysplittest3');
     }
@@ -157,7 +157,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         $result = $evaluator->evalTreatment('test', '', 'mysplittest4', null);
 
         $this->assertEquals('killed', $result['treatment']);
-        $this->assertEquals($result['configurations'], '{"color": "orange","size": 13}');
+        $this->assertEquals($result['config'], '{"color": "orange","size": 13}');
 
         $redisClient->del('SPLITIO.split.mysplittest4');
     }
