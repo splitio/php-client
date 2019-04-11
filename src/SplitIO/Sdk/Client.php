@@ -145,6 +145,12 @@ class Client implements ClientInterface
         try {
             $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
 
+            if ($result['impression']['label'] == ImpressionLabel::SPLIT_NOT_FOUND) {
+                SplitApp::logger()->critical($operation . ": you passed " . $featureName
+                    . " that does not exist in this, please double check what Splits exist"
+                    . " in the web console.");
+            }
+
             // Creates impression
             $impression = $this->createImpression(
                 $matchingKey,
