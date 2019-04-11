@@ -245,13 +245,14 @@ class Client implements ClientInterface
     public function getTreatment($key, $featureName, array $attributes = null)
     {
         try {
-            return $this->doEvaluation(
+            $result = $this->doEvaluation(
                 'getTreatment',
                 Metrics::MNAME_SDK_GET_TREATMENT,
                 $key,
                 $featureName,
                 $attributes
-            )['treatment'];
+            );
+            return $result['treatment'];
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatment method is throwing exceptions');
             return TreatmentEnum::CONTROL;
