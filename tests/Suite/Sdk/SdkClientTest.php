@@ -78,7 +78,12 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
-        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
         $options = array();
 
         $sdkConfig = array(
@@ -287,10 +292,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
         $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['on']);
-
-        $this->assertEquals(41, count($splitManager->splitNames()));
-
-        $this->assertEquals(41, count($splitManager->splits()));
     }
 
     /**
