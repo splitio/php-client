@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Test\Suite\Sdk;
 
+use \stdClass;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Cache\SegmentCache;
@@ -77,7 +78,12 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
-        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
         $options = array();
 
         $sdkConfig = array(
@@ -88,6 +94,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         //Initializing the SDK instance.
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
         $splitSdk = $splitFactory->client();
+        $splitManager = $splitFactory->manager();
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -140,6 +147,151 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         // testing regex matcher
         $this->assertEquals('on', $splitSdk->getTreatment('abc4', 'regex_test'));
         $this->validateLastImpression($redisClient, 'regex_test', 'abc4', 'on');
+
+        //Assertions GET_TREATMENT_WITH_CONFIG
+        $result = $splitSdk->getTreatmentWithConfig('user1', 'sample_feature');
+        $this->assertEquals('on', $result['treatment']);
+        $this->assertEquals('{"size":15,"test":20}', $result['config']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'sample_feature');
+        $this->assertEquals('off', $result['treatment']);
+        $this->assertEquals(null, $result['config']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
+
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'invalid_feature');
+        $this->assertEquals('control', $result['treatment']);
+        $this->assertEquals(null, $result['config']);
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
+
+        //testing a killed feature. No matter what the key, must return default treatment
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'killed_feature');
+        $this->assertEquals('defTreatment', $result['treatment']);
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result['config']);
+        $this->validateLastImpression($redisClient, 'killed_feature', 'invalidKey', 'defTreatment');
+
+        //testing ALL matcher
+        $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'all_feature');
+        $this->assertEquals('on', $result['treatment']);
+        $this->assertEquals(null, $result['config']);
+        $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
+
+        //Assertions GET_TREATMENTS
+        $result = $splitSdk->getTreatments('user1', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['sample_feature']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
+        $result = $splitSdk->getTreatments('invalidKey', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('off', $result['sample_feature']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
+
+        $result = $splitSdk->getTreatments('invalidKey', array('invalid_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('control', $result['invalid_feature']);
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
+
+        //testing a killed feature. No matter what the key, must return default treatment
+        $result = $splitSdk->getTreatments('invalidKey', array('killed_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('defTreatment', $result['killed_feature']);
+        $this->validateLastImpression($redisClient, 'killed_feature', 'invalidKey', 'defTreatment');
+
+        //testing ALL matcher
+        $result = $splitSdk->getTreatments('invalidKey', array('all_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['all_feature']);
+        $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
+
+        //testing multiple splitNames
+        $result = $splitSdk->getTreatments('invalidKey', array(
+            'all_feature',
+            'killed_feature',
+            'invalid_feature',
+            'sample_feature'
+        ));
+        $this->assertEquals(4, count($result));
+        $this->assertEquals('on', $result['all_feature']);
+        $this->assertEquals('defTreatment', $result['killed_feature']);
+        $this->assertEquals('control', $result['invalid_feature']);
+        $this->assertEquals('off', $result['sample_feature']);
+
+        //Assertions GET_TREATMENTS_WITH_CONFIG
+        $result = $splitSdk->getTreatmentsWithConfig('user1', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['sample_feature']['treatment']);
+        $this->assertEquals('{"size":15,"test":20}', $result['sample_feature']['config']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('sample_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('off', $result['sample_feature']['treatment']);
+        $this->assertEquals(null, $result['sample_feature']['config']);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
+
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('invalid_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('control', $result['invalid_feature']['treatment']);
+        $this->assertEquals(null, $result['invalid_feature']['config']);
+        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
+
+        //testing a killed feature. No matter what the key, must return default treatment
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('killed_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('defTreatment', $result['killed_feature']['treatment']);
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result['killed_feature']['config']);
+        $this->validateLastImpression($redisClient, 'killed_feature', 'invalidKey', 'defTreatment');
+
+        //testing ALL matcher
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('all_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('on', $result['all_feature']['treatment']);
+        $this->assertEquals(null, $result['all_feature']['config']);
+        $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
+
+        //testing multiple splitNames
+        $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array(
+            'all_feature',
+            'killed_feature',
+            'invalid_feature',
+            'sample_feature'
+        ));
+        $this->assertEquals(4, count($result));
+        $this->assertEquals('on', $result['all_feature']['treatment']);
+        $this->assertEquals(null, $result['all_feature']['config']);
+        $this->assertEquals('defTreatment', $result['killed_feature']['treatment']);
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result['killed_feature']['config']);
+        $this->assertEquals('control', $result['invalid_feature']['treatment']);
+        $this->assertEquals(null, $result['invalid_feature']['config']);
+        $this->assertEquals('off', $result['sample_feature']['treatment']);
+        $this->assertEquals(null, $result['sample_feature']['config']);
+
+        //Assertions Manager
+        $result = $splitManager->split('all_feature');
+        $this->assertEquals('all_feature', $result->getName());
+        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals(false, $result->getKilled());
+        $this->assertEquals(2, count($result->getTreatments()));
+        $this->assertEquals(-1, $result->getChangeNumber());
+        $this->assertEquals(new StdClass, $result->getConfigs());
+
+        $result = $splitManager->split('killed_feature');
+        $this->assertEquals('killed_feature', $result->getName());
+        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals(true, $result->getKilled());
+        $this->assertEquals(2, count($result->getTreatments()));
+        $this->assertEquals(-1, $result->getChangeNumber());
+        $this->assertEquals('{"size":15,"defTreatment":true}', $result->getConfigs()['defTreatment']);
+        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['off']);
+
+        $result = $splitManager->split('sample_feature');
+        $this->assertEquals('sample_feature', $result->getName());
+        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals(false, $result->getKilled());
+        $this->assertEquals(2, count($result->getTreatments()));
+        $this->assertEquals(-1, $result->getChangeNumber());
+        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['on']);
     }
 
     /**

@@ -6,6 +6,7 @@ use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
 use SplitIO\Component\Utils as SplitIOUtils;
 use SplitIO\Component\Cache\TrafficTypeCache;
+use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 const MAX_LENGTH = 250;
 const REG_EXP_EVENT_TYPE = "/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/";
@@ -18,7 +19,7 @@ class InputValidator
      * @param $operation
      * @return true|false
      */
-    private static function validString($value, $name, $operation)
+    public static function validString($value, $name, $operation)
     {
         if (self::checkIsNull($value, $name, $operation) or self::checkIsNotString($value, $name, $operation)
         or self::checkIsEmpty($value, $name, $operation)) {
@@ -225,37 +226,38 @@ class InputValidator
     }
 
     /**
-     * @param $featureName
-     * @return true|false
-     */
-    private static function validFeatureNameFromTreatments($featureName)
-    {
-        return self::validString($featureName, 'split name', 'getTreatments');
-    }
-
-    /**
      * @param $featureNames
+     * @param $operation
      * @return array|null
      */
-    public static function validateFeatureNames($featureNames)
+    public static function validateFeatureNames($featureNames, $operation)
     {
         if (is_null($featureNames) || !is_array($featureNames)) {
-            SplitApp::logger()->critical('getTreatments: featureNames must be a non-empty array.');
+            SplitApp::logger()->critical($operation . ': featureNames must be a non-empty array.');
             return null;
         }
         $filteredArray = array_values(
             array_map(
-                "self::trimFeatureName",
+                function ($featureName) use ($operation) {
+                    $trimmed = trim($featureName);
+                    if ($trimmed !== $featureName) {
+                        SplitApp::logger()->warning($operation . ": split name " . json_encode($featureName)
+                        . " has extra " . "whitespace, trimming.");
+                    }
+                    return $trimmed;
+                },
                 array_unique(
                     array_filter(
                         $featureNames,
-                        "self::validFeatureNameFromTreatments"
+                        function ($featureName) use ($operation) {
+                            return InputValidator::validString($featureName, 'split name', $operation);
+                        }
                     )
                 )
             )
         );
         if (count($filteredArray) == 0) {
-            SplitApp::logger()->critical('getTreatments: featureNames must be a non-empty array.');
+            SplitApp::logger()->critical($operation . ': featureNames must be a non-empty array.');
             return null;
         }
         return $filteredArray;
@@ -275,5 +277,10 @@ class InputValidator
             return false;
         }
         return true;
+    }
+
+    public static function generateControlTreatments($splitNames)
+    {
+        return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
     }
 }
