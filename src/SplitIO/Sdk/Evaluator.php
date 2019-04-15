@@ -162,9 +162,7 @@ class Evaluator
     
                 $treatment = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
                 $impressionLabel = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];
-
                 $result['metadata']['latency'] = $latency;
-                
                 //If the given key doesn't match on any condition, default treatment is returned
                 if ($treatment == null) {
                     $treatment = $split->getDefaultTratment();
@@ -178,6 +176,7 @@ class Evaluator
                 if (!is_null($configs) && isset($configs[$treatment])) {
                     $result['config'] = $configs[$treatment];
                 }
+                $result['impression']['label'] = $impressionLabel;
             }
         }
 

@@ -78,7 +78,12 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
-        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
         $options = array();
 
         $sdkConfig = array(
@@ -105,7 +110,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
 
         $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'invalid_feature'));
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         $this->assertTrue($splitSdk->isTreatment('user1', 'sample_feature', 'on'));
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
@@ -157,7 +161,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'invalid_feature');
         $this->assertEquals('control', $result['treatment']);
         $this->assertEquals(null, $result['config']);
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         //testing a killed feature. No matter what the key, must return default treatment
         $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'killed_feature');
@@ -185,7 +188,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $result = $splitSdk->getTreatments('invalidKey', array('invalid_feature'));
         $this->assertEquals(1, count($result));
         $this->assertEquals('control', $result['invalid_feature']);
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         //testing a killed feature. No matter what the key, must return default treatment
         $result = $splitSdk->getTreatments('invalidKey', array('killed_feature'));
@@ -229,7 +231,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($result));
         $this->assertEquals('control', $result['invalid_feature']['treatment']);
         $this->assertEquals(null, $result['invalid_feature']['config']);
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         //testing a killed feature. No matter what the key, must return default treatment
         $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('killed_feature'));
@@ -287,10 +288,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
         $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['on']);
-
-        $this->assertEquals(41, count($splitManager->splitNames()));
-
-        $this->assertEquals(41, count($splitManager->splits()));
     }
 
     /**
@@ -410,7 +407,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions generated
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
@@ -447,7 +443,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         // Check impressions
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
@@ -484,7 +479,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 }

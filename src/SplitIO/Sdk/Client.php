@@ -80,6 +80,11 @@ class Client implements ClientInterface
         return $impression;
     }
 
+    private static function generateControlTreatments($splitNames)
+    {
+        return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
+    }
+
     /**
      * Verifies inputs for getTreatment and getTreatmentWithConfig methods
      *
@@ -145,10 +150,8 @@ class Client implements ClientInterface
         try {
             $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
 
-            if ($result['impression']['label'] == ImpressionLabel::SPLIT_NOT_FOUND) {
-                SplitApp::logger()->critical($operation . ": you passed " . $featureName
-                    . " that does not exist in this, please double check what Splits exist"
-                    . " in the web console.");
+            if (!InputValidator::isSplitFound($result['impression']['label'], $featureName, $operation)) {
+                return $default;
             }
 
             // Creates impression
@@ -251,13 +254,14 @@ class Client implements ClientInterface
     public function getTreatment($key, $featureName, array $attributes = null)
     {
         try {
-            return $this->doEvaluation(
+            $result = $this->doEvaluation(
                 'getTreatment',
                 Metrics::MNAME_SDK_GET_TREATMENT,
                 $key,
                 $featureName,
                 $attributes
-            )['treatment'];
+            );
+            return $result['treatment'];
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatment method is throwing exceptions');
             return TreatmentEnum::CONTROL;
@@ -341,7 +345,7 @@ class Client implements ClientInterface
         $key = InputValidator::validateKey($key, $operation);
         if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
             return array(
-                'controlTreatments' => InputValidator::generateControlTreatments($splitNames),
+                'controlTreatments' => $this->generateControlTreatments($splitNames),
             );
         }
 
@@ -384,22 +388,30 @@ class Client implements ClientInterface
             foreach ($splitNames as $splitName) {
                 try {
                     $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
-                    $result[$splitName] = array(
-                        'treatment' => $evalResult['treatment'],
-                        'config' => $evalResult['config'],
-                    );
 
-                    $latency += $evalResult['metadata']['latency'];
+                    if (!InputValidator::isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
+                        $result[$splitName] = array(
+                            'treatment' => TreatmentEnum::CONTROL,
+                            'config' => null
+                        );
+                    } else {
+                        $latency += $evalResult['metadata']['latency'];
 
-                    // Creates impression
-                    $impressions[] = $this->createImpression(
-                        $matchingKey,
-                        $splitName,
-                        $evalResult['treatment'],
-                        $evalResult['impression']['label'],
-                        $bucketingKey,
-                        $evalResult['impression']['changeNumber']
-                    );
+                        // Creates impression
+                        $impressions[] = $this->createImpression(
+                            $matchingKey,
+                            $splitName,
+                            $evalResult['treatment'],
+                            $evalResult['impression']['label'],
+                            $bucketingKey,
+                            $evalResult['impression']['changeNumber']
+                        );
+    
+                        $result[$splitName] = array(
+                            'treatment' => $evalResult['treatment'],
+                            'config' => $evalResult['config'],
+                        );
+                    }
                 } catch (\Exception $e) {
                     $result[$splitName] = array(
                         'treatment' => TreatmentEnum::CONTROL,
@@ -421,13 +433,13 @@ class Client implements ClientInterface
                             $this->impressionListener->sendDataToClient($impression, $attributes);
                         }
                     }
-                }
 
-                //Register latency value
-                MetricsCache::addLatencyOnBucket(
-                    $metricName,
-                    Metrics::getBucketForLatencyMicros($latency)
-                );
+                    //Register latency value
+                    MetricsCache::addLatencyOnBucket(
+                        $metricName,
+                        Metrics::getBucketForLatencyMicros($latency)
+                    );
+                }
             } catch (\Exception $e) {
                 SplitApp::logger()->critical(
                     $operation . ': An exception occured when trying to store impressions.'
@@ -497,7 +509,7 @@ class Client implements ClientInterface
                 function ($feature) {
                     return $feature['treatment'];
                 },
-                InputValidator::generateControlTreatments($splitNames)
+                $this->generateControlTreatments($splitNames)
             ) : array();
         }
     }
@@ -548,7 +560,7 @@ class Client implements ClientInterface
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
             $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
-            return !is_null($splitNames) ? InputValidator::generateControlTreatments($splitNames) : array();
+            return !is_null($splitNames) ? $this->generateControlTreatments($splitNames) : array();
         }
     }
 
