@@ -50,7 +50,7 @@ class LocalhostClient implements ClientInterface
         $filePath = $this->getExistingFile($splitFilePath);
         // @codeCoverageIgnoreStart
         if (!is_null($filePath)) {
-            if (preg_match('/(.yml$|.yaml$)/', $filePath)) {
+            if (preg_match('/(\.yml$|\.yaml$)/i', $filePath)) {
                 $this->loadSplitsFromYAML($filePath);
             } else {
                 SplitApp::logger()->warning("Localhost mode: .split mocks will be deprecated soon in favor of YAML "
