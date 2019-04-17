@@ -1,7 +1,10 @@
 <?php
 namespace SplitIO\Sdk;
 
+use Symfony\Component\Yaml\Parser;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
+use SplitIO\Sdk\Validator\InputValidator;
+use SplitIO\Split as SplitApp;
 
 class LocalhostClient implements ClientInterface
 {
@@ -18,6 +21,25 @@ class LocalhostClient implements ClientInterface
         return (isset($userData['dir'])) ? $userData['dir'] : null;
     }
 
+    private function getExistingFile($path)
+    {
+        if (!is_null($path) && file_exists($path)) {
+            return $path;
+        }
+        if (file_exists($this->getUserHome().'/split.yaml')) {
+            return $this->getUserHome().'/split.yaml';
+        }
+        if (file_exists($this->getUserHome().'/split.yml')) {
+            return $this->getUserHome().'/split.yml';
+        }
+        if (file_exists($this->getUserHome().'/.split')) {
+            SplitApp::logger()->warning("Localhost mode: .split mocks will be deprecated soon in favor of YAML "
+            . "files, which provide more targeting power. Take a look in our documentation.");
+            return $this->getUserHome().'/.split';
+        }
+        return null;
+    }
+
     /**
      * Constructor of the FakeClient for development purpose
      * @param null $splitFilePath
@@ -25,19 +47,19 @@ class LocalhostClient implements ClientInterface
      */
     public function __construct($splitFilePath = null)
     {
-        //Try to load Splits file given by developer
-        if ($splitFilePath !== null) {
-            $this->loadSplits($splitFilePath);
-        }
-
+        $filePath = $this->getExistingFile($splitFilePath);
         // @codeCoverageIgnoreStart
-        //Try to load Splits file from developer home if this has not given by developer
-        if ($this->splits === null) {
-            $homeFilePath = $this->getUserHome().'/.split';
-            $this->loadSplits($homeFilePath);
+        if (!is_null($filePath)) {
+            if (preg_match('/(\.yml$|\.yaml$)/i', $filePath)) {
+                $this->loadSplitsFromYAML($filePath);
+            } else {
+                SplitApp::logger()->warning("Localhost mode: .split mocks will be deprecated soon in favor of YAML "
+                    . "files, which provide more targeting power. Take a look in our documentation.");
+                $this->loadSplits($filePath);
+            }
         }
 
-        if ($this->splits === null) {
+        if (is_null($filePath) || $this->splits === null) {
             throw new \Exception("Splits file could not be found");
         }
         // @codeCoverageIgnoreEnd
@@ -48,15 +70,67 @@ class LocalhostClient implements ClientInterface
      */
     private function loadSplits($splitFilePath)
     {
-        if (file_exists($splitFilePath)) {
-            $fileContent = file_get_contents($splitFilePath);
-            $this->splits = \SplitIO\parseSplitsFile($fileContent);
+        $fileContent = file_get_contents($splitFilePath);
+        $this->splits = \SplitIO\parseSplitsFile($fileContent);
+    }
+
+    /**
+     * @param $splitFilePath
+     */
+    private function loadSplitsFromYAML($splitFilePath)
+    {
+        $yaml = new Parser();
+        $parsed = $yaml->parse(file_get_contents($splitFilePath));
+
+        $splits = array();
+
+        foreach ($parsed as $split) {
+            $featureName = key($split);
+            $treatment = $split[$featureName]["treatment"];
+            if (isset($split[$featureName]["keys"])) {
+                $keys = $split[$featureName]["keys"];
+                if (is_array($keys)) {
+                    foreach ($keys as $key) {
+                        $splits[$featureName . ":" . $key]["treatment"] = $treatment;
+                        if (isset($split[$featureName]["config"])) {
+                            $splits[$featureName . ":" . $key]["config"] = $split[$featureName]["config"];
+                        }
+                    }
+                } else {
+                    $splits[$featureName . ":" . $keys]["treatment"] = $treatment;
+                    if (isset($split[$featureName]["config"])) {
+                        $splits[$featureName . ":" . $keys]["config"] = $split[$featureName]["config"];
+                    }
+                }
+            } else {
+                $splits[$featureName]["treatment"] = $treatment;
+                if (isset($split[$featureName]["config"])) {
+                    $splits[$featureName]["config"] = $split[$featureName]["config"];
+                }
+            }
         }
+
+        $this->splits = $splits;
     }
 
     public function getSplits()
     {
         return $this->splits;
+    }
+
+    public function doValidation($key, $featureName, $operation)
+    {
+        $key = InputValidator::validateKey($key, $operation);
+        if (is_null($key)) {
+            return null;
+        }
+
+        $featureName = InputValidator::validateFeatureName($featureName, $operation);
+        if (is_null($featureName)) {
+            return null;
+        }
+
+        return is_null($key) ? $featureName : ($featureName . ":" .  $key["matchingKey"]);
     }
 
     /**
@@ -93,19 +167,99 @@ class LocalhostClient implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        if (isset($this->splits[$featureName])) {
-            return $this->splits[$featureName];
+        $key = $this->doValidation($key, $featureName, "getTreatment");
+        if (is_null($key)) {
+            return TreatmentEnum::CONTROL;
+        }
+
+        if (isset($this->splits[$key])) {
+            return $this->splits[$key]["treatment"];
+        } else {
+            if (isset($this->splits[$featureName])) {
+                return $this->splits[$featureName]["treatment"];
+            }
         }
 
         return TreatmentEnum::CONTROL;
     }
 
+    public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
+    {
+        $treatmentResult = array(
+            "treatment" => TreatmentEnum::CONTROL,
+            "config" => null,
+        );
+
+        $key = $this->doValidation($key, $featureName, "getTreatmentWithConfig");
+        if (is_null($key)) {
+            return $treatmentResult;
+        }
+
+        if (isset($this->splits[$key])) {
+            $treatmentResult["treatment"] = $this->splits[$key]["treatment"];
+            if (isset($this->splits[$key]["config"])) {
+                $treatmentResult["config"] = $this->splits[$key]["config"];
+            }
+        } else {
+            if (isset($this->splits[$featureName])) {
+                $treatmentResult["treatment"] = $this->splits[$featureName]["treatment"];
+                if (isset($this->splits[$featureName]["config"])) {
+                    $treatmentResult["config"] = $this->splits[$featureName]["config"];
+                }
+            }
+        }
+
+        return $treatmentResult;
+    }
+
+    public function getTreatments($key, $featureNames, $attributes = null)
+    {
+        $splitNames = InputValidator::validateFeatureNames($featureNames, "getTreatments");
+        if (is_null($splitNames)) {
+            return null;
+        }
+
+        $key = InputValidator::validateKey($key, "getTreatments");
+        if (is_null($key)) {
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                InputValidator::generateControlTreatments($splitNames)
+            );
+        }
+
+        $result = array();
+
+        foreach ($splitNames as $split) {
+            $result[$split] = $this->getTreatment($key["matchingKey"], $split, $attributes);
+        };
+
+        return $result;
+    }
+
+    public function getTreatmentsWithConfig($key, $featureNames, $attributes = null)
+    {
+        $splitNames = InputValidator::validateFeatureNames($featureNames, "getTreatmentsWithConfig");
+        if (is_null($splitNames)) {
+            return null;
+        }
+
+        $key = InputValidator::validateKey($key, "getTreatmentsWithConfig");
+        if (is_null($key)) {
+            return InputValidator::generateControlTreatments($splitNames);
+        }
+
+        $result = array();
+
+        foreach ($splitNames as $split) {
+            $result[$split] = $this->getTreatmentWithConfig($key["matchingKey"], $split, $attributes);
+        };
+
+        return $result;
+    }
+
     /**
-     * A short-hand for
-     * <pre>
-     *     (getTreatment(key, feature) == treatment) ? true : false;
-     * </pre>
-     *
      * This method never throws exceptions.
      * Instead of throwing  exceptions, it returns false.
      *

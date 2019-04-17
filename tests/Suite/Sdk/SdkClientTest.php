@@ -64,6 +64,145 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($splitSdk->isTreatment('someKey', 'feature_C', 'invalid_treatment'));
     }
 
+    public function testLocalClientYAML()
+    {
+        $options['splitFile'] = dirname(dirname(__DIR__)).'/files/splits.yml';
+        $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
+        $splitSdk = $splitFactory->client();
+        $splitManager = $splitFactory->manager();
+
+        $this->assertEquals('off', $splitSdk->getTreatment('only_key', 'my_feature'));
+        $this->assertEquals('control', $splitSdk->getTreatment('invalid_key', 'my_feature'));
+        $this->assertEquals('on', $splitSdk->getTreatment('key', 'my_feature'));
+        $this->assertEquals('on', $splitSdk->getTreatment('key2', 'other_feature'));
+        $this->assertEquals('on', $splitSdk->getTreatment('test', 'other_feature_2'));
+        $this->assertEquals('off', $splitSdk->getTreatment('key', 'other_feature_3'));
+        $this->assertEquals('on', $splitSdk->getTreatment('key_whitelist', 'other_feature_3'));
+
+        $this->assertEquals('control', $splitSdk->getTreatment(true, 'other_feature_3'));
+
+        $result = $splitSdk->getTreatments('only_key', array('my_feature', 'other_feature'));
+        $this->assertEquals('off', $result["my_feature"]);
+        $this->assertEquals('control', $result["other_feature"]);
+
+        $result = $splitSdk->getTreatments(true, array('my_feature', 'other_feature'));
+        $this->assertEquals('control', $result["my_feature"]);
+        $this->assertEquals('control', $result["other_feature"]);
+
+        $result = $splitSdk->getTreatments(true, array(true, 'other_feature'));
+        $this->assertEquals('control', $result["other_feature"]);
+
+        $result = $splitSdk->getTreatmentWithConfig('only_key', 'my_feature');
+        $this->assertEquals('off', $result["treatment"]);
+        $this->assertEquals(
+            '{"desc" : "this applies only to OFF and only for only_key. The rest will receive ON"}',
+            $result["config"]
+        );
+
+        $result = $splitSdk->getTreatmentWithConfig('invalid_key', 'my_feature');
+        $this->assertEquals('control', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
+        $result = $splitSdk->getTreatmentWithConfig('key', 'my_feature');
+        $this->assertEquals('on', $result["treatment"]);
+        $this->assertEquals(
+            '{"desc" : "this applies only to ON treatment"}',
+            $result["config"]
+        );
+
+        $result = $splitSdk->getTreatmentWithConfig('key2', 'other_feature');
+        $this->assertEquals('on', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
+        $result = $splitSdk->getTreatmentWithConfig('test', 'other_feature_2');
+        $this->assertEquals('on', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
+        $result = $splitSdk->getTreatmentWithConfig('key', 'other_feature_3');
+        $this->assertEquals('off', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
+        $result = $splitSdk->getTreatmentWithConfig('key_whitelist', 'other_feature_3');
+        $this->assertEquals('on', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
+        $result = $splitSdk->getTreatmentWithConfig(true, 'other_feature_3');
+        $this->assertEquals('control', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
+        $result = $splitSdk->getTreatmentWithConfig('key_whitelist', true);
+        $this->assertEquals('control', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
+        $result = $splitSdk->getTreatmentsWithConfig('only_key', array('my_feature', 'other_feature'));
+        $this->assertEquals('off', $result['my_feature']["treatment"]);
+        $this->assertEquals(
+            '{"desc" : "this applies only to OFF and only for only_key. The rest will receive ON"}',
+            $result['my_feature']["config"]
+        );
+        $this->assertEquals('control', $result['other_feature']["treatment"]);
+        $this->assertEquals(null, $result['other_feature']["config"]);
+
+        $result = $splitSdk->getTreatmentsWithConfig(true, array('my_feature', 'other_feature'));
+        $this->assertEquals('control', $result['my_feature']["treatment"]);
+        $this->assertEquals(null, $result['my_feature']["config"]);
+        $this->assertEquals('control', $result['other_feature']["treatment"]);
+        $this->assertEquals(null, $result['other_feature']["config"]);
+
+        $result = $splitSdk->getTreatmentsWithConfig('only_key', array('my_feature', true));
+        $this->assertEquals('off', $result['my_feature']["treatment"]);
+        $this->assertEquals(
+            '{"desc" : "this applies only to OFF and only for only_key. The rest will receive ON"}',
+            $result['my_feature']["config"]
+        );
+
+        $this->assertEquals(4, count($splitManager->splitNames()));
+
+        $splitView = $splitManager->split("my_feature");
+        $this->assertEquals("my_feature", $splitView->getName());
+        $this->assertEquals(false, $splitView->getKilled());
+        $this->assertEquals(2, count($splitView->getTreatments()));
+        $config = $splitView->getConfigs();
+        $this->assertEquals(
+            '{"desc" : "this applies only to OFF and only for only_key. The rest will receive ON"}',
+            $config['off']
+        );
+        $this->assertEquals(
+            '{"desc" : "this applies only to ON treatment"}',
+            $config['on']
+        );
+
+        $splitView = $splitManager->split("other_feature");
+        $this->assertEquals("other_feature", $splitView->getName());
+        $this->assertEquals(false, $splitView->getKilled());
+        $this->assertEquals(1, count($splitView->getTreatments()));
+        $config = $splitView->getConfigs();
+        $this->assertEquals(
+            new StdClass,
+            $config
+        );
+
+        $splitView = $splitManager->split("other_feature_2");
+        $this->assertEquals("other_feature_2", $splitView->getName());
+        $this->assertEquals(false, $splitView->getKilled());
+        $this->assertEquals(1, count($splitView->getTreatments()));
+        $config = $splitView->getConfigs();
+        $this->assertEquals(
+            new StdClass,
+            $config
+        );
+
+        $splitView = $splitManager->split("other_feature_3");
+        $this->assertEquals("other_feature_3", $splitView->getName());
+        $this->assertEquals(false, $splitView->getKilled());
+        $this->assertEquals(2, count($splitView->getTreatments()));
+        $config = $splitView->getConfigs();
+        $this->assertEquals(
+            new StdClass,
+            $config
+        );
+    }
+
     private function validateLastImpression($redisClient, $feature, $key, $treatment)
     {
         $raw = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
