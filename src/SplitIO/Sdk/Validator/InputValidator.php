@@ -18,7 +18,7 @@ class InputValidator
      * @param $operation
      * @return true|false
      */
-    private static function validString($value, $name, $operation)
+    public static function validString($value, $name, $operation)
     {
         if (self::checkIsNull($value, $name, $operation) or self::checkIsNotString($value, $name, $operation)
         or self::checkIsEmpty($value, $name, $operation)) {
@@ -243,7 +243,7 @@ class InputValidator
                     array_filter(
                         $featureNames,
                         function ($featureName) use ($operation) {
-                            return self::validString($featureName, 'split name', $operation);
+                            return InputValidator::validString($featureName, 'split name', $operation);
                         }
                     )
                 )
