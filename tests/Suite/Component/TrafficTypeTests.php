@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Test\Suite\Component;
 
-use SplitIO\Component\Cache\TrafficTypeCache;
+use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Common\Di;
 
@@ -45,9 +45,9 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
         $redisClient->del($keyTrafficType);
 
-        $trafficTypeCache = new TrafficTypeCache();
+        $trafficTypeCache = new SplitCache();
 
-        $this->assertEquals($trafficTypeCache->getTrafficType("abc"), 0);
+        $this->assertEquals($trafficTypeCache->trafficTypeExists("abc"), false);
 
         $logger->expects($this->once())
         ->method('warning')
@@ -61,7 +61,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(true, $splitSdk->track('some_key', 'abc', 'some_event', 1));
 
-        $this->assertEquals($trafficTypeCache->getTrafficType("abc"), 1);
+        $this->assertEquals($trafficTypeCache->trafficTypeExists("abc"), true);
 
         $redisClient->del($keyTrafficType);
     }

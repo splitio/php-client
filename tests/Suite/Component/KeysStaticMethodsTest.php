@@ -90,7 +90,7 @@ class KeyTest extends \PHPUnit_Framework_TestCase
 
     public function testTrafficTypeNameFromCache()
     {
-        $trafficTypeName = TrafficTypeCache::getCacheKeyForTrafficType('abc');
+        $trafficTypeName = SplitCache::getCacheKeyForTrafficType('abc');
         $this->assertEquals($trafficTypeName, 'SPLITIO.trafficType.abc');
     }
 }
