@@ -96,7 +96,7 @@ class SplitCache implements SplitCacheInterface
 
     /**
      * @param string $trafficType
-     * @return string JSON representation
+     * @return bool
      */
     public function trafficTypeExists($trafficType)
     {
