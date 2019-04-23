@@ -182,7 +182,7 @@ class InputValidator
                 . "lowercase.");
         }
         $splitCache = new SplitCache();
-        if (!$splitCache->trafficTypeExists($trafficType)) {
+        if (!$splitCache->trafficTypeExists($toLowercase)) {
             SplitApp::logger()->warning("track: Traffic Type '". $toLowercase . "' does not have any corresponding "
                 . "Splits in this environment, make sure you’re tracking your events to a valid traffic type "
                 . "defined in the Split console.");
