@@ -322,8 +322,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
-        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', null, 'invalid_feature',
-        'sample_feature', null, 'sample_feature'], null);
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', null, 'invalid_feature',
+        'sample_feature', null, 'sample_feature'), null);
 
         //Assertions
         $this->assertEquals(2, count(array_keys($treatmentResult)));
