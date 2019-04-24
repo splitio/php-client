@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Sdk\Factory;
 
-use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Stats\Latency;
 use SplitIO\Exception\TimeOutException;
 use SplitIO\Sdk\Client;
@@ -55,33 +54,6 @@ class SplitFactory implements SplitFactoryInterface
                 throw new TimeOutException("Cache data is not ready yet");
             }
         }
-    }
-
-    /**
-     * @param $timeout
-     * @return bool
-     */
-    private function blockUntilReady($timeout)
-    {
-        $bur = new BlockUntilReadyCache();
-
-        $startTime = Latency::startMeasuringLatency();
-
-        do {
-            $lastreadyCheckpoint = $bur->getReadyCheckpoint();
-
-            if ($lastreadyCheckpoint > 0) {
-                return true;
-            }
-
-            // Checkpoint in milliseconds
-            $checkPoint = Latency::calculateLatency($startTime) / 1000;
-
-            // waiting 10 milliseconds
-            usleep(10000);
-        } while ($checkPoint < $timeout);
-
-        return false;
     }
 
     /**
