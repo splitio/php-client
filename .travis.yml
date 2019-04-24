@@ -1,11 +1,15 @@
 language: php
 
+env:
+  global:
+    - COMPOSER_DISABLE_XDEBUG_WARN=1
+
 matrix:
   include:
     - dist: precise
       php: '5.3'
-    - dist: trusty
-      php: '7.3'
+    - dist: xenial
+      php: '7.2'
 
 services:
   - redis-server
