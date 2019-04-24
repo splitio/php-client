@@ -388,7 +388,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithoutCustomKeyHashtagClusters()
     {
-        $this->setExpectedException(ClientException::class);
+        $this->setExpectedException('ClientException');
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
