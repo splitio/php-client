@@ -9,24 +9,28 @@ use SplitIO\Grammar\Split;
 
 class SplitTest extends \PHPUnit_Framework_TestCase
 {
-    public $split1 = '{"trafficTypeName":"user","name":"mysplittest","trafficAllocation":100,'
-        . '"trafficAllocationSeed":-285565213,"seed":-1992295819,"status":"ACTIVE","killed":false,"'
-        . 'defaultTreatment":"off","changeNumber":1494593336752,"algo":2,"conditions":[{"conditionType"'
-        . ':"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"'
-        . ':"user","attribute":null},"matcherType":"ALL_KEYS","negate":false,"userDefinedSegmentMatcherData":null,'
-        . '"whitelistMatcherData":null,"unaryNumericMatcherData":null,"betweenMatcherData":null,"booleanMatcherData"'
-        . ':null,"dependencyMatcherData":null,"stringMatcherData":null}]},"partitions":[{"treatment":"on","size":0}'
-        . ',{"treatment":"off","size":100}],"label":"default rule"}]}';
+    public $split1 = <<<EOD
+{"trafficTypeName":"user","name":"mysplittest","trafficAllocation":100,
+"trafficAllocationSeed":-285565213,"seed":-1992295819,"status":"ACTIVE","killed":false,
+"defaultTreatment":"off","changeNumber":1494593336752,"algo":2,"conditions":[{"conditionType"
+:"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"
+:"user","attribute":null},"matcherType":"ALL_KEYS","negate":false,"userDefinedSegmentMatcherData":null,
+"whitelistMatcherData":null,"unaryNumericMatcherData":null,"betweenMatcherData":null,"booleanMatcherData"
+:null,"dependencyMatcherData":null,"stringMatcherData":null}]},"partitions":[{"treatment":"on","size":0}
+,{"treatment":"off","size":100}],"label":"default rule"}]}
+EOD;
 
-    public $split2 = '{"trafficTypeName":"user","name":"mysplittest2","trafficAllocation":100,"'
-        . 'trafficAllocationSeed":1252392550,"seed":971538037,"status":"ACTIVE","killed":false,'
-        . '"defaultTreatment":"off","changeNumber":1494593352077,"algo":2,"conditions":[{"conditionType"'
-        . ':"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"'
-        . ':"user","attribute":null},"matcherType":"ALL_KEYS","negate":false,"userDefinedSegmentMatcherData'
-        . '":null,"whitelistMatcherData":null,"unaryNumericMatcherData":null,"betweenMatcherData":null,"'
-        . 'booleanMatcherData":null,"dependencyMatcherData":null,"stringMatcherData":null}]},"partitions"'
-        . ':[{"treatment":"on","size":0},{"treatment":"off","size":100}],"label":"default rule"}'
-        . '],"configurations":{"on":"{\"color\": \"blue\",\"size\": 13}"}}';
+    public $split2 = <<<EOD
+{"trafficTypeName":"user","name":"mysplittest2","trafficAllocation":100,
+"trafficAllocationSeed":1252392550,"seed":971538037,"status":"ACTIVE","killed":false,
+"defaultTreatment":"off","changeNumber":1494593352077,"algo":2,"conditions":[{"conditionType"
+:"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType"
+:"user","attribute":null},"matcherType":"ALL_KEYS","negate":false,"userDefinedSegmentMatcherData":
+null,"whitelistMatcherData":null,"unaryNumericMatcherData":null,"betweenMatcherData":null,
+"booleanMatcherData":null,"dependencyMatcherData":null,"stringMatcherData":null}]},"partitions"
+:[{"treatment":"on","size":0},{"treatment":"off","size":100}],"label":"default rule"}
+],"configurations":{"on":"{\"color\": \"blue\",\"size\": 13}"}}
+EOD;
 
     public function testSplitWithoutConfigurations()
     {
@@ -87,7 +91,8 @@ class SplitTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('mysplittest2', $split->getName());
         $this->assertNotNull($split->getConfigurations());
-        $this->assertEquals($split->getConfigurations()['on'], '{"color": "blue","size": 13}');
+        $configs = $split->getConfigurations();
+        $this->assertEquals($configs['on'], '{"color": "blue","size": 13}');
 
         $redisClient->del('SPLITIO.split.mysplittest2');
     }
