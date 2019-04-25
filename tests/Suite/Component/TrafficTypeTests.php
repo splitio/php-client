@@ -38,16 +38,16 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
 
         $logger = $this->getMockedLogger();
 
-        $keyTrafficType = TrafficTypeCache::getCacheKeyForTrafficType('abc');
+        $keyTrafficType = SplitCache::getCacheKeyForTrafficType('abc');
 
         $this->assertEquals($keyTrafficType, 'SPLITIO.trafficType.abc');
 
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
         $redisClient->del($keyTrafficType);
 
-        $trafficTypeCache = new SplitCache();
+        $splitCache = new SplitCache();
 
-        $this->assertEquals($trafficTypeCache->trafficTypeExists("abc"), false);
+        $this->assertEquals($splitCache->trafficTypeExists("abc"), false);
 
         $logger->expects($this->once())
         ->method('warning')
@@ -61,7 +61,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(true, $splitSdk->track('some_key', 'abc', 'some_event', 1));
 
-        $this->assertEquals($trafficTypeCache->trafficTypeExists("abc"), true);
+        $this->assertEquals($splitCache->trafficTypeExists("abc"), true);
 
         $redisClient->del($keyTrafficType);
     }
