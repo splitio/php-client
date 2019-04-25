@@ -30,6 +30,11 @@ class Sdk
         //Adding API Key into args array.
         $options['apiKey'] = $apiKey;
 
+        if (self::instanceExists()) {
+            return null;
+        }
+        self::registerInstance();
+
         if ($apiKey == 'localhost') {
             //Register Logger
             self::registerLogger((isset($options['log'])) ? $options['log'] : array());
@@ -91,5 +96,27 @@ class Sdk
     private static function setIP($ip)
     {
         \SplitIO\Component\Common\Di::set('ipAddress', $ip);
+    }
+
+    /**
+     * Check factory instance
+     */
+    private static function instanceExists()
+    {
+        $value = Di::get(Di::KEY_FACTORY_TRACKER);
+        if (is_null($value) || !$value) {
+            return false;
+        }
+        Di::getLogger()->critical("Factory Instantiation: creating multiple factories is not possible. "
+            . "You have already created a factory.");
+        return true;
+    }
+
+    /**
+     * Register factory instance
+     */
+    private static function registerInstance()
+    {
+        Di::set(Di::KEY_FACTORY_TRACKER, true);
     }
 }

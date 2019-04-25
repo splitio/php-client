@@ -15,6 +15,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 {
     private function setupSplitApp()
     {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array(
             'scheme' => 'redis',
             'host' => "localhost",
