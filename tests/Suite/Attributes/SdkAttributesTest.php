@@ -76,15 +76,15 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
     {
         // IN Operator
         //if user.account is in segment all then 100%:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_account_in_segment_all', ['account' => 'my_new_user']));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_account_in_segment_all', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_account_in_segment_all', array('account' => 'my_new_user')));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_account_in_segment_all', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_account_in_segment_all', null));
 
         //if user.plan is in list [“pro”, “premium”] then 100%:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', ['plan' => 'pro']));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', ['plan' => 'premium']));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', ['plan' => 'standard']));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', array('plan' => 'pro')));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', array('plan' => 'premium')));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', array('plan' => 'standard')));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_plan_in_whitelist', null));
     }
 
@@ -92,54 +92,60 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
     {
         // = Operator
         //if user.attr = 0 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', ['attr' => 0]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', ['attr' => -0]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', ['attr' => 15]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', array('attr' => 0)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', array('attr' => -0)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', array('attr' => 15)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_zero', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', ['attr' => 0]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', ['attr' => -0]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', ['attr' => 15]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', array('attr' => 0)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', array('attr' => -0)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', array('attr' => 15)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_zero', null));
 
         //if user.attr = 10 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', ['attr' => 10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', ['attr' => -10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', ['attr' => 15]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', array('attr' => 10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', array('attr' => -10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', array('attr' => 15)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_number_ten', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', ['attr' => 10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', ['attr' => -10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', ['attr' => 15]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', array('attr' => 10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', array('attr' => -10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', array('attr' => 15)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_ten', null));
 
         //if user.attr = -10 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', ['attr' => -10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', ['attr' => 10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', ['attr' => 15]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', array('attr' => -10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', array('attr' => 10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', array('attr' => 15)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_number_ten', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', ['attr' => -10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', ['attr' => 10]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', ['attr' => 15]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', array('attr' => -10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', array('attr' => 10)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', array('attr' => 15)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_negative_ten', null));
 
         //if user.attr = datetime 1458240947021 then split 100:on
         //For DATETIME the EQUAL_TO remove the time in order to compare only the date.
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:55:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 09:12PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 00:00:00", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 23:59:59", new \DateTimeZone("UTC")))->getTimestamp()]));
+        $date = new \DateTime("2016/03/17 06:55:23PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 09:12PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 00:00:00", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 23:59:59", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', array('attr' => $date->getTimestamp())));
 
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/16 23:59:59", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/18 00:00:00", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', []));
+        $date = new \DateTime("2016/03/16 23:59:59", new \DateTimeZone("UTC"));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/18 00:00:00", new \DateTimeZone("UTC"));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_eq_datetime_1458240947021', null));
     }
 
@@ -147,105 +153,118 @@ class SdkAttributesTest extends \PHPUnit_Framework_TestCase
     {
         // >= Operator
         //if user.attr >= 10 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_10', ['attr' => 10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_10', ['attr' => 11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_10', ['attr' => 9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_10', array('attr' => 10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_10', array('attr' => 11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_10', array('attr' => 9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_10', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', ['attr' => 10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', ['attr' => 11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', ['attr' => 9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', array('attr' => 10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', array('attr' => 11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', array('attr' => 9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_number_10', null));
 
         //if user.attr >= -10 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', ['attr' => -10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', ['attr' => -9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', ['attr' => -11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', array('attr' => -10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', array('attr' => -9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', array('attr' => -11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_10', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', ['attr' => -10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', ['attr' => -9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', ['attr' => -11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', array('attr' => -10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', array('attr' => -9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', array('attr' => -11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_negative_number_10', null));
 
         //if user.attr >= datetime 1458240947021 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:55:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:55:00PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:56:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', ['attr' => (new \DateTime("2025/04/17 09:56:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:54:22PM", new \DateTimeZone("UTC")))->getTimestamp()]));
+        $date = new \DateTime("2016/03/17 06:55:23PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 06:55:00PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 06:56:23PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2025/04/17 09:56:23PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 06:54:22PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_gte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
     }
 
     private function lessThanOrEqualToOperator(\SplitIO\Sdk\ClientInterface $splitSdk)
     {
         // <= Operator
         //if user.attr <= 10 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_10', ['attr' => 10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_10', ['attr' => 9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_10', ['attr' => 11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_10', array('attr' => 10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_10', array('attr' => 9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_10', array('attr' => 11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_10', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', ['attr' => 10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', ['attr' => 9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', ['attr' => 11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', array('attr' => 10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', array('attr' => 9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', array('attr' => 11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_number_10', null));
 
         //if user.attr <= -10 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', ['attr' => -10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', ['attr' => -11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', ['attr' => -9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', array('attr' => -10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', array('attr' => -11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', array('attr' => -9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_10', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', ['attr' => -10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', ['attr' => -11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', ['attr' => -9]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', array('attr' => -10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', array('attr' => -11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', array('attr' => -9)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_negative_number_10', null));
 
         //if user.attr <= datetime 1458240947021 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:55:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:55:00PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:54:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', ['attr' => (new \DateTime("2016/02/10 09:24:23PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', ['attr' => (new \DateTime("2016/03/17 06:56:22PM", new \DateTimeZone("UTC")))->getTimestamp()]));
+        $date = new \DateTime("2016/03/17 06:55:23PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 06:55:00PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 06:54:23PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/02/10 09:24:23PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 06:56:22PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_lte_datetime_1458240947021', array('attr' => $date->getTimestamp())));
     }
 
     private function betweenOperator(\SplitIO\Sdk\ClientInterface $splitSdk)
     {
         // Between Operator
         //if user.attr is between -10 and 20 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', ['attr' => -10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', ['attr' => 0]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', ['attr' => 20]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', ['attr' => -11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', ['attr' => 21]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', array('attr' => -10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', array('attr' => 0)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', array('attr' => 20)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', array('attr' => -11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', array('attr' => 21)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_negative_10_and_20', null));
 
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', ['attr' => -10]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', ['attr' => 0]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', ['attr' => 20]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', ['attr' => -11]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', ['attr' => 21]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', []));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', array('attr' => -10)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', array('attr' => 0)));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', array('attr' => 20)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', array('attr' => -11)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', array('attr' => 21)));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_number_negative_10_and_20', null));
 
         //if user.attr is between datetime 1458240947021 and 1459452812642 then split 100:on
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', ['attr' => (new \DateTime("2016/03/17 06:55:47PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', ['attr' => (new \DateTime("2016/03/17 08:34:44PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', ['attr' => (new \DateTime("2016/03/31 07:33:32PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', ['attr' => (new \DateTime("1995/12/17 06:24:00AM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', ['attr' => (new \DateTime("2016/03/31 07:35:48PM", new \DateTimeZone("UTC")))->getTimestamp()]));
-        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', []));
+        $date = new \DateTime("2016/03/17 06:55:47PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/17 08:34:44PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/31 07:33:32PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("1995/12/17 06:24:00AM", new \DateTimeZone("UTC"));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array('attr' => $date->getTimestamp())));
+        $date = new \DateTime("2016/03/31 07:35:48PM", new \DateTimeZone("UTC"));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array('attr' => $date->getTimestamp())));
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', null));
     }
 }

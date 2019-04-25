@@ -293,7 +293,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisWithInvalidKeyHashtagInClusters()
     {
         $this->setExpectedException(
-            'AdapterException',
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag is not valid."
         );
 
@@ -313,7 +313,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisWithInvalidBeginingKeyHashtagInClusters()
     {
         $this->setExpectedException(
-            'AdapterException',
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag is not valid."
         );
 
@@ -333,7 +333,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisWithWrongTypeKeyHashtagInClusters()
     {
         $this->setExpectedException(
-            'AdapterException',
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag must be string."
         );
 
@@ -353,7 +353,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     public function testRedisWithWrongLengthKeyHashtagInClusters()
     {
         $this->setExpectedException(
-            'AdapterException',
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag is not valid."
         );
 
@@ -388,7 +388,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithoutCustomKeyHashtagClusters()
     {
-        $this->setExpectedException('ClientException');
+        $this->setExpectedException('\Predis\ClientException');
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
