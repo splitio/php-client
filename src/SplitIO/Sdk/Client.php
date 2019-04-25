@@ -177,39 +177,12 @@ class Client implements ClientInterface
                 'treatment' => $result['treatment'],
                 'config' => $result['config'],
             );
-        } catch (InvalidMatcherException $ie) {
-            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
-            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
         } catch (\Exception $e) {
             SplitApp::logger()->critical($operation . ' method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
             SplitApp::logger()->critical($e->getTraceAsString());
         }
 
-        try {
-            // Creates impression
-            $impression = $this->createImpression(
-                $matchingKey,
-                $featureName,
-                TreatmentEnum::CONTROL,
-                $impressionLabel,
-                $bucketingKey
-            );
-
-            // Register impression
-            TreatmentImpression::log($impression);
-
-            // Provides logic to send data to Client
-            if (isset($this->impressionListener)) {
-                $this->impressionListener->sendDataToClient($impression, $attributes);
-            }
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical(
-                "An error occurred when attempting to log impression for " .
-                "feature: $featureName, key: $matchingKey"
-            );
-            SplitApp::logger()->critical($e);
-        }
         return $default;
     }
 
@@ -376,20 +349,21 @@ class Client implements ClientInterface
         $matchingKey = $inputValidation['matchingKey'];
         $bucketingKey = $inputValidation['bucketingKey'];
         $splitNames = $inputValidation['featureNames'];
+
+        $defaultTreatment = array(
+            'treatment' => TreatmentEnum::CONTROL,
+            'config' => null
+        );
         
         try {
             $result = array();
             $impressions = array();
             foreach ($splitNames as $splitName) {
+                $result[$splitName] = $defaultTreatment;
                 try {
                     $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
 
-                    if (!InputValidator::isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
-                        $result[$splitName] = array(
-                            'treatment' => TreatmentEnum::CONTROL,
-                            'config' => null
-                        );
-                    } else {
+                    if (InputValidator::isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
                         $latency += $evalResult['metadata']['latency'];
 
                         // Creates impression
@@ -408,10 +382,6 @@ class Client implements ClientInterface
                         );
                     }
                 } catch (\Exception $e) {
-                    $result[$splitName] = array(
-                        'treatment' => TreatmentEnum::CONTROL,
-                        'config' => null,
-                    );
                     SplitApp::logger()->critical(
                         $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
                     );

@@ -272,7 +272,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         // testing INVALID matcher
         $this->assertEquals('control', $splitSdk->getTreatment('some_user_key', 'invalid_matcher_feature'));
-        $this->validateLastImpression($redisClient, 'invalid_matcher_feature', 'some_user_key', 'control');
 
         // testing Dependency matcher
         $this->assertEquals('off', $splitSdk->getTreatment('somekey', 'dependency_test'));
