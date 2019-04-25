@@ -2,6 +2,7 @@
 namespace SplitIO;
 
 use SplitIO\Split as SplitApp;
+use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 function version()
 {
@@ -60,7 +61,7 @@ function parseSplitsFile($fileContent)
             $matches = array();
             if (preg_match($re, $line, $matches)) {
                 if (isset($matches[1]) && isset($matches[2])) {
-                    $result[$matches[1]] = $matches[2];
+                    $result[$matches[1]]["treatment"] = $matches[2];
                 }
             }
         }
@@ -80,4 +81,9 @@ function getHostIpAddress()
     } else {
         return 'unknown';
     }
+}
+
+function generateControlTreatments($splitNames)
+{
+    return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
 }

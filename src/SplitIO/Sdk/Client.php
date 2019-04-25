@@ -80,11 +80,6 @@ class Client implements ClientInterface
         return $impression;
     }
 
-    private static function generateControlTreatments($splitNames)
-    {
-        return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
-    }
-
     /**
      * Verifies inputs for getTreatment and getTreatmentWithConfig methods
      *
@@ -345,7 +340,7 @@ class Client implements ClientInterface
         $key = InputValidator::validateKey($key, $operation);
         if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
             return array(
-                'controlTreatments' => $this->generateControlTreatments($splitNames),
+                'controlTreatments' => \SplitIO\generateControlTreatments($splitNames),
             );
         }
 
@@ -509,7 +504,7 @@ class Client implements ClientInterface
                 function ($feature) {
                     return $feature['treatment'];
                 },
-                $this->generateControlTreatments($splitNames)
+                \SplitIO\generateControlTreatments($splitNames)
             ) : array();
         }
     }
@@ -560,7 +555,7 @@ class Client implements ClientInterface
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
             $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
-            return !is_null($splitNames) ? $this->generateControlTreatments($splitNames) : array();
+            return !is_null($splitNames) ? \SplitIO\generateControlTreatments($splitNames) : array();
         }
     }
 
