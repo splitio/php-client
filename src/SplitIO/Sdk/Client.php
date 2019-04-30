@@ -81,6 +81,135 @@ class Client implements ClientInterface
     }
 
     /**
+     * Verifies inputs for getTreatment and getTreatmentWithConfig methods
+     *
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     * @param $operation
+     *
+     * @return null|mixed
+     */
+    private function doInputValidationForTreatment($key, $featureName, array $attributes = null, $operation)
+    {
+        $key = InputValidator::validateKey($key, $operation);
+        if (is_null($key)) {
+            return null;
+        }
+
+        $featureName = InputValidator::validateFeatureName($featureName, $operation);
+        if (is_null($featureName)) {
+            return null;
+        }
+
+        if (!InputValidator::validAttributes($attributes, $operation)) {
+            return null;
+        }
+
+        return array(
+            'matchingKey' => $key['matchingKey'],
+            'bucketingKey' => $key['bucketingKey'],
+            'featureName' => $featureName,
+            'impressionLabel' => ImpressionLabel::EXCEPTION
+        );
+    }
+
+    /**
+     * Executes evaluation for getTreatment or getTreatmentWithConfig
+     *
+     * @param $operation
+     * @param $metricName
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     *
+     * @return mixed
+     */
+    private function doEvaluation($operation, $metricName, $key, $featureName, $attributes)
+    {
+        $default = array(
+            'treatment' => TreatmentEnum::CONTROL,
+            'config' => null
+        );
+
+        $inputValidation = $this->doInputValidationForTreatment($key, $featureName, $attributes, $operation);
+        if (is_null($inputValidation)) {
+            return $default;
+        }
+
+        $matchingKey = $inputValidation['matchingKey'];
+        $bucketingKey = $inputValidation['bucketingKey'];
+        $featureName = $inputValidation['featureName'];
+        $impressionLabel = $inputValidation['impressionLabel'];
+
+        try {
+            $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
+
+            // Creates impression
+            $impression = $this->createImpression(
+                $matchingKey,
+                $featureName,
+                $result['treatment'],
+                $result['impression']['label'],
+                $bucketingKey,
+                $result['impression']['changeNumber']
+            );
+
+            // Register impression
+            TreatmentImpression::log($impression);
+
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
+
+            //Register latency value
+            MetricsCache::addLatencyOnBucket(
+                $metricName,
+                Metrics::getBucketForLatencyMicros($result['metadata']['latency'])
+            );
+
+            return array(
+                'treatment' => $result['treatment'],
+                'config' => $result['config'],
+            );
+        } catch (InvalidMatcherException $ie) {
+            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
+            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical($operation . ' method is throwing exceptions');
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
+        }
+
+        try {
+            // Creates impression
+            $impression = $this->createImpression(
+                $matchingKey,
+                $featureName,
+                TreatmentEnum::CONTROL,
+                $impressionLabel,
+                $bucketingKey
+            );
+
+            // Register impression
+            TreatmentImpression::log($impression);
+
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical(
+                "An error occurred when attempting to log impression for " .
+                "feature: $featureName, key: $matchingKey"
+            );
+            SplitApp::logger()->critical($e);
+        }
+        return $default;
+    }
+
+    /**
      * Returns the treatment to show this id for this feature.
      * The set of treatments for a feature can be configured
      * on the Split web console.
@@ -115,87 +244,198 @@ class Client implements ClientInterface
      */
     public function getTreatment($key, $featureName, array $attributes = null)
     {
-        $key = InputValidator::validateKey($key, 'getTreatment');
-        if (is_null($key)) {
-            return TreatmentEnum::CONTROL;
-        }
-
-        $featureName = InputValidator::validateFeatureName($featureName, 'getTreatment');
-        if (is_null($featureName)) {
-            return TreatmentEnum::CONTROL;
-        }
-
-        if (!InputValidator::validAttributes($attributes, 'getTreatment')) {
-            return TreatmentEnum::CONTROL;
-        }
-
-        $matchingKey = $key['matchingKey'];
-        $bucketingKey = $key['bucketingKey'];
-
-        $impressionLabel = ImpressionLabel::EXCEPTION;
-
         try {
-            $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
-
-            // Creates impression
-            $impression = $this->createImpression(
-                $matchingKey,
-                $featureName,
-                $result['treatment'],
-                $result['impression']['label'],
-                $bucketingKey,
-                $result['impression']['changeNumber']
-            );
-
-            // Register impression
-            TreatmentImpression::log($impression);
-
-            // Provides logic to send data to Client
-            if (isset($this->impressionListener)) {
-                $this->impressionListener->sendDataToClient($impression, $attributes);
-            }
-
-            //Register latency value
-            MetricsCache::addLatencyOnBucket(
+            $result = $this->doEvaluation(
+                'getTreatment',
                 Metrics::MNAME_SDK_GET_TREATMENT,
-                Metrics::getBucketForLatencyMicros($result['metadata']['latency'])
+                $key,
+                $featureName,
+                $attributes
             );
-
             return $result['treatment'];
-        } catch (InvalidMatcherException $ie) {
-            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
-            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatment method is throwing exceptions');
+            return TreatmentEnum::CONTROL;
+        }
+    }
+
+    /**
+     * Returns an object with the treatment to show this id for this feature
+     * and the config provided.
+     * The set of treatments and config for a feature can be configured
+     * on the Split web console.
+     * This method returns the string 'control' if:
+     * <ol>
+     *     <li>Any of the parameters were null</li>
+     *     <li>There was an exception</li>
+     *     <li>The SDK does not know this feature</li>
+     *     <li>The feature was deleted through the web console.</li>
+     * </ol>
+     * 'control' is a reserved treatment, to highlight these
+     * exceptional circumstances.
+     *
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     *
+     * This method returns null configuration if:
+     * <ol>
+     *     <li>config was not set up</li>
+     * </ol>
+     * @param $key
+     * @param $featureName
+     * @param $attributes
+     * @return string
+     */
+    public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
+    {
+        try {
+            return $this->doEvaluation(
+                'getTreatmentWithConfig',
+                Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
+                $key,
+                $featureName,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentWithConfig method is throwing exceptions');
+            return array(
+                'treatment' => TreatmentEnum::CONTROL,
+                'config' => null,
+            );
+        }
+    }
+
+    /**
+     * Verifies inputs for getTreatments and getTreatmentsWithConfig methods
+     *
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     * @param $operation
+     *
+     * @return null|mixed
+     */
+    private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
+    {
+        $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
+        if (is_null($splitNames)) {
+            return null;
+        }
+
+        $key = InputValidator::validateKey($key, $operation);
+        if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
+            return array(
+                'controlTreatments' => InputValidator::generateControlTreatments($splitNames),
+            );
+        }
+
+        return array(
+            'matchingKey' => $key['matchingKey'],
+            'bucketingKey' => $key['bucketingKey'],
+            'featureNames' => $splitNames,
+        );
+    }
+
+    /**
+     * Executes evaluation for getTreatments or getTreatmentsWithConfig
+     *
+     * @param $operation
+     * @param $metricName
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     *
+     * @return mixed
+     */
+    private function doEvaluationForTreatments($operation, $metricName, $key, $featureNames, $attributes)
+    {
+        $latency = 0;
+        $inputValidation = $this->doInputValidationForTreatments($key, $featureNames, $attributes, $operation);
+        if (is_null($inputValidation)) {
+            return array();
+        }
+        if (isset($inputValidation['controlTreatments'])) {
+            return $inputValidation['controlTreatments'];
+        }
+
+        $matchingKey = $inputValidation['matchingKey'];
+        $bucketingKey = $inputValidation['bucketingKey'];
+        $splitNames = $inputValidation['featureNames'];
+        
+        try {
+            $result = array();
+            $impressions = array();
+            foreach ($splitNames as $splitName) {
+                try {
+                    $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
+                    $result[$splitName] = array(
+                        'treatment' => $evalResult['treatment'],
+                        'config' => $evalResult['config'],
+                    );
+
+                    $latency += $evalResult['metadata']['latency'];
+
+                    // Creates impression
+                    $impressions[] = $this->createImpression(
+                        $matchingKey,
+                        $splitName,
+                        $evalResult['treatment'],
+                        $evalResult['impression']['label'],
+                        $bucketingKey,
+                        $evalResult['impression']['changeNumber']
+                    );
+                } catch (\Exception $e) {
+                    $result[$splitName] = array(
+                        'treatment' => TreatmentEnum::CONTROL,
+                        'config' => null,
+                    );
+                    SplitApp::logger()->critical(
+                        $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
+                    );
+                    continue;
+                }
+            }
+
+            // Register impressions
+            try {
+                if (!empty($impressions)) {
+                    TreatmentImpression::log($impressions);
+                    if (isset($this->impressionListener)) {
+                        foreach ($impressions as $impression) {
+                            $this->impressionListener->sendDataToClient($impression, $attributes);
+                        }
+                    }
+                }
+
+                //Register latency value
+                MetricsCache::addLatencyOnBucket(
+                    $metricName,
+                    Metrics::getBucketForLatencyMicros($latency)
+                );
+            } catch (\Exception $e) {
+                SplitApp::logger()->critical(
+                    $operation . ': An exception occured when trying to store impressions.'
+                );
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical($operation . ' method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
             SplitApp::logger()->critical($e->getTraceAsString());
         }
-
-        try {
-            // Creates impression
-            $impression = $this->createImpression(
-                $matchingKey,
-                $featureName,
-                TreatmentEnum::CONTROL,
-                $impressionLabel,
-                $bucketingKey
-            );
-
-            // Register impression
-            TreatmentImpression::log($impression);
-
-            // Provides logic to send data to Client
-            if (isset($this->impressionListener)) {
-                $this->impressionListener->sendDataToClient($impression, $attributes);
-            }
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical(
-                "An error occurred when attempting to log impression for " .
-                "feature: $featureName, key: $matchingKey"
-            );
-            SplitApp::logger()->critical($e);
-        }
-        return TreatmentEnum::CONTROL;
+        return array();
     }
 
     /**
@@ -231,72 +471,80 @@ class Client implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
-        $key = InputValidator::validateKey($key, 'getTreatments');
-        if (is_null($key)) {
-            return null;
-        }
-
-        $splitNames = InputValidator::validateFeatureNames($featureNames);
-        if (is_null($splitNames)) {
-            return null;
-        }
-
-        if (!InputValidator::validAttributes($attributes, 'getTreatments')) {
-            return null;
-        }
-
-        $matchingKey = $key['matchingKey'];
-        $bucketingKey = $key['bucketingKey'];
-        
         try {
-            $result = array();
-            $impressions = array();
-            foreach ($splitNames as $splitName) {
-                try {
-                    $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
-                    $result[$splitName] = $evalResult['treatment'];
-
-                    // Creates impression
-                    $impressions[] = $this->createImpression(
-                        $matchingKey,
-                        $splitName,
-                        $evalResult['treatment'],
-                        $evalResult['impression']['label'],
-                        $bucketingKey,
-                        $evalResult['impression']['changeNumber']
-                    );
-                } catch (\Exception $e) {
-                    $result[$splitName] = TreatmentEnum::CONTROL;
-                    SplitApp::logger()->critical(
-                        'getTreatments: An exception occured when evaluating feature: '. $splitName . '. skipping it'
-                    );
-                    continue;
-                }
-            }
-
-            // Register impressions
-            try {
-                if (!empty($impressions)) {
-                    TreatmentImpression::log($impressions);
-                    if (isset($this->impressionListener)) {
-                        foreach ($impressions as $impression) {
-                            $this->impressionListener->sendDataToClient($impression, $attributes);
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-                SplitApp::logger()->critical(
-                    'getTreatments: An exception occured when trying to store impressions.'
-                );
-            }
-
-            return $result;
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                $this->doEvaluationForTreatments(
+                    'getTreatments',
+                    Metrics::MNAME_SDK_GET_TREATMENTS,
+                    $key,
+                    $featureNames,
+                    $attributes
+                )
+            );
         } catch (\Exception $e) {
-            SplitApp::logger()->critical('getTreatments method is throwing exceptions');
-            SplitApp::logger()->critical($e->getMessage());
-            SplitApp::logger()->critical($e->getTraceAsString());
+            SplitApp::logger()->critical('getTreatmens method is throwing exceptions');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
+            return !is_null($splitNames) ?
+            array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                InputValidator::generateControlTreatments($splitNames)
+            ) : array();
         }
-        return null;
+    }
+
+    /**
+     * Returns an associative array which each key will be
+     * the treatment result and the config for each
+     * feature passed as parameter.
+     * The set of treatments for a feature can be configured
+     * on the Split web console and the config for
+     * that treatment.
+     * This method returns the string 'control' if:
+     * <ol>
+     *     <li>featureNames is invalid/li>
+     * </ol>
+     * 'control' is a reserved treatment, to highlight these
+     * exceptional circumstances.
+     *
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     *
+     * @param $key
+     * @param $featureNames
+     * @param $attributes
+     * @return array|control
+     */
+    public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
+    {
+        try {
+            return $this->doEvaluationForTreatments(
+                'getTreatmentsWithConfig',
+                Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
+                $key,
+                $featureNames,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
+            return !is_null($splitNames) ? InputValidator::generateControlTreatments($splitNames) : array();
+        }
     }
 
     /**

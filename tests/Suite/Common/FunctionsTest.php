@@ -18,9 +18,9 @@ SFC;
 
         $parsed = \SplitIO\parseSplitsFile($splitFileContent);
 
-        $this->assertEquals('treatment_1', $parsed['feature_A']);
-        $this->assertEquals('treatment_2', $parsed['feature_B']);
-        $this->assertEquals('treatment_1', $parsed['feature_C']);
+        $this->assertEquals('treatment_1', $parsed['feature_A']['treatment']);
+        $this->assertEquals('treatment_2', $parsed['feature_B']['treatment']);
+        $this->assertEquals('treatment_1', $parsed['feature_C']['treatment']);
     }
 
     public function testIsAssociativeArrayWithEmptyAssociativeArray()
@@ -30,16 +30,16 @@ SFC;
 
     public function testIsAssociativeArrayWithEmptyArray()
     {
-        $this->assertTrue(SplitIOUtils\isAssociativeArray([]));
+        $this->assertTrue(SplitIOUtils\isAssociativeArray(array()));
     }
 
     public function testIsAssociativeArrayWithIndexedArray()
     {
-        $this->assertFalse(SplitIOUtils\isAssociativeArray([1, 2, 3, 4]));
+        $this->assertFalse(SplitIOUtils\isAssociativeArray(array(1, 2, 3, 4)));
     }
 
     public function testIsAssociativeArrayWithAssociativeArray()
     {
-        $this->assertTrue(SplitIOUtils\isAssociativeArray(['one' => 'one', 'two' => null]));
+        $this->assertTrue(SplitIOUtils\isAssociativeArray(array('one' => 'one', 'two' => null)));
     }
 }

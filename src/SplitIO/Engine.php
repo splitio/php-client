@@ -36,7 +36,7 @@ class Engine
 
         $inRollOut = false;
         foreach ($conditions as $condition) {
-            if (!$inRollOut  && $condition->getConditionType() == ConditionTypeEnum::ROLLOUT) {
+            if (!$inRollOut && $condition->getConditionType() == ConditionTypeEnum::ROLLOUT) {
                 if ($split->getTrafficAllocation() < 100) {
                     $bucket = Di::get('splitter')->getBucket(
                         $split->getAlgo(),
