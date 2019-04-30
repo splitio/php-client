@@ -1,4 +1,4 @@
-6.1.0 (April 22,2019)
+6.1.0 (April 30,2019)
  - Added getTreatmentWithConfig and getTreatmentsWithConfig methods.
  - Added support for YAML files for Localhost mode.
 6.0.0 (Feb 8, 2019)
