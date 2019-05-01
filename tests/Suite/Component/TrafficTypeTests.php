@@ -5,7 +5,7 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Common\Di;
 
-class ImpressionsTest extends \PHPUnit_Framework_TestCase
+class TrafficTypeTest extends \PHPUnit_Framework_TestCase
 {
     private function getMockedLogger()
     {
@@ -22,7 +22,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
         return $logger;
     }
 
-    public function testImpressionsAreAdded()
+    public function testTrafficTypeWarning()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
