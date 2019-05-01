@@ -406,8 +406,17 @@ class Client implements ClientInterface
                     }
                 } catch (\Exception $e) {
                     SplitApp::logger()->critical(
-                        $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
+                        $operation . ': An exception occured when evaluating feature: '. $splitName
                     );
+
+                    $impressions[] = $this->createImpression(
+                        $matchingKey,
+                        $splitName,
+                        TreatmentEnum::CONTROL,
+                        ImpressionLabel::EXCEPTION,
+                        $bucketingKey
+                    );
+
                     continue;
                 }
             }
