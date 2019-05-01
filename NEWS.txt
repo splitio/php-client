@@ -1,6 +1,8 @@
 6.2.0 (May,2019)
  - Added validation for TrafficType in track calls.
  - Added validation when split does not exist on treatments and manager calls.
+ - Added multiple factory instantiation check.
+ - Removed producer modules.
 6.1.0 (April 30,2019)
  - Added getTreatmentWithConfig and getTreatmentsWithConfig methods.
  - Added support for YAML files for Localhost mode.

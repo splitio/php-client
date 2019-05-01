@@ -22,6 +22,8 @@ class Di
 
     const KEY_MATCHER_CLIENT = 'MATCHER-CLIENT';
 
+    const KEY_FACTORY_TRACKER = 'FACTORY-TRACKER';
+
     /**
      * @var Singleton The reference to *Singleton* instance of this class
      */

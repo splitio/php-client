@@ -8,6 +8,7 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClient;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
+use SplitIO\Component\Common\Di;
 
 class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,6 +54,26 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 
+    private function getFactoryClient($sdkConfig)
+    {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array();
+
+        if (is_null($sdkConfig)) {
+            $sdkConfig = array(
+                'log' => array('adapter' => 'stdout'),
+                'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            );
+        }
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        return $splitSdk;
+    }
+
     public function testClientThrowningExceptionInListener()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
@@ -67,8 +88,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -91,8 +111,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -124,8 +143,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -166,8 +184,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -199,8 +216,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -233,8 +249,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $_SERVER['SERVER_ADDR'] = "";
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -264,8 +279,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
@@ -288,8 +302,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $splitSdk = $splitFactory->client();
+        $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
         $this->addSplitsInCache();
