@@ -149,16 +149,6 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'off');
         $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient->dataLogged['impression']);
         $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
-
-        $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'iltestNotExistant'));
-
-        $this->assertArrayHasKey('instance-id', $impressionClient->dataLogged);
-        $this->assertEquals($impressionClient->dataLogged['instance-id'], '1.2.3.4');
-        $this->assertEquals($impressionClient->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
-        $this->assertArrayHasKey('impression', $impressionClient->dataLogged);
-        $this->assertEquals($impressionClient->dataLogged['impression']->getTreatment(), 'control');
-        $this->assertInstanceOf('SplitIO\Sdk\Impressions\Impression', $impressionClient->dataLogged['impression']);
-        $this->assertArrayHasKey('attributes', $impressionClient->dataLogged);
     }
 
     public function testClientWithEmptyIpAddress()

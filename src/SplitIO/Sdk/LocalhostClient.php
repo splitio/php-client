@@ -225,7 +225,7 @@ class LocalhostClient implements ClientInterface
                 function ($feature) {
                     return $feature['treatment'];
                 },
-                InputValidator::generateControlTreatments($splitNames)
+                \SplitIO\generateControlTreatments($splitNames)
             );
         }
 
@@ -247,7 +247,7 @@ class LocalhostClient implements ClientInterface
 
         $key = InputValidator::validateKey($key, "getTreatmentsWithConfig");
         if (is_null($key)) {
-            return InputValidator::generateControlTreatments($splitNames);
+            return \SplitIO\generateControlTreatments($splitNames);
         }
 
         $result = array();

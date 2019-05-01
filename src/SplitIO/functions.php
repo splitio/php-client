@@ -2,6 +2,7 @@
 namespace SplitIO;
 
 use SplitIO\Split as SplitApp;
+use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 
 function version()
 {
@@ -80,4 +81,9 @@ function getHostIpAddress()
     } else {
         return 'unknown';
     }
+}
+
+function generateControlTreatments($splitNames)
+{
+    return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
 }
