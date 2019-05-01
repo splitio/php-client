@@ -421,8 +421,10 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
-        $this->assertEquals('{"size":15,"defTreatment":true}', $result->getConfigs()['defTreatment']);
-        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['off']);
+        $configs = $result->getConfigs();
+        $this->assertEquals('{"size":15,"defTreatment":true}', $configs['defTreatment']);
+        $configs = $result->getConfigs();
+        $this->assertEquals('{"size":15,"test":20}', $configs['off']);
 
         $result = $splitManager->split('sample_feature');
         $this->assertEquals('sample_feature', $result->getName());
@@ -430,7 +432,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
-        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['on']);
+        $configs = $result->getConfigs();
+        $this->assertEquals('{"size":15,"test":20}', $configs['on']);
     }
 
     /**
@@ -540,7 +543,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
-        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', 'invalid_feature'], null);
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature'), null);
 
         //Assertions
         $this->assertEquals(2, count(array_keys($treatmentResult)));
@@ -576,8 +579,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
-        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', 'invalid_feature', 'sample_feature',
-        'sample_feature'], null);
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature', 'sample_feature',
+        'sample_feature'), null);
 
         //Assertions
         $this->assertEquals(2, count(array_keys($treatmentResult)));
@@ -613,8 +616,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
-        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', null, 'invalid_feature',
-        'sample_feature', null, 'sample_feature'], null);
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', null, 'invalid_feature',
+        'sample_feature', null, 'sample_feature'), null);
 
         //Assertions
         $this->assertEquals(2, count(array_keys($treatmentResult)));
