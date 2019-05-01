@@ -41,7 +41,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWithNullMatchingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -50,7 +50,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWithEmptyMatchingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -59,7 +59,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWithWrongTypeMatchingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -68,7 +68,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWithNonFiniteMatchingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -95,7 +95,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWithNullBucketingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -104,7 +104,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWithEmptyBucketingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -113,7 +113,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWithWrongTypeBucketingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -122,7 +122,7 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentWitNonFiniteBucketingKeyObject()
     {
-        $this->setExpectedException(\SplitIO\Exception\KeyException::class);
+        $this->setExpectedException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -326,14 +326,36 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
             ->method('critical')
             ->with($this->equalTo("getTreatment: you passed an invalid split name, split name must be a non-empty"
                 . " string."));
-        
+
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', array()));
     }
 
-    public function testGetTreatmentWithValidInputs()
+    public function testGetTreatmentWithNotExistantSplitName()
     {
         $splitSdk = $this->getFactoryClient();
 
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatment: you passed some_feature_non_existant that does not exist in this"
+                . " environment, please double check what Splits exist in the web console."));
+
         $this->assertEquals('control', $splitSdk->getTreatment('some_key_non_existant', 'some_feature_non_existant'));
+    }
+
+    public function testGetTreatmentWithConfigWithNotExistantSplitName()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatmentWithConfig: you passed some_feature_non_existant that does"
+                . " not exist in this environment, please double check what Splits exist in the web console."));
+
+        $result = $splitSdk->getTreatmentWithConfig('some_key_non_existant', 'some_feature_non_existant');
+        $this->assertEquals('control', $result['treatment']);
     }
 }

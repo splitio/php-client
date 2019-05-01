@@ -9,6 +9,8 @@ class SplitCache implements SplitCacheInterface
 
     const KEY_SPLIT_CACHED_ITEM = 'SPLITIO.split.{splitName}';
 
+    const KEY_TRAFFIC_TYPE_CACHED = 'SPLITIO.trafficType.{trafficTypeName}';
+
     public static function getCacheKeyForSinceParameter()
     {
         return self::KEY_TILL_CACHED_ITEM;
@@ -85,5 +87,22 @@ class SplitCache implements SplitCacheInterface
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
 
         return $cacheItem->get();
+    }
+
+    public static function getCacheKeyForTrafficType($trafficType)
+    {
+        return str_replace('{trafficTypeName}', $trafficType, self::KEY_TRAFFIC_TYPE_CACHED);
+    }
+
+    /**
+     * @param string $trafficType
+     * @return bool
+     */
+    public function trafficTypeExists($trafficType)
+    {
+        $cache = Di::getCache();
+
+        $count = $cache->getItem(self::getCacheKeyForTrafficType($trafficType))->get();
+        return (empty($count) || $count < 1) ? false : true;
     }
 }

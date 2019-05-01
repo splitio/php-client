@@ -5,7 +5,9 @@ namespace SplitIO\Sdk\Validator;
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
 use SplitIO\Component\Utils as SplitIOUtils;
+use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
+use SplitIO\Sdk\Impressions\ImpressionLabel;
 
 const MAX_LENGTH = 250;
 const REG_EXP_EVENT_TYPE = "/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/";
@@ -180,6 +182,12 @@ class InputValidator
             SplitApp::logger()->warning("track: '" . $trafficType . "' should be all lowercase - converting string to "
                 . "lowercase.");
         }
+        $splitCache = new SplitCache();
+        if (!$splitCache->trafficTypeExists($toLowercase)) {
+            SplitApp::logger()->warning("track: Traffic Type '". $toLowercase . "' does not have any corresponding "
+                . "Splits in this environment, make sure you’re tracking your events to a valid traffic type "
+                . "defined in the Split console.");
+        }
         return $toLowercase;
     }
 
@@ -272,8 +280,14 @@ class InputValidator
         return true;
     }
 
-    public static function generateControlTreatments($splitNames)
+    public static function isSplitFound($label, $splitName, $operation)
     {
-        return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
+        if ($label == ImpressionLabel::SPLIT_NOT_FOUND) {
+            SplitApp::logger()->critical($operation . ": you passed " . $splitName
+                . " that does not exist in this environment, please double check what Splits exist"
+                . " in the web console.");
+            return false;
+        }
+        return true;
     }
 }

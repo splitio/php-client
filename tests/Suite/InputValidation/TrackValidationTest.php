@@ -76,7 +76,10 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("track: key '123456' is not of type string, converting.")
+                $this->equalTo("track: key '123456' is not of type string, converting."),
+                $this->equalTo("track: Traffic Type 'some_traffic' does not have any corresponding Splits "
+                    . "in this environment, make sure you’re tracking your events to a valid traffic "
+                    . "type defined in the Split console.")
             ));
 
         $this->assertEquals(true, $splitSdk->track(123456, 'some_traffic', 'some_event', 1));
@@ -183,11 +186,31 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $logger = $this->getMockedLogger();
 
-        $logger->expects($this->once())
-            ->method('warning')
-            ->with($this->equalTo("track: 'UPPERCASE' should be all lowercase - converting string to lowercase."));
+        $logger->expects($this->any())
+        ->method('warning')
+        ->with($this->logicalOr(
+            $this->equalTo("track: 'UPPERCASE' should be all lowercase - converting string to lowercase."),
+            $this->equalTo("track: Traffic Type 'uppercase' does not have any corresponding Splits "
+                . "in this environment, make sure you’re tracking your events to a valid traffic "
+                . "type defined in the Split console.")
+        ));
 
         $this->assertEquals(true, $splitSdk->track('some_key', 'UPPERCASE', 'some_event', 1));
+    }
+
+    public function testTrackDoesNotMatchesTrafficTypeName()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+        ->method('warning')
+        ->with($this->equalTo("track: Traffic Type 'not_match' does not have any corresponding Splits "
+            . "in this environment, make sure you’re tracking your events to a valid traffic "
+            . "type defined in the Split console."));
+
+        $this->assertEquals(true, $splitSdk->track('some_key', 'not_match', 'some_event', 1));
     }
 
     public function testTrackWithNullEventType()

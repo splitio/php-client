@@ -252,7 +252,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->validateLastImpression($redisClient, 'sample_feature', 'invalidKey', 'off');
 
         $this->assertEquals('control', $splitSdk->getTreatment('invalidKey', 'invalid_feature'));
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         $this->assertTrue($splitSdk->isTreatment('user1', 'sample_feature', 'on'));
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
@@ -304,7 +303,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'invalid_feature');
         $this->assertEquals('control', $result['treatment']);
         $this->assertEquals(null, $result['config']);
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         //testing a killed feature. No matter what the key, must return default treatment
         $result = $splitSdk->getTreatmentWithConfig('invalidKey', 'killed_feature');
@@ -332,7 +330,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $result = $splitSdk->getTreatments('invalidKey', array('invalid_feature'));
         $this->assertEquals(1, count($result));
         $this->assertEquals('control', $result['invalid_feature']);
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         //testing a killed feature. No matter what the key, must return default treatment
         $result = $splitSdk->getTreatments('invalidKey', array('killed_feature'));
@@ -359,6 +356,12 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('control', $result['invalid_feature']);
         $this->assertEquals('off', $result['sample_feature']);
 
+        // testing INVALID matcher
+        $result = $splitSdk->getTreatments('some_user_key', array('invalid_matcher_feature'));
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('control', $result['invalid_matcher_feature']);
+        $this->validateLastImpression($redisClient, 'invalid_matcher_feature', 'some_user_key', 'control');
+        
         //Assertions GET_TREATMENTS_WITH_CONFIG
         $result = $splitSdk->getTreatmentsWithConfig('user1', array('sample_feature'));
         $this->assertEquals(1, count($result));
@@ -376,7 +379,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($result));
         $this->assertEquals('control', $result['invalid_feature']['treatment']);
         $this->assertEquals(null, $result['invalid_feature']['config']);
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'invalidKey', 'control');
 
         //testing a killed feature. No matter what the key, must return default treatment
         $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array('killed_feature'));
@@ -424,8 +426,10 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
-        $this->assertEquals('{"size":15,"defTreatment":true}', $result->getConfigs()['defTreatment']);
-        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['off']);
+        $configs = $result->getConfigs();
+        $this->assertEquals('{"size":15,"defTreatment":true}', $configs['defTreatment']);
+        $configs = $result->getConfigs();
+        $this->assertEquals('{"size":15,"test":20}', $configs['off']);
 
         $result = $splitManager->split('sample_feature');
         $this->assertEquals('sample_feature', $result->getName());
@@ -433,7 +437,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
-        $this->assertEquals('{"size":15,"test":20}', $result->getConfigs()['on']);
+        $configs = $result->getConfigs();
+        $this->assertEquals('{"size":15,"test":20}', $configs['on']);
     }
 
     /**
@@ -546,7 +551,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
-        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', 'invalid_feature'], null);
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature'), null);
 
         //Assertions
         $this->assertEquals(2, count(array_keys($treatmentResult)));
@@ -556,7 +561,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions generated
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
@@ -583,8 +587,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
-        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', 'invalid_feature', 'sample_feature',
-        'sample_feature'], null);
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature',
+        'sample_feature', 'sample_feature'), null);
 
         //Assertions
         $this->assertEquals(2, count(array_keys($treatmentResult)));
@@ -594,7 +598,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         // Check impressions
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
@@ -621,8 +624,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->addSplitsInCache();
         $this->addSegmentsInCache();
 
-        $treatmentResult = $splitSdk->getTreatments('user1', ['sample_feature', null, 'invalid_feature',
-        'sample_feature', null, 'sample_feature'], null);
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', null, 'invalid_feature',
+        'sample_feature', null, 'sample_feature'), null);
 
         //Assertions
         $this->assertEquals(2, count(array_keys($treatmentResult)));
@@ -632,7 +635,6 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'invalid_feature', 'user1', 'control');
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 }

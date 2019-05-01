@@ -162,7 +162,7 @@ class Evaluator
     
                 $treatment = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
                 $impressionLabel = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];
-
+                $result['metadata']['latency'] = $latency;
                 //If the given key doesn't match on any condition, default treatment is returned
                 if ($treatment == null) {
                     $treatment = $split->getDefaultTratment();
@@ -172,14 +172,12 @@ class Evaluator
                 SplitApp::logger()->info("*Treatment for $matchingKey in {$split->getName()} is: $treatment");
 
                 $result['treatment'] = $treatment;
+                $result['impression']['label'] = $impressionLabel;
                 if (!is_null($configs) && isset($configs[$treatment])) {
                     $result['config'] = $configs[$treatment];
                 }
-                $result['metadata']['latency'] = $latency;
                 $result['impression']['label'] = $impressionLabel;
             }
-        } else {
-            SplitApp::logger()->warning("The SPLIT definition for '$featureName' has not been found'");
         }
 
         return $result;
