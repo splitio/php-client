@@ -183,6 +183,29 @@ class Client implements ClientInterface
             SplitApp::logger()->critical($e->getTraceAsString());
         }
 
+        try {
+            // Creates impression
+            $impression = $this->createImpression(
+                $matchingKey,
+                $featureName,
+                TreatmentEnum::CONTROL,
+                $impressionLabel,
+                $bucketingKey
+            );
+            // Register impression
+            TreatmentImpression::log($impression);
+            // Provides logic to send data to Client
+            if (isset($this->impressionListener)) {
+                $this->impressionListener->sendDataToClient($impression, $attributes);
+            }
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical(
+                "An error occurred when attempting to log impression for " .
+                "feature: $featureName, key: $matchingKey"
+            );
+            SplitApp::logger()->critical($e);
+        }
+
         return $default;
     }
 
