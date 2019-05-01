@@ -6,6 +6,7 @@ use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\MetricsCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Cache\SegmentCache;
+use SplitIO\Component\Cache\TrafficTypeCache;
 
 class KeyTest extends \PHPUnit_Framework_TestCase
 {
@@ -85,5 +86,11 @@ class KeyTest extends \PHPUnit_Framework_TestCase
     {
         $key = SegmentCache::getCacheKeyForSinceParameter('abc');
         $this->assertEquals($key, 'SPLITIO.segment.abc.till');
+    }
+
+    public function testTrafficTypeNameFromCache()
+    {
+        $trafficTypeName = SplitCache::getCacheKeyForTrafficType('abc');
+        $this->assertEquals($trafficTypeName, 'SPLITIO.trafficType.abc');
     }
 }
