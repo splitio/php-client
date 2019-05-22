@@ -11,7 +11,7 @@ use SplitIO\Sdk\Impressions\ImpressionLabel;
 
 const MAX_LENGTH = 250;
 const REG_EXP_EVENT_TYPE = "/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/";
-const MAX_PROPERTIES_LENGTH_BYTES = 32 * 1024;
+const MAX_PROPERTIES_LENGTH_BYTES = 32768;
 
 class InputValidator
 {
@@ -336,7 +336,7 @@ class InputValidator
             }
         }
 
-        if (count($validProperties) > 300) {
+        if (is_array($validProperties) && count($validProperties) > 300) {
             SplitApp::logger()->warning('Event has more than 300 properties. Some of them will be '
             . 'trimmed when processed');
         }
