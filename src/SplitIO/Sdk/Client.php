@@ -599,19 +599,21 @@ class Client implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function track($key, $trafficType, $eventType, $value = null)
+    public function track($key, $trafficType, $eventType, $value = null, $properties = null)
     {
         $key = InputValidator::validateTrackKey($key);
         $trafficType = InputValidator::validateTrafficType($trafficType);
         $eventType = InputValidator::validateEventType($eventType);
         $value = InputValidator::validateValue($value);
+        $properties = InputValidator::validProperties($properties);
 
-        if (is_null($key) || is_null($trafficType) || is_null($eventType) || ($value === false)) {
+        if (is_null($key) || is_null($trafficType) || is_null($eventType) || $value === false
+            || $properties === false) {
             return false;
         }
 
         try {
-            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
             $eventMessageMetadata = new EventQueueMetadataMessage();
             $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
             return EventsCache::addEvent($eventQueueMessage);

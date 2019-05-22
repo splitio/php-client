@@ -11,6 +11,7 @@ use SplitIO\Sdk\Impressions\ImpressionLabel;
 
 const MAX_LENGTH = 250;
 const REG_EXP_EVENT_TYPE = "/^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$/";
+const MAX_PROPERTIES_LENGTH_BYTES = 32 * 1024;
 
 class InputValidator
 {
@@ -278,6 +279,69 @@ class InputValidator
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param $properties
+     * @return mixed
+     */
+    public static function validProperties($properties)
+    {
+        if (is_null($properties)) {
+            return null;
+        }
+
+        if (!SplitIOUtils\isAssociativeArray($properties)) {
+            SplitApp::logger()->critical('track: properties must be of type associative array.');
+            return false;
+        }
+
+        $size = 1024; // We assume 1kb events without properties (750 bytes avg measured)
+
+        $validProperties = null;
+
+        foreach ($properties as $property => $value) {
+            // Exclude property if is not string
+            if (!is_string($property)) {
+                continue;
+            }
+
+            // Define new valid properties
+            if (is_null($validProperties)) {
+                $validProperties = array();
+            }
+
+            $element = $properties[$property];
+
+            $validProperties[$property] = null;
+            $size += strlen($property);
+            
+            if (is_null($element)) {
+                continue;
+            }
+
+            if (!is_string($element) && !is_bool($element) && !is_int($element) && !is_float($element)) {
+                SplitApp::logger()->warning('Property ' . json_encode($element) . ' is of invalid type.'
+                . ' Setting value to null');
+                $element = null;
+            }
+
+            $validProperties[$property] = $element;
+            $size += strlen(strval($element));
+
+            if ($size > MAX_PROPERTIES_LENGTH_BYTES) {
+                SplitApp::logger()->critical("The maximum size allowed for the properties is 32768 bytes. "
+                    . "Current one is " . strval($size) . " bytes. Event not queued");
+                return false;
+            }
+        }
+
+        if (count($validProperties) > 300) {
+            SplitApp::logger()->warning('Event has more than 300 properties. Some of them will be '
+            . 'trimmed when processed');
+        }
+
+        return $validProperties;
     }
 
     public static function isSplitFound($label, $splitName, $operation)
