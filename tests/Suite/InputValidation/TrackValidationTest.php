@@ -375,9 +375,9 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
 
         $properties2 = array();
         for ($i = 1; $i <= 301; $i++) {
-            $properties2[strval($i)] = $i;
+            $properties2["props" . strval($i)] = $i;
         }
-        $this->assertEquals(false, InputValidator::validProperties($properties2));
+        $this->assertEquals($properties2, InputValidator::validProperties($properties2));
 
         $properties3 = array();
         for ($i = 1; $i <= 110; $i++) {
