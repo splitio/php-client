@@ -327,7 +327,10 @@ class InputValidator
             }
 
             $validProperties[$property] = $element;
-            $size += strlen(strval($element));
+
+            if (is_string($element)) {
+                $size += strlen($element);
+            }
 
             if ($size > MAX_PROPERTIES_LENGTH_BYTES) {
                 SplitApp::logger()->critical("The maximum size allowed for the properties is 32768 bytes. "
