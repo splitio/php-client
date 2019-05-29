@@ -298,20 +298,13 @@ class InputValidator
 
         $size = 1024; // We assume 1kb events without properties (750 bytes avg measured)
 
-        $validProperties = null;
+        $validProperties = array();
 
-        foreach ($properties as $property => $value) {
+        foreach ($properties as $property => $element) {
             // Exclude property if is not string
             if (!is_string($property)) {
                 continue;
             }
-
-            // Define new valid properties
-            if (is_null($validProperties)) {
-                $validProperties = array();
-            }
-
-            $element = $properties[$property];
 
             $validProperties[$property] = null;
             $size += strlen($property);
@@ -344,7 +337,7 @@ class InputValidator
             . 'trimmed when processed');
         }
 
-        return $validProperties;
+        return count($validProperties) > 0 ? $validProperties : null;
     }
 
     public static function isSplitFound($label, $splitName, $operation)
