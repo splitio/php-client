@@ -110,7 +110,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
         $logger = $this->getMockedLogger();
         
         $logger->expects($this->once())
-            ->method('critical')
+            ->method('warning')
             ->with($this->equalTo("split: you passed this_is_a_non_existing_split that does"
                 . " not exist in this environment, please double check what Splits exist in the web console."));
 

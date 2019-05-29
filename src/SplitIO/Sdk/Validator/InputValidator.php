@@ -343,7 +343,7 @@ class InputValidator
     public static function isSplitFound($label, $splitName, $operation)
     {
         if ($label == ImpressionLabel::SPLIT_NOT_FOUND) {
-            SplitApp::logger()->critical($operation . ": you passed " . $splitName
+            SplitApp::logger()->warning($operation . ": you passed " . $splitName
                 . " that does not exist in this environment, please double check what Splits exist"
                 . " in the web console.");
             return false;

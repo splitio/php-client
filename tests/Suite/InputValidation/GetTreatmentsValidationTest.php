@@ -380,7 +380,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $logger = $this->getMockedLogger();
 
         $logger->expects($this->once())
-            ->method('critical')
+            ->method('warning')
             ->with($this->equalTo("getTreatments: you passed some_feature_non_existant that does"
                 . " not exist in this environment, please double check what Splits exist in the web console."));
 
@@ -398,7 +398,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $logger = $this->getMockedLogger();
 
         $logger->expects($this->once())
-            ->method('critical')
+            ->method('warning')
             ->with($this->equalTo("getTreatmentsWithConfig: you passed some_feature_non_existant that does"
                 . " not exist in this environment, please double check what Splits exist in the web console."));
 
