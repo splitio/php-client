@@ -2,6 +2,7 @@
 namespace SplitIO\Test\Suite\InputValidation;
 
 use SplitIO\Component\Common\Di;
+use SplitIO\Sdk\Validator\InputValidator;
 
 class TrackValidationTest extends \PHPUnit_Framework_TestCase
 {
@@ -341,5 +342,175 @@ class TrackValidationTest extends \PHPUnit_Framework_TestCase
         $splitSdk = $this->getFactoryClient();
 
         $this->assertEquals(true, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1.4));
+    }
+
+    public function testInputValidationProperties()
+    {
+        $this->assertEquals(null, InputValidator::validProperties(null));
+
+        $this->assertEquals(null, InputValidator::validProperties(array(1 => "two")));
+
+        $this->assertEquals(null, InputValidator::validProperties(array()));
+
+        $this->assertEquals(false, InputValidator::validProperties(array(1, "two")));
+
+        $this->assertEquals(false, InputValidator::validProperties(1));
+
+        $properties1 = array(
+            "test1" => "test",
+            "test2" => 1,
+            "test3" => true,
+            "test4" => null,
+            "test5" => array(),
+            2 => "t",
+        );
+        $propertiesResult = InputValidator::validProperties($properties1);
+
+        $this->assertEquals(5, count($propertiesResult));
+        $this->assertEquals("test", $propertiesResult["test1"]);
+        $this->assertEquals(1, $propertiesResult["test2"]);
+        $this->assertEquals(true, $propertiesResult["test3"]);
+        $this->assertEquals(null, $propertiesResult["test4"]);
+        $this->assertEquals(null, $propertiesResult["test5"]);
+
+        $properties2 = array();
+        for ($i = 1; $i <= 301; $i++) {
+            $properties2["props" . strval($i)] = $i;
+        }
+        $this->assertEquals($properties2, InputValidator::validProperties($properties2));
+
+        $properties3 = array();
+        for ($i = 1; $i <= 110; $i++) {
+            $properties3[strval($i)] = str_pad("", 300, "a", STR_PAD_LEFT);
+        }
+        $this->assertEquals(false, InputValidator::validProperties($properties3));
+    }
+
+    public function testTrackWithNullProperties()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $this->assertEquals(true, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1, null));
+    }
+
+    public function testTrackWithAssociativeArratWithoutStringProperties()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $this->assertEquals(true, $splitSdk->track(
+            'some_key',
+            'some_traffic',
+            'some_event',
+            1,
+            array(1 => "two")
+        ));
+    }
+
+    public function testTrackWithEmptyProperties()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $this->assertEquals(true, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1, array()));
+    }
+
+    public function testTrackWithInvalidArrayProperties()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo('track: properties must be of type associative array.'));
+
+        $this->assertEquals(false, $splitSdk->track(
+            'some_key',
+            'some_traffic',
+            'some_event',
+            1,
+            array(1, true, "two")
+        ));
+    }
+
+    public function testTrackWithInvalidProperties()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo('track: properties must be of type associative array.'));
+
+        $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1, true));
+    }
+
+    public function testTrackWithProperties()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo("Property [] is of invalid type. Setting value to null"),
+                $this->equalTo("track: Traffic Type 'some_traffic' does not have any corresponding Splits "
+                    . "in this environment, make sure you’re tracking your events to a valid traffic "
+                    . "type defined in the Split console.")
+            ));
+
+        $properties = array(
+            "test1" => "test",
+            "test2" => 1,
+            "test3" => true,
+            "test4" => null,
+            "test5" => array(),
+            2 => "t",
+        );
+
+        $this->assertEquals(true, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1, $properties));
+    }
+
+    public function testTrackWithPropertiesGreaterThan300Properties()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->any())
+            ->method('warning')
+            ->with($this->logicalOr(
+                $this->equalTo("Event has more than 300 properties. Some of them will be trimmed when processed"),
+                $this->equalTo("track: Traffic Type 'some_traffic' does not have any corresponding Splits "
+                    . "in this environment, make sure you’re tracking your events to a valid traffic "
+                    . "type defined in the Split console.")
+            ));
+
+        $properties = array();
+        for ($i = 1; $i <= 301; $i++) {
+            $properties["prop" . strval($i)] = $i;
+        }
+
+        $this->assertEquals(true, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1, $properties));
+    }
+
+    public function testTrackWithEventGreaterThan32KB()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo('The maximum size allowed for the properties is 32768 bytes. '
+                . 'Current one is 32844 bytes. Event not queued'));
+
+        $properties = array();
+        for ($i = 1; $i <= 110; $i++) {
+            $properties["prop" . strval($i)] = str_pad("", 300, "a", STR_PAD_LEFT);
+        }
+
+        $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1, $properties));
     }
 }

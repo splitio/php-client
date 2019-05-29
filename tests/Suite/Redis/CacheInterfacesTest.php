@@ -141,4 +141,30 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(EventsCache::addEvent($eventQueueMessage));
     }
+
+    /**
+     * @depends testDiLog
+     * @depends testDiCache
+     */
+    public function testEventsCacheWithProperties()
+    {
+        $key= "some_key";
+        $trafficType = "some_trafficType";
+        $eventType = "some_event_type";
+        $value = 0.0;
+        $properties = array(
+            "test1" => "test",
+            "test2" => 1,
+            "test3" => true,
+            "test4" => null,
+        );
+
+        $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
+        $eventMessageMetadata = new EventQueueMetadataMessage();
+        $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+
+        $this->assertTrue(EventsCache::addEvent($eventQueueMessage));
+
+        $this->assertEquals($properties, $eventDTO->getProperties());
+    }
 }
