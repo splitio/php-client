@@ -65,6 +65,10 @@ class SplitManager implements SplitManagerInterface
             return $this->parseSplitView($splitCachedItem->get());
         }
 
+        SplitApp::logger()->warning("split: you passed " . $featureName
+        . " that does not exist in this environment, please double check what Splits exist"
+        . " in the web console.");
+
         return null;
     }
 

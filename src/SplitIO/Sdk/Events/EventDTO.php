@@ -11,7 +11,7 @@ class EventDTO
     private $value;
     private $timestamp;
 
-    public function __construct($key, $trafficTypeName, $eventTypeId, $value)
+    public function __construct($key, $trafficTypeName, $eventTypeId, $value, $properties)
     {
         if (empty($key)) {
             throw new Exception("Key must not be empty");
@@ -29,6 +29,7 @@ class EventDTO
         $this->trafficTypeName = $trafficTypeName;
         $this->eventTypeId = $eventTypeId;
         $this->value = $value;
+        $this->properties = $properties;
 
         $this->timestamp = round(microtime(true) * 1000);
     }
@@ -113,6 +114,22 @@ class EventDTO
         $this->timestamp = $timestamp;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    /**
+     * @param mixed $properties
+     */
+    public function setProperties($properties)
+    {
+        $this->properties = $properties;
+    }
+
 
     public function toArray()
     {
@@ -121,7 +138,8 @@ class EventDTO
             'trafficTypeName' => $this->trafficTypeName,
             'eventTypeId' => $this->eventTypeId,
             'value' => $this->value,
-            'timestamp'=> $this->timestamp
+            'timestamp'=> $this->timestamp,
+            'properties' => $this->properties,
         );
     }
 }

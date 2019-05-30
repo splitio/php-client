@@ -145,6 +145,10 @@ class Client implements ClientInterface
         try {
             $result = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $featureName, $attributes);
 
+            if (!InputValidator::isSplitFound($result['impression']['label'], $featureName, $operation)) {
+                return $default;
+            }
+
             // Creates impression
             $impression = $this->createImpression(
                 $matchingKey,
@@ -173,9 +177,6 @@ class Client implements ClientInterface
                 'treatment' => $result['treatment'],
                 'config' => $result['config'],
             );
-        } catch (InvalidMatcherException $ie) {
-            SplitApp::logger()->critical('Exception due an INVALID MATCHER');
-            $impressionLabel = ImpressionLabel::MATCHER_NOT_FOUND;
         } catch (\Exception $e) {
             SplitApp::logger()->critical($operation . ' method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
@@ -191,10 +192,8 @@ class Client implements ClientInterface
                 $impressionLabel,
                 $bucketingKey
             );
-
             // Register impression
             TreatmentImpression::log($impression);
-
             // Provides logic to send data to Client
             if (isset($this->impressionListener)) {
                 $this->impressionListener->sendDataToClient($impression, $attributes);
@@ -206,6 +205,7 @@ class Client implements ClientInterface
             );
             SplitApp::logger()->critical($e);
         }
+
         return $default;
     }
 
@@ -336,7 +336,7 @@ class Client implements ClientInterface
         $key = InputValidator::validateKey($key, $operation);
         if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
             return array(
-                'controlTreatments' => InputValidator::generateControlTreatments($splitNames),
+                'controlTreatments' => \SplitIO\generateControlTreatments($splitNames),
             );
         }
 
@@ -372,37 +372,51 @@ class Client implements ClientInterface
         $matchingKey = $inputValidation['matchingKey'];
         $bucketingKey = $inputValidation['bucketingKey'];
         $splitNames = $inputValidation['featureNames'];
+
+        $defaultTreatment = array(
+            'treatment' => TreatmentEnum::CONTROL,
+            'config' => null
+        );
         
         try {
             $result = array();
             $impressions = array();
             foreach ($splitNames as $splitName) {
+                $result[$splitName] = $defaultTreatment;
                 try {
                     $evalResult = $this->evaluator->evalTreatment($matchingKey, $bucketingKey, $splitName, $attributes);
-                    $result[$splitName] = array(
-                        'treatment' => $evalResult['treatment'],
-                        'config' => $evalResult['config'],
+
+                    if (InputValidator::isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
+                        $latency += $evalResult['metadata']['latency'];
+
+                        // Creates impression
+                        $impressions[] = $this->createImpression(
+                            $matchingKey,
+                            $splitName,
+                            $evalResult['treatment'],
+                            $evalResult['impression']['label'],
+                            $bucketingKey,
+                            $evalResult['impression']['changeNumber']
+                        );
+    
+                        $result[$splitName] = array(
+                            'treatment' => $evalResult['treatment'],
+                            'config' => $evalResult['config'],
+                        );
+                    }
+                } catch (\Exception $e) {
+                    SplitApp::logger()->critical(
+                        $operation . ': An exception occured when evaluating feature: '. $splitName
                     );
 
-                    $latency += $evalResult['metadata']['latency'];
-
-                    // Creates impression
                     $impressions[] = $this->createImpression(
                         $matchingKey,
                         $splitName,
-                        $evalResult['treatment'],
-                        $evalResult['impression']['label'],
-                        $bucketingKey,
-                        $evalResult['impression']['changeNumber']
+                        TreatmentEnum::CONTROL,
+                        ImpressionLabel::EXCEPTION,
+                        $bucketingKey
                     );
-                } catch (\Exception $e) {
-                    $result[$splitName] = array(
-                        'treatment' => TreatmentEnum::CONTROL,
-                        'config' => null,
-                    );
-                    SplitApp::logger()->critical(
-                        $operation . ': An exception occured when evaluating feature: '. $splitName . '. skipping it'
-                    );
+
                     continue;
                 }
             }
@@ -416,13 +430,13 @@ class Client implements ClientInterface
                             $this->impressionListener->sendDataToClient($impression, $attributes);
                         }
                     }
-                }
 
-                //Register latency value
-                MetricsCache::addLatencyOnBucket(
-                    $metricName,
-                    Metrics::getBucketForLatencyMicros($latency)
-                );
+                    //Register latency value
+                    MetricsCache::addLatencyOnBucket(
+                        $metricName,
+                        Metrics::getBucketForLatencyMicros($latency)
+                    );
+                }
             } catch (\Exception $e) {
                 SplitApp::logger()->critical(
                     $operation . ': An exception occured when trying to store impressions.'
@@ -492,7 +506,7 @@ class Client implements ClientInterface
                 function ($feature) {
                     return $feature['treatment'];
                 },
-                InputValidator::generateControlTreatments($splitNames)
+                \SplitIO\generateControlTreatments($splitNames)
             ) : array();
         }
     }
@@ -543,7 +557,7 @@ class Client implements ClientInterface
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
             $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
-            return !is_null($splitNames) ? InputValidator::generateControlTreatments($splitNames) : array();
+            return !is_null($splitNames) ? \SplitIO\generateControlTreatments($splitNames) : array();
         }
     }
 
@@ -585,19 +599,21 @@ class Client implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function track($key, $trafficType, $eventType, $value = null)
+    public function track($key, $trafficType, $eventType, $value = null, $properties = null)
     {
         $key = InputValidator::validateTrackKey($key);
         $trafficType = InputValidator::validateTrafficType($trafficType);
         $eventType = InputValidator::validateEventType($eventType);
         $value = InputValidator::validateValue($value);
+        $properties = InputValidator::validProperties($properties);
 
-        if (is_null($key) || is_null($trafficType) || is_null($eventType) || ($value === false)) {
+        if (is_null($key) || is_null($trafficType) || is_null($eventType) || $value === false
+            || $properties === false) {
             return false;
         }
 
         try {
-            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
+            $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
             $eventMessageMetadata = new EventQueueMetadataMessage();
             $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
             return EventsCache::addEvent($eventQueueMessage);

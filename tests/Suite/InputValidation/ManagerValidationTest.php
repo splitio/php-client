@@ -7,6 +7,7 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
 {
     private function getFactoryClient()
     {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
@@ -105,6 +106,13 @@ class ManagerValidationTest extends \PHPUnit_Framework_TestCase
     public function testManagerWithValidFeatureName()
     {
         $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+        
+        $logger->expects($this->once())
+            ->method('warning')
+            ->with($this->equalTo("split: you passed this_is_a_non_existing_split that does"
+                . " not exist in this environment, please double check what Splits exist in the web console."));
 
         $this->assertEquals(null, $splitSdk->split('this_is_a_non_existing_split'));
     }
