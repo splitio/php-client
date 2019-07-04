@@ -1,7 +1,6 @@
 <?php
 
 namespace SplitIO\Test\Suite\Adapter;
-
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use \Predis\Response\ServerException;
@@ -400,4 +399,31 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
         $predis->getItem('this_is_a_test_key');
     }
+
+    public function testRedisSSLWithClusterFails()
+    {
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $predis = new PRedis(array(
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+            ),
+            'parameters' => array(
+                'tls' => array(),
+            ),
+        ));
+    }
+
+    public function testRedisSSLWithSentinelFails()
+    {
+        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $predis = new PRedis(array(
+            'options' => array(
+                'distributedStrategy' => 'sentinel',
+            ),
+            'parameters' => array(
+                'tls' => array(),
+            ),
+        ));
+    }
+
 }

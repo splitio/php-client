@@ -120,6 +120,10 @@ class PRedis implements CacheStorageAdapterInterface
         $clusters = (isset($options['clusterNodes'])) ? $options['clusterNodes'] : null;
         $_options = (isset($options['options'])) ? $options['options'] : null;
 
+        if (isset($_options['distributedStrategy']) && isset($parameters['tls'])) {
+            throw new AdapterException("SSL/TLS cannot be used together with sentinel/cluster yet");
+        }
+
         if ($_options && isset($_options['prefix'])) {
             $_options['prefix'] = self::normalizePrefix($_options['prefix']);
         }
