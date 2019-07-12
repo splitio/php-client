@@ -1,3 +1,6 @@
+6.2.1 (Jul 12, 2019)
+ - Verified TLS support for redis and validated config options
+ - Support newer versions of symfony/yaml
 6.2.0 (May 30, 2019)
  - Added validation for TrafficType in track calls.
  - Added validation when split does not exist on treatments and manager calls.
