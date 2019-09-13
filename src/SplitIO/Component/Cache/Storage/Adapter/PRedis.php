@@ -8,6 +8,7 @@ use SplitIO\Component\Common\Di;
 
 /**
  * Class PRedis
+ *
  * @package SplitIO\Component\Cache\Storage\Adapter
  */
 class PRedis implements CacheStorageAdapterInterface
@@ -202,7 +203,15 @@ class PRedis implements CacheStorageAdapterInterface
      */
     public function getItems(array $keys = array())
     {
-        return $this->client->mget($keys);
+        $values = $this->client->mget($keys);
+        $toReturn = array();
+        foreach ($keys as $index => $key) {
+            $toReturn[$key] = new Item($key);
+            if (!is_null($values[$index])) {
+                $toReturn[$key]->set($values[$index]);
+            }
+        }
+        return $toReturn;
     }
 
     /**
@@ -331,8 +340,8 @@ class PRedis implements CacheStorageAdapterInterface
         }
         if ($prefix) {
             if (is_array($keys)) {
-                for ($i=0; $i < count($keys); $i++) {
-                    $keys[$i] = str_replace($prefix, '', $keys[$i]);
+                foreach ($keys as $index => $key) {
+                    $keys[$index] = str_replace($prefix, '', $key);
                 }
             } else {
                 $keys = str_replace($prefix, '', $keys);

@@ -361,7 +361,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($result));
         $this->assertEquals('control', $result['invalid_matcher_feature']);
         $this->validateLastImpression($redisClient, 'invalid_matcher_feature', 'some_user_key', 'control');
-        
+
         //Assertions GET_TREATMENTS_WITH_CONFIG
         $result = $splitSdk->getTreatmentsWithConfig('user1', array('sample_feature'));
         $this->assertEquals(1, count($result));

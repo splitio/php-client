@@ -80,17 +80,18 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
-
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("Key: matchingKey '12345' is not of type string, converting.")
+                $this->equalTo("Key: matchingKey '12345' is not of type string, converting."),
+                $this->equalTo("getTreatment: you passed some_feature that does not exist in this environment, "
+                    . "please double check what Splits exist in the web console.")
             ));
 
-            $this->assertEquals(
-                'control',
-                $splitSdk->getTreatment(new Key(12345, 'some_bucketing_key'), 'some_feature')
-            );
+        $this->assertEquals(
+            'control',
+            $splitSdk->getTreatment(new Key(12345, 'some_bucketing_key'), 'some_feature')
+        );
     }
 
     public function testGetTreatmentWithNullBucketingKeyObject()
@@ -134,12 +135,19 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
-
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("Key: bucketingKey '12345' is not of type string, converting.")
+                $this->equalTo("Key: bucketingKey '12345' is not of type string, converting."),
+                $this->equalTo("getTreatment: you passed some_feature that does not exist in this environment, "
+                    . "please double check what Splits exist in the web console.")
             ));
+
+//        $logger->expects($this->any())
+//            ->method('warning')
+//            ->with($this->logicalOr(
+//                $this->equalTo("Key: bucketingKey '12345' is not of type string, converting.")
+//            ));
 
             $this->assertEquals(
                 'control',
@@ -211,8 +219,15 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("getTreatment: key '123456' is not of type string, converting.")
+                $this->equalTo("getTreatment: key '123456' is not of type string, converting."),
+                $this->equalTo("getTreatment: you passed some_feature that does not exist in this environment, "
+                    . "please double check what Splits exist in the web console.")
             ));
+//        $logger->expects($this->any())
+//            ->method('warning')
+//            ->with($this->logicalOr(
+//                $this->equalTo("getTreatment: key '123456' is not of type string, converting.")
+//            ));
 
         $this->assertEquals('control', $splitSdk->getTreatment(123456, 'some_feature'));
     }
@@ -277,12 +292,19 @@ class GetTreatmentValidationTest extends \PHPUnit_Framework_TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
-
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo('getTreatment: split name "some_feature  " has extra whitespace, trimming.')
+                $this->equalTo("getTreatment: key '123456' is not of type string, converting."),
+                $this->equalTo("getTreatment: you passed some_feature that does not exist in this environment, "
+                    . "please double check what Splits exist in the web console.")
             ));
+
+//        $logger->expects($this->any())
+//            ->method('warning')
+//            ->with($this->logicalOr(
+//                $this->equalTo('getTreatment: split name "some_feature  " has extra whitespace, trimming.')
+//            ));
 
         $this->assertEquals('control', $splitSdk->getTreatment("some_key", 'some_feature  '));
     }

@@ -40,7 +40,6 @@ class SplitCache implements SplitCacheInterface
     public function addSplit($splitName, $split)
     {
         $cache = Di::getCache();
-
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
         $cacheItem->set($split);
         return $cache->save($cacheItem);
@@ -83,10 +82,23 @@ class SplitCache implements SplitCacheInterface
     public function getSplit($splitName)
     {
         $cache = Di::getCache();
-
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
-
         return $cacheItem->get();
+    }
+
+    /**
+     * @param array $splitNames
+     * @return string JSON representation
+     */
+    public function getSplits($splitNames)
+    {
+        $cache = Di::getCache();
+        $cacheItems = $cache->getItems(array_map('self::getCacheKeyForSplit', $splitNames));
+        $toReturn = array();
+        foreach ($cacheItems as $key => $value) {
+            $toReturn[self::getSplitNameFromCacheKey($key)] = $value->get();
+        }
+        return $toReturn;
     }
 
     public static function getCacheKeyForTrafficType($trafficType)
