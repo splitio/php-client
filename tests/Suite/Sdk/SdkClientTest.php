@@ -4,11 +4,15 @@ namespace SplitIO\Test\Suite\Sdk;
 use \stdClass;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
+use SplitIO\Component\Cache\Storage\Adapter;
+use SplitIO\Component\Cache\Storage\Adapter\PRedis;
+use SplitIO\Component\Cache\Pool;
+use SplitIO\Component\Cache\SegmentCache;
+use SplitIO\Component\Cache\SplitCache;
+use SplitIO\Sdk\Client;
 
 class SdkClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -637,4 +641,44 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
+
+    public function testGetTreatmentsFetchesSplitsInOneCall()
+    {
+        // Set redis-library client mock
+        $predisMock = $this
+            ->getMockBuilder('\Predis\Client')
+            ->disableOriginalConstructor()
+            ->setMethods(array('get', 'mget', 'rpush', 'incr'))
+            ->getMock();
+
+        // Create an adapter and inject mock via reflection
+        $adapter = new PRedis(array('parameters' => array()));
+        $adapterReflection = new \ReflectionClass($adapter);
+        $clientProperty = $adapterReflection->getProperty('client');
+        $clientProperty->setAccessible(true);
+        $clientProperty->setValue($adapter, $predisMock);
+
+        // Create a pool and inject the adapter via reflection
+        $pool = new Pool(array('adapter' => array('name' => 'predis', 'options' => array('parameters' => array()))));
+        $poolReflection = new \ReflectionClass($pool);
+        $adapterProperty = $poolReflection->getProperty('adapter');
+        $adapterProperty->setAccessible(true);
+        $adapterProperty->setValue($pool, $adapter);
+
+        // use the newly created pool as cache
+        Di::setCache($pool);
+
+        // Assert that MGET is called with the 3 splits.
+        $predisMock->expects($this->once())
+            ->method('mget')
+            ->with($this->equalTo(array('SPLITIO.split.split1', 'SPLITIO.split.split2', 'SPLITIO.split.split3')));
+
+        // Assert that GET is never called
+        $predisMock->expects($this->never())
+            ->method('get');
+
+        $client = new Client();
+        $client->getTreatments('key1', array('split1', 'split2', 'split3'));
+    }
+
 }
