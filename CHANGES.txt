@@ -1,3 +1,7 @@
+6.2.2 (TBD)
+ - Fetch multiple splits at once on getTreatments/getTreatmentsWithConfig
+ - Removed MatcherClient (DependencyMatcher now uses Evaluator directly)
+ - Several code cleanups
 6.2.1 (Jul 12, 2019)
  - Verified TLS support for redis and validated config options
  - Support newer versions of symfony/yaml
