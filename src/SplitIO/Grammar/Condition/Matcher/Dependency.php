@@ -8,7 +8,8 @@ use SplitIO\Sdk\Key;
 
 class Dependency
 {
-    protected $dependencyMatcherData = null;
+    protected $splitName = null;
+    protected $treatments = null;
     protected $type = null;
     protected $negate = false;
     protected $attribute = null;
@@ -16,7 +17,8 @@ class Dependency
     public function __construct($data, $negate = false, $attribute = null)
     {
         $this->type = Matcher::IN_SPLIT_TREATMENT;
-        $this->dependencyMatcherData = $data;
+        $this->splitName = $data['split'];
+        $this->treatments = $data['treatments'];
         $this->negate = $negate;
         $this->attribute = $attribute;
     }
@@ -28,10 +30,8 @@ class Dependency
 
     public function evalKey($key, $attributes = null, $bucketingKey = null)
     {
-        $client = Di::getMatcherClient();
-        $_key = ($bucketingKey == null) ? $key : new Key($key, $bucketingKey);
-        $treatment = $client->getTreatment($_key, $this->dependencyMatcherData['split'], $attributes);
-        return (is_array($this->dependencyMatcherData['treatments']) &&
-                in_array($treatment, $this->dependencyMatcherData['treatments']));
+        $evaluator = Di::getEvaluator();
+        $treatment = $evaluator->evaluateFeature($key, $bucketingKey, $this->splitName, $attributes);
+        return (is_array($this->treatments) && in_array($treatment, $this->treatments));
     }
 }

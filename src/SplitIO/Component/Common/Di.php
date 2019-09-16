@@ -20,7 +20,7 @@ class Di
 
     const KEY_SPLIT_SDK_CONFIG = 'SPLIT-SDK-CONFIG';
 
-    const KEY_MATCHER_CLIENT = 'MATCHER-CLIENT';
+    const KEY_EVALUATOR = 'EVALUATOR';
 
     const KEY_FACTORY_TRACKER = 'FACTORY-TRACKER';
 
@@ -147,13 +147,13 @@ class Di
         return self::get(self::KEY_CACHE);
     }
 
-    public static function setMatcherClient(\SplitIO\Sdk\MatcherClient $matcherClient)
+    public static function setEvaluator(\SplitIO\Sdk\Evaluator $evaluator)
     {
-        self::set(self::KEY_MATCHER_CLIENT, $matcherClient);
+        self::set(self::KEY_EVALUATOR, $evaluator);
     }
 
-    public static function getMatcherClient()
+    public static function getEvaluator()
     {
-        return self::get(self::KEY_MATCHER_CLIENT);
+        return self::get(self::KEY_EVALUATOR);
     }
 }

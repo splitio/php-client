@@ -38,7 +38,7 @@ class Sdk
         if ($apiKey == 'localhost') {
             //Register Logger
             self::registerLogger((isset($options['log'])) ? $options['log'] : array());
-            
+
             return new LocalhostSplitFactory($options);
         } else {
             //Register Logger

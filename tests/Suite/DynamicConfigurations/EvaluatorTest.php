@@ -78,7 +78,7 @@ EOD;
         $redisClient->set('SPLITIO.split.mysplittest', $this->split1);
 
         $evaluator = new Evaluator($options);
-        $result = $evaluator->evalTreatment('test', '', 'mysplittest', null);
+        $result = $evaluator->evaluateFeature('test', '', 'mysplittest', null);
 
         $this->assertEquals('off', $result['treatment']);
         $this->assertEquals(null, $result['config']);
@@ -106,7 +106,7 @@ EOD;
         $redisClient->set('SPLITIO.split.mysplittest2', $this->split2);
 
         $evaluator = new Evaluator($options);
-        $result = $evaluator->evalTreatment('test', '', 'mysplittest2', null);
+        $result = $evaluator->evaluateFeature('test', '', 'mysplittest2', null);
 
         $this->assertEquals('on', $result['treatment']);
         $this->assertEquals($result['config'], '{"color": "blue","size": 13}');
@@ -134,7 +134,7 @@ EOD;
         $redisClient->set('SPLITIO.split.mysplittest3', $this->split3);
 
         $evaluator = new Evaluator($options);
-        $result = $evaluator->evalTreatment('test', '', 'mysplittest3', null);
+        $result = $evaluator->evaluateFeature('test', '', 'mysplittest3', null);
 
         $this->assertEquals('killed', $result['treatment']);
         $this->assertEquals($result['config'], null);
@@ -162,7 +162,7 @@ EOD;
         $redisClient->set('SPLITIO.split.mysplittest4', $this->split4);
 
         $evaluator = new Evaluator($options);
-        $result = $evaluator->evalTreatment('test', '', 'mysplittest4', null);
+        $result = $evaluator->evaluateFeature('test', '', 'mysplittest4', null);
 
         $this->assertEquals('killed', $result['treatment']);
         $this->assertEquals($result['config'], '{"color": "orange","size": 13}');

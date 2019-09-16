@@ -35,6 +35,11 @@
         <testsuite name="attributes">
             <directory suffix="Test.php">tests/Suite/Attributes/</directory>
         </testsuite>
+        <testsuite name="input_validation">
+            <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
+        </testsuite>
+
+
 
         <testsuite name="integration">
             <directory suffix="Test.php">tests/Suite/Common/</directory>
