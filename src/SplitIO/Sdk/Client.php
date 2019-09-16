@@ -149,7 +149,7 @@ class Client implements ClientInterface
                 $matchingKey,
                 $featureName,
                 TreatmentEnum::CONTROL,
-                -1,
+                -1, // At this point we have no information on the real changeNumber (redis might have failed)
                 ImpressionLabel::EXCEPTION,
                 $bucketingKey
             );
