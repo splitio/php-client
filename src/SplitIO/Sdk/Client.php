@@ -362,9 +362,9 @@ class Client implements ClientInterface
                         $matchingKey,
                         $splitName,
                         $evalResult['treatment'],
+                        $evalResult['impression']['changeNumber'],
                         $evalResult['impression']['label'],
-                        $bucketingKey,
-                        $evalResult['impression']['changeNumber']
+                        $bucketingKey
                     );
                     $result[$splitName] = array(
                         'treatment' => $evalResult['treatment'],
