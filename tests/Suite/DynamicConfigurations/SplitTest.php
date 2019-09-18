@@ -51,10 +51,8 @@ EOD;
 
         $redisClient->set('SPLITIO.split.mysplittest', $this->split1);
 
-        $splitCacheKey = SplitCache::getCacheKeyForSplit('mysplittest');
-        $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
-
-        $splitRepresentation = $splitCachedItem->get();
+        $splitCache = new SplitCache();
+        $splitRepresentation = $splitCache->getSplit('mysplittest');
 
         $split = new Split(json_decode($splitRepresentation, true));
 
@@ -83,10 +81,8 @@ EOD;
 
         $redisClient->set('SPLITIO.split.mysplittest2', $this->split2);
 
-        $splitCacheKey = SplitCache::getCacheKeyForSplit('mysplittest2');
-        $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
-
-        $splitRepresentation = $splitCachedItem->get();
+        $splitCache = new SplitCache();
+        $splitRepresentation = $splitCache->getSplit('mysplittest2');
         $split = new Split(json_decode($splitRepresentation, true));
 
         $this->assertEquals('mysplittest2', $split->getName());

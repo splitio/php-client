@@ -31,7 +31,7 @@ class Dependency
     public function evalKey($key, $attributes = null, $bucketingKey = null)
     {
         $evaluator = Di::getEvaluator();
-        $treatment = $evaluator->evaluateFeature($key, $bucketingKey, $this->splitName, $attributes);
-        return (is_array($this->treatments) && in_array($treatment, $this->treatments));
+        $result = $evaluator->evaluateFeature($key, $bucketingKey, $this->splitName, $attributes);
+        return (is_array($this->treatments) && in_array($result['treatment'], $this->treatments));
     }
 }

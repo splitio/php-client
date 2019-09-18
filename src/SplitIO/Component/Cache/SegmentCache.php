@@ -11,17 +11,17 @@ class SegmentCache implements SegmentCacheInterface
 
     const KEY_TILL_CACHED_ITEM = 'SPLITIO.segment.{segment_name}.till';
 
-    public static function getCacheKeyForRegisterSegments()
+    private static function getCacheKeyForRegisterSegments()
     {
         return self::KEY_REGISTER_SEGMENTS;
     }
 
-    public static function getCacheKeyForSegmentData($segmentName)
+    private static function getCacheKeyForSegmentData($segmentName)
     {
         return str_replace('{segmentName}', $segmentName, self::KEY_SEGMENT_DATA);
     }
 
-    public static function getCacheKeyForSinceParameter($segmentName)
+    private static function getCacheKeyForSinceParameter($segmentName)
     {
         return str_replace('{segment_name}', $segmentName, self::KEY_TILL_CACHED_ITEM);
     }

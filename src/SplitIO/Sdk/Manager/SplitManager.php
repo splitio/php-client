@@ -13,13 +13,8 @@ class SplitManager implements SplitManagerInterface
 {
     public function splitNames()
     {
-        $splitKeys = Di::getCache()->getKeys(SplitCache::getCacheKeySearchPattern());
-
-        if (in_array('SPLITIO.split.till', $splitKeys)) {
-            $splitKeys = array_diff($splitKeys, array('SPLITIO.split.till'));
-        }
-
-        return array_map('SplitIO\Component\Cache\SplitCache::getSplitNameFromCacheKey', $splitKeys);
+        $cache = new SplitCache();
+        return $cache->getSplitNames();
     }
 
     /**
@@ -27,24 +22,9 @@ class SplitManager implements SplitManagerInterface
      */
     public function splits()
     {
-        $_splits = array();
-
-        $splitKeys = Di::getCache()->getKeys(SplitCache::getCacheKeySearchPattern());
-
-        if (empty($splitKeys)) {
-            return $_splits;
-        }
-        
-        $cachedSplits = Di::getCache()->getItems($splitKeys);
-
-        foreach ($cachedSplits as $split) {
-            $splitView = $this->parseSplitView($split);
-            if ($splitView != null) {
-                $_splits[] = $splitView;
-            }
-        }
-
-        return $_splits;
+        $cache = new SplitCache();
+        $rawSplits = $cache->getAllSplits();
+        return array_map('self::parseSplitView', $rawSplits);
     }
 
     /**
@@ -58,25 +38,22 @@ class SplitManager implements SplitManagerInterface
             return null;
         }
 
-        $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
-        $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
-
-        if ($splitCachedItem->isHit()) {
-            return $this->parseSplitView($splitCachedItem->get());
+        $cache = new SplitCache();
+        $raw = $cache->getSplit($featureName);
+        if (is_null($raw)) {
+            SplitApp::logger()->warning("split: you passed " . $featureName
+            . " that does not exist in this environment, please double check what Splits exist"
+            . " in the web console.");
+            return null;
         }
-
-        SplitApp::logger()->warning("split: you passed " . $featureName
-        . " that does not exist in this environment, please double check what Splits exist"
-        . " in the web console.");
-
-        return null;
+        return self::parseSplitView($raw);
     }
 
     /**
      * @param $splitRepresentation
      * @return SplitView
      */
-    private function parseSplitView($splitRepresentation)
+    private static function parseSplitView($splitRepresentation)
     {
         if (empty($splitRepresentation)) {
             return null;

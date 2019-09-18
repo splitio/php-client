@@ -444,7 +444,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array('evaluateFeature'))
             ->getMock();
 
-        $evaluator->method('evaluateFeature')->willReturn('on');
+        $evaluator->method('evaluateFeature')->willReturn(array('treatment' => 'on'));
         $evaluator->expects($this->once())
             ->method('evaluateFeature')
             ->with('test_key', null, 'test_feature', array('test_attribute1' => 'test_value1'));
@@ -469,8 +469,8 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
     public function testRegexMatcher()
     {
         $refile = file_get_contents(__DIR__.'/files/regex.txt');
-        $cases = array_map(function ($i) {
-            return explode('#', $i);
+        $cases = array_map(function ($line) {
+            return explode('#', $line);
         }, explode("\n", $refile));
         array_pop($cases); // remove latest (empty) case
 
