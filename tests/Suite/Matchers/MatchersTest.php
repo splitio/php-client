@@ -8,7 +8,6 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Component\Common\Di;
-use SplitIO\Sdk\MatcherClient;
 use \ReflectionMethod;
 
 class MatcherTest extends \PHPUnit_Framework_TestCase
@@ -439,18 +438,18 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 
     private function setDependencyMatcherTestMocks()
     {
-        $client = $this
-            ->getMockBuilder('\SplitIO\Sdk\MatcherClient')
+        $evaluator = $this
+            ->getMockBuilder('\SplitIO\Sdk\Evaluator')
             ->disableOriginalConstructor()
-            ->setMethods(array('getTreatment'))
+            ->setMethods(array('evaluateFeature'))
             ->getMock();
 
-        $client->method('getTreatment')->willReturn('on');
-        $client->expects($this->once())
-            ->method('getTreatment')
-            ->with('test_key', 'test_feature', array('test_attribute1' => 'test_value1'));
+        $evaluator->method('evaluateFeature')->willReturn(array('treatment' => 'on'));
+        $evaluator->expects($this->once())
+            ->method('evaluateFeature')
+            ->with('test_key', null, 'test_feature', array('test_attribute1' => 'test_value1'));
 
-        Di::setMatcherClient($client);
+        Di::setEvaluator($evaluator);
     }
 
     public function testDependencyMatcherTrue()
@@ -470,11 +469,11 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
     public function testRegexMatcher()
     {
         $refile = file_get_contents(__DIR__.'/files/regex.txt');
-        $cases = array_map(function ($i) {
-            return explode('#', $i);
+        $cases = array_map(function ($line) {
+            return explode('#', $line);
         }, explode("\n", $refile));
         array_pop($cases); // remove latest (empty) case
-    
+
         $meth = new ReflectionMethod('SplitIO\Grammar\Condition\Matcher\Regex', 'evalKey');
         $meth->setAccessible(true);
         foreach ($cases as $case) {

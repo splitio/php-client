@@ -121,7 +121,7 @@ class InputValidator
         if (self::checkIsEmpty($strKey, "key", $operation) or self::checkNotProperLength($strKey, "key", $operation)) {
             return null;
         }
-        
+
         return array(
             'matchingKey' => $strKey,
             'bucketingKey' => null
@@ -308,7 +308,7 @@ class InputValidator
 
             $validProperties[$property] = null;
             $size += strlen($property);
-            
+
             if (is_null($element)) {
                 continue;
             }

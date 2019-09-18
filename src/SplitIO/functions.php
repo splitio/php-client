@@ -82,8 +82,3 @@ function getHostIpAddress()
         return 'unknown';
     }
 }
-
-function generateControlTreatments($splitNames)
-{
-    return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
-}

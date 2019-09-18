@@ -15,7 +15,9 @@ class TreatmentImpression
     {
         try {
             Di::getLogger()->debug($impressions);
-
+            if (is_null($impressions) || (is_array($impressions) && 0 == count($impressions))) {
+                return;
+            }
             $impressionCache = new ImpressionCache();
             $toStore = (is_array($impressions)) ? $impressions : array($impressions);
             return $impressionCache->logImpressions(

@@ -11,22 +11,22 @@ class SplitCache implements SplitCacheInterface
 
     const KEY_TRAFFIC_TYPE_CACHED = 'SPLITIO.trafficType.{trafficTypeName}';
 
-    public static function getCacheKeyForSinceParameter()
+    private static function getCacheKeyForSinceParameter()
     {
         return self::KEY_TILL_CACHED_ITEM;
     }
 
-    public static function getCacheKeySearchPattern()
+    private static function getCacheKeySearchPattern()
     {
         return self::getCacheKeyForSplit('*');
     }
 
-    public static function getCacheKeyForSplit($splitName)
+    private static function getCacheKeyForSplit($splitName)
     {
         return str_replace('{splitName}', $splitName, self::KEY_SPLIT_CACHED_ITEM);
     }
 
-    public static function getSplitNameFromCacheKey($key)
+    private static function getSplitNameFromCacheKey($key)
     {
         $cacheKeyPrefix = self::getCacheKeyForSplit('');
         return str_replace($cacheKeyPrefix, '', $key);
@@ -40,7 +40,6 @@ class SplitCache implements SplitCacheInterface
     public function addSplit($splitName, $split)
     {
         $cache = Di::getCache();
-
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
         $cacheItem->set($split);
         return $cache->save($cacheItem);
@@ -83,13 +82,45 @@ class SplitCache implements SplitCacheInterface
     public function getSplit($splitName)
     {
         $cache = Di::getCache();
-
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
-
         return $cacheItem->get();
     }
 
-    public static function getCacheKeyForTrafficType($trafficType)
+    /**
+     * @param array $splitNames
+     * @return string JSON representation
+     */
+    public function getSplits($splitNames)
+    {
+        $cache = Di::getCache();
+        $cacheItems = $cache->getItems(array_map('self::getCacheKeyForSplit', $splitNames));
+        $toReturn = array();
+        foreach ($cacheItems as $key => $value) {
+            $toReturn[self::getSplitNameFromCacheKey($key)] = $value->get();
+        }
+        return $toReturn;
+    }
+
+    /**
+     * @return array(string) List of split names
+     */
+    public function getSplitNames()
+    {
+        $cache = Di::getCache();
+        $splitKeys = $cache->getKeys(self::getCacheKeySearchPattern());
+        return array_map('self::getSplitNameFromCacheKey', $splitKeys);
+    }
+
+    /**
+     * @return array(string) List of all split JSON strings
+     */
+    public function getAllSplits()
+    {
+        $splitNames = $this->getSplitNames();
+        return $this->getSplits($splitNames);
+    }
+
+    private static function getCacheKeyForTrafficType($trafficType)
     {
         return str_replace('{trafficTypeName}', $trafficType, self::KEY_TRAFFIC_TYPE_CACHED);
     }

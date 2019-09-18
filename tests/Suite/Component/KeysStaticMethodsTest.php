@@ -10,9 +10,18 @@ use SplitIO\Component\Cache\TrafficTypeCache;
 
 class KeyTest extends \PHPUnit_Framework_TestCase
 {
+
+    private static function getStaticMethodAsPublic($className, $methodName)
+    {
+        $refMethod = new \ReflectionMethod($className, $methodName);
+        $refMethod->setAccessible(true);
+        return $refMethod;
+    }
+
     public function testMetricsGetCacheKeyForLatencyButcket()
     {
-        $key = MetricsCache::getCacheKeyForLatencyBucket('abc', 'def');
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getCacheKeyForLatencyBucket');
+        $key = $method->invoke(null, 'abc', 'def');
         $this->assertEquals(
             $key,
             'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.abc.bucket.def'
@@ -21,7 +30,8 @@ class KeyTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCacheKeySearchLatencyPattern()
     {
-        $key = MetricsCache::getCacheKeySearchLatencyPattern();
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getCacheKeySearchLatencyPattern');
+        $key = $method->invoke(null);
         $this->assertEquals(
             $key,
             'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.*.bucket.*'
@@ -30,7 +40,9 @@ class KeyTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMetricNameFromKey()
     {
-        $metricName = MetricsCache::getMetricNameFromKey(
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getMetricNameFromKey');
+        $metricName = $method->invoke(
+            null,
             'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.abc.bucket.def'
         );
 
@@ -39,7 +51,9 @@ class KeyTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBucketFromKey()
     {
-        $metricName = MetricsCache::getBucketFromKey(
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getBucketFromKey');
+        $metricName = $method->invoke(
+            null,
             'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.abc.bucket.def'
         );
 
@@ -48,49 +62,57 @@ class KeyTest extends \PHPUnit_Framework_TestCase
 
     public function testSplitGetCacheKeyForSinceParameter()
     {
-        $key = SplitCache::getCacheKeyForSinceParameter();
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SplitCache', 'getCacheKeyForSinceParameter');
+        $key = $method->invoke(null);
         $this->assertEquals($key, SplitCache::KEY_TILL_CACHED_ITEM);
     }
 
     public function testSplitGetCacheKeySearchPattern()
     {
-        $key = SplitCache::getCacheKeySearchPattern();
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SplitCache', 'getCacheKeySearchPattern');
+        $key = $method->invoke(null);
         $this->assertEquals($key, 'SPLITIO.split.*');
     }
 
     public function testSplitGetCacheKeyForSplit()
     {
-        $key = SplitCache::getCacheKeyForSplit('abc');
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SplitCache', 'getCacheKeyForSplit');
+        $key = $method->invoke(null, 'abc');
         $this->assertEquals($key, 'SPLITIO.split.abc');
     }
 
     public function testSplitGetSplitNameFromCacheKey()
     {
-        $splitName = SplitCache::getSplitNameFromCacheKey('SPLITIO.split.abc');
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SplitCache', 'getSplitNameFromCacheKey');
+        $splitName = $method->invoke(null, 'SPLITIO.split.abc');
         $this->assertEquals($splitName, 'abc');
     }
 
     public function testSegmentGetCacheKeyForRegisterSegments()
     {
-        $key = SegmentCache::getCacheKeyForRegisterSegments();
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SegmentCache', 'getCacheKeyForRegisterSegments');
+        $key = $method->invoke(null);
         $this->assertEquals($key, 'SPLITIO.segments.registered');
     }
 
     public function testSegmentGetCacheKeyForSegmentData()
     {
-        $key = SegmentCache::getCacheKeyForSegmentData('abc');
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SegmentCache', 'getCacheKeyForSegmentData');
+        $key = $method->invoke(null, 'abc');
         $this->assertEquals($key, 'SPLITIO.segment.abc');
     }
 
     public function testSegmentGetCacheKeyForSinceParameter()
     {
-        $key = SegmentCache::getCacheKeyForSinceParameter('abc');
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SegmentCache', 'getCacheKeyForSinceParameter');
+        $key = $method->invoke(null, 'abc');
         $this->assertEquals($key, 'SPLITIO.segment.abc.till');
     }
 
     public function testTrafficTypeNameFromCache()
     {
-        $trafficTypeName = SplitCache::getCacheKeyForTrafficType('abc');
+        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SplitCache', 'getCacheKeyForTrafficType');
+        $trafficTypeName = $method->invoke(null, 'abc');
         $this->assertEquals($trafficTypeName, 'SPLITIO.trafficType.abc');
     }
 }

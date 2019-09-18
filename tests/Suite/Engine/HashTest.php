@@ -51,7 +51,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
             if ($handle) {
                 while (($line = fgets($handle)) !== false) {
                     $_line = explode(',', $line);
-    
+
                     if ($_line[0] == '#seed') {
                         continue;
                     }
@@ -59,7 +59,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
                     $hashfn = new Murmur3Hash();
                     $hash = $hashfn->getHash($_line[1], $_line[0]);
                     $bucket = abs($hash % 100) + 1;
-    
+
                     $this->assertEquals((int)$_line[2], (int)$hash, "Hash, Expected: ".$_line[2]." Calculated: ".$hash);
                     $this->assertEquals(
                         (int)$_line[3],
@@ -130,10 +130,9 @@ class HashTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
+        $splitCache = new SplitCache();
         foreach ($cases as $case) {
-            $splitCacheKey = SplitCache::getCacheKeyForSplit($case['key']);
-            $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
-            $split = new Split(json_decode($splitCachedItem->get(), true));
+            $split = new Split(json_decode($splitCache->getSplit($case['key']), true));
             $this->assertEquals($split->getAlgo(), $case['algo']);
             $hasher = HashFactory::getHashAlgorithm($split->getAlgo());
             $this->assertInstanceof($case['class'], $hasher);

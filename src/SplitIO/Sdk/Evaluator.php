@@ -18,128 +18,79 @@ use SplitIO\Split as SplitApp;
 
 class Evaluator
 {
-    /**
-     * Size of memory block in bytes
-     * @var int
-     */
-    private $smSize;
 
-    /**
-     * mode of shared memory block
-     * @var int
-     */
-    private $smMode;
+    private $splitCache = null;
 
-    /**
-     * Time to live of data in shared memory block
-     * @var int
-     */
-    private $smTtl;
-
-
-    /**
-     * Seed to generate an integer key
-     * @var int
-     */
-    private $smKeySeed;
-
-    /**
-     * @param array $options
-     */
-    public function __construct($options = array())
+    public function __construct()
     {
-        $this->smSize        = isset($options['memory']['size']) ? $options['memory']['size'] : 40000;
-        $this->smMode        = isset($options['memory']['mode']) ? $options['memory']['mode'] : 0644;
-        $this->smTtl         = isset($options['memory']['ttl'])  ? $options['memory']['ttl']  : 60;
-        $this->smKeySeed     = isset($options['memory']['seed']) ? $options['memory']['seed'] : 123123;
+        $this->splitCache = new SplitCache();
     }
 
-    private function getSmKey($featureName)
-    {
-        $murmurHashFn = new \SplitIO\Engine\Hash\Murmur3Hash();
-        return $murmurHashFn->getHash('feature::'.$featureName, $this->smKeySeed);
-    }
-
-    private function cacheFeature($featureName, \SplitIO\Grammar\Split $split)
-    {
-        $ikey = $this->getSmKey($featureName);
-        try {
-            return SharedMemory::write($ikey, $split, $this->smTtl, $this->smMode, $this->smSize);
-        } catch (SupportSharedMemoryException $se) {
-            SplitApp::logger()->debug($se->getMessage());
-        } catch (OpenSharedMemoryException $oe) {
-            SplitApp::logger()->debug($oe->getMessage());
-        } catch (WriteSharedMemoryException $we) {
-            SplitApp::logger()->debug($we->getMessage());
-        } catch (\Exception $e) {
-            SplitApp::logger()->debug($e->getMessage());
-        }
-        return false;
-    }
-
-    /**
-     * @param $featureName
-     * @return null|\SplitIO\Grammar\Split
-     */
-    private function getCachedFeature($featureName)
-    {
-        $ikey = $this->getSmKey($featureName);
-        $value = null;
-
-        try {
-            $value = SharedMemory::read($ikey, $this->smMode, $this->smSize);
-            if (!($value instanceof Split)) {
-                return null;
-            }
-        } catch (SupportSharedMemoryException $se) {
-            SplitApp::logger()->debug($se->getMessage());
-        } catch (OpenSharedMemoryException $oe) {
-            SplitApp::logger()->debug($oe->getMessage());
-        } catch (ReadSharedMemoryException $re) {
-            SplitApp::logger()->debug($re->getMessage());
-        } catch (\Exception $e) {
-            SplitApp::logger()->debug($e->getMessage());
-        }
-
-        return $value;
-    }
 
     private function fetchSplit($featureName)
     {
-        $split = null;
-        $cachedFeature = $this->getCachedFeature($featureName);
-        if ($cachedFeature !== null) {
-            $split = $cachedFeature;
-        } else {
-            $splitCacheKey = SplitCache::getCacheKeyForSplit($featureName);
-            $splitCachedItem = SplitApp::cache()->getItem($splitCacheKey);
-
-            if ($splitCachedItem->isHit()) {
-                SplitApp::logger()->info("$featureName is present on cache");
-                $splitRepresentation = $splitCachedItem->get();
-                $split = new Split(json_decode($splitRepresentation, true));
-                $this->cacheFeature($featureName, $split);
-            }
+        $splitCachedItem = $this->splitCache->getSplit($featureName);
+        if (is_null($splitCachedItem)) {
+            return null;
         }
+        SplitApp::logger()->info("$featureName is present on cache");
+        $split = new Split(json_decode($splitCachedItem, true));
         return $split;
     }
 
-    public function evalTreatment($matchingKey, $bucketingKey, $featureName, array $attributes = null)
+    private function fetchSplits($featureNames)
+    {
+        $splitCachedItems = $this->splitCache->getSplits($featureNames);
+        $toReturn = array();
+        foreach ($splitCachedItems as $splitName => $rawSplit) {
+            if (is_null($rawSplit)) {
+                $toReturn[$splitName] = null;
+                continue;
+            }
+            $toReturn[$splitName] = new Split(json_decode($rawSplit, true));
+        }
+        return $toReturn;
+    }
+
+    public function evaluateFeature($matchingKey, $bucketingKey, $featureName, array $attributes = null)
+    {
+        $timeStart = Metrics::startMeasuringLatency();
+        $split = $this->fetchSplit($featureName);
+        $toReturn = $this->evalTreatment($matchingKey, $bucketingKey, $split, $attributes);
+        $toReturn['latency'] = Metrics::calculateLatency($timeStart);
+        return $toReturn;
+    }
+
+    public function evaluateFeatures($matchingKey, $bucketingKey, array $featureNames, array $attributes = null)
+    {
+        $toReturn = array(
+            'evaluations' => array(),
+            'latency' => 0
+        );
+        $timeStart = Metrics::startMeasuringLatency();
+        foreach ($this->fetchSplits($featureNames) as $name => $split) {
+            $toReturn['evaluations'][$name] = $this->evalTreatment($matchingKey, $bucketingKey, $split, $attributes);
+        }
+        $toReturn['latency'] = Metrics::calculateLatency($timeStart);
+        return $toReturn;
+    }
+
+    private function evalTreatment($key, $bucketingKey, $split, array $attributes = null)
     {
         $result = array(
             'treatment' => TreatmentEnum::CONTROL,
             'impression' => array(
-                'label' => ImpressionLabel::SPLIT_NOT_FOUND,
+                'label' => null,
                 'changeNumber' => null,
-            ),
-            'metadata' => array(
-                'latency' => null,
             ),
             'config' => null
         );
 
-        $split = $this->fetchSplit($featureName);
-        if ($split != null) {
+        if (is_null($split)) {
+            $result['impression']['label'] = ImpressionLabel::SPLIT_NOT_FOUND;
+            return $result;
+        }
+        try {
             $configs = $split->getConfigurations();
             $result['impression']['changeNumber'] = $split->getChangeNumber();
             if ($split->killed()) {
@@ -149,37 +100,28 @@ class Evaluator
                 if (!is_null($configs) && isset($configs[$defaultTreatment])) {
                     $result['config'] = $configs[$defaultTreatment];
                 }
-            } else {
-                Di::setMatcherClient(new MatcherClient($this));
-                $timeStart = Metrics::startMeasuringLatency();
-                $evaluationResult = Engine::getTreatment(
-                    $matchingKey,
-                    $bucketingKey,
-                    $split,
-                    $attributes
-                );
-                $latency = Metrics::calculateLatency($timeStart);
-    
-                $treatment = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
-                $impressionLabel = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];
-                $result['metadata']['latency'] = $latency;
-                //If the given key doesn't match on any condition, default treatment is returned
-                if ($treatment == null) {
-                    $treatment = $split->getDefaultTratment();
-                    $impressionLabel = ImpressionLabel::NO_CONDITION_MATCHED;
-                }
-    
-                SplitApp::logger()->info("*Treatment for $matchingKey in {$split->getName()} is: $treatment");
-
-                $result['treatment'] = $treatment;
-                $result['impression']['label'] = $impressionLabel;
-                if (!is_null($configs) && isset($configs[$treatment])) {
-                    $result['config'] = $configs[$treatment];
-                }
-                $result['impression']['label'] = $impressionLabel;
+                return $result;
             }
-        }
 
+            $evaluationResult = Engine::getTreatment($key, $bucketingKey, $split, $attributes);
+            if (!is_null($evaluationResult[Engine::EVALUATION_RESULT_TREATMENT])) {
+                $result['treatment'] = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
+                $result['impression']['label'] = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];
+            } else { // If the given key doesn't match on any condition, default treatment is returned
+                $result['treatment'] = $split->getDefaultTratment();
+                $result['impression']['label'] = ImpressionLabel::NO_CONDITION_MATCHED;
+            }
+
+            if (!is_null($configs) && isset($configs[$result['treatment']])) {
+                $result['config'] = $configs[$result['treatment']];
+            }
+            SplitApp::logger()->info("*Treatment for $key in {$split->getName()} is: ".$result['treatment']);
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('An exception occured when evaluating feature: '. $split->getName());
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
+            $result['impression']['label'] = ImpressionLabel::EXCEPTION;
+        }
         return $result;
     }
 }

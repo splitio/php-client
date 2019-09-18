@@ -13,7 +13,7 @@ class MetricsCache
      * @param $bucketNumber
      * @return mixed
      */
-    public static function getCacheKeyForLatencyBucket($metricName, $bucketNumber)
+    private static function getCacheKeyForLatencyBucket($metricName, $bucketNumber)
     {
         return KeyFactory::make(self::KEY_LATENCY_BUCKET, array(
             '{bucketNumber}' => $bucketNumber,
@@ -24,7 +24,7 @@ class MetricsCache
     /**
      * @return mixed
      */
-    public static function getCacheKeySearchLatencyPattern()
+    private static function getCacheKeySearchLatencyPattern()
     {
         return KeyFactory::make(self::KEY_LATENCY_BUCKET, array(
             '{bucketNumber}' => '*',
@@ -36,7 +36,7 @@ class MetricsCache
      * @param $key
      * @return string
      */
-    public static function getMetricNameFromKey($key)
+    private static function getMetricNameFromKey($key)
     {
         $explodeKey = explode('/', $key);
         $lastShard = $explodeKey[3];
@@ -48,7 +48,7 @@ class MetricsCache
      * @param $key
      * @return int
      */
-    public static function getBucketFromKey($key)
+    private static function getBucketFromKey($key)
     {
         $explodeKey = explode('/', $key);
         $lastShard = $explodeKey[3];
