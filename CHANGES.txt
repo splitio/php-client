@@ -3,73 +3,101 @@
  - Removed MatcherClient (DependencyMatcher now uses Evaluator directly)
  - Removed shared memory.
  - Several code cleanups
+
 6.2.1 (Jul 12, 2019)
  - Verified TLS support for redis and validated config options
  - Support newer versions of symfony/yaml
+
 6.2.0 (May 30, 2019)
  - Added validation for TrafficType in track calls.
  - Added validation when split does not exist on treatments and manager calls.
  - Added multiple factory instantiation check.
  - Removed producer modules.
  - Added properties to track method.
+
 6.1.0 (April 30, 2019)
  - Added getTreatmentWithConfig and getTreatmentsWithConfig methods.
  - Added support for YAML files for Localhost mode.
+
 6.0.0 (Feb 8, 2019)
  - Updated Input Sanitization.
  - BREAKING CHANGE: Moved Impressions to single queue approach.
+
 5.7.1 (Dec 20, 2018)
  - Fixed traffic allocation issue on 1%.
+
 5.7.0 (Nov 14, 2018)
  - Added support for redis cluster.
+
 5.6.0 (Oct 23, 2018)
  - Added getTreatments method.
+
 5.5.1 (Oct 9, 2018)
  - Added validation for ipAddress.
+
 5.5.0 (Sep 25, 2018)
  - Added custom impression listener feature.
  - Input Sanitization for track, getTreatment and split.
+
 5.4.0 (Aug 29, 2018)
  - Added support for redis with sentinel replication
+
 5.3.1: (Apr 4, 2018)
  - Force key data type to be a string
+
 5.3.0: (Feb 8, 2018)
  - Split client supports .track method (events)
+
 5.2.4: (Sep 13, 2017)
  - Downgrade logging level for shared memory messages
+
 5.2.3: (Sep 5, 2017)
  - Adding hotfix to return empty splits array in SplitManager when redis is empty.
+
 5.2.2: (Aug 1, 2017)
  - Adding hotfix to return CONTROL if redis is down instead of failing.
+
 5.2.1: (Jul 28, 2017)
  - Adding hotfix for manager->getTreatments()
+
 5.2.0: (Jul 26, 2017)
  - Adding support for regex & boolean matcher
+
 5.1.0: (Jul 20, 2017)
  - Adding support for dependency matcher
+
 5.0.0 (Jun 13, 2017)
  - Adding support for Split Synchronizer service
+
 4.1.0 (May 16, 2017)
  - Adding support for String and Set Matchers
+
 4.0.2 (May 8, 2017)
  - Adding support for Traffic Allocation
  - Fixing stdout log blocker on synchronizer when run as service
+
 4.0.1 (April 20, 2017)
  - Renaming Void log handler to get PHP 7.1 compatibility
+
 4.0.0 (April 17, 2017)
  - Added support for murmur3 hashing
  - Fixed result "control" when invalid matchers are used for evaluation
+
 3.1.3
  - Modified predis version to ^1.0
+
 3.1.2
  - Modified stdout logger handler
  - Added "echo" logger handler
+
 3.1.1
  - Set syslog as default log adapter
  - Added "void" log adapter
+
 3.1.0
  - Added enabled labels
  - Added impressions by sdk and version including bucketing key
+
 3.0.0
  - Added SDK Factory Method with Manager API and Sdk Client
  - Added Bucketing key support
@@ -77,13 +105,17 @@
  - Added support for Block Until Redy
  - Removed php serialization at Redis cache to support Cache cross SDK spec
  - Fixed push impressions minor bug using redis prefix
+
 2.1.1
  - Added Events endpoint support in binary splitio.phar
  - Fixed Standard messages in binary splitio.phar
+
 2.1.0
  - Added PRedis Adapter support
+
 2.0.0
  - Added attributes support
+
 1.0.1
  - The Segment evaluation has benn added into a shared memory block to improve the performance.
  - The Feature specification is stored in shared memory in order to improve the evaluation performance.
