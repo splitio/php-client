@@ -7,7 +7,7 @@ use SplitIO\Metrics;
 use SplitIO\Component\Cache\MetricsCache;
 use SplitIO\Sdk\Events\EventDTO;
 use SplitIO\Sdk\Events\EventQueueMessage;
-use SplitIO\Sdk\Events\EventQueueMetadataMessage;
+use SplitIO\Sdk\QueueMetadataMessage;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
@@ -20,6 +20,7 @@ class Client implements ClientInterface
 
     private $evaluator = null;
     private $impressionListener = null;
+    private $IPAddressesEnabled = true;
 
     /**
      * Flag to get Impression's labels feature enabled
@@ -38,6 +39,7 @@ class Client implements ClientInterface
         if (isset($options['impressionListener'])) {
             $this->impressionListener = new \SplitIO\Sdk\ImpressionListenerWrapper($options['impressionListener']);
         }
+        $this->IPAddressesEnabled = isset($options['IPAddressesEnabled']) ? $options['IPAddressesEnabled'] : true;
     }
 
     /**
@@ -305,7 +307,8 @@ class Client implements ClientInterface
     private function registerData($impressions, $attributes, $metricName, $latency = null)
     {
         try {
-            TreatmentImpression::log($impressions);
+            $queueMetadata = new QueueMetadataMessage($this->IPAddressesEnabled);
+            TreatmentImpression::log($impressions, $queueMetadata);
             if (isset($this->impressionListener)) {
                 $this->impressionListener->sendDataToClient($impressions, $attributes);
             }
@@ -541,8 +544,8 @@ class Client implements ClientInterface
 
         try {
             $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
-            $eventMessageMetadata = new EventQueueMetadataMessage();
-            $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+            $queueMetadata = new QueueMetadataMessage($this->IPAddressesEnabled);
+            $eventQueueMessage = new EventQueueMessage($queueMetadata, $eventDTO);
             return EventsCache::addEvent($eventQueueMessage);
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart

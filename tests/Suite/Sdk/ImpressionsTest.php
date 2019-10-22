@@ -6,6 +6,7 @@ use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
+use SplitIO\Sdk\QueueMetadataMessage;
 
 class ImpressionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
 
         $redisClient->del(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
+        $queueMetadata = new QueueMetadataMessage();
 
         TreatmentImpression::log(new Impression(
             'someMatchingKey',
@@ -35,7 +37,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
             123456,
             321654,
             'someBucketingKey'
-        ));
+        ), $queueMetadata);
 
         // Assert that the TTL is within a 10-second range (between it was set and retrieved).
         $ttl = $redisClient->ttl(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
@@ -47,6 +49,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($decoded['m']['s'], 'php-'.\Splitio\version());
         $this->assertEquals($decoded['m']['i'], 'unknown');
+        $this->assertEquals($decoded['m']['n'], 'unknown');
         $this->assertEquals($decoded['i']['k'], 'someMatchingKey');
         $this->assertEquals($decoded['i']['b'], 'someBucketingKey');
         $this->assertEquals($decoded['i']['f'], 'someFeature');
@@ -64,7 +67,8 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'IPAddressEnabled' => false
         );
 
         //Initializing the SDK instance.
@@ -72,6 +76,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
 
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
         $redisClient->del(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
+        $queueMetadata = new QueueMetadataMessage(false);
 
         TreatmentImpression::log(new Impression(
             'someMatchingKey',
@@ -81,7 +86,7 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
             123456,
             321654,
             'someBucketingKey'
-        ));
+        ), $queueMetadata);
 
         sleep(3);
 
@@ -93,11 +98,25 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
             123456,
             321654,
             'someBucketingKey'
-        ));
+        ), $queueMetadata);
 
         $ttl = $redisClient->ttl(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         // $ttl should be lower than or equalt the default impressions TTL minus 3 seconds,
         // since it should have not been resetted with the last imrpession logged.
         $this->assertLessThanOrEqual(ImpressionCache::IMPRESSION_KEY_DEFAULT_TTL - 3, $ttl);
+
+        $imp = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
+        $decoded = json_decode($imp, true);
+
+        $this->assertEquals($decoded['m']['s'], 'php-'.\Splitio\version());
+        $this->assertEquals($decoded['m']['i'], 'na');
+        $this->assertEquals($decoded['m']['n'], 'na');
+        $this->assertEquals($decoded['i']['k'], 'someMatchingKey');
+        $this->assertEquals($decoded['i']['b'], 'someBucketingKey');
+        $this->assertEquals($decoded['i']['f'], 'someFeature');
+        $this->assertEquals($decoded['i']['t'], 'on');
+        $this->assertEquals($decoded['i']['r'], 'label1');
+        $this->assertEquals($decoded['i']['m'], 123456);
+        $this->assertEquals($decoded['i']['c'], 321654);
     }
 }

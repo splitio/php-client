@@ -9,6 +9,7 @@ use SplitIO\Test\Suite\Redis\PRedisReadOnlyMock;
 use SplitIO\TreatmentImpression;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Sdk\Impressions\Impression;
+use SplitIO\Sdk\QueueMetadataMessage;
 
 class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
 {
@@ -126,6 +127,6 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
             'something'
         );
 
-        TreatmentImpression::log($impression);
+        TreatmentImpression::log($impression, new QueueMetadataMessage());
     }
 }

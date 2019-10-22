@@ -3,22 +3,19 @@ namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Common\Di;
 use SplitIO\Component\Cache\KeyFactory;
+use SplitIO\Sdk\QueueMetadataMessage;
 
 class ImpressionCache
 {
     const IMPRESSIONS_QUEUE_KEY = "SPLITIO.impressions";
     const IMPRESSION_KEY_DEFAULT_TTL = 3600;
 
-    public function logImpressions($impressions, $metadata)
+    public function logImpressions($impressions, QueueMetadataMessage $metadata)
     {
         $toStore = array_map(
             function ($imp) use ($metadata) {
                 return json_encode(array(
-                    "m" => array(
-                        "s" => $metadata['sdkVersion'],
-                        "i" => $metadata['machineIp'],
-                        "n" => $metadata['machineName'],
-                    ),
+                    'm' => $metadata->toArray(),
                     "i" => array(
                         "k" => $imp->getId(),
                         "b" => $imp->getBucketingKey(),
