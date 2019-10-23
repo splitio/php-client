@@ -11,10 +11,10 @@ matrix:
   include:
     - dist: precise
       php: '5.4'
-      env: SONAR_SCANNER=false
     - dist: xenial
       php: '7.2'
-      env: SONAR_SCANNER=true
+      after_success:
+      - bash sonar-scanner.sh
 
 services:
   - redis-server
@@ -27,4 +27,3 @@ install:
 script:
   - vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/
   - vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration
-  - 'if [ "$SONAR_SCANNER" == "true" ]; then bash sonar-scanner.sh; fi'
