@@ -17,6 +17,8 @@ sonar_scanner() {
     -Dsonar.exclusions="**/tests/**/*.*" \
     -Dsonar.links.ci='https://travis-ci.com/splitio/php-client' \
     -Dsonar.links.scm='https://github.com/splitio/php-client' \
+    -Dsonar.pullrequest.provider='GitHub' \
+    -Dsonar.pullrequest.github.repository='splitio/php-client'
     "${params}"
 
   return $?
