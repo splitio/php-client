@@ -1,6 +1,5 @@
 *.phar
 .idea
-*.sh
 *~
 ci
 composer.lock
@@ -23,3 +22,6 @@ test.php
 
 # phpenv
 .php-version
+
+# Sonarqube
+.scannerwork

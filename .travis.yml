@@ -22,3 +22,6 @@ install:
 script:
   - vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/
   - vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration
+
+after_success:
+  - bash sonar-scanner.sh
