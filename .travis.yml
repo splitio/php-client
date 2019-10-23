@@ -1,5 +1,8 @@
 language: php
 
+git:
+  depth: false
+
 env:
   global:
     - COMPOSER_DISABLE_XDEBUG_WARN=1
