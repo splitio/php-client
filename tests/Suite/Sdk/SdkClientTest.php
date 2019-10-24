@@ -575,7 +575,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions generated
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'na', 'na');
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'NA', 'NA');
     }
 
     public function testGetTreatmentsWithRepeteadedFeatures()

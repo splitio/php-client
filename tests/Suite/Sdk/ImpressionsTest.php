@@ -109,8 +109,8 @@ class ImpressionsTest extends \PHPUnit_Framework_TestCase
         $decoded = json_decode($imp, true);
 
         $this->assertEquals($decoded['m']['s'], 'php-'.\Splitio\version());
-        $this->assertEquals($decoded['m']['i'], 'na');
-        $this->assertEquals($decoded['m']['n'], 'na');
+        $this->assertEquals($decoded['m']['i'], 'NA');
+        $this->assertEquals($decoded['m']['n'], 'NA');
         $this->assertEquals($decoded['i']['k'], 'someMatchingKey');
         $this->assertEquals($decoded['i']['b'], 'someBucketingKey');
         $this->assertEquals($decoded['i']['f'], 'someFeature');

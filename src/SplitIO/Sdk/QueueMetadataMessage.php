@@ -15,8 +15,8 @@ class QueueMetadataMessage
     public function __construct($IPAddressesEnabled = true)
     {
         $this->sdkVersion = 'php-' . \SplitIO\version();
-        $this->machineIP = 'na';
-        $this->machineName = 'na';
+        $this->machineIP = 'NA';
+        $this->machineName = 'NA';
         if ($IPAddressesEnabled) {
             $this->machineIP = \SplitIO\getHostIpAddress();
             if ($this->machineIP != 'unknown') {
