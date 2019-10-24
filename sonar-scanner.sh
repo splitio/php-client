@@ -7,7 +7,7 @@ sonar_scanner() {
     -Dsonar.host.url='https://sonarqube.split-internal.com' \
     -Dsonar.login="$SONAR_TOKEN" \
     -Dsonar.ws.timeout='300' \
-    -Dsonar.sources='./src,./vendor' \
+    -Dsonar.sources='./src' \
     -Dsonar.projectName='php-client' \
     -Dsonar.exclusions='**/tests/**/*.*' \
     -Dsonar.links.ci='https://travis-ci.com/splitio/php-client' \
