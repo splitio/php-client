@@ -1,6 +1,8 @@
 <?php
 namespace SplitIO\Sdk\Events;
 
+use SplitIO\Sdk\QueueMetadataMessage;
+
 class EventQueueMessage
 {
     /**
@@ -18,7 +20,7 @@ class EventQueueMessage
      * @param $metadata
      * @param $event
      */
-    public function __construct(EventQueueMetadataMessage $metadata, EventDTO $event)
+    public function __construct(QueueMetadataMessage $metadata, EventDTO $event)
     {
         $this->metadata = $metadata;
         $this->event = $event;
@@ -26,7 +28,7 @@ class EventQueueMessage
 
 
     /**
-     * @return EventQueueMetadataMessage
+     * @return QueueMetadataMessage
      */
     public function getMetadata()
     {
@@ -36,7 +38,7 @@ class EventQueueMessage
     /**
      * @param mixed $metadata
      */
-    public function setMetadata(EventQueueMetadataMessage $metadata)
+    public function setMetadata(QueueMetadataMessage $metadata)
     {
         $this->metadata = $metadata;
     }
