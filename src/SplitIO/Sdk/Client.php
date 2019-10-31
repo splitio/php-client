@@ -20,7 +20,6 @@ class Client implements ClientInterface
 
     private $evaluator = null;
     private $impressionListener = null;
-    private $IPAddressesEnabled = true;
 
     /**
      * Flag to get Impression's labels feature enabled
