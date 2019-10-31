@@ -39,7 +39,8 @@ class Client implements ClientInterface
         if (isset($options['impressionListener'])) {
             $this->impressionListener = new \SplitIO\Sdk\ImpressionListenerWrapper($options['impressionListener']);
         }
-        $this->IPAddressesEnabled = isset($options['IPAddressesEnabled']) ? $options['IPAddressesEnabled'] : true;
+        $IPAddressesEnabled = isset($options['IPAddressesEnabled']) ? $options['IPAddressesEnabled'] : true;
+        $this->queueMetadata = new QueueMetadataMessage($IPAddressesEnabled);
     }
 
     /**
@@ -307,8 +308,7 @@ class Client implements ClientInterface
     private function registerData($impressions, $attributes, $metricName, $latency = null)
     {
         try {
-            $queueMetadata = new QueueMetadataMessage($this->IPAddressesEnabled);
-            TreatmentImpression::log($impressions, $queueMetadata);
+            TreatmentImpression::log($impressions, $this->queueMetadata);
             if (isset($this->impressionListener)) {
                 $this->impressionListener->sendDataToClient($impressions, $attributes);
             }
@@ -544,8 +544,7 @@ class Client implements ClientInterface
 
         try {
             $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
-            $queueMetadata = new QueueMetadataMessage($this->IPAddressesEnabled);
-            $eventQueueMessage = new EventQueueMessage($queueMetadata, $eventDTO);
+            $eventQueueMessage = new EventQueueMessage($this->queueMetadata, $eventDTO);
             return EventsCache::addEvent($eventQueueMessage);
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart
