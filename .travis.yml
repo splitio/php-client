@@ -1,5 +1,8 @@
 language: php
 
+git:
+  depth: false
+
 env:
   global:
     - COMPOSER_DISABLE_XDEBUG_WARN=1
@@ -7,9 +10,11 @@ env:
 matrix:
   include:
     - dist: precise
-      php: '5.3'
+      php: '5.4'
     - dist: xenial
       php: '7.2'
+      after_success:
+      - bash sonar-scanner.sh
 
 services:
   - redis-server
