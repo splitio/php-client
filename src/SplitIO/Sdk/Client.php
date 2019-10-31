@@ -39,8 +39,9 @@ class Client implements ClientInterface
         if (isset($options['impressionListener'])) {
             $this->impressionListener = new \SplitIO\Sdk\ImpressionListenerWrapper($options['impressionListener']);
         }
-        $IPAddressesEnabled = isset($options['IPAddressesEnabled']) ? $options['IPAddressesEnabled'] : true;
-        $this->queueMetadata = new QueueMetadataMessage($IPAddressesEnabled);
+        $this->queueMetadata = new QueueMetadataMessage(
+            isset($options['IPAddressesEnabled']) ? $options['IPAddressesEnabled'] : true
+        );
     }
 
     /**
