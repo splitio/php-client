@@ -1,3 +1,6 @@
+6.2.3 (Nov 1, 2019)
+ - Added flag `IPAddressesEnabled` into options to enable/disable sending MachineName and MachineIP when data is posted in headers.
+
 6.2.2 (Sep 18, 2019)
  - Fetch multiple splits at once on getTreatments/getTreatmentsWithConfig
  - Removed MatcherClient (DependencyMatcher now uses Evaluator directly)

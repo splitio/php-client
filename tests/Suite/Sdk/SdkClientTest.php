@@ -209,13 +209,22 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    private function validateLastImpression($redisClient, $feature, $key, $treatment)
-    {
+    private function validateLastImpression(
+        $redisClient,
+        $feature,
+        $key,
+        $treatment,
+        $machineName = 'unknown',
+        $machineIP = 'unknown'
+    ) {
         $raw = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $parsed = json_decode($raw, true);
+        echo "parsed " . json_encode($parsed) . "\n";
         $this->assertEquals($parsed['i']['f'], $feature);
         $this->assertEquals($parsed['i']['k'], $key);
         $this->assertEquals($parsed['i']['t'], $treatment);
+        $this->assertEquals($parsed['m']['i'], $machineIP);
+        $this->assertEquals($parsed['m']['n'], $machineName);
     }
 
     public function testClient()
@@ -544,7 +553,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'IPAddressesEnabled' => false
         );
 
         //Initializing the SDK instance.
@@ -565,7 +575,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         //Check impressions generated
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'NA', 'NA');
     }
 
     public function testGetTreatmentsWithRepeteadedFeatures()
@@ -580,7 +590,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => '1.2.3.4'
         );
 
         //Initializing the SDK instance.
@@ -602,12 +613,13 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         // Check impressions
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
-        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
     }
 
     public function testGetTreatmentsWithRepeteadedAndNullFeatures()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set('ipAddress', null); // unset ipaddress from previous test
 
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
@@ -680,5 +692,4 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $client = new Client();
         $client->getTreatments('key1', array('split1', 'split2', 'split3'));
     }
-
 }

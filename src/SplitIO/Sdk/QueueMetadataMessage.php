@@ -1,7 +1,7 @@
 <?php
-namespace SplitIO\Sdk\Events;
+namespace SplitIO\Sdk;
 
-class EventQueueMetadataMessage
+class QueueMetadataMessage
 {
     private $sdkVersion;
 
@@ -10,15 +10,22 @@ class EventQueueMetadataMessage
     private $machineName;
 
     /**
-     * EventQueueMetadataMessage constructor.
+     * QueueMetadataMessage constructor.
      */
-    public function __construct()
+    public function __construct($IPAddressesEnabled = true)
     {
         $this->sdkVersion = 'php-' . \SplitIO\version();
-        $this->machineIP = \SplitIO\getHostIpAddress();
-        $this->machineName = 'unknown';
+        $this->machineIP = 'NA';
+        $this->machineName = 'NA';
+        if ($IPAddressesEnabled) {
+            $this->machineIP = \SplitIO\getHostIpAddress();
+            if ($this->machineIP != 'unknown') {
+                $this->machineName = 'ip-' . str_replace('.', '-', $this->machineIP);
+            } else {
+                $this->machineName = 'unknown';
+            }
+        }
     }
-
 
     /**
      * @return mixed
