@@ -6,11 +6,16 @@
   "authors": [
     {
       "name": "Split",
-      "homepage": "http://split.io"
+      "homepage": "https://www.split.io/",
+      "email": "php@split.io"
     },
     {
-      "name": "Sebastian Arrubia",
-      "email": "sebastian@split.io"
+      "name": "Martin Redolatti",
+      "email": "martin.redolatti@split.io"
+    },
+    {
+      "name": "Matias Melograno",
+      "email": "matias.melograno@split.io"
     }
   ],
 
