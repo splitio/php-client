@@ -254,7 +254,7 @@ class Client implements ClientInterface
             }
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
-                ': An exception occured when trying to store impressions.'
+                ': An exception occurred when trying to store impressions.'
             );
         }
     }
