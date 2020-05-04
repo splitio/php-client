@@ -87,7 +87,10 @@ class SharedMemory
             throw new ReadSharedMemoryException("The shared memory block could not be read");
         }
 
-        $data = json_decode($cached_string, true);
+        $data = json_decode(
+            trim($cached_string),
+            true
+        );
 
         if ((isset($data['expiration']) && time() > $data['expiration']) || !isset($data['expiration'])) {
             shmop_delete($shm_id);
