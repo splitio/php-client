@@ -37,7 +37,7 @@ class SharedMemory
 
         $expiration = time() + $expiration;
 
-        $data = json_encode(array('expiration' => $expiration, 'value' => serialize($value)));
+        $data = json_encode(array('expiration' => $expiration, 'value' => serialize($value))) . "\0";
 
         @$shm_id = shmop_open($key, "c", $mode, $size);
 
@@ -87,8 +87,9 @@ class SharedMemory
             throw new ReadSharedMemoryException("The shared memory block could not be read");
         }
 
+        $null_pos = strpos($cached_string, "\0");
         $data = json_decode(
-            trim($cached_string),
+            substr($cached_string, 0, $null_pos),
             true
         );
 

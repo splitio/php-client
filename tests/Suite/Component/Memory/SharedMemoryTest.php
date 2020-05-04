@@ -32,7 +32,32 @@ class SharedMemoryTest extends \PHPUnit_Framework_TestCase
         list($key, $expected) = $tuple;
 
         $given = Sut::read($key);
-        $this->assertEquals($expected, $given );
+        $this->assertEquals($expected, $given);
+    }
+
+    public function overwriteProvider()
+    {
+        return [
+            'longer to shorter' => [4321, str_repeat('a', 50), 'b'],
+            'shorter to longer' => [5555, 'c', 'ddddd'],
+        ];
+    }
+
+    /**
+     * @dataProvider overwriteProvider
+     */
+    public function testOverwrite($key, $original_value, $updated_value)
+    {
+        if (!extension_loaded('shmop')) {
+            $this->markTestSkipped(
+                'The shmop extension is not available.'
+            );
+        }
+
+        Sut::write($key, $original_value);
+        Sut::write($key, $updated_value);
+        $given = Sut::read($key);
+        $this->assertEquals($updated_value, $given);
     }
 
 }
