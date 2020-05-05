@@ -56,7 +56,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
     private function getFactoryClient($sdkConfig)
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 

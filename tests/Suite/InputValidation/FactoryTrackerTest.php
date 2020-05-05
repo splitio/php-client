@@ -7,18 +7,26 @@ class FactoryTrackerTest extends \PHPUnit_Framework_TestCase
 {
     private function getFactoryClient()
     {
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory($this->getApiKey(), $this->getSdkConfig());
+
+        return $splitFactory;
+    }
+
+    private function getSdkConfig()
+    {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
-        $sdkConfig = array(
+        return array(
             'log' => array('adapter' => 'stdout'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
+    }
 
-        //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        return $splitFactory;
+    private function getApiKey()
+    {
+        return 'asdqwe123456';
     }
 
     private function getMockedLogger()
@@ -38,7 +46,7 @@ class FactoryTrackerTest extends \PHPUnit_Framework_TestCase
 
     public function testMultipleClientInstantiation()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         $splitFactory = $this->getFactoryClient();
         $this->assertNotNull($splitFactory->client());
 
@@ -51,5 +59,21 @@ class FactoryTrackerTest extends \PHPUnit_Framework_TestCase
         
         $splitFactory2 = $this->getFactoryClient();
         $this->assertEquals(null, $splitFactory2);
+    }
+
+    public function testMultipleSingletonClientInstantiation()
+    {
+        Di::set(Di::KEY_FACTORY, false);
+        $splitFactory = \SplitIO\Sdk::singleton($this->getApiKey(), $this->getSdkConfig());
+
+        $this->assertNotNull($splitFactory->client());
+
+        $logger = $this->getMockedLogger();
+        $logger->expects($this->never())
+            ->method('critical');
+
+        $splitFactory2 = \SplitIO\Sdk::singleton($this->getApiKey(), $this->getSdkConfig());
+        $this->assertSame($splitFactory, $splitFactory2);
+        $this->assertNotNull($splitFactory2->client());
     }
 }

@@ -22,7 +22,7 @@ class Di
 
     const KEY_EVALUATOR = 'EVALUATOR';
 
-    const KEY_FACTORY_TRACKER = 'FACTORY-TRACKER';
+    const KEY_FACTORY = 'FACTORY';
 
     /**
      * @var Singleton The reference to *Singleton* instance of this class

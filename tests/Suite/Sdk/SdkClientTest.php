@@ -54,7 +54,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testLocalClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/.splits';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -71,7 +71,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testLocalClientYAML()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/splits.yml';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -229,7 +229,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -459,7 +459,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testCustomLog()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         // create a log channel
         $log = new Logger('SplitIO');
         $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
@@ -490,7 +490,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidCacheAdapter()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         $this->setExpectedException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
@@ -504,7 +504,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheExceptionReturnsControl()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         $log = new Logger('SplitIO');
         $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
 
@@ -544,7 +544,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithDistinctFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -580,7 +580,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithRepeteadedFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
 
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
@@ -618,7 +618,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithRepeteadedAndNullFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
         Di::set('ipAddress', null); // unset ipaddress from previous test
 
         //Testing version string

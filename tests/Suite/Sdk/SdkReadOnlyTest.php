@@ -28,7 +28,7 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
 
     public function testClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
@@ -74,7 +74,7 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
 
     public function testException()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        Di::set(Di::KEY_FACTORY, false);
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
