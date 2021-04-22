@@ -33,7 +33,7 @@
     "phpunit/phpunit": "~4.0",
     "phpdocumentor/phpdocumentor": "2.*",
     "squizlabs/php_codesniffer": "2.*",
-    "rogervila/php-sonarqube-scanner": "0.4.0"
+    "rogervila/php-sonarqube-scanner": "1.0.0"
   },
 
   "autoload": {
