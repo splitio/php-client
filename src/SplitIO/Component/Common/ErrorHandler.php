@@ -74,7 +74,7 @@ class ErrorHandler
     }
 
     /**
-     * Method to add the catched error
+     * Method to add the caught error
      * @param $errno
      * @param string $errstr
      * @param string $errfile
