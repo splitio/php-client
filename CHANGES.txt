@@ -1,4 +1,4 @@
-6.2.5 (Apr 22, 2021)
+6.2.5 (Apr 27, 2021)
  - Added delimiter in SharedMemory Cache.
 
 6.2.4 (Mar 20, 2020)
