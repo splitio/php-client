@@ -117,7 +117,7 @@ class Evaluator
             }
             SplitApp::logger()->info("*Treatment for $key in {$split->getName()} is: ".$result['treatment']);
         } catch (\Exception $e) {
-            SplitApp::logger()->critical('An exception occured when evaluating feature: '. $split->getName());
+            SplitApp::logger()->critical('An exception occurred when evaluating feature: '. $split->getName());
             SplitApp::logger()->critical($e->getMessage());
             SplitApp::logger()->critical($e->getTraceAsString());
             $result['impression']['label'] = ImpressionLabel::EXCEPTION;

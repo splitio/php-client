@@ -1,3 +1,9 @@
+6.2.5 (Apr 27, 2021)
+ - Added delimiter in SharedMemory Cache.
+
+6.2.4 (Mar 20, 2020)
+ - Added missing methods in ClientInterface.
+
 6.2.3 (Nov 1, 2019)
  - Added flag `IPAddressesEnabled` into options to enable/disable sending MachineName and MachineIP when data is posted in headers.
 
