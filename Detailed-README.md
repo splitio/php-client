@@ -391,7 +391,7 @@ $splitClient = $splitFactory->client();
 Within tests folder you can find different test suites in order to run the Split SDK tests. The most important test suite is: **integration** that wrap the others test suites.
 
 ### Integration test suite
-Before to run this test suite, please be sure to have a Redis instance runing:
+Before to run this test suite, please be sure to have a Redis instance running:
 - In order to have a local Redis instance you can install [Docker Container Tool](https://www.docker.com) and pull the oficial Redis container running the command ```docker pull redis```.
 
 And set the correct values on the **phpunit.xml** that you should have copied from **phpunit.xml.dist** file. 
