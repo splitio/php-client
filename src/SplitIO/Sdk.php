@@ -4,6 +4,7 @@ namespace SplitIO;
 use SplitIO\Component\Http\Uri;
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerTrait;
+use SplitIO\Component\Initialization\StaticCacheTrait;
 use SplitIO\Exception\Exception;
 use SplitIO\Sdk\Factory\LocalhostSplitFactory;
 use SplitIO\Sdk\Factory\SplitFactory;
@@ -35,6 +36,8 @@ class Sdk
         }
         self::registerInstance();
 
+        StaticCacheTrait::addStaticCache($options['static_cache'] ?? []);
+        
         if ($apiKey == 'localhost') {
             //Register Logger
             self::registerLogger((isset($options['log'])) ? $options['log'] : array());
@@ -45,7 +48,9 @@ class Sdk
             self::registerLogger((isset($options['log'])) ? $options['log'] : array());
 
             //Register Cache
-            self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
+            if (!empty($options['cache'])) {
+                self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
+            }
 
             if (isset($options['ipAddress'])) {
                 self::setIP($options['ipAddress']);
@@ -78,7 +83,7 @@ class Sdk
         $cacheAdapter = isset($options['adapter']) ? $options['adapter'] : 'redis';
 
         if ($cacheAdapter == 'redis') {
-            throw new Exception("'redis' adapter is not longer supported. Please use 'predis' instead");
+            $_options = $options;
         } elseif ($cacheAdapter == 'predis') {
             $_options['predis-options'] = isset($options['options']) ? $options['options'] : null;
             $_options['predis-parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
@@ -89,7 +94,6 @@ class Sdk
         } else {
             throw new Exception("A valid cache system is required. Given: $cacheAdapter");
         }
-
         CacheTrait::addCache($cacheAdapter, $_options);
     }
 

@@ -14,7 +14,7 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
 
-class SdkClientTest extends \PHPUnit_Framework_TestCase
+class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {
@@ -242,8 +242,9 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'log' => array('adapter' => LOG_ADAPTER),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -491,10 +492,10 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     public function testInvalidCacheAdapter()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
-        $this->setExpectedException('\SplitIO\Exception\Exception');
+        $this->expectException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'invalidAdapter')
         );
 
@@ -513,7 +514,8 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
 
         $sdkConfig = array(
             'log' => array('psr3-instance' => $log),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
@@ -552,7 +554,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
             'IPAddressesEnabled' => false
         );
@@ -589,7 +591,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
             'ipAddress' => '1.2.3.4'
         );
@@ -628,7 +630,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 

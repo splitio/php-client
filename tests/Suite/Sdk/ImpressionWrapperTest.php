@@ -10,7 +10,7 @@ use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
 use SplitIO\Component\Common\Di;
 
-class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
+class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {
@@ -62,8 +62,9 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
         if (is_null($sdkConfig)) {
             $sdkConfig = array(
-                'log' => array('adapter' => 'stdout'),
-                'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+                'log' => array('adapter' => LOG_ADAPTER),
+                'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+                'static_cache' => array('class' => \VoidStaticCache::class)
             );
         }
 
@@ -82,9 +83,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient = new ListenerClientWithException();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient,
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -105,9 +107,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient2 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient2,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -118,7 +121,6 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
-
         $this->assertArrayHasKey('instance-id', $impressionClient2->dataLogged);
         $this->assertEquals($impressionClient2->dataLogged['instance-id'], 'unknown');
         $this->assertEquals($impressionClient2->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
@@ -136,9 +138,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class),
             'ipAddress' => '1.2.3.4'
         );
 
@@ -177,9 +180,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient3 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient3,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class),
             'ipAddress' => ""
         );
 
@@ -209,9 +213,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient4 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient4,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class),
             'ipAddress' => "     "
         );
 
@@ -241,9 +246,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient4 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient4,
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         $_SERVER['SERVER_ADDR'] = "";
@@ -274,8 +280,9 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient5 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'log' => array('adapter' => LOG_ADAPTER),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -296,9 +303,10 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient6 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => null,
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.

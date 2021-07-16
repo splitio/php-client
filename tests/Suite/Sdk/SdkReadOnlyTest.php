@@ -11,7 +11,7 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Sdk\QueueMetadataMessage;
 
-class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
+class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {
@@ -33,7 +33,7 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -79,8 +79,9 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'log' => array('adapter' => LOG_ADAPTER),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -101,16 +102,8 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         // Discard (ignore) first logging statement
-        $logger->expects($this->at(1))
+        $logger->expects($this->exactly(2))
             ->method('debug');
-
-        $logger->expects($this->at(2))
-            ->method('warning')
-            ->with('Unable to write impression back to redis.');
-
-        $logger->expects($this->at(3))
-            ->method('warning')
-            ->with('READONLY mode mocked.');
 
         $logger->expects($this->exactly(2))
             ->method('warning');

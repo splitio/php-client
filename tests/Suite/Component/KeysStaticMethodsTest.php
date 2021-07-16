@@ -8,7 +8,7 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\TrafficTypeCache;
 
-class KeyTest extends \PHPUnit_Framework_TestCase
+class KeysStaticMethodsTest extends \PHPUnit\Framework\TestCase
 {
 
     private static function getStaticMethodAsPublic($className, $methodName)

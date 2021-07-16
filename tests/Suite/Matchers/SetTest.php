@@ -3,7 +3,7 @@ namespace SplitIO\Test\Suite\Matcher;
 
 use SplitIO\Grammar\Condition\Matcher\DataType\Set;
 
-class SetTest extends \PHPUnit_Framework_TestCase
+class SetTest extends \PHPUnit\Framework\TestCase
 {
     public function testSetBasic()
     {

@@ -1,11 +1,13 @@
-# Split SDK for PHP
+This is fork of [Official Split SDK for PHP](https://github.com/splitio/php-client)
 
-[![Build Status](https://api.travis-ci.com/splitio/php-client.svg?branch=master)](https://api.travis-ci.com/splitio/php-client)
+---
+
+# Split SDK for PHP
 
 This SDK is designed to work with Split, the platform for controlled rollouts, serving features to your users via the Split feature flag to manage your complete customer experience.
 
 ## Compatibility
-This SDK is compatible with PHP 5.6 and above.
+This SDK is compatible with PHP 7.0 and above.
 
 ## Getting started
 Below is a simple example that describes the instantiation and most basic usage of our SDK.
@@ -27,6 +29,11 @@ if ($treatment === 'on') {
     // Unable to perform evaluation.
 }
 ```
+
+
+### Comments
+
+Please note, that you do not need to provide real SDK API KEY into this SDK. You can use first argument to switch between localhost mode or working with split synchronizer agent application, which updates data in redis. It's important to provide correct redis configuration, including prefix.
 
 ## Submitting issues
  

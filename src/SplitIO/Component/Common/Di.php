@@ -3,6 +3,8 @@ namespace SplitIO\Component\Common;
 
 use Psr\Log\LoggerInterface;
 use SplitIO\Component\Cache\Pool;
+use SplitIO\Component\Cache\StaticCache;
+use SplitIO\Sdk\Evaluator;
 
 /**
  * Class Di
@@ -13,6 +15,8 @@ class Di
     const KEY_LOG = 'SPLIT-LOGGER';
 
     const KEY_CACHE = 'SPLIT-CACHE';
+
+    const KEY_STATIC_CACHE = 'SPLIT-STATIC-CACHE';
 
     const KEY_SPLIT_CLIENT = 'SPLIT-CLIENT';
 
@@ -147,7 +151,23 @@ class Di
         return self::get(self::KEY_CACHE);
     }
 
-    public static function setEvaluator(\SplitIO\Sdk\Evaluator $evaluator)
+    /**
+     * @param \SplitIO\Component\Cache\StaticCache $staticCache
+     */
+    public static function setStaticCache(StaticCache $staticCache)
+    {
+        self::set(self::KEY_STATIC_CACHE, $staticCache);
+    }
+
+    /**
+     * @return null|\SplitIO\Component\Cache\Static
+     */
+    public static function getStaticCache()
+    {
+        return self::get(self::KEY_STATIC_CACHE);
+    }
+
+    public static function setEvaluator(Evaluator $evaluator)
     {
         self::set(self::KEY_EVALUATOR, $evaluator);
     }
