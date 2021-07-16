@@ -1,3 +1,7 @@
+This is fork of [Official Split SDK for PHP](https://github.com/splitio/php-client)
+
+---
+
 # Split SDK for PHP
 
 [![Build Status](https://api.travis-ci.com/splitio/php-client.svg?branch=master)](https://api.travis-ci.com/splitio/php-client)
