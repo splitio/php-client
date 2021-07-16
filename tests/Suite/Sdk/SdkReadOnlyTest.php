@@ -80,7 +80,8 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
         $options = array();
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -101,16 +102,8 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         // Discard (ignore) first logging statement
-        $logger->expects($this->at(1))
+        $logger->expects($this->exactly(2))
             ->method('debug');
-
-        $logger->expects($this->at(2))
-            ->method('warning')
-            ->with('Unable to write impression back to redis.');
-
-        $logger->expects($this->at(3))
-            ->method('warning')
-            ->with('READONLY mode mocked.');
 
         $logger->expects($this->exactly(2))
             ->method('warning');

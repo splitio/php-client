@@ -7,8 +7,9 @@ use SplitIO\Component\Common\ServiceProvider;
 
 class StaticCacheTrait
 {
-    public static function addStaticCache()
+    public static function addStaticCache($options = [])
     {
-        ServiceProvider::registerStaticCache(new StaticCache());
+        $class = $options['class'] ?? StaticCache::class;
+        ServiceProvider::registerStaticCache(new $class($options ?? []));
     }
 }

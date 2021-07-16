@@ -14,7 +14,8 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.

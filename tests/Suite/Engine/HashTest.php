@@ -92,15 +92,16 @@ class HashTest extends \PHPUnit\Framework\TestCase
 
     public function testAlgoField()
     {
-        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'redis', 'client' => new \RedisMock),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
+        \SplitIO\Component\Common\Di::set(\SplitIO\Component\Common\Di::KEY_FACTORY_TRACKER, false);
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123457', $sdkConfig);
         $splitFactory->client();
 
