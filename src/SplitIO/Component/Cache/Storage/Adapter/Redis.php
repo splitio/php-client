@@ -160,7 +160,7 @@ class Redis implements CacheStorageAdapterInterface
      */
     private function splitNodes($nodes)
     {
-        return preg_split('#\w|,|\|;#', $nodes);
+        return preg_split('#\s|,|\|;#', $nodes);
     }
 
     /**
