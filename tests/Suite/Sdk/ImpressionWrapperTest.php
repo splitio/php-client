@@ -63,7 +63,8 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
         if (is_null($sdkConfig)) {
             $sdkConfig = array(
                 'log' => array('adapter' => LOG_ADAPTER),
-                'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+                'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+                'static_cache' => array('class' => \VoidStaticCache::class)
             );
         }
 
@@ -84,7 +85,8 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient,
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -108,6 +110,7 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
             'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient2,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -118,7 +121,6 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
-
         $this->assertArrayHasKey('instance-id', $impressionClient2->dataLogged);
         $this->assertEquals($impressionClient2->dataLogged['instance-id'], 'unknown');
         $this->assertEquals($impressionClient2->dataLogged['sdk-language-version'], 'php-'.\SplitIO\version());
@@ -139,6 +141,7 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
             'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class),
             'ipAddress' => '1.2.3.4'
         );
 
@@ -180,6 +183,7 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
             'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient3,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class),
             'ipAddress' => ""
         );
 
@@ -212,6 +216,7 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
             'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient4,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class),
             'ipAddress' => "     "
         );
 
@@ -243,7 +248,8 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient4,
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         $_SERVER['SERVER_ADDR'] = "";
@@ -275,7 +281,8 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -298,7 +305,8 @@ class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => null,
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.

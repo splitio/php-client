@@ -10,6 +10,9 @@ use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;
+use SplitIO\Sdk\Events\EventDTO;
+use SplitIO\Sdk\Events\EventQueueMessage;
+use SplitIO\Sdk\QueueMetadataMessage;
 
 class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,13 +35,10 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
     {
         try {
             $cachePoolAdapter = array(
-                'name' => 'predis',
-                'parameters' => [],
-                'options' => array(
-                    'host' => REDIS_HOST,
-                    'port' => REDIS_PORT,
-                    'distributedStrategy' => 'cluster',
-                )
+                'name' => 'redis',
+                'options' => [
+                    'client' => new \RedisMock,
+                ]
             );
 
             $cachePool = new Pool(array( 'adapter' => $cachePoolAdapter ));
@@ -109,6 +109,7 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
      */
     public function testBlockUntilReadyCacheInterface()
     {
+        $this->markTestIncomplete('Class BlockUntilReadyCache is not present. SplitFactory::doBUR is also not implemented!');
         $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
         $deltaTime = 100;
 
@@ -136,9 +137,10 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
         $trafficType = "some_trafficType";
         $eventType = "some_event_type";
         $value = 0.0;
+        $properties = [];
 
-        $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
-        $eventMessageMetadata = new EventQueueMetadataMessage();
+        $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
+        $eventMessageMetadata = new QueueMetadataMessage();
         $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
 
         $this->assertTrue(EventsCache::addEvent($eventQueueMessage));
@@ -162,7 +164,7 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
         );
 
         $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
-        $eventMessageMetadata = new EventQueueMetadataMessage();
+        $eventMessageMetadata = new QueueMetadataMessage();
         $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
 
         $this->assertTrue(EventsCache::addEvent($eventQueueMessage));

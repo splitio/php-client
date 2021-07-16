@@ -51,9 +51,6 @@ class Redis implements CacheStorageAdapterInterface
      */
     public function __construct(array $options)
     {
-        if (empty($options['adapter'])) {
-            throw new \Exception('a');
-        }
         $this->options = $options;
         if (!empty($options['client'])) {
             $this->client = $options['client'];

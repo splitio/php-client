@@ -35,6 +35,8 @@ class Sdk
             return null;
         }
         self::registerInstance();
+
+        StaticCacheTrait::addStaticCache($options['static_cache'] ?? []);
         
         if ($apiKey == 'localhost') {
             //Register Logger
@@ -92,8 +94,6 @@ class Sdk
         } else {
             throw new Exception("A valid cache system is required. Given: $cacheAdapter");
         }
-
-        StaticCacheTrait::addStaticCache();
         CacheTrait::addCache($cacheAdapter, $_options);
     }
 

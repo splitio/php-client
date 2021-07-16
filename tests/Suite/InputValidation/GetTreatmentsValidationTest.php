@@ -14,7 +14,8 @@ class GetTreatmentsValidationTest extends \PHPUnit\Framework\TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -285,17 +286,8 @@ class GetTreatmentsValidationTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
-        $logger->expects($this->at(0))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed a null split name, split name must be a non-empty '
-                . 'string.'));
-        $logger->expects($this->at(1))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed a null split name, split name must be a non-empty '
-                . 'string.'));
-        $logger->expects($this->at(2))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
+        $logger->expects($this->exactly(3))
+            ->method('critical');
 
         $this->assertEquals(array(), $splitSdk->getTreatments('some_key', array(null, null), null));
     }
@@ -323,17 +315,8 @@ class GetTreatmentsValidationTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
-        $logger->expects($this->at(0))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed an invalid split name, split name must be a non-empty '
-            . 'string.'));
-        $logger->expects($this->at(1))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed an invalid split name, split name must be a non-empty '
-            . 'string.'));
-        $logger->expects($this->at(2))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
+        $logger->expects($this->exactly(3))
+            ->method('critical');
 
         $this->assertEquals(array(), $splitSdk->getTreatments('some_key', array(true, array()), null));
     }

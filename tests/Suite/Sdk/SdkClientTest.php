@@ -243,7 +243,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => LOG_ADAPTER),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         //Initializing the SDK instance.
@@ -459,7 +460,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCustomLog()
     {
-        $this->markTestSkipped('aaa');
         Di::set(Di::KEY_FACTORY_TRACKER, false);
         // create a log channel
         $log = new Logger('SplitIO');
@@ -514,7 +514,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $sdkConfig = array(
             'log' => array('psr3-instance' => $log),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'static_cache' => array('class' => \VoidStaticCache::class)
         );
 
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
