@@ -30,6 +30,11 @@ if ($treatment === 'on') {
 }
 ```
 
+
+### Comments
+
+Please note, that you do not need to provide real SDK API KEY into this SDK. You can use first argument to switch between localhost mode or working with split synchronizer agent application, which updates data in redis. It's important to provide correct redis configuration, including prefix.
+
 ## Submitting issues
  
 The Split team monitors all issues submitted to this [issue tracker](https://github.com/splitio/php-client/issues). We encourage you to use this issue tracker to submit any bug reports, feedback, and feature enhancements. We'll do our best to respond in a timely manner.
