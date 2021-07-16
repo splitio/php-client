@@ -30,7 +30,7 @@
     "php": ">=7.3",
     "psr/log": "~1.0",
     "rmccue/requests": "^1.6",
-    "symfony/yaml": ">=5.3"
+    "symfony/yaml": "^5.0"
   },
 
   "require-dev": {
