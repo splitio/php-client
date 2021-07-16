@@ -10,7 +10,7 @@ use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Component\Common\Di;
 use \ReflectionMethod;
 
-class MatcherTest extends \PHPUnit_Framework_TestCase
+class MatchersTest extends \PHPUnit\Framework\TestCase
 {
     private function setupSplitApp()
     {
@@ -23,7 +23,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         );
         $options = array('prefix' => '');
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout', 'level' => 'info'),
+            'log' => array('adapter' => LOG_ADAPTER, 'level' => 'info'),
             'cache' => array('adapter' => 'predis',
                 'parameters' => $parameters,
                 'options' => $options

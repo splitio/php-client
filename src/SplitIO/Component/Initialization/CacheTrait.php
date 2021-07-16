@@ -38,12 +38,7 @@ class CacheTrait
             default:
                 $adapter_config = array(
                     'name' => 'redis',
-                    'options' => array(
-                        'host'      => isset($options['redis-host']) ? $options['redis-host'] : null,
-                        'port'      => isset($options['redis-port']) ? $options['redis-port'] : null,
-                        'password'  => isset($options['redis-pass']) ? $options['redis-pass'] : null,
-                        'timeout'   => isset($options['redis-timeout']) ? $options['redis-timeout'] : null,
-                    )
+                    'options' => $options['options'] ?? $options,
                 );
                 break;
         }

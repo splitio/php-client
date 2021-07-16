@@ -5,7 +5,7 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Common\Di;
 
-class TrafficTypeTest extends \PHPUnit_Framework_TestCase
+class TrafficTypeTest extends \PHPUnit\Framework\TestCase
 {
     private function getMockedLogger()
     {
@@ -28,7 +28,7 @@ class TrafficTypeTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 

@@ -39,7 +39,7 @@ class Between extends AbstractMatcher
             SplitApp::logger()->info($logMsg);
 
             if (isset($this->betweenMatcherData['dataType'])
-                && DataTypeEnum::isValid($this->betweenMatcherData['dataType']) ) {
+                && DataTypeEnum::isValid($this->betweenMatcherData['dataType'])) {
                 if (DataTypeEnum::DATETIME == $this->betweenMatcherData['dataType']) {
                     $phpTimestampStart = DateTime::millisecondToPHPTimestamp($this->betweenMatcherData['start']);
                     $phpTimestampEnd   = DateTime::millisecondToPHPTimestamp($this->betweenMatcherData['end']);

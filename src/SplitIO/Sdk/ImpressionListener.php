@@ -2,7 +2,7 @@
 
 namespace SplitIO\Sdk;
 
-// Declaration of ImpressionListener interface 
+// Declaration of ImpressionListener interface
 interface ImpressionListener
 {
     /*

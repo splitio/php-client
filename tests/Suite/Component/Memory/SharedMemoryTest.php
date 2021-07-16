@@ -3,7 +3,7 @@ namespace SplitIO\Test\Suite\Component\Memory;
 
 use SplitIO\Component\Memory\SharedMemory;
 
-class SharedMemoryTest extends \PHPUnit_Framework_TestCase
+class SharedMemoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testSharedMemoryOperations()
     {

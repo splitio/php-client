@@ -12,4 +12,9 @@ class ServiceProvider
     {
         Di::setCache($cache);
     }
+
+    public static function registerStaticCache(\SplitIO\Component\Cache\StaticCache $staticCache)
+    {
+        Di::setStaticCache($staticCache);
+    }
 }

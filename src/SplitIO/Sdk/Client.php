@@ -111,11 +111,16 @@ class Client implements ClientInterface
      */
     private function doEvaluation($operation, $metricName, $key, $featureName, $attributes)
     {
+        $registry = Di::getStaticCache();
+        $staticCacheKey = json_encode([$operation, $metricName, $key, $featureName, $attributes]);
+        if ($registry->has($staticCacheKey)) {
+            return $registry->get($staticCacheKey);
+        }
         $default = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
 
         $inputValidation = $this->doInputValidationForTreatment($key, $featureName, $attributes, $operation);
         if (is_null($inputValidation)) {
-            return $default;
+            return $registry->add($staticCacheKey, $default);
         }
         $matchingKey = $inputValidation['matchingKey'];
         $bucketingKey = $inputValidation['bucketingKey'];
@@ -123,7 +128,7 @@ class Client implements ClientInterface
         try {
             $result = $this->evaluator->evaluateFeature($matchingKey, $bucketingKey, $featureName, $attributes);
             if (!InputValidator::isSplitFound($result['impression']['label'], $featureName, $operation)) {
-                return $default;
+                return $registry->add($staticCacheKey, $default);
             }
             // Creates impression
             $impression = $this->createImpression(
@@ -136,10 +141,10 @@ class Client implements ClientInterface
             );
 
             $this->registerData($impression, $attributes, $metricName, $result['latency']);
-            return array(
+            return $registry->add($staticCacheKey, array(
                 'treatment' => $result['treatment'],
                 'config' => $result['config'],
-            );
+            ));
         } catch (\Exception $e) {
             SplitApp::logger()->critical($operation . ' method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
@@ -164,7 +169,7 @@ class Client implements ClientInterface
             );
             SplitApp::logger()->critical($e);
         }
-        return $default;
+        return $registry->add($staticCacheKey, $default);
     }
 
     /**
