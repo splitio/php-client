@@ -10,7 +10,7 @@ use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
 use SplitIO\Component\Common\Di;
 
-class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
+class ImpressionWrapperTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {
@@ -62,7 +62,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
 
         if (is_null($sdkConfig)) {
             $sdkConfig = array(
-                'log' => array('adapter' => 'stdout'),
+                'log' => array('adapter' => LOG_ADAPTER),
                 'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
             );
         }
@@ -82,7 +82,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient = new ListenerClientWithException();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
@@ -105,7 +105,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient2 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient2,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
         );
@@ -136,7 +136,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
             'ipAddress' => '1.2.3.4'
@@ -177,7 +177,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient3 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient3,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
             'ipAddress' => ""
@@ -209,7 +209,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient4 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient4,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
             'ipAddress' => "     "
@@ -241,7 +241,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient4 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => $impressionClient4,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
@@ -274,7 +274,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient5 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -296,7 +296,7 @@ class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
         $impressionClient6 = new ListenerClient();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'impressionListener' => null,
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );

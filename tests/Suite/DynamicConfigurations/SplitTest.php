@@ -7,7 +7,7 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Split;
 
-class SplitTest extends \PHPUnit_Framework_TestCase
+class SplitTest extends \PHPUnit\Framework\TestCase
 {
     public $split1 = <<<EOD
 {"trafficTypeName":"user","name":"mysplittest","trafficAllocation":100,
@@ -38,7 +38,7 @@ EOD;
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -68,7 +68,7 @@ EOD;
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 

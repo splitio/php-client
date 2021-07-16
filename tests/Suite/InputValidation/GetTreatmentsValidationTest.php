@@ -4,7 +4,7 @@ namespace SplitIO\Test\Suite\InputValidation;
 use SplitIO\Component\Common\Di;
 use SplitIO\Sdk\Key;
 
-class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
+class GetTreatmentsValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {
@@ -13,7 +13,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -41,7 +41,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithNullMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -52,7 +52,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithEmptyMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -63,7 +63,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithWrongTypeMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -94,7 +94,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithNullBucketingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -105,7 +105,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithEmptyBucketingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -116,7 +116,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithWrongTypeBucketingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -210,7 +210,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithNonFiniteMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 

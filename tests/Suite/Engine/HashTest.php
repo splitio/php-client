@@ -9,7 +9,7 @@ use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;
 
-class HashTest extends \PHPUnit_Framework_TestCase
+class HashTest extends \PHPUnit\Framework\TestCase
 {
     public function testLegacyHashFunction()
     {
@@ -96,12 +96,12 @@ class HashTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
         //Initializing the SDK instance.
-        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123457', $sdkConfig);
         $splitFactory->client();
 
         //Populating the cache.

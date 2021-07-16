@@ -51,6 +51,7 @@ class SplitCache implements SplitCacheInterface
      */
     public function removeSplit($splitName)
     {
+        Di::getStaticCache()->remove($splitName);
         return Di::getCache()->deleteItem(self::getCacheKeyForSplit($splitName));
     }
 
@@ -82,8 +83,14 @@ class SplitCache implements SplitCacheInterface
     public function getSplit($splitName)
     {
         $cache = Di::getCache();
+        $registry = Di::getStaticCache();
+        if ($registry->has($splitName)) {
+            return $registry->get($splitName);
+        }
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
-        return $cacheItem->get();
+        $return = $cacheItem->get();
+        $registry->add($splitName, $return);
+        return $return;
     }
 
     /**
@@ -93,11 +100,16 @@ class SplitCache implements SplitCacheInterface
     public function getSplits($splitNames)
     {
         $cache = Di::getCache();
+        $registry = Di::getStaticCache();
+        if ($registry->has(json_encode($splitNames))) {
+            return $registry->get(json_encode($splitNames));
+        }
         $cacheItems = $cache->getItems(array_map('self::getCacheKeyForSplit', $splitNames));
         $toReturn = array();
         foreach ($cacheItems as $key => $value) {
             $toReturn[self::getSplitNameFromCacheKey($key)] = $value->get();
         }
+        $registry->add(json_encode($splitNames), $toReturn);
         return $toReturn;
     }
 
@@ -116,8 +128,14 @@ class SplitCache implements SplitCacheInterface
      */
     public function getAllSplits()
     {
+        $registry = Di::getStaticCache();
+        if ($registry->has('$all')) {
+            return $registry->get('$all');
+        }
         $splitNames = $this->getSplitNames();
-        return $this->getSplits($splitNames);
+        $return = $this->getSplits($splitNames);
+        $registry->add('$all', $return);
+        return $return;
     }
 
     private static function getCacheKeyForTrafficType($trafficType)

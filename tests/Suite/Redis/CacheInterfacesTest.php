@@ -11,7 +11,7 @@ use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;
 
-class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
+class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testDiLog()
@@ -32,16 +32,18 @@ class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
     {
         try {
             $cachePoolAdapter = array(
-                'name' => 'redis',
+                'name' => 'predis',
+                'parameters' => [],
                 'options' => array(
                     'host' => REDIS_HOST,
                     'port' => REDIS_PORT,
+                    'distributedStrategy' => 'cluster',
                 )
             );
 
             $cachePool = new Pool(array( 'adapter' => $cachePoolAdapter ));
             Di::getInstance()->setCache($cachePool);
-        } catch (\Exception $e) {
+        } catch (\Exception $e) { throw $e;
             $this->assertTrue(false, "Error setting cache on Di");
         }
 

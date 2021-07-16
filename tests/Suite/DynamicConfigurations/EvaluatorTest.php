@@ -8,7 +8,7 @@ use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Split;
 use SplitIO\Sdk\Evaluator;
 
-class EvaluatorTest extends \PHPUnit_Framework_TestCase
+class EvaluatorTest extends \PHPUnit\Framework\TestCase
 {
     private $split1 = <<<EOD
 {"trafficTypeName":"user","name":"mysplittest","trafficAllocation":100,
@@ -64,7 +64,7 @@ EOD;
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -92,7 +92,7 @@ EOD;
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -120,7 +120,7 @@ EOD;
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -148,7 +148,7 @@ EOD;
         $options = array();
 
         $sdkConfig = array(
-            'log' => array('adapter' => 'stdout'),
+            'log' => array('adapter' => LOG_ADAPTER),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 

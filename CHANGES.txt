@@ -1,4 +1,10 @@
-6.2.5 (Apr 27, 2021)
+6.3.0 (Jul 16, 2021)
+ - Redis cache reestablished
+ - Static caching to improve performance
+ - Introduction of PHPUnit 9
+ - Upgraded vendors
+
+ 6.2.5 (Apr 27, 2021)
  - Added delimiter in SharedMemory Cache.
 
 6.2.4 (Mar 20, 2020)

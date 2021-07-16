@@ -3,11 +3,12 @@ namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Cache\Storage\Adapter\Redis as RedisAdapter;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis as PRedisAdapter;
+use SplitIO\Component\Cache\Storage\Adapter\CacheStorageAdapterInterface;
 use SplitIO\Component\Common\Di;
 
 class Pool extends CacheKeyTrait
 {
-    /** @var null|\SplitIO\Component\Cache\Storage\Adapter\CacheStorageAdapterInterface */
+    /** @var null|CacheStorageAdapterInterface */
     private $adapter = null;
 
     /** @var array */
@@ -26,13 +27,10 @@ class Pool extends CacheKeyTrait
             /*case 'filesystem':
                 $this->adapter = new FilesystemAdapter($adapterOptions);
                 break;*/
-
             case 'predis':
                 $this->adapter = new PRedisAdapter($adapterOptions);
                 break;
-
             case 'redis':
-            default:
                 $this->adapter = new RedisAdapter($adapterOptions);
                 break;
         }

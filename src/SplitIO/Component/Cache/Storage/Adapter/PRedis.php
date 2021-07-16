@@ -174,9 +174,8 @@ class PRedis implements CacheStorageAdapterInterface
     public function getItem($key)
     {
         $item = new Item($key);
-
         $redisItem = $this->client->get($key);
-
+        
         if ($redisItem !== null) {
             $item->set($redisItem);
         }

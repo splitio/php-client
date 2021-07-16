@@ -25,3 +25,4 @@ test.php
 
 # Sonarqube
 .scannerwork
+.phpunit.result.cache
