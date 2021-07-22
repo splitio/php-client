@@ -62,7 +62,7 @@ class Di
      *
      * @return void
      */
-    private function __clone()
+    public function __clone()
     {
     }
 
