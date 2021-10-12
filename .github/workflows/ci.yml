@@ -30,10 +30,12 @@ jobs:
         run: PHPENV_ROOT=/usr/local/bin/phpenv
 
       - name: install phpenv
-        run: curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer
+        run: curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer | bash
 
       - name: set phpenv
-        run: export PATH="$HOME/.phpenv/bin:$PATH"        
+        run: |
+          export PATH="$HOME/.phpenv/bin:$PATH"
+          echo 'export PATH="$HOME/.phpenv/bin:$PATH"' >> ~/.bash_profile
 
       - name: Create .ini file
         run: echo "extension = zip.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
