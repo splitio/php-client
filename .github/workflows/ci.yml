@@ -1,0 +1,50 @@
+name: ci
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['5.6', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, intl
+          ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
+
+      - name: set phpenv var
+        run: PHPENV_ROOT=/usr/local/bin/phpenv
+
+      - name: install phpenv
+        run: curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer
+
+      - name: set phpenv
+        run: export PATH="$HOME/.phpenv/bin:$PATH"        
+
+      - name: Create .ini file
+        run: echo "extension = zip.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+      - name: Install dependencies
+        run: |
+          composer install --prefer-dist
+          composer update
+          composer dumpautoload
+
+      - name: script
+        run: |
+          vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/
+          vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration
