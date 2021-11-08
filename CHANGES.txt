@@ -1,3 +1,6 @@
+6.2.6 (Nov XX, 2021)
+ - PHP 8 Compatibility: made Di methods public.
+
 6.2.5 (Apr 27, 2021)
  - Added delimiter in SharedMemory Cache.
 

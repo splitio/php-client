@@ -3,7 +3,7 @@ namespace SplitIO\Test\Suite\InputValidation;
 
 use SplitIO\Component\Common\Di;
 
-class ManagerValidationTest extends \PHPUnit_Framework_TestCase
+class ManagerValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {

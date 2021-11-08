@@ -8,7 +8,7 @@ use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Sdk\QueueMetadataMessage;
 
-class ImpressionsTest extends \PHPUnit_Framework_TestCase
+class ImpressionsTest extends \PHPUnit\Framework\TestCase
 {
     public function testImpressionsAreAdded()
     {

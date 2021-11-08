@@ -9,7 +9,7 @@ use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;
 
-class HashTest extends \PHPUnit_Framework_TestCase
+class HashTest extends \PHPUnit\Framework\TestCase
 {
     public function testLegacyHashFunction()
     {

@@ -10,7 +10,7 @@ use SplitIO\Grammar\Split;
 use SplitIO\Engine;
 use SplitIO\Component\Common\Di;
 
-class SplitterTest extends \PHPUnit_Framework_TestCase
+class SplitterTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testDiLog()

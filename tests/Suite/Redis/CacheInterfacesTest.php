@@ -11,7 +11,7 @@ use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;
 
-class CacheInterfacesTest extends \PHPUnit_Framework_TestCase
+class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testDiLog()

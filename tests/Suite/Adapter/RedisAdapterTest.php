@@ -1,13 +1,14 @@
 <?php
 
 namespace SplitIO\Test\Suite\Adapter;
+
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use \Predis\Response\ServerException;
 use \Predis\ClientException;
 use SplitIO\Component\Common\Di;
 
-class RedisAdapterTest extends \PHPUnit_Framework_TestCase
+class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 {
     private function getMockedLogger()
     {
@@ -26,7 +27,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithNullValues()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
 
         $predis = new PRedis(array());
     }
@@ -94,7 +95,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithEmptySentinels()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one sentinel is required.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one sentinel is required.');
 
         $predis = new PRedis(array(
             'sentinels' => array(),
@@ -106,7 +107,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinelsWithoutOptions()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -117,7 +118,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinelsWithoutReplicationOption()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
         $predis = new PRedis(array(
             'sentinels' => array(
                 '127.0.0.1'
@@ -133,7 +134,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis 'distributedStrategy'.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis 'distributedStrategy'.");
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -152,7 +153,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
-        $this->setExpectedException(
+        $this->expectException(
             'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             'Master name is required in replication mode for sentinel.'
         );
@@ -171,7 +172,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $logger = $this->getMockedLogger();
 
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'sentinels must be an array.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'sentinels must be an array.');
 
         $predis = new PRedis(array(
             'sentinels' => "test",
@@ -183,7 +184,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisSentinelWithWrongRedisDistributedStrategy()
     {
-        $this->setExpectedException(
+        $this->expectException(
             'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "Wrong configuration of redis 'distributedStrategy'."
         );
@@ -205,7 +206,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
-        $this->setExpectedException('\Predis\ClientException');
+        $this->expectException('\Predis\ClientException');
         $predis = new PRedis(array(
             'sentinels' => array(
                 'tcp://MYIP:26379?timeout=3'
@@ -221,7 +222,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithSentinelsAndDistributedStrategy()
     {
-        $this->setExpectedException('\Predis\Response\ServerException');
+        $this->expectException('\Predis\Response\ServerException');
         $predis = new PRedis(array(
             'sentinels' => array(
                 'tcp:/MYIP:26379?timeout=3'
@@ -237,7 +238,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithEmptyClusters()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one clusterNode is required.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one clusterNode is required.');
 
         $predis = new PRedis(array(
             'clusterNodes' => array(),
@@ -250,7 +251,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithClustersWithoutOptions()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -261,7 +262,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithWrongTypeOfClusters()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'clusterNodes must be an array.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'clusterNodes must be an array.');
 
         $predis = new PRedis(array(
             'clusterNodes' => "test",
@@ -274,7 +275,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisClusterWithWrongRedisDistributedStrategy()
     {
-        $this->setExpectedException(
+        $this->expectException(
             'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "Wrong configuration of redis 'distributedStrategy'."
         );
@@ -291,7 +292,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithInvalidKeyHashtagInClusters()
     {
-        $this->setExpectedException(
+        $this->expectException(
             'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag is not valid."
         );
@@ -311,7 +312,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithInvalidBeginingKeyHashtagInClusters()
     {
-        $this->setExpectedException(
+        $this->expectException(
             'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag is not valid."
         );
@@ -331,7 +332,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithWrongTypeKeyHashtagInClusters()
     {
-        $this->setExpectedException(
+        $this->expectException(
             'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag must be string."
         );
@@ -351,7 +352,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithWrongLengthKeyHashtagInClusters()
     {
-        $this->setExpectedException(
+        $this->expectException(
             'SplitIO\Component\Cache\Storage\Exception\AdapterException',
             "keyHashTag is not valid."
         );
@@ -371,7 +372,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithClusters()
     {
-        $this->setExpectedException('\Predis\ClientException');
+        $this->expectException('\Predis\ClientException');
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
@@ -387,7 +388,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisWithoutCustomKeyHashtagClusters()
     {
-        $this->setExpectedException('\Predis\ClientException');
+        $this->expectException('\Predis\ClientException');
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
@@ -402,7 +403,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisSSLWithClusterFails()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
         $predis = new PRedis(array(
             'options' => array(
                 'distributedStrategy' => 'cluster',
@@ -415,7 +416,7 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testRedisSSLWithSentinelFails()
     {
-        $this->setExpectedException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
         $predis = new PRedis(array(
             'options' => array(
                 'distributedStrategy' => 'sentinel',
@@ -425,5 +426,4 @@ class RedisAdapterTest extends \PHPUnit_Framework_TestCase
             ),
         ));
     }
-
 }

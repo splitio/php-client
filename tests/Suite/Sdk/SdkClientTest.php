@@ -14,7 +14,7 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
 
-class SdkClientTest extends \PHPUnit_Framework_TestCase
+class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {
@@ -491,7 +491,7 @@ class SdkClientTest extends \PHPUnit_Framework_TestCase
     public function testInvalidCacheAdapter()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
-        $this->setExpectedException('\SplitIO\Exception\Exception');
+        $this->expectException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),

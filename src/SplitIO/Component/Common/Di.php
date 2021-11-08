@@ -62,7 +62,7 @@ class Di
      *
      * @return void
      */
-    private function __clone()
+    public function __clone()
     {
     }
 
@@ -72,7 +72,7 @@ class Di
      *
      * @return void
      */
-    private function __wakeup()
+    public function __wakeup()
     {
     }
 
