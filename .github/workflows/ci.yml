@@ -1,0 +1,43 @@
+name: ci
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    strategy:
+      matrix:
+        php-versions: ['7.3', '8.0']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, intl
+          ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: |
+          composer install --prefer-dist
+          composer update
+          composer dumpautoload
+
+      - name: script
+        run: |
+          vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/
+          vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration
