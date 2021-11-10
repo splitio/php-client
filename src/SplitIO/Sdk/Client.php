@@ -4,7 +4,6 @@ namespace SplitIO\Sdk;
 use SplitIO\Component\Cache\EventsCache;
 use SplitIO\Component\Common\Di;
 use SplitIO\Metrics;
-use SplitIO\Component\Cache\MetricsCache;
 use SplitIO\Sdk\Events\EventDTO;
 use SplitIO\Sdk\Events\EventQueueMessage;
 use SplitIO\Sdk\QueueMetadataMessage;
@@ -246,11 +245,6 @@ class Client implements ClientInterface
             TreatmentImpression::log($impressions, $this->queueMetadata);
             if (isset($this->impressionListener)) {
                 $this->impressionListener->sendDataToClient($impressions, $attributes);
-            }
-
-            //Register latency value
-            if (!is_null($latency)) {
-                MetricsCache::addLatencyOnBucket($metricName, Metrics::getBucketForLatencyMicros($latency));
             }
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
