@@ -3,7 +3,6 @@
 namespace SplitIO\Test\Suite\Component;
 
 use SplitIO\Component\Cache\ImpressionCache;
-use SplitIO\Component\Cache\MetricsCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\TrafficTypeCache;
@@ -16,48 +15,6 @@ class KeyTest extends \PHPUnit\Framework\TestCase
         $refMethod = new \ReflectionMethod($className, $methodName);
         $refMethod->setAccessible(true);
         return $refMethod;
-    }
-
-    public function testMetricsGetCacheKeyForLatencyButcket()
-    {
-        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getCacheKeyForLatencyBucket');
-        $key = $method->invoke(null, 'abc', 'def');
-        $this->assertEquals(
-            $key,
-            'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.abc.bucket.def'
-        );
-    }
-
-    public function testGetCacheKeySearchLatencyPattern()
-    {
-        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getCacheKeySearchLatencyPattern');
-        $key = $method->invoke(null);
-        $this->assertEquals(
-            $key,
-            'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.*.bucket.*'
-        );
-    }
-
-    public function testGetMetricNameFromKey()
-    {
-        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getMetricNameFromKey');
-        $metricName = $method->invoke(
-            null,
-            'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.abc.bucket.def'
-        );
-
-        $this->assertEquals($metricName, 'abc');
-    }
-
-    public function testGetBucketFromKey()
-    {
-        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\MetricsCache', 'getBucketFromKey');
-        $metricName = $method->invoke(
-            null,
-            'SPLITIO/php-' . \SplitIO\version() . '/' . \SplitIO\getHostIpAddress() . '/latency.abc.bucket.def'
-        );
-
-        $this->assertEquals($metricName, 'def');
     }
 
     public function testSplitGetCacheKeyForSinceParameter()
