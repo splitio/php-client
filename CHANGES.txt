@@ -1,5 +1,9 @@
-6.2.6 (Nov XX, 2021)
+7.0.0 (Nov 25, 2021)
+ - Breaking Change:
+    - Removed support from versions older than PHP 7.3.
+    - Removed SharedMemory (shmop) component for Segments.
  - PHP 8 Compatibility: made Di methods public.
+ - Upgraded dependencies.
 
 6.2.5 (Apr 27, 2021)
  - Added delimiter in SharedMemory Cache.
