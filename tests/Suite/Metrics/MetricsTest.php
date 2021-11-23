@@ -3,7 +3,7 @@ namespace SplitIO\Test\Suite\Metrics;
 
 use SplitIO\Metrics as MetricsModule;
 
-class MetricsTest extends \PHPUnit_Framework_TestCase
+class MetricsTest extends \PHPUnit\Framework\TestCase
 {
 
     private $latencies_limits = array(1000, 1500, 2250, 3375, 5063, 7594, 11391, 17086, 25629, 38443,
@@ -69,6 +69,5 @@ class MetricsTest extends \PHPUnit_Framework_TestCase
         foreach ($this->latencies_limits as $bucket => $latency) {
             $this->assertEquals($bucket, MetricsModule::getBucketForLatencyMicros($latency));
         }
-
     }
 }

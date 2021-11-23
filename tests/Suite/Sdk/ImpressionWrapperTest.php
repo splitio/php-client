@@ -10,7 +10,7 @@ use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
 use SplitIO\Component\Common\Di;
 
-class ImpressionListenerTest extends \PHPUnit_Framework_TestCase
+class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {

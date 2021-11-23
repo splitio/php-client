@@ -3,11 +3,6 @@
 namespace SplitIO\Sdk;
 
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Memory\Exception\OpenSharedMemoryException;
-use SplitIO\Component\Memory\Exception\ReadSharedMemoryException;
-use SplitIO\Component\Memory\Exception\SupportSharedMemoryException;
-use SplitIO\Component\Memory\Exception\WriteSharedMemoryException;
-use SplitIO\Component\Memory\SharedMemory;
 use SplitIO\Component\Common\Di;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;

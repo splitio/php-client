@@ -7,7 +7,7 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Common\Di;
 
-class SdkAttributesTest extends \PHPUnit_Framework_TestCase
+class SdkAttributesTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {

@@ -3,7 +3,7 @@ namespace SplitIO\Test\Suite\Common;
 
 use SplitIO\Component\Utils as SplitIOUtils;
 
-class FunctionsTest extends \PHPUnit_Framework_TestCase
+class FunctionsTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testParseSplitsFileFunction()

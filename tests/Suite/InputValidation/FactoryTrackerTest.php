@@ -3,7 +3,7 @@ namespace SplitIO\Test\Suite\InputValidation;
 
 use SplitIO\Component\Common\Di;
 
-class FactoryTrackerTest extends \PHPUnit_Framework_TestCase
+class FactoryTrackerTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {

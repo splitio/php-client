@@ -10,7 +10,7 @@ use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Component\Common\Di;
 use \ReflectionMethod;
 
-class MatcherTest extends \PHPUnit_Framework_TestCase
+class MatcherTest extends \PHPUnit\Framework\TestCase
 {
     private function setupSplitApp()
     {
