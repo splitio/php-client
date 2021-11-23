@@ -16,6 +16,7 @@ php53test.php
 test.php
 .phpcd
 .vscode
+.DS_Store
 
 #vim backup files
 *.swp

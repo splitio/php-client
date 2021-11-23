@@ -4,7 +4,7 @@ namespace SplitIO\Test\Suite\InputValidation;
 use SplitIO\Component\Common\Di;
 use SplitIO\Sdk\Validator\InputValidator;
 
-class TrackValidationTest extends \PHPUnit_Framework_TestCase
+class TrackValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {

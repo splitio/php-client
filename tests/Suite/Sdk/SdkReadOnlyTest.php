@@ -11,7 +11,7 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Sdk\QueueMetadataMessage;
 
-class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
+class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
 {
     private function addSplitsInCache()
     {
@@ -101,16 +101,15 @@ class SdkReadOnlyTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         // Discard (ignore) first logging statement
-        $logger->expects($this->at(1))
+        $logger->expects($this->exactly(2))
             ->method('debug');
 
-        $logger->expects($this->at(2))
+        $logger->expects($this->exactly(2))
             ->method('warning')
-            ->with('Unable to write impression back to redis.');
-
-        $logger->expects($this->at(3))
-            ->method('warning')
-            ->with('READONLY mode mocked.');
+            ->willReturnOnConsecutiveCalls(
+                'Unable to write impression back to redis.',
+                'READONLY mode mocked.'
+            );
 
         $logger->expects($this->exactly(2))
             ->method('warning');

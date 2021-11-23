@@ -38,7 +38,7 @@ class GreaterThanOrEqualTo extends AbstractMatcher
             SplitApp::logger()->info($logMsg);
 
             if (isset($this->unaryNumericMatcherData['dataType'])
-                && DataTypeEnum::isValid($this->unaryNumericMatcherData['dataType']) ) {
+                && DataTypeEnum::isValid($this->unaryNumericMatcherData['dataType'])) {
                 if (DataTypeEnum::DATETIME == $this->unaryNumericMatcherData['dataType']) {
                     $phpTimestamp = DateTime::millisecondToPHPTimestamp($this->unaryNumericMatcherData['value']);
                     return DateTime::zeroOutSeconds($key) >= DateTime::zeroOutSeconds($phpTimestamp);

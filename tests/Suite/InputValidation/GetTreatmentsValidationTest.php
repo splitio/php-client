@@ -4,7 +4,7 @@ namespace SplitIO\Test\Suite\InputValidation;
 use SplitIO\Component\Common\Di;
 use SplitIO\Sdk\Key;
 
-class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
+class GetTreatmentsValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {
@@ -41,7 +41,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithNullMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -52,7 +52,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithEmptyMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -63,7 +63,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithWrongTypeMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -94,7 +94,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithNullBucketingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -105,7 +105,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithEmptyBucketingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -116,7 +116,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithWrongTypeBucketingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -210,7 +210,7 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTreatmentsWithNonFiniteMatchingKeyObject()
     {
-        $this->setExpectedException('\SplitIO\Exception\KeyException');
+        $this->expectException('\SplitIO\Exception\KeyException');
 
         $splitSdk = $this->getFactoryClient();
 
@@ -285,18 +285,13 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
-        $logger->expects($this->at(0))
+        $logger->expects($this->exactly(3))
             ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed a null split name, split name must be a non-empty '
-                . 'string.'));
-        $logger->expects($this->at(1))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed a null split name, split name must be a non-empty '
-                . 'string.'));
-        $logger->expects($this->at(2))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
-
+            ->willReturnOnConsecutiveCalls(
+                'getTreatments: you passed a null split name, split name must be a non-empty string.',
+                'getTreatments: you passed a null split name, split name must be a non-empty string.',
+                'getTreatments: featureNames must be a non-empty array.'
+            );
         $this->assertEquals(array(), $splitSdk->getTreatments('some_key', array(null, null), null));
     }
 
@@ -323,17 +318,13 @@ class GetTreatmentsValidationTest extends \PHPUnit_Framework_TestCase
         $splitSdk = $this->getFactoryClient();
 
         $logger = $this->getMockedLogger();
-        $logger->expects($this->at(0))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed an invalid split name, split name must be a non-empty '
-            . 'string.'));
-        $logger->expects($this->at(1))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: you passed an invalid split name, split name must be a non-empty '
-            . 'string.'));
-        $logger->expects($this->at(2))
-            ->method('critical')
-            ->with($this->equalTo('getTreatments: featureNames must be a non-empty array.'));
+        $logger->expects($this->exactly(3))
+        ->method('critical')
+        ->willReturnOnConsecutiveCalls(
+            'getTreatments: you passed an invalid split name, split name must be a non-empty string.',
+            'getTreatments: you passed an invalid split name, split name must be a non-empty string',
+            'getTreatments: featureNames must be a non-empty array.'
+        );
 
         $this->assertEquals(array(), $splitSdk->getTreatments('some_key', array(true, array()), null));
     }
