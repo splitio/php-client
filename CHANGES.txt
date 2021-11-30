@@ -1,3 +1,6 @@
+7.1.0 (Nov XX, 2021)
+ - Added `keyHashTags` option for cluster to select one against several passed.
+
 7.0.0 (Nov 23, 2021)
  - BREAKING CHANGE: Removed support from versions older than PHP 7.3.
  - BREAKING CHANGE: Removed SharedMemory (shmop) component for Segments.
