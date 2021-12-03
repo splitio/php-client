@@ -1,4 +1,4 @@
-7.1.0 (Nov XX, 2021)
+7.1.0 (Dec 3, 2021)
  - Added a new option to use when running Redis in cluster mode called `keyHashTags` which receives a list of hashtags from which the SDK will randomly pick one to use on the generated instance.
 
 7.0.0 (Nov 23, 2021)
