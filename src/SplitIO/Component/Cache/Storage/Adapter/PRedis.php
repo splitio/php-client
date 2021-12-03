@@ -67,6 +67,19 @@ class PRedis implements CacheStorageAdapterInterface
         return true;
     }
 
+    private function validateKeyHashTag($keyHashTag)
+    {
+        if (!is_string($keyHashTag)) {
+            return array('valid' => false, 'msg' => 'keyHashTag must be string.');
+        }
+        if ((strlen($keyHashTag) < 3) || ($keyHashTag[0] != "{") ||
+            (substr($keyHashTag, -1) != "}") || (substr_count($keyHashTag, "{") != 1) ||
+            (substr_count($keyHashTag, "}") != 1)) {
+            return array('valid' => false, 'msg' => 'keyHashTag is not valid.');
+        }
+        return array('valid' => true, 'msg' => '');
+    }
+
     /**
      * @param mixed $options
      * @return string
@@ -77,18 +90,41 @@ class PRedis implements CacheStorageAdapterInterface
         if (!isset($options['keyHashTag'])) {
             return "{SPLITIO}";
         }
-        $keyHashTag = $options['keyHashTag'];
-        if (!is_string($keyHashTag)) {
-            throw new AdapterException("keyHashTag must be string.");
-        } else {
-            if ((strlen($keyHashTag) < 3) || ($keyHashTag[0] != "{") ||
-                (substr($keyHashTag, -1) != "}") || (substr_count($keyHashTag, "{") != 1) ||
-                (substr_count($keyHashTag, "}") != 1)) {
-                throw new AdapterException("keyHashTag is not valid.");
-            }
+        $validation = $this->validateKeyHashTag($options['keyHashTag']);
+        if (!($validation['valid'])) {
+            throw new AdapterException($validation['msg']);
         }
-        return $keyHashTag;
+        return $options['keyHashTag'];
     }
+
+
+    /**
+     * @param mixed $options
+     * @return string
+     * @throws AdapterException
+     */
+    private function selectKeyHashTag($options)
+    {
+        if (!isset($options['keyHashTags'])) { // check if array keyHashTags is set
+            return $this->getDefaultKeyHashTag($options); // defaulting to keyHashTag or {SPLITIO}
+        }
+        $keyHashTags = $options['keyHashTags'];
+        $msg = $this->isValidConfigArray($keyHashTags, 'keyHashTags'); // check if is valid array
+        if (!is_null($msg)) {
+            throw new AdapterException($msg);
+        }
+        $filteredArray = array_filter( // filter to only use string element {X}
+            $keyHashTags,
+            function ($value) {
+                return $this->validateKeyHashTag($value)['valid'];
+            }
+        );
+        if (count($filteredArray) == 0) {
+            throw new AdapterException('keyHashTags size is zero after filtering valid elements.');
+        }
+        return $selected = $filteredArray[array_rand($filteredArray, 1)];
+    }
+
 
     /**
      * @param array $clusters
@@ -143,7 +179,7 @@ class PRedis implements CacheStorageAdapterInterface
                 switch ($_options['distributedStrategy']) {
                     case 'cluster':
                         if ($this->isValidClusterConfig($clusters)) {
-                            $keyHashTag = $this->getDefaultKeyHashTag($_options);
+                            $keyHashTag = $this->selectKeyHashTag($_options);
                             $_options['cluster'] = 'redis';
                             $redisConfigutation['redis'] = $clusters;
                             $prefix = isset($_options['prefix']) ? $_options['prefix'] : '';
