@@ -61,7 +61,6 @@ jobs:
           args: >
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
             -Dsonar.projectName=${{ github.event.repository.name }}
-            -Dsonar.projectKey=${{ github.event.repository.name }}
             -Dsonar.exclusions='**/tests/**/*.*'
             -Dsonar.links.ci="https://github.com/splitio/${{ github.event.repository.name }}/actions"
             -Dsonar.links.scm="https://github.com/splitio/${{ github.event.repository.name }}"
@@ -76,7 +75,6 @@ jobs:
           args: >
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
             -Dsonar.projectName=${{ github.event.repository.name }}
-            -Dsonar.projectKey=${{ github.event.repository.name }}
             -Dsonar.exclusions='**/tests/**/*.*'
             -Dsonar.links.ci="https://github.com/splitio/${{ github.event.repository.name }}/actions"
             -Dsonar.links.scm="https://github.com/splitio/${{ github.event.repository.name }}"
