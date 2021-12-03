@@ -1,3 +1,6 @@
+7.1.0 (Dec 3, 2021)
+ - Added a new option to use when running Redis in cluster mode called `keyHashTags` which receives a list of hashtags from which the SDK will randomly pick one to use on the generated instance.
+
 7.0.0 (Nov 23, 2021)
  - BREAKING CHANGE: Removed support from versions older than PHP 7.3.
  - BREAKING CHANGE: Removed SharedMemory (shmop) component for Segments.

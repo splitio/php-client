@@ -401,6 +401,79 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         $predis->getItem('this_is_a_test_key');
     }
 
+    public function testRedisWithClustersKeyHashTags()
+    {
+        $this->expectException(
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
+            "keyHashTags must be array."
+        );
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'keyHashTags' => '{TEST}'
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithClustersKeyHashTagsInvalid()
+    {
+        $this->expectException(
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
+            "keyHashTags size is zero after filtering valid elements."
+        );
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'keyHashTags' => array(1, 2)
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithClustersKeyHashTagsInvalidHashTags()
+    {
+        $this->expectException(
+            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
+            "keyHashTags size is zero after filtering valid elements."
+        );
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'keyHashTags' => array("one", "two", "three")
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
+    public function testRedisWithClustersKeyHashTagsValid()
+    {
+        $this->expectException('\Predis\ClientException');
+        $predis = new PRedis(array(
+            'clusterNodes' => array(
+                'tcp://MYIP:26379?timeout=3'
+            ),
+            'options' => array(
+                'distributedStrategy' => 'cluster',
+                'keyHashTags' => array("{one}", "{two}", "{three}")
+            )
+        ));
+
+        $predis->getItem('this_is_a_test_key');
+    }
+
     public function testRedisSSLWithClusterFails()
     {
         $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
