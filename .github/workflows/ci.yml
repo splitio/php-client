@@ -2,9 +2,11 @@ name: ci
 on:
   push:
     branches:
+      - develop
       - master
   pull_request:
     branches:
+      - develop
       - master
 
 jobs:
@@ -37,7 +39,42 @@ jobs:
           composer update
           composer dumpautoload
 
-      - name: script
+      - name: Build
         run: |
           vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/
           vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration
+
+      - name: SonarQube Scan (Push)
+        if: github.event_name == 'push'
+        uses: SonarSource/sonarcloud-github-action@v1.5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+            -Dsonar.projectName=${{ github.event.repository.name }}
+            -Dsonar.projectKey=${{ github.event.repository.name }}
+            -Dsonar.sources='./src'
+            -Dsonar.exclusions='**/tests/**/*.*'
+            -Dsonar.links.ci="https://github.com/splitio/${{ github.event.repository.name }}/actions"
+            -Dsonar.links.scm="https://github.com/splitio/${{ github.event.repository.name }}"
+
+      - name: SonarQube Scan (Pull Request)
+        if: github.event_name == 'pull_request'
+        uses: SonarSource/sonarcloud-github-action@v1.5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+            -Dsonar.projectName=${{ github.event.repository.name }}
+            -Dsonar.projectKey=${{ github.event.repository.name }}
+            -Dsonar.sources='./src'
+            -Dsonar.exclusions='**/tests/**/*.*'
+            -Dsonar.links.ci="https://github.com/splitio/${{ github.event.repository.name }}/actions"
+            -Dsonar.links.scm="https://github.com/splitio/${{ github.event.repository.name }}"
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
