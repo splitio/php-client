@@ -67,7 +67,7 @@ class PRedis implements CacheStorageAdapterInterface
         return true;
     }
 
-    private function validateKeyHashtTag($keyHashTag)
+    private function validateKeyHashTag($keyHashTag)
     {
         if (!is_string($keyHashTag)) {
             return array('valid' => false, 'msg' => 'keyHashTag must be string.');
@@ -90,7 +90,7 @@ class PRedis implements CacheStorageAdapterInterface
         if (!isset($options['keyHashTag'])) {
             return "{SPLITIO}";
         }
-        $validation = $this->validateKeyHashtTag($options['keyHashTag']);
+        $validation = $this->validateKeyHashTag($options['keyHashTag']);
         if (!($validation['valid'])) {
             throw new AdapterException($validation['msg']);
         }
@@ -116,7 +116,7 @@ class PRedis implements CacheStorageAdapterInterface
         $filteredArray = array_filter( // filter to only use string element {X}
             $keyHashTags,
             function ($value) {
-                return $this->validateKeyHashtTag($value)['valid'];
+                return $this->validateKeyHashTag($value)['valid'];
             }
         );
         if (count($filteredArray) == 0) {
