@@ -6,7 +6,6 @@ on:
       - master
   push:
     branches:
-      - develop
       - master
 
 jobs:
