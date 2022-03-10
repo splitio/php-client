@@ -13,14 +13,8 @@ class SplitManager implements SplitManagerInterface
 {
     public function splitNames()
     {
-        try {
-            $cache = new SplitCache();
-            return $cache->getSplitNames();
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical('splitNames method is throwing exceptions');
-            SplitApp::logger()->critical($e->getMessage());
-            return [];
-        }
+        $cache = new SplitCache();
+        return $cache->getSplitNames();
     }
 
     /**
@@ -28,15 +22,9 @@ class SplitManager implements SplitManagerInterface
      */
     public function splits()
     {
-        try {
-            $cache = new SplitCache();
-            $rawSplits = $cache->getAllSplits();
-            return array_map('self::parseSplitView', $rawSplits);
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical('splits method is throwing exceptions');
-            SplitApp::logger()->critical($e->getMessage());
-            return [];
-        }
+        $cache = new SplitCache();
+        $rawSplits = $cache->getAllSplits();
+        return array_map('self::parseSplitView', $rawSplits);
     }
 
     /**
@@ -45,26 +33,20 @@ class SplitManager implements SplitManagerInterface
      */
     public function split($featureName)
     {
-        try {
-            $featureName = InputValidator::validateFeatureName($featureName, 'split');
-            if (is_null($featureName)) {
-                return null;
-            }
-
-            $cache = new SplitCache();
-            $raw = $cache->getSplit($featureName);
-            if (is_null($raw)) {
-                SplitApp::logger()->warning("split: you passed " . $featureName
-                . " that does not exist in this environment, please double check what Splits exist"
-                . " in the web console.");
-                return null;
-            }
-            return self::parseSplitView($raw);
-        } catch (\Exception $e) {
-            SplitApp::logger()->critical('split method is throwing exceptions');
-            SplitApp::logger()->critical($e->getMessage());
+        $featureName = InputValidator::validateFeatureName($featureName, 'split');
+        if (is_null($featureName)) {
             return null;
         }
+
+        $cache = new SplitCache();
+        $raw = $cache->getSplit($featureName);
+        if (is_null($raw)) {
+            SplitApp::logger()->warning("split: you passed " . $featureName
+            . " that does not exist in this environment, please double check what Splits exist"
+            . " in the web console.");
+            return null;
+        }
+        return self::parseSplitView($raw);
     }
 
     /**
