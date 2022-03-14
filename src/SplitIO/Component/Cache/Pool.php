@@ -1,8 +1,6 @@
 <?php
 namespace SplitIO\Component\Cache;
 
-// use SplitIO\Component\Cache\Storage\Adapter\Redis as RedisAdapter;
-// use SplitIO\Component\Cache\Storage\Adapter\PRedis as PRedisAdapter;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis as PRedisAdapter;
 use SplitIO\Component\Cache\Storage\Adapter\SafeRedisWrapper;
 use SplitIO\Component\Common\Di;
