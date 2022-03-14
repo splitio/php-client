@@ -1,8 +1,10 @@
 <?php
 namespace SplitIO\Component\Cache;
 
-use SplitIO\Component\Cache\Storage\Adapter\Redis as RedisAdapter;
+// use SplitIO\Component\Cache\Storage\Adapter\Redis as RedisAdapter;
+// use SplitIO\Component\Cache\Storage\Adapter\PRedis as PRedisAdapter;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis as PRedisAdapter;
+use SplitIO\Component\Cache\Storage\Adapter\PRedisWrapperException as PRedisWrapperAdapter;
 use SplitIO\Component\Common\Di;
 
 class Pool extends CacheKeyTrait
@@ -18,14 +20,17 @@ class Pool extends CacheKeyTrait
      */
     public function __construct(array $options = array())
     {
+        $adapterOptions = (isset($options['adapter']['options'])
+            && is_array($options['adapter']['options'])) ? $options['adapter']['options'] : array();
+        /*
         $adapterName = (isset($options['adapter']['name'])) ? $options['adapter']['name'] : 'redis';
         $adapterOptions = (isset($options['adapter']['options'])
                             && is_array($options['adapter']['options'])) ? $options['adapter']['options'] : array();
 
         switch ($adapterName) {
-            /*case 'filesystem':
+            case 'filesystem':
                 $this->adapter = new FilesystemAdapter($adapterOptions);
-                break;*/
+                break;
 
             case 'predis':
                 $this->adapter = new PRedisAdapter($adapterOptions);
@@ -36,6 +41,8 @@ class Pool extends CacheKeyTrait
                 $this->adapter = new RedisAdapter($adapterOptions);
                 break;
         }
+        */
+        $this->adapter = new PRedisWrapperAdapter(new PredisAdapter($adapterOptions));
     }
 
     /**
