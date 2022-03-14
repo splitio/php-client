@@ -7,11 +7,11 @@ use SplitIO\Component\Utils as SplitIOUtils;
 use SplitIO\Component\Common\Di;
 
 /**
- * Class PRedis
+ * Class SafeRedisWrapper
  *
  * @package SplitIO\Component\Cache\Storage\Adapter
  */
-class PRedisWrapperException implements CacheStorageAdapterInterface
+class SafeRedisWrapper implements CacheStorageAdapterInterface
 {
     private $cacheAdapter = null;
 
