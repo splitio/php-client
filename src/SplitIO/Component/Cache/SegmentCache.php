@@ -37,6 +37,7 @@ class SegmentCache implements SegmentCacheInterface
     public function getChangeNumber($segmentName)
     {
         $since = Di::getCache()->getItem(self::getCacheKeyForSinceParameter($segmentName))->get();
+        // empty check for nullable value
         return (empty($since)) ? -1 : $since;
     }
 }
