@@ -25,7 +25,6 @@
     "php": ">=7.3",
     "psr/log": "~1.0",
     "predis/predis": "^1.1.9",
-    "rmccue/requests": "^1.8.1",
     "symfony/yaml": ">=5.3"
   },
 
