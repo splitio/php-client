@@ -78,7 +78,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         $value = $predis->getItem('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value->get());
 
-        $predisClient->del('this_is_a_test_key');
+        $predisClient->del('test-redis-assertion.this_is_a_test_key');
     }
 
     public function testRedisWithParametersPrefixAndSentinels()
@@ -100,7 +100,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             'host' => REDIS_HOST,
             'port' => REDIS_PORT,
         ]);
-        $predisClient->set('this_is_a_test_key', 'this-is-a-test-value');
+        $predisClient->set('test-redis-assertion.this_is_a_test_key', 'this-is-a-test-value');
 
         $value = $predis->getItem('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value->get());
