@@ -38,7 +38,7 @@ class Splitter
         SplitApp::logger()->debug($logMsg);
         
         $bucket = self::getBucket($algo, $key, $seed);
-        SplitApp::logger()->info("Butcket: ".$bucket);
+        SplitApp::logger()->info("Bucket: ".$bucket);
 
         $accumulatedSize = 0;
         foreach ($partitions as $partition) {
