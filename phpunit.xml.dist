@@ -5,6 +5,7 @@
     <php>
         <const name="REDIS_HOST" value="localhost"/>
         <const name="REDIS_PORT" value="6379"/>
+        <const name="TEST_PREFIX" value="SPLITIO_TEST:."/>
     </php>
 
     <testsuites>

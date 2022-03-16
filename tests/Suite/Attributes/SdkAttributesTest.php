@@ -7,24 +7,10 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Common\Di;
 
+use SplitIO\Test\Utils;
+
 class SdkAttributesTest extends \PHPUnit\Framework\TestCase
 {
-    private function addSplitsInCache()
-    {
-        $splitChanges = file_get_contents(__DIR__."/files/splitChanges.json");
-        $this->assertJson($splitChanges);
-
-        $splitCache = new SplitCache();
-
-        $splitChanges = json_decode($splitChanges, true);
-        $splits = $splitChanges['splits'];
-
-        foreach ($splits as $split) {
-            $splitName = $split['name'];
-            $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
-        }
-    }
-
     private function addSegmentsInCache()
     {
         $segmentCache = new SegmentCache();
@@ -50,7 +36,7 @@ class SdkAttributesTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout', 'level' => 'info'),
@@ -62,7 +48,7 @@ class SdkAttributesTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
         $this->addSegmentsInCache();
 
         //Assertions
@@ -267,5 +253,10 @@ class SdkAttributesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array('attr' => $date->getTimestamp())));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', array()));
         $this->assertEquals('off', $splitSdk->getTreatment('user1', 'user_attr_btw_datetime_1458240947021_and_1458246884077', null));
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

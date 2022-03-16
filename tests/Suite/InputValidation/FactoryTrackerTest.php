@@ -8,7 +8,7 @@ class FactoryTrackerTest extends \PHPUnit\Framework\TestCase
     private function getFactoryClient()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),

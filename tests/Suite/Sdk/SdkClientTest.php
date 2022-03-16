@@ -14,24 +14,10 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
 
+use SplitIO\Test\Utils;
+
 class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
-    private function addSplitsInCache()
-    {
-        $splitChanges = file_get_contents(__DIR__."/files/splitChanges.json");
-        $this->assertJson($splitChanges);
-
-        $splitCache = new SplitCache();
-
-        $splitChanges = json_decode($splitChanges, true);
-        $splits = $splitChanges['splits'];
-
-        foreach ($splits as $split) {
-            $splitName = $split['name'];
-            $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
-        }
-    }
-
     private function addSegmentsInCache()
     {
         $segmentCache = new SegmentCache();
@@ -219,7 +205,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
     ) {
         $raw = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $parsed = json_decode($raw, true);
-        echo "parsed " . json_encode($parsed) . "\n";
         $this->assertEquals($parsed['i']['f'], $feature);
         $this->assertEquals($parsed['i']['k'], $key);
         $this->assertEquals($parsed['i']['t'], $treatment);
@@ -239,7 +224,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
             'port' => REDIS_PORT,
             'timeout' => 881,
         );
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -252,7 +237,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitManager = $splitFactory->manager();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
         $this->addSegmentsInCache();
 
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
@@ -465,7 +450,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('psr3-instance' => $log),
@@ -476,7 +461,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
         $this->addSegmentsInCache();
 
         //Assertions
@@ -549,7 +534,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -562,7 +547,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
         $this->addSegmentsInCache();
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature'), null);
@@ -586,7 +571,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -599,7 +584,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
         $this->addSegmentsInCache();
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature',
@@ -625,7 +610,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -637,7 +622,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
         $this->addSegmentsInCache();
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', null, 'invalid_feature',
@@ -691,5 +676,10 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $client = new Client();
         $client->getTreatments('key1', array('split1', 'split2', 'split3'));
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

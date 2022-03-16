@@ -21,7 +21,7 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
             'port' => 6379,
             'timeout' => 881
         );
-        $options = array('prefix' => '');
+        $options = array('prefix' => TEST_PREFIX);
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout', 'level' => 'info'),
             'cache' => array('adapter' => 'predis',
