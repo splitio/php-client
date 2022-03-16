@@ -45,77 +45,6 @@ class PRedisReadOnlyMock
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $expiration
-     * @return bool
-     */
-    public function addItem($key, $value, $expiration = null)
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    /**
-     * @return bool
-     */
-    public function clear()
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     */
-    public function deleteItem($key)
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    /**
-     * @param array $keys
-     * @return bool
-     */
-    public function deleteItems(array $keys)
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     * @param int|null $expiration
-     * @return bool
-     */
-    public function save($key, $value, $expiration = null)
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    /**
-     * Adds a values to the set value stored at key.
-     * If this value is already in the set, FALSE is returned.
-     *
-     * @param $key
-     * @param $value
-     * @return boolean
-     */
-    public function addItemList($key, $value)
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     * @return mixed
-     */
-    public function removeItemList($key, $value)
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    /**
      * @param $key
      * @param $value
      * @return mixed
@@ -125,43 +54,14 @@ class PRedisReadOnlyMock
         return $this->predis->isOnList($key, $value);
     }
 
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public function getListItems($key)
-    {
-        return $this->predis->getListItems($key);
-    }
-
-    public function getListItemsRandomly($key, $count)
-    {
-        return $this->predis->getListItemsRandomly($key, $count);
-    }
-
     public function getKeys($pattern = '*')
     {
         return $this->predis->getKeys($pattern);
     }
 
-    public function incrementKey($key)
-    {
-        throw new \Exception('READONLY mode mocked.');
-    }
-
-    public function getSet($key, $value)
-    {
-        return $this->predis->getSet($key, $value);
-    }
-
     private function normalizePrefix($prefix)
     {
         return $this->predis->normalizePrefix($prefix);
-    }
-
-    public function saveItemOnList($key, $value)
-    {
-        throw new \Exception('READONLY mode mocked.');
     }
 
     public function rightPushInList($key, $value)

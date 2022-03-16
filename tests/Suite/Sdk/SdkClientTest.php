@@ -487,10 +487,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         $cachePoolMethods = array(
-            'getItem', 'getItems', 'hasItem', 'clear', 'deleteItem', 'deleteItems',
-            'save', 'saveDeferred', 'commit', 'saveItemOnList', 'removeItemOnList',
-            'getItemOnList', 'getItemsOnList', 'isItemOnList', 'getItemsRandomlyOnList',
-            'getKeys', 'incrementeKey', 'getSet', 'rightPushInList'
+            'getItem', 'getItems', 'getItemOnList', 'getItemsOnList', 'isItemOnList',
+            'getKeys', 'rightPushInList'
         );
         $cachePool = $this
             ->getMockBuilder('\SplitIO\Component\Cache\Pool')

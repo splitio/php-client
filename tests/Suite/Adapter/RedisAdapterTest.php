@@ -43,11 +43,16 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
                 'database' => 0
             )
         ));
-        $predis->addItem('this_is_a_test_key', 'this-is-a-test-value');
+        $predisClient = new \Predis\Client([
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+        ]);
+        $predisClient->set('this_is_a_test_key', 'this-is-a-test-value');
+
         $value = $predis->getItem('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value->get());
-        $result = $predis->deleteItem('this_is_a_test_key');
-        $this->assertTrue($result);
+
+        $predisClient->del('this_is_a_test_key');
     }
 
     public function testRedisWithParametersAndPrefix()
@@ -64,11 +69,16 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
                 'prefix' => 'test-redis-assertion'
             )
         ));
-        $predis->addItem('this_is_a_test_key', 'this-is-a-test-value');
+        $predisClient = new \Predis\Client([
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+        ]);
+        $predisClient->set('test-redis-assertion.this_is_a_test_key', 'this-is-a-test-value');
+
         $value = $predis->getItem('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value->get());
-        $result = $predis->deleteItem('this_is_a_test_key');
-        $this->assertTrue($result);
+
+        $predisClient->del('this_is_a_test_key');
     }
 
     public function testRedisWithParametersPrefixAndSentinels()
@@ -86,11 +96,16 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
                 'prefix' => 'test-redis-assertion'
             )
         ));
-        $predis->addItem('this_is_a_test_key', 'this-is-a-test-value');
+        $predisClient = new \Predis\Client([
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+        ]);
+        $predisClient->set('this_is_a_test_key', 'this-is-a-test-value');
+
         $value = $predis->getItem('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value->get());
-        $result = $predis->deleteItem('this_is_a_test_key');
-        $this->assertTrue($result);
+
+        $predisClient->del('test-redis-assertion.this_is_a_test_key');
     }
 
     public function testRedisWithEmptySentinels()

@@ -260,15 +260,6 @@ class PRedis implements CacheStorageAdapterInterface
         return $this->client->sIsMember($key, $value);
     }
 
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public function getListItems($key)
-    {
-        return $this->client->sMembers($key);
-    }
-
     public function getKeys($pattern = '*')
     {
         $prefix = null;
@@ -323,55 +314,5 @@ class PRedis implements CacheStorageAdapterInterface
     public function expireKey($key, $ttl)
     {
         return $this->client->expire($key, $ttl);
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     * @param int|null $expiration
-     * @return bool
-     */
-    public function save($key, $value, $expiration = null)
-    {
-        return $this->client->set($key, $value);
-    }
-
-    /**
-     * Adds a values to the set value stored at key.
-     * If this value is already in the set, FALSE is returned.
-     *
-     * @param $key
-     * @param $value
-     * @return boolean
-     */
-    public function addItemList($key, $value)
-    {
-        return $this->client->sAdd($key, $value);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $expiration
-     * @return bool
-     */
-    public function addItem($key, $value, $expiration = null)
-    {
-        return $this->save($key, $value, $expiration);
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     */
-    public function deleteItem($key)
-    {
-        $return = $this->client->del($key);
-
-        if ($return > 0) {
-            return true;
-        }
-
-        return false;
     }
 }

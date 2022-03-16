@@ -28,12 +28,6 @@ interface CacheStorageAdapterInterface
     public function isOnList($key, $value);
 
     /**
-     * @param $key
-     * @return mixed
-     */
-    public function getListItems($key);
-
-    /**
      * @param $queueName
      * @param $item
      * @return integer
