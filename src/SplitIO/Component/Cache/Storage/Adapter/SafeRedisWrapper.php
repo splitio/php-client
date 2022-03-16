@@ -78,22 +78,6 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
     }
 
     /**
-     * @param $key
-     * @return mixed
-     */
-    public function getListItems($key)
-    {
-        try {
-            return $this->cacheAdapter->getListItems($key);
-        } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred getting " . $key);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
-            return null;
-        }
-    }
-
-    /**
      * @param $pattern
      * @return mixed|null
      */
@@ -137,78 +121,6 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
             return $this->cacheAdapter->expireKey($key, $ttl);
         } catch (\Exception $e) {
             Di::getLogger()->critical("An error occurred setting expiration for " . $key);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
-            return false;
-        }
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     * @param int|null $expiration
-     * @return bool
-     */
-    public function save($key, $value, $expiration = null)
-    {
-        try {
-            return $this->cacheAdapter->save($key, $value, $expiration);
-        } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred setting " . $key);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
-            return false;
-        }
-    }
-
-    /**
-     * Adds a values to the set value stored at key.
-     * If this value is already in the set, FALSE is returned.
-     *
-     * @param $key
-     * @param $value
-     * @return boolean
-     */
-    public function addItemList($key, $value)
-    {
-        try {
-            return $this->cacheAdapter->addItemList($key, $value);
-        } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred adding element into " . $key);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
-            return false;
-        }
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $expiration
-     * @return bool
-     */
-    public function addItem($key, $value, $expiration = null)
-    {
-        try {
-            return $this->cacheAdapter->addItem($key, $value);
-        } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred adding element into " . $key);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
-            return false;
-        }
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     */
-    public function deleteItem($key)
-    {
-        try {
-            return $this->cacheAdapter->deleteItem($key);
-        } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred removing " . $key);
             Di::getLogger()->critical($e->getMessage());
             Di::getLogger()->critical($e->getTraceAsString());
             return false;
