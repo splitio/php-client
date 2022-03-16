@@ -45,13 +45,6 @@ class KeyTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($splitName, 'abc');
     }
 
-    public function testSegmentGetCacheKeyForRegisterSegments()
-    {
-        $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SegmentCache', 'getCacheKeyForRegisterSegments');
-        $key = $method->invoke(null);
-        $this->assertEquals($key, 'SPLITIO.segments.registered');
-    }
-
     public function testSegmentGetCacheKeyForSegmentData()
     {
         $method = self::getStaticMethodAsPublic('SplitIO\Component\Cache\SegmentCache', 'getCacheKeyForSegmentData');

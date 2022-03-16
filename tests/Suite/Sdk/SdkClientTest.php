@@ -18,26 +18,6 @@ use SplitIO\Test\Utils;
 
 class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
-    private function addSegmentsInCache()
-    {
-        $segmentCache = new SegmentCache();
-
-        //Addinng Employees Segment.
-        $segmentEmployeesChanges = file_get_contents(__DIR__ . "/files/segmentEmployeesChanges.json");
-        $this->assertJson($segmentEmployeesChanges);
-        $segmentData = json_decode($segmentEmployeesChanges, true);
-        $this->assertArrayHasKey('employee_1', $segmentCache->addToSegment(
-            $segmentData['name'],
-            $segmentData['added']
-        ));
-
-        //Adding Human Beigns Segment.
-        $segmentHumanBeignsChanges = file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json");
-        $this->assertJson($segmentHumanBeignsChanges);
-        $segmentData = json_decode($segmentHumanBeignsChanges, true);
-        $this->assertArrayHasKey('user1', $segmentCache->addToSegment($segmentData['name'], $segmentData['added']));
-    }
-
     public function testLocalClient()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
@@ -238,7 +218,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         //Populating the cache.
         Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
-        $this->addSegmentsInCache();
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
 
@@ -462,7 +443,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         //Populating the cache.
         Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
-        $this->addSegmentsInCache();
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('user1', 'sample_feature'));
@@ -548,7 +530,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         //Populating the cache.
         Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
-        $this->addSegmentsInCache();
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature'), null);
 
@@ -585,7 +568,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         //Populating the cache.
         Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
-        $this->addSegmentsInCache();
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature',
         'sample_feature', 'sample_feature'), null);
@@ -623,7 +607,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         //Populating the cache.
         Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
-        $this->addSegmentsInCache();
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', null, 'invalid_feature',
         'sample_feature', null, 'sample_feature'), null);
