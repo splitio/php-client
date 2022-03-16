@@ -8,13 +8,15 @@ use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Sdk\QueueMetadataMessage;
 
+use SplitIO\Test\Utils;
+
 class ImpressionsTest extends \PHPUnit\Framework\TestCase
 {
     public function testImpressionsAreAdded()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -63,7 +65,7 @@ class ImpressionsTest extends \PHPUnit\Framework\TestCase
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -118,5 +120,10 @@ class ImpressionsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($decoded['i']['r'], 'label1');
         $this->assertEquals($decoded['i']['m'], 123456);
         $this->assertEquals($decoded['i']['c'], 321654);
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

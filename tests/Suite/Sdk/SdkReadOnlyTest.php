@@ -11,27 +11,16 @@ use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Sdk\QueueMetadataMessage;
 
+use SplitIO\Test\Utils;
+
 class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
 {
-    private function addSplitsInCache()
-    {
-        $splitChanges = file_get_contents(__DIR__."/files/splitReadOnly.json");
-        $this->assertJson($splitChanges);
-        $splitCache = new SplitCache();
-        $splitChanges = json_decode($splitChanges, true);
-        $splits = $splitChanges['splits'];
-        foreach ($splits as $split) {
-            $splitName = $split['name'];
-            $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
-        }
-    }
-
     public function testClient()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
@@ -42,7 +31,7 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitReadOnly.json"));
 
         //Instantiate PRedis Mocked Cache
         $predis = new PRedis(array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options));
@@ -77,7 +66,7 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
         Di::set(Di::KEY_FACTORY_TRACKER, false);
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
@@ -87,7 +76,7 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
         \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitReadOnly.json"));
 
         //Instantiate PRedis Mocked Cache
         $predis = new PRedis(array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options));
@@ -127,5 +116,10 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
         );
 
         TreatmentImpression::log($impression, new QueueMetadataMessage());
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

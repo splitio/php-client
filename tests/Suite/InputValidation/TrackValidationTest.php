@@ -4,13 +4,15 @@ namespace SplitIO\Test\Suite\InputValidation;
 use SplitIO\Component\Common\Di;
 use SplitIO\Sdk\Validator\InputValidator;
 
+use SplitIO\Test\Utils;
+
 class TrackValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -512,5 +514,10 @@ class TrackValidationTest extends \PHPUnit\Framework\TestCase
         }
 
         $this->assertEquals(false, $splitSdk->track('some_key', 'some_traffic', 'some_event', 1, $properties));
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }
