@@ -14,7 +14,7 @@ class PRedisReadOnlyMock
     }
 
 
- /**
+    /**
      * @param string $key
      * @return \SplitIO\Component\Cache\Item
      */

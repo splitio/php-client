@@ -10,6 +10,11 @@ use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;
+use SplitIO\Sdk\Events\EventDTO;
+use SplitIO\Sdk\Events\EventQueueMessage;
+use SplitIO\Sdk\QueueMetadataMessage;
+
+use SplitIO\Test\Utils;
 
 class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,18 +36,21 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
     public function testDiCache()
     {
         try {
-            $cachePoolAdapter = array(
-                'name' => 'redis',
-                'options' => array(
-                    'host' => REDIS_HOST,
-                    'port' => REDIS_PORT,
-                )
+            $parameters = array(
+                'host' => REDIS_HOST,
+                'port' => REDIS_PORT,
             );
 
-            $cachePool = new Pool(array( 'adapter' => $cachePoolAdapter ));
+            $cachePool = new Pool(array('adapter' => array(
+                'name' => 'predis',
+                'options' => array(
+                    'options' => array('prefix' => TEST_PREFIX),
+                    'parameters' => $parameters,
+                ),
+            )));
             Di::getInstance()->setCache($cachePool);
         } catch (\Exception $e) {
-            $this->assertTrue(false, "Error setting cache on Di");
+            $this->assertTrue(false, "Error setting cache on Di".  $e);
         }
 
         $this->assertTrue(true);
@@ -57,6 +65,7 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
         $splitChanges = file_get_contents(__DIR__."/../../files/splitChanges.json");
         $this->assertJson($splitChanges);
 
+        Utils\Utils::addSplitsInCache($splitChanges);
         $splitCache = new SplitCache();
 
         $splitChanges = json_decode($splitChanges, true);
@@ -65,14 +74,7 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
 
         $splitName = $split['name'];
 
-        $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
-
         $this->assertEquals(strlen(json_encode($split)), strlen($splitCache->getSplit($splitName)));
-
-        $this->assertTrue($splitCache->removeSplit($splitName));
-
-        $this->assertTrue($splitCache->setChangeNumber($splitChanges['till']));
-
         $this->assertEquals($splitChanges['till'], $splitCache->getChangeNumber());
     }
 
@@ -82,46 +84,17 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
     public function testSegmentCacheInterface()
     {
         $segmentChanges = file_get_contents(__DIR__."/../../files/segmentEmployeesChanges.json");
-
         $this->assertJson($segmentChanges);
 
+        Utils\Utils::addSegmentsInCache($segmentChanges);
+
         $segmentData = json_decode($segmentChanges, true);
-
         $segmentName = $segmentData['name'];
-
         $segmentCache = new SegmentCache();
-
-        $this->assertArrayHasKey('fake_user_id_4', $segmentCache->addToSegment($segmentName, $segmentData['added']));
-
-        $removedResult = $segmentCache->removeFromSegment($segmentName, $segmentData['removed']);
-        $this->assertArrayHasKey('fake_user_id_6', $removedResult);
-
-        $this->assertTrue($segmentCache->setChangeNumber($segmentName, $segmentData['till']));
+        $this->assertTrue(boolval($segmentCache->isInSegment($segmentName, "fake_user_id_4")));
+        $this->assertFalse(boolval($segmentCache->isInSegment($segmentName, "fake_user_id_4_")));
 
         $this->assertEquals($segmentData['till'], $segmentCache->getChangeNumber($segmentName));
-    }
-
-    /**
-     * @depends testDiLog
-     * @depends testDiCache
-     */
-    public function testBlockUntilReadyCacheInterface()
-    {
-        $dateTimeUTC = new \DateTime("now", new \DateTimeZone("UTC"));
-        $deltaTime = 100;
-
-        $splitsTimestamp = $dateTimeUTC->getTimestamp();
-        $segmentsTimestamp = $dateTimeUTC->getTimestamp() + $deltaTime;
-
-        $bur = new BlockUntilReadyCache();
-        $bur->setReadySplits($splitsTimestamp);
-        $bur->setReadySegments($segmentsTimestamp);
-
-        //Checking
-        $this->assertEquals($splitsTimestamp, $bur->getReadySplits());
-        $this->assertEquals($segmentsTimestamp, $bur->getReadySegments());
-
-        $this->assertEquals(min($splitsTimestamp, $segmentsTimestamp), $bur->getReadyCheckpoint());
     }
 
     /**
@@ -135,9 +108,8 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
         $eventType = "some_event_type";
         $value = 0.0;
 
-        $eventDTO = new EventDTO($key, $trafficType, $eventType, $value);
-        $eventMessageMetadata = new EventQueueMetadataMessage();
-        $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+        $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, null);
+        $eventQueueMessage = new EventQueueMessage(new QueueMetadataMessage(), $eventDTO);
 
         $this->assertTrue(EventsCache::addEvent($eventQueueMessage));
     }
@@ -160,8 +132,7 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
         );
 
         $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
-        $eventMessageMetadata = new EventQueueMetadataMessage();
-        $eventQueueMessage = new EventQueueMessage($eventMessageMetadata, $eventDTO);
+        $eventQueueMessage = new EventQueueMessage(new QueueMetadataMessage(), $eventDTO);
 
         $this->assertTrue(EventsCache::addEvent($eventQueueMessage));
 

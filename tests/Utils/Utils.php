@@ -6,6 +6,7 @@ class Utils
     public static function addSplitsInCache($splitChanges)
     {
         $splitKey = "SPLITIO.split.";
+        $tillKey = "SPLITIO.splits.till";
 
         $predis = new \Predis\Client([
             'host' => REDIS_HOST,
@@ -18,11 +19,16 @@ class Utils
     
         $splitChanges = json_decode($splitChanges, true);
         $splits = $splitChanges['splits'];
-    
+
         foreach ($splits as $split) {
             $splitName = $split['name'];
             $predis->set($splitKey . $splitName, json_encode($split));
         }
+        $till = -1;
+        if (isset($splitChanges['till'])) {
+            $till = $splitChanges['till'];
+        }
+        $predis->set($tillKey, $till);
         return true;
     }
 
@@ -41,6 +47,7 @@ class Utils
 
         $segmentData = json_decode($segmentChanges, true);
         $predis->sadd($segmentKey . $segmentData['name'], $segmentData['added']);
+        $predis->set($segmentKey . $segmentData['name'] . ".till", $segmentData['till']);
 
         return true;
     }

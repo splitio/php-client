@@ -53,7 +53,7 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
         try {
             return $this->cacheAdapter->getItems($keys);
         } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred getting " . $keys . " from redis.");
+            Di::getLogger()->critical("An error occurred getting " . json_encode($keys) . " from redis.");
             Di::getLogger()->critical($e->getMessage());
             Di::getLogger()->critical($e->getTraceAsString());
             return array();

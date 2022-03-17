@@ -239,8 +239,11 @@ class PRedis implements CacheStorageAdapterInterface
      */
     public function getItems(array $keys = array())
     {
-        $values = $this->client->mget($keys);
         $toReturn = array();
+        if (count($keys) == 0) {
+            return $toReturn;
+        }
+        $values = $this->client->mget($keys);
         foreach ($keys as $index => $key) {
             $toReturn[$key] = new Item($key);
             if (!is_null($values[$index])) {
