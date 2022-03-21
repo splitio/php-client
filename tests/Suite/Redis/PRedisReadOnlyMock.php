@@ -16,11 +16,11 @@ class PRedisReadOnlyMock
 
     /**
      * @param string $key
-     * @return \SplitIO\Component\Cache\Item
+     * @return string
      */
-    public function getItem($key)
+    public function get($key)
     {
-        return $this->predis->getItem($key);
+        return $this->predis->get($key);
     }
 
     /**
@@ -39,9 +39,9 @@ class PRedisReadOnlyMock
      *   key is not found. However, if no keys are specified then an empty
      *   traversable MUST be returned instead.
      */
-    public function getItems(array $keys = array())
+    public function fetchMany(array $keys = array())
     {
-        return $this->predis->getItems($keys);
+        return $this->predis->fetchMany($keys);
     }
 
     /**

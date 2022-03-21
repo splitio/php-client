@@ -487,7 +487,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         $cachePoolMethods = array(
-            'getItem', 'getItems', 'isItemOnList', 'getKeys', 'rightPushInList', 'expireKey'
+            'get', 'fetchMany', 'isItemOnList', 'getKeys', 'rightPushInList', 'expireKey'
         );
         $cachePool = $this
             ->getMockBuilder('\SplitIO\Component\Cache\Pool')

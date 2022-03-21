@@ -34,14 +34,13 @@ class Pool extends CacheKeyTrait
      *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
      *   MUST be thrown.
      *
-     * @return \SplitIO\Component\Cache\Item
-     *   The corresponding Cache Item.
+     * @return string
      */
-    public function getItem($key)
+    public function get($key)
     {
         $this->assertValidKey($key);
         Di::getLogger()->debug("Fetching item ** $key ** from cache");
-        return $this->adapter->getItem($key);
+        return $this->adapter->get($key);
     }
 
     /**
@@ -60,9 +59,9 @@ class Pool extends CacheKeyTrait
      *   key is not found. However, if no keys are specified then an empty
      *   traversable MUST be returned instead.
      */
-    public function getItems(array $keys = array())
+    public function fetchMany(array $keys = array())
     {
-        return $this->adapter->getItems($keys);
+        return $this->adapter->fetchMany($keys);
     }
 
     public function isItemOnList($key, $value)

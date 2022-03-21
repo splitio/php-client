@@ -14,11 +14,11 @@ interface CacheStorageAdapterInterface
 
     /**
      * @param string $key
-     * @return \SplitIO\Component\Cache\Item
+     * @return string
      */
-    public function getItem($key);
+    public function get($key);
 
-    public function getItems(array $keys);
+    public function fetchMany(array $keys);
 
     /**
      * @param $key
