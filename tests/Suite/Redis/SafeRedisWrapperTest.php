@@ -25,31 +25,7 @@ class SafeRedisWrapperTest extends \PHPUnit\Framework\TestCase
         }
 
         $predisMock->method('getOptions')
-                ->willReturn(array());
-
-        /*
-        $reflectionPRedis = new ReflectionClass('SplitIO\Component\Cache\Storage\Adapter\PRedis');
-        $parameters = array(
-            'host' => REDIS_HOST,
-            'port' => REDIS_PORT,
-        );
-        $predisAdapter = new PRedis(array(
-            'parameters' => array(
-                'scheme' => 'tcp',
-                'host' => 'localhost',
-                'port' => 6379,
-                'timeout' => 881,
-                'database' => 0
-            )
-        ));
-        $property = $reflectionPRedis->getProperty('client');
-        $property->setAccessible(true);
-        $property->setValue($predisMock, $predisMock);
-
-        // $predisAdapter->client = predisMock;
-
-        $safeRedisWrapper = new SafeRedisWrapper($reflectionPRedis);
-        */
+            ->willReturn(array());
 
         $predisAdapter = new PRedis(array(
             'parameters' => array(
