@@ -207,7 +207,7 @@ class PRedis implements CacheStorageAdapterInterface
      * @param string $key
      * @return string
      */
-    public function getItem($key)
+    public function get($key)
     {
         return $this->client->get($key);
     }
@@ -225,7 +225,7 @@ class PRedis implements CacheStorageAdapterInterface
      *
      * @return array
      */
-    public function getItems(array $keys = array())
+    public function fetchMany(array $keys = array())
     {
         $toReturn = array();
         if (count($keys) == 0) {

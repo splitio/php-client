@@ -27,10 +27,10 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
      * @param string $key
      * @return string
      */
-    public function getItem($key)
+    public function get($key)
     {
         try {
-            return $this->cacheAdapter->getItem($key);
+            return $this->cacheAdapter->get($key);
         } catch (\Exception $e) {
             Di::getLogger()->critical("An error occurred getting " . $key . " from redis.");
             Di::getLogger()->critical($e->getMessage());
@@ -48,10 +48,10 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
      *
      * @return array
      */
-    public function getItems(array $keys = array())
+    public function fetchMany(array $keys = array())
     {
         try {
-            return $this->cacheAdapter->getItems($keys);
+            return $this->cacheAdapter->fetchMany($keys);
         } catch (\Exception $e) {
             Di::getLogger()->critical("An error occurred getting " . json_encode($keys) . " from redis.");
             Di::getLogger()->critical($e->getMessage());

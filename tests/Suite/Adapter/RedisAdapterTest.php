@@ -49,7 +49,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $predisClient->set('this_is_a_test_key', 'this-is-a-test-value');
 
-        $value = $predis->getItem('this_is_a_test_key');
+        $value = $predis->get('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value);
 
         $predisClient->del('this_is_a_test_key');
@@ -75,7 +75,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $predisClient->set('test-redis-assertion.this_is_a_test_key', 'this-is-a-test-value');
 
-        $value = $predis->getItem('this_is_a_test_key');
+        $value = $predis->get('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value);
 
         $predisClient->del('test-redis-assertion.this_is_a_test_key');
@@ -102,7 +102,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $predisClient->set('test-redis-assertion.this_is_a_test_key', 'this-is-a-test-value');
 
-        $value = $predis->getItem('this_is_a_test_key');
+        $value = $predis->get('this_is_a_test_key');
         $this->assertEquals('this-is-a-test-value', $value);
 
         $predisClient->del('test-redis-assertion.this_is_a_test_key');
@@ -232,7 +232,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithSentinelsAndDistributedStrategy()
@@ -248,7 +248,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithEmptyClusters()
@@ -322,7 +322,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithInvalidBeginingKeyHashtagInClusters()
@@ -342,7 +342,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithWrongTypeKeyHashtagInClusters()
@@ -362,7 +362,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithWrongLengthKeyHashtagInClusters()
@@ -382,7 +382,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithClusters()
@@ -398,7 +398,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithoutCustomKeyHashtagClusters()
@@ -413,7 +413,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithClustersKeyHashTags()
@@ -432,7 +432,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithClustersKeyHashTagsInvalid()
@@ -451,7 +451,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithClustersKeyHashTagsInvalidHashTags()
@@ -470,7 +470,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisWithClustersKeyHashTagsValid()
@@ -486,7 +486,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             )
         ));
 
-        $predis->getItem('this_is_a_test_key');
+        $predis->get('this_is_a_test_key');
     }
 
     public function testRedisSSLWithClusterFails()
