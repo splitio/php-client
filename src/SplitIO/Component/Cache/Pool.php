@@ -34,8 +34,7 @@ class Pool extends CacheKeyTrait
      *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
      *   MUST be thrown.
      *
-     * @return \SplitIO\Component\Cache\Item
-     *   The corresponding Cache Item.
+     * @return string
      */
     public function getItem($key)
     {

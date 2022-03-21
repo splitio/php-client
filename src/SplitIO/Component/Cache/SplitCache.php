@@ -37,7 +37,7 @@ class SplitCache implements SplitCacheInterface
      */
     public function getChangeNumber()
     {
-        $since = Di::getCache()->getItem(self::getCacheKeyForSinceParameter())->get();
+        $since = Di::getCache()->getItem(self::getCacheKeyForSinceParameter());
         // empty check for nullable value
         return (empty($since)) ? -1 : $since;
     }
@@ -50,7 +50,7 @@ class SplitCache implements SplitCacheInterface
     {
         $cache = Di::getCache();
         $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
-        return $cacheItem->get();
+        return $cacheItem;
     }
 
     /**
@@ -63,7 +63,7 @@ class SplitCache implements SplitCacheInterface
         $cacheItems = $cache->getItems(array_map('self::getCacheKeyForSplit', $splitNames));
         $toReturn = array();
         foreach ($cacheItems as $key => $value) {
-            $toReturn[self::getSplitNameFromCacheKey($key)] = $value->get();
+            $toReturn[self::getSplitNameFromCacheKey($key)] = $value;
         }
         return $toReturn;
     }
@@ -100,7 +100,7 @@ class SplitCache implements SplitCacheInterface
     {
         $cache = Di::getCache();
 
-        $count = $cache->getItem(self::getCacheKeyForTrafficType($trafficType))->get();
+        $count = $cache->getItem(self::getCacheKeyForTrafficType($trafficType));
         // empty check for nullable value
         return (empty($count) || $count < 1) ? false : true;
     }

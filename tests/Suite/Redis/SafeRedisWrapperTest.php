@@ -40,7 +40,7 @@ class SafeRedisWrapperTest extends \PHPUnit\Framework\TestCase
         $refProperty->setValue($predisAdapter, $predisMock);
         $safeRedisWrapper = new SafeRedisWrapper($predisAdapter);
 
-        $this->assertEquals(false, $safeRedisWrapper->getItem("some")->get());
+        $this->assertEquals(false, $safeRedisWrapper->getItem("some"));
         $this->assertEquals(array(), $safeRedisWrapper->getItems(array("some")));
         $this->assertEquals(false, $safeRedisWrapper->isOnList("some", "another"));
         $this->assertEquals(array(), $safeRedisWrapper->getKeys("some"));

@@ -205,19 +205,11 @@ class PRedis implements CacheStorageAdapterInterface
 
     /**
      * @param string $key
-     * @return \SplitIO\Component\Cache\Item
+     * @return string
      */
     public function getItem($key)
     {
-        $item = new Item($key);
-
-        $redisItem = $this->client->get($key);
-
-        if ($redisItem !== null) {
-            $item->set($redisItem);
-        }
-
-        return $item;
+        return $this->client->get($key);
     }
 
 
@@ -231,11 +223,7 @@ class PRedis implements CacheStorageAdapterInterface
      *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
      *   MUST be thrown.
      *
-     * @return array|\Traversable
-     *   A traversable collection of Cache Items keyed by the cache keys of
-     *   each item. A Cache item will be returned for each key, even if that
-     *   key is not found. However, if no keys are specified then an empty
-     *   traversable MUST be returned instead.
+     * @return array
      */
     public function getItems(array $keys = array())
     {
@@ -245,10 +233,7 @@ class PRedis implements CacheStorageAdapterInterface
         }
         $values = $this->client->mget($keys);
         foreach ($keys as $index => $key) {
-            $toReturn[$key] = new Item($key);
-            if (!is_null($values[$index])) {
-                $toReturn[$key]->set($values[$index]);
-            }
+            $toReturn[$key] = $values[$index];
         }
         return $toReturn;
     }

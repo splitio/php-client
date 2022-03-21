@@ -16,7 +16,7 @@ class PRedisReadOnlyMock
 
     /**
      * @param string $key
-     * @return \SplitIO\Component\Cache\Item
+     * @return string
      */
     public function getItem($key)
     {

@@ -25,7 +25,7 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
 
     /**
      * @param string $key
-     * @return \SplitIO\Component\Cache\Item
+     * @return string
      */
     public function getItem($key)
     {
@@ -35,7 +35,7 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
             Di::getLogger()->critical("An error occurred getting " . $key . " from redis.");
             Di::getLogger()->critical($e->getMessage());
             Di::getLogger()->critical($e->getTraceAsString());
-            return new Item($key);
+            return null;
         }
     }
 

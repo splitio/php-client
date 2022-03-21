@@ -50,7 +50,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         $predisClient->set('this_is_a_test_key', 'this-is-a-test-value');
 
         $value = $predis->getItem('this_is_a_test_key');
-        $this->assertEquals('this-is-a-test-value', $value->get());
+        $this->assertEquals('this-is-a-test-value', $value);
 
         $predisClient->del('this_is_a_test_key');
     }
@@ -76,7 +76,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         $predisClient->set('test-redis-assertion.this_is_a_test_key', 'this-is-a-test-value');
 
         $value = $predis->getItem('this_is_a_test_key');
-        $this->assertEquals('this-is-a-test-value', $value->get());
+        $this->assertEquals('this-is-a-test-value', $value);
 
         $predisClient->del('test-redis-assertion.this_is_a_test_key');
     }
@@ -103,7 +103,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         $predisClient->set('test-redis-assertion.this_is_a_test_key', 'this-is-a-test-value');
 
         $value = $predis->getItem('this_is_a_test_key');
-        $this->assertEquals('this-is-a-test-value', $value->get());
+        $this->assertEquals('this-is-a-test-value', $value);
 
         $predisClient->del('test-redis-assertion.this_is_a_test_key');
     }
