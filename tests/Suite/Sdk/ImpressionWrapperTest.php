@@ -10,24 +10,10 @@ use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
 use SplitIO\Component\Common\Di;
 
+use SplitIO\Test\Utils;
+
 class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private function addSplitsInCache()
-    {
-        $splitChanges = file_get_contents(__DIR__."/files/splitil.json");
-        $this->assertJson($splitChanges);
-
-        $splitCache = new SplitCache();
-
-        $splitChanges = json_decode($splitChanges, true);
-        $splits = $splitChanges['splits'];
-
-        foreach ($splits as $split) {
-            $splitName = $split['name'];
-            $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
-        }
-    }
-
     public function testSendDataToClient()
     {
         $impression = new Impression(
@@ -77,7 +63,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClientThrowningExceptionInListener()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient = new ListenerClientWithException();
 
@@ -91,7 +77,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
@@ -100,7 +86,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClientWithNullIpAddress()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient2 = new ListenerClient();
 
@@ -114,7 +100,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
@@ -131,7 +117,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClient()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient = new ListenerClient();
 
@@ -146,7 +132,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
@@ -172,7 +158,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClientWithEmptyIpAddress()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient3 = new ListenerClient();
 
@@ -187,7 +173,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
@@ -204,7 +190,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClientWithEmptyStringIpAddress()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient4 = new ListenerClient();
 
@@ -219,7 +205,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
@@ -236,7 +222,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClientErasingServer()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient4 = new ListenerClient();
 
@@ -252,7 +238,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
@@ -269,7 +255,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClientWithoutImpressionListener()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient5 = new ListenerClient();
 
@@ -282,7 +268,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
@@ -291,7 +277,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
     public function testClientWithNullImpressionListener()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $impressionClient6 = new ListenerClient();
 
@@ -305,9 +291,14 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient($sdkConfig);
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitil.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'iltest'));
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

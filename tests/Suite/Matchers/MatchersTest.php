@@ -10,6 +10,8 @@ use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Component\Common\Di;
 use \ReflectionMethod;
 
+use SplitIO\Test\Utils;
+
 class MatcherTest extends \PHPUnit\Framework\TestCase
 {
     private function setupSplitApp()
@@ -21,7 +23,7 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
             'port' => 6379,
             'timeout' => 881
         );
-        $options = array('prefix' => '');
+        $options = array('prefix' => TEST_PREFIX);
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout', 'level' => 'info'),
             'cache' => array('adapter' => 'predis',
@@ -36,9 +38,14 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
 
     private function populateSegmentCache()
     {
-        SegmentCache::registerSegment('segmentA');
-        $segmentCache = new SegmentCache();
-        $segmentCache->addToSegment('segmentA', array('id1', 'id2', 'id3'));
+        $segmentKey = "SPLITIO.segment.";
+
+        $predis = new \Predis\Client([
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+        ], ['prefix' => TEST_PREFIX]);
+
+        $predis->sadd($segmentKey . 'segmentA', array('id1', 'id2', 'id3'));
     }
 
     public function testSartsWithMatcher()
@@ -492,5 +499,10 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
 
         $matcher2 = new Matcher\EqualToBoolean(false);
         $this->assertEquals($meth->invoke($matcher2, 'ff'), false);
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

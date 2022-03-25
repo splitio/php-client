@@ -5,16 +5,9 @@ use SplitIO\Component\Common\Di;
 
 class SegmentCache implements SegmentCacheInterface
 {
-    const KEY_REGISTER_SEGMENTS = 'SPLITIO.segments.registered';
-
     const KEY_SEGMENT_DATA = 'SPLITIO.segment.{segmentName}';
 
     const KEY_TILL_CACHED_ITEM = 'SPLITIO.segment.{segment_name}.till';
-
-    private static function getCacheKeyForRegisterSegments()
-    {
-        return self::KEY_REGISTER_SEGMENTS;
-    }
 
     private static function getCacheKeyForSegmentData($segmentName)
     {
@@ -24,60 +17,6 @@ class SegmentCache implements SegmentCacheInterface
     private static function getCacheKeyForSinceParameter($segmentName)
     {
         return str_replace('{segment_name}', $segmentName, self::KEY_TILL_CACHED_ITEM);
-    }
-
-    /**
-     * @param $segmentName
-     * @return boolean
-     */
-    public static function registerSegment($segmentName)
-    {
-        $cache = Di::getCache();
-
-        return $cache->saveItemOnList(self::getCacheKeyForRegisterSegments(), $segmentName);
-    }
-
-    public static function getRegisteredSegments()
-    {
-        return Di::getCache()->getItemsOnList(self::getCacheKeyForRegisterSegments());
-    }
-
-    /**
-     * @param $segmentName
-     * @param $segmentKeys
-     * @return mixed
-     */
-    public function addToSegment($segmentName, array $segmentKeys)
-    {
-        $cache = Di::getCache();
-        $return = array();
-
-        $segmentDataKey = self::getCacheKeyForSegmentData($segmentName);
-
-        foreach ($segmentKeys as $key) {
-            $return[$key] = $cache->saveItemOnList($segmentDataKey, $key);
-        }
-
-        return $return;
-    }
-
-    /**
-     * @param $segmentName
-     * @param array $segmentKeys
-     * @return mixed
-     */
-    public function removeFromSegment($segmentName, array $segmentKeys)
-    {
-        $cache = Di::getCache();
-        $return = array();
-
-        $segmentDataKey = self::getCacheKeyForSegmentData($segmentName);
-
-        foreach ($segmentKeys as $key) {
-            $return[$key] = $cache->removeItemOnList($segmentDataKey, $key);
-        }
-
-        return $return;
     }
 
     /**
@@ -93,26 +32,12 @@ class SegmentCache implements SegmentCacheInterface
 
     /**
      * @param $segmentName
-     * @param $changeNumber
-     * @return mixed
-     */
-    public function setChangeNumber($segmentName, $changeNumber)
-    {
-        $sinceKey = self::getCacheKeyForSinceParameter($segmentName);
-        $since_cached_item = Di::getCache()->getItem($sinceKey);
-        Di::getLogger()->info(">>> SINCE CACHE KEY: $sinceKey");
-        $since_cached_item->set($changeNumber);
-
-        return Di::getCache()->save($since_cached_item);
-    }
-
-    /**
-     * @param $segmentName
      * @return mixed
      */
     public function getChangeNumber($segmentName)
     {
-        $since = Di::getCache()->getItem(self::getCacheKeyForSinceParameter($segmentName))->get();
+        $since = Di::getCache()->get(self::getCacheKeyForSinceParameter($segmentName));
+        // empty check for nullable value
         return (empty($since)) ? -1 : $since;
     }
 }

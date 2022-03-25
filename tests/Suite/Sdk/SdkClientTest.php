@@ -14,44 +14,10 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
 
+use SplitIO\Test\Utils;
+
 class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
-    private function addSplitsInCache()
-    {
-        $splitChanges = file_get_contents(__DIR__."/files/splitChanges.json");
-        $this->assertJson($splitChanges);
-
-        $splitCache = new SplitCache();
-
-        $splitChanges = json_decode($splitChanges, true);
-        $splits = $splitChanges['splits'];
-
-        foreach ($splits as $split) {
-            $splitName = $split['name'];
-            $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
-        }
-    }
-
-    private function addSegmentsInCache()
-    {
-        $segmentCache = new SegmentCache();
-
-        //Addinng Employees Segment.
-        $segmentEmployeesChanges = file_get_contents(__DIR__ . "/files/segmentEmployeesChanges.json");
-        $this->assertJson($segmentEmployeesChanges);
-        $segmentData = json_decode($segmentEmployeesChanges, true);
-        $this->assertArrayHasKey('employee_1', $segmentCache->addToSegment(
-            $segmentData['name'],
-            $segmentData['added']
-        ));
-
-        //Adding Human Beigns Segment.
-        $segmentHumanBeignsChanges = file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json");
-        $this->assertJson($segmentHumanBeignsChanges);
-        $segmentData = json_decode($segmentHumanBeignsChanges, true);
-        $this->assertArrayHasKey('user1', $segmentCache->addToSegment($segmentData['name'], $segmentData['added']));
-    }
-
     public function testLocalClient()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
@@ -219,7 +185,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
     ) {
         $raw = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $parsed = json_decode($raw, true);
-        echo "parsed " . json_encode($parsed) . "\n";
         $this->assertEquals($parsed['i']['f'], $feature);
         $this->assertEquals($parsed['i']['k'], $key);
         $this->assertEquals($parsed['i']['t'], $treatment);
@@ -239,7 +204,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
             'port' => REDIS_PORT,
             'timeout' => 881,
         );
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -252,8 +217,9 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitManager = $splitFactory->manager();
 
         //Populating the cache.
-        $this->addSplitsInCache();
-        $this->addSegmentsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
 
@@ -465,7 +431,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('psr3-instance' => $log),
@@ -476,8 +442,9 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
-        $this->addSegmentsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('user1', 'sample_feature'));
@@ -520,10 +487,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         $cachePoolMethods = array(
-            'getItem', 'getItems', 'hasItem', 'clear', 'deleteItem', 'deleteItems',
-            'save', 'saveDeferred', 'commit', 'saveItemOnList', 'removeItemOnList',
-            'getItemOnList', 'getItemsOnList', 'isItemOnList', 'getItemsRandomlyOnList',
-            'getKeys', 'incrementeKey', 'getSet', 'rightPushInList'
+            'get', 'fetchMany', 'isItemOnList', 'getKeys', 'rightPushInList', 'expireKey'
         );
         $cachePool = $this
             ->getMockBuilder('\SplitIO\Component\Cache\Pool')
@@ -549,7 +513,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -562,8 +526,9 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
-        $this->addSegmentsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature'), null);
 
@@ -586,7 +551,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -599,8 +564,9 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
-        $this->addSegmentsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature',
         'sample_feature', 'sample_feature'), null);
@@ -625,7 +591,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -637,8 +603,9 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
-        $this->addSegmentsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
         $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', null, 'invalid_feature',
         'sample_feature', null, 'sample_feature'), null);
@@ -691,5 +658,10 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $client = new Client();
         $client->getTreatments('key1', array('split1', 'split2', 'split3'));
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

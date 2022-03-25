@@ -35,7 +35,7 @@ EOD;
     public function testSplitWithoutConfigurations()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -65,7 +65,7 @@ EOD;
     public function testSplitWithConfigurations()
     {
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),

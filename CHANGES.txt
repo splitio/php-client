@@ -1,5 +1,8 @@
-7.1.1 (Feb 11, 2021)
+7.1.1 (March XX, 2021)
  - Removed unused logic for HTTP and requests dependency.
+ - Removed all producer logic for Storages.
+ - Added SafeRedisWrapper for handling exception in Redis.
+ - Fixed typos in bucket and CONTRIBUTORS-GUIDE.
 
 7.1.0 (Dec 3, 2021)
  - Added a new option to use when running Redis in cluster mode called `keyHashTags` which receives a list of hashtags from which the SDK will randomly pick one to use on the generated instance.

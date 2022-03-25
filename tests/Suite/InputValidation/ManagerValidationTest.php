@@ -9,7 +9,7 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
