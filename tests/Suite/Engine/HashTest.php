@@ -8,6 +8,9 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;
+use SplitIO\Component\Common\Di;
+
+use SplitIO\Test\Utils;
 
 class HashTest extends \PHPUnit\Framework\TestCase
 {
@@ -74,26 +77,12 @@ class HashTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    private function addSplitsInCache()
-    {
-        $splitChanges = file_get_contents(__DIR__."/../../files/algoSplits.json");
-        $this->assertJson($splitChanges);
-
-        $splitCache = new SplitCache();
-
-        $splitChanges = json_decode($splitChanges, true);
-        $splits = $splitChanges['splits'];
-
-        foreach ($splits as $split) {
-            $splitName = $split['name'];
-            $this->assertTrue($splitCache->addSplit($splitName, json_encode($split)));
-        }
-    }
-
     public function testAlgoField()
     {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
+
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
-        $options = array();
+        $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
@@ -105,7 +94,7 @@ class HashTest extends \PHPUnit\Framework\TestCase
         $splitFactory->client();
 
         //Populating the cache.
-        $this->addSplitsInCache();
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/../../files/algoSplits.json"));
 
         $cases = array(
             array(  // Split with algo = 1. Should use legacy function
@@ -137,5 +126,10 @@ class HashTest extends \PHPUnit\Framework\TestCase
             $hasher = HashFactory::getHashAlgorithm($split->getAlgo());
             $this->assertInstanceof($case['class'], $hasher);
         }
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        Utils\Utils::cleanCache();
     }
 }

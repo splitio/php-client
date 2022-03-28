@@ -46,14 +46,17 @@ class SplitFactory implements SplitFactoryInterface
 
     private function doBUR()
     {
-        $ready =  (isset($this->options['ready']) && $this->options['ready'] > 0) ? $this->options['ready'] : null;
+        /*
+            Deprecated
+            $ready =  (isset($this->options['ready']) && $this->options['ready'] > 0) ? $this->options['ready'] : null;
 
-        //Block Until Ready
-        if ($ready) {
-            if (!$this->blockUntilReady($ready)) {
-                throw new TimeOutException("Cache data is not ready yet");
+            //Block Until Ready
+            if ($ready) {
+                if (!$this->blockUntilReady($ready)) {
+                    throw new TimeOutException("Cache data is not ready yet");
+                }
             }
-        }
+        */
     }
 
     /**

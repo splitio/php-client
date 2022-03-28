@@ -33,45 +33,12 @@ class SplitCache implements SplitCacheInterface
     }
 
     /**
-     * @param string $splitName
-     * @param string $split JSON representation
-     * @return boolean
-     */
-    public function addSplit($splitName, $split)
-    {
-        $cache = Di::getCache();
-        $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
-        $cacheItem->set($split);
-        return $cache->save($cacheItem);
-    }
-
-    /**
-     * @param string $splitName
-     * @return boolean
-     */
-    public function removeSplit($splitName)
-    {
-        return Di::getCache()->deleteItem(self::getCacheKeyForSplit($splitName));
-    }
-
-    /**
-     * @param long $changeNumber
-     * @return boolean
-     */
-    public function setChangeNumber($changeNumber)
-    {
-        $since_cached_item = Di::getCache()->getItem(self::getCacheKeyForSinceParameter());
-        $since_cached_item->set($changeNumber);
-
-        return Di::getCache()->save($since_cached_item);
-    }
-
-    /**
      * @return long
      */
     public function getChangeNumber()
     {
-        $since = Di::getCache()->getItem(self::getCacheKeyForSinceParameter())->get();
+        $since = Di::getCache()->get(self::getCacheKeyForSinceParameter());
+        // empty check for nullable value
         return (empty($since)) ? -1 : $since;
     }
 
@@ -82,8 +49,7 @@ class SplitCache implements SplitCacheInterface
     public function getSplit($splitName)
     {
         $cache = Di::getCache();
-        $cacheItem = $cache->getItem(self::getCacheKeyForSplit($splitName));
-        return $cacheItem->get();
+        return $cache->get(self::getCacheKeyForSplit($splitName));
     }
 
     /**
@@ -93,10 +59,10 @@ class SplitCache implements SplitCacheInterface
     public function getSplits($splitNames)
     {
         $cache = Di::getCache();
-        $cacheItems = $cache->getItems(array_map('self::getCacheKeyForSplit', $splitNames));
+        $cacheItems = $cache->fetchMany(array_map('self::getCacheKeyForSplit', $splitNames));
         $toReturn = array();
         foreach ($cacheItems as $key => $value) {
-            $toReturn[self::getSplitNameFromCacheKey($key)] = $value->get();
+            $toReturn[self::getSplitNameFromCacheKey($key)] = $value;
         }
         return $toReturn;
     }
@@ -133,7 +99,8 @@ class SplitCache implements SplitCacheInterface
     {
         $cache = Di::getCache();
 
-        $count = $cache->getItem(self::getCacheKeyForTrafficType($trafficType))->get();
+        $count = $cache->get(self::getCacheKeyForTrafficType($trafficType));
+        // empty check for nullable value
         return (empty($count) || $count < 1) ? false : true;
     }
 }

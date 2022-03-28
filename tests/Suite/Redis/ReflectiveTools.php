@@ -13,6 +13,11 @@ class ReflectiveTools
         $reflectionAdapter->setAccessible(true);
         $adapter = $reflectionAdapter->getValue($cachePool);
 
+        $reflectionSafeRedis = new ReflectionClass('SplitIO\Component\Cache\Storage\Adapter\SafeRedisWrapper');
+        $reflectionCacheAdapter= $reflectionSafeRedis->getProperty('cacheAdapter');
+        $reflectionCacheAdapter->setAccessible(true);
+        $adapter = $reflectionCacheAdapter->getValue($adapter);
+
         $reflectionPRedis = new ReflectionClass('SplitIO\Component\Cache\Storage\Adapter\PRedis');
         $reflectionClient= $reflectionPRedis->getProperty('client');
         $reflectionClient->setAccessible(true);

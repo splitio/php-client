@@ -5,14 +5,18 @@
     <php>
         <const name="REDIS_HOST" value="localhost"/>
         <const name="REDIS_PORT" value="6379"/>
+        <const name="TEST_PREFIX" value="SPLITIO_TEST:."/>
     </php>
 
     <testsuites>
         <testsuite name="splitio">
             <directory suffix="Test.php">tests/</directory>
         </testsuite>
-        <testsuite name="redis-adapter">
-            <file>tests/Suite/Redis/CacheInterfacesTest.php</file>
+        <testsuite name="adapter">
+            <directory suffix="Test.php">tests/Suite/Adapter</directory>
+        </testsuite>
+        <testsuite name="attributes">
+            <directory suffix="Test.php">tests/Suite/Attributes/</directory>
         </testsuite>
         <testsuite name="common">
             <directory suffix="Test.php">tests/Suite/Common/</directory>
@@ -20,8 +24,14 @@
         <testsuite name="component">
             <directory suffix="Test.php">tests/Suite/Component/</directory>
         </testsuite>
+                <testsuite name="dynamic_configurations">
+            <directory suffix="Test.php">tests/Suite/DynamicConfigurations/</directory>
+        </testsuite>
         <testsuite name="engine">
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
+        </testsuite>
+        <testsuite name="input_validation">
+            <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
         </testsuite>
         <testsuite name="matchers">
             <directory suffix="Test.php">tests/Suite/Matchers/</directory>
@@ -29,29 +39,27 @@
         <testsuite name="metrics">
             <directory suffix="Test.php">tests/Suite/Metrics/</directory>
         </testsuite>
+        <testsuite name="redis">
+            <directory suffix="Test.php">tests/Suite/Redis/</directory>
+        </testsuite>
         <testsuite name="sdk">
             <directory suffix="Test.php">tests/Suite/Sdk/</directory>
-        </testsuite>
-        <testsuite name="attributes">
-            <directory suffix="Test.php">tests/Suite/Attributes/</directory>
-        </testsuite>
-        <testsuite name="input_validation">
-            <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
         </testsuite>
 
 
 
         <testsuite name="integration">
-            <directory suffix="Test.php">tests/Suite/Common/</directory>
-            <directory suffix="Test.php">tests/Suite/Component/</directory>
-            <directory suffix="Test.php">tests/Suite/Engine/</directory>
-            <directory suffix="Test.php">tests/Suite/Matchers/</directory>
-            <directory suffix="Test.php">tests/Suite/Metrics/</directory>
-            <directory suffix="Test.php">tests/Suite/Sdk/</directory>
             <directory suffix="Test.php">tests/Suite/Adapter/</directory>
             <directory suffix="Test.php">tests/Suite/Attributes/</directory>
-            <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
+            <directory suffix="Test.php">tests/Suite/Common/</directory>
+            <directory suffix="Test.php">tests/Suite/Component/</directory>
             <directory suffix="Test.php">tests/Suite/DynamicConfigurations/</directory>
+            <directory suffix="Test.php">tests/Suite/Engine/</directory>
+            <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
+            <directory suffix="Test.php">tests/Suite/Matchers/</directory>
+            <directory suffix="Test.php">tests/Suite/Metrics/</directory>
+            <directory suffix="Test.php">tests/Suite/Redis/</directory>
+            <directory suffix="Test.php">tests/Suite/Sdk/</directory>
         </testsuite>
     </testsuites>
 

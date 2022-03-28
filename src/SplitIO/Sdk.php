@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Component\Http\Uri;
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerTrait;
 use SplitIO\Exception\Exception;
