@@ -18,7 +18,7 @@ class PartOfSet extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        if (!is_array($key) || count($key) == 0) {
+        if (!is_array($key) || empty($key)) {
             return false;
         }
 

@@ -40,7 +40,7 @@ class PRedis implements CacheStorageAdapterInterface
         if (!is_array($nodes)) {
             return $type . "s must be an array.";
         }
-        if (count($nodes) == 0) {
+        if (empty($nodes)) {
             return "At least one " . $type . " is required.";
         }
         if (SplitIOUtils\isAssociativeArray($nodes)) {
@@ -119,7 +119,7 @@ class PRedis implements CacheStorageAdapterInterface
                 return $this->validateKeyHashTag($value)['valid'];
             }
         );
-        if (count($filteredArray) == 0) {
+        if (empty($filteredArray)) {
             throw new AdapterException('keyHashTags size is zero after filtering valid elements.');
         }
         return $selected = $filteredArray[array_rand($filteredArray, 1)];
@@ -228,7 +228,7 @@ class PRedis implements CacheStorageAdapterInterface
     public function fetchMany(array $keys = array())
     {
         $toReturn = array();
-        if (count($keys) == 0) {
+        if (empty($keys)) {
             return $toReturn;
         }
         $values = $this->client->mget($keys);

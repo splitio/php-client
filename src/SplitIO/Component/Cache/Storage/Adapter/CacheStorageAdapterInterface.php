@@ -3,9 +3,6 @@ namespace SplitIO\Component\Cache\Storage\Adapter;
 
 interface CacheStorageAdapterInterface
 {
-
-    // public function __construct(array $options);
-
     /**
      * @param null|string $pattern
      * @return mixed
