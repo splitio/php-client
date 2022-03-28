@@ -49,8 +49,7 @@ class SplitCache implements SplitCacheInterface
     public function getSplit($splitName)
     {
         $cache = Di::getCache();
-        $cacheItem = $cache->get(self::getCacheKeyForSplit($splitName));
-        return $cacheItem;
+        return $cache->get(self::getCacheKeyForSplit($splitName));
     }
 
     /**
