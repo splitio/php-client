@@ -17,14 +17,12 @@ class EndsWith extends AbstractMatcher
 
     protected function evalKey($key)
     {
-        $keyLength = strlen($key);
-        if (!is_array($this->endsWithMatcherData) || !is_string($key) || $keyLength == 0) {
+        if (!is_array($this->endsWithMatcherData) || !is_string($key) || strlen($key) == 0) {
             return false;
         }
 
         foreach ($this->endsWithMatcherData as $item) {
-            $itemLength = strlen($item);
-            if (is_string($item) && substr($key, -$itemLength) == $item) {
+            if (is_string($item) && substr($key, -strlen($item)) == $item) {
                 return true;
             }
         }

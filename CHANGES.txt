@@ -1,3 +1,6 @@
+7.1.2 (May 24, 2022)
+ - Added validation when strlen is not receiving string to avoid Fatal Error in PHP 8.
+
 7.1.1 (March 28, 2022)
  - Removed unused logic for HTTP and requests dependency.
  - Removed all producer logic for Storages.
