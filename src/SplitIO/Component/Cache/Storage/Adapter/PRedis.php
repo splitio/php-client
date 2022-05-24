@@ -279,7 +279,7 @@ class PRedis implements CacheStorageAdapterInterface
 
     private static function normalizePrefix($prefix)
     {
-        if ($prefix && strlen($prefix)) {
+        if ($prefix && is_string($prefix) && strlen($prefix)) {
             if ($prefix[strlen($prefix) - 1] == '.') {
                 return $prefix;
             } else {

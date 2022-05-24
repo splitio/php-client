@@ -94,6 +94,7 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($matcher->evaluate('testJKL'), false);
         $this->assertEquals($matcher->evaluate(''), false);
         $this->assertEquals($matcher->evaluate(null), false);
+        $this->assertEquals($matcher->evaluate(array("some")), false);
     }
 
     public function testContainsStringMatcher()
@@ -118,6 +119,7 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($matcher->evaluate('Curabitur'), false);
         $this->assertEquals($matcher->evaluate(''), false);
         $this->assertEquals($matcher->evaluate(null), false);
+        $this->assertEquals($matcher->evaluate(array("some")), false);
     }
 
 
