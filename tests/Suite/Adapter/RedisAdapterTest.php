@@ -514,4 +514,30 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             ),
         ));
     }
+
+    public function testRedisWithWrongPrefix()
+    {
+        $predis = new PRedis(array(
+            'parameters' => array(
+                'scheme' => 'tcp',
+                'host' => 'localhost',
+                'port' => 6379,
+                'timeout' => 881,
+                'database' => 0
+            ),
+            'options' => array(
+                'prefix' => array()
+            )
+        ));
+        $predisClient = new \Predis\Client([
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+        ]);
+        $predisClient->set('{SPLITIO}.this_is_a_test_key', 'this-is-a-test-value');
+
+        $value = $predis->get('{SPLITIO}.this_is_a_test_key');
+        $this->assertEquals('this-is-a-test-value', $value);
+
+        $predisClient->del('{SPLITIO}.this_is_a_test_key');
+    }
 }
