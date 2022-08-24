@@ -24,7 +24,7 @@
   "require": {
     "php": ">=7.3",
     "psr/log": "~1.0",
-    "predis/predis": "^1.1.9",
+    "predis/predis": "^2.0",
     "symfony/yaml": ">=5.3"
   },
 
@@ -45,6 +45,12 @@
   "autoload-dev": {
     "psr-4": {
       "SplitIO\\Test\\": "tests/"
+    }
+  },
+
+  "config": {
+    "allow-plugins": {
+      "symfony/flex": true
     }
   }
 }
