@@ -5,14 +5,17 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use \SplitIO\Component\Log\Handler\LogHandlerInterface;
 use SplitIO\Component\Log\Handler\VoidHandler;
+use Psr\Log\LoggerTrait;
 
 /**
  * Class Logger
  * Implement PSR-3 interface
  * @package SplitIO\Component\Log
  */
-class Logger extends LoggerTrait implements LoggerInterface
+class Logger implements LoggerInterface
 {
+    use LoggerTrait;
+
     /**
      * @var null|LogHandlerInterface
      */
@@ -50,14 +53,9 @@ class Logger extends LoggerTrait implements LoggerInterface
     }
 
     /**
-     * Log method
-     *
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
-     * @return null
+     * {@inheritDoc}
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, string|\Stringable $message, array $context = []): void
     {
         if ($this->logLevels[$level] <= $this->logLevel) {
             $this->handler->write($level, $message);

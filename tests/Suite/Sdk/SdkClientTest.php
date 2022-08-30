@@ -7,11 +7,8 @@ use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
-use SplitIO\Component\Cache\Storage\Adapter;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Pool;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
 
 use SplitIO\Test\Utils;
