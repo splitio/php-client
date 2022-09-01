@@ -5,11 +5,11 @@ use Psr\Log\LoggerInterface;
 use SplitIO\Component\Log\Handler\LogHandlerInterface;
 
 /**
- * Class LoggerAdapterPSR3v2
- * Logger Handler for PSR3 v2
+ * Class LoggerAdapterPSR
+ * Logger Handler for PSR3
  * @package namespace SplitIO\Component\Log;
  */
-class LoggerAdapterPSR3v2 implements LogHandlerInterface
+class LoggerAdapterPSR implements LogHandlerInterface
 {
     /**
      * @var LogHandlerInterface
