@@ -16,12 +16,12 @@ class LoggerFactory
      * Builds defaultLogger
      *
      * @param $options
+     * @param $level
      * @return SplitIO\Component\Log\Logger
      */
-    private static function setDefaultLogger(array $options)
+    private static function setDefaultLogger(array $options, $level)
     {
         $adapter = (isset($options['adapter'])) ? $options['adapter'] : null;
-        $level = (isset($options['level'])) ? $options['level'] : null;
 
         switch ($adapter) {
             case 'stdout':
@@ -42,9 +42,7 @@ class LoggerFactory
                 break;
         }
 
-        if (! LogLevelEnum::isValid($level)) {
-            $level = LogLevel::WARNING;
-        }
+
 
         return new Logger($logAdapter, $level);
     }
@@ -57,10 +55,15 @@ class LoggerFactory
      */
     public static function setupLogger(array $options)
     {
-        if (!isset($options['psr3-instance'])) {
-            return self::setDefaultLogger($options);
+        $level = (isset($options['level'])) ? $options['level'] : null;
+        if (!LogLevelEnum::isValid($level)) {
+            $level = LogLevel::WARNING;
         }
 
-        return new Logger(new LoggerAdapterPSR($options['psr3-instance']));
+        if (!isset($options['psr3-instance'])) {
+            return self::setDefaultLogger($options, $level);
+        }
+
+        return new Logger(new LoggerAdapterPSR($options['psr3-instance']), $level);
     }
 }
