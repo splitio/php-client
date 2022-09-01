@@ -12,6 +12,12 @@ use SplitIO\Component\Log\Handler\VoidHandler;
 
 class LoggerFactory
 {
+    /**
+     * Builds defaultLogger
+     *
+     * @param $options
+     * @return SplitIO\Component\Log\Logger
+     */
     private static function setDefaultLogger(array $options) {
         $adapter = (isset($options['adapter'])) ? $options['adapter'] : null;
         $level = (isset($options['level'])) ? $options['level'] : null;
@@ -42,6 +48,12 @@ class LoggerFactory
         return new Logger($logAdapter, $level);
     }
 
+    /**
+     * Builds logger
+     *
+     * @param $options
+     * @return SplitIO\Component\Log\Logger
+     */
     public static function setupLogger(array $options) {
         if (!isset($options['psr3-instance'])) {
             return self::setDefaultLogger($options);
