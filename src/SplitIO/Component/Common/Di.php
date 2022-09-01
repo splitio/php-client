@@ -118,7 +118,7 @@ class Di
     /**
      * @param LoggerInterface $logger
      */
-    public static function setLogger(LoggerInterface $logger)
+    public static function setLogger($logger)
     {
         self::set(self::KEY_LOG, $logger);
     }

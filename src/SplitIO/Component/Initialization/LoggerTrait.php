@@ -13,7 +13,7 @@ use SplitIO\Component\Log\LogLevelEnum;
 
 class LoggerTrait
 {
-    public static function addLogger($adapter, $level, LoggerInterface $custom = null)
+    public static function addLogger($adapter, $level, $custom = null)
     {
         $logger = null;
 

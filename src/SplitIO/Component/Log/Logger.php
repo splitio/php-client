@@ -11,7 +11,7 @@ use SplitIO\Component\Log\Handler\VoidHandler;
  * Implement PSR-3 interface
  * @package SplitIO\Component\Log
  */
-class Logger extends LoggerTrait implements LoggerInterface
+class Logger extends LoggerTrait
 {
     /**
      * @var null|LogHandlerInterface
