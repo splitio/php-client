@@ -36,7 +36,7 @@ class LoggerAdapterPSR3v2 implements LogHandlerInterface
             if (!is_string($message) || !$message instanceof Stringable) {
                 $message = json_encode($message);
             }
-            $this->logger->write($logLevel, $message);
+            $this->logger->log($logLevel, $message);
         } catch (\Exception $e) {
         }
     }

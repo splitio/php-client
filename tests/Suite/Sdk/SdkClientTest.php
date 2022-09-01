@@ -2,6 +2,8 @@
 namespace SplitIO\Test\Suite\Sdk;
 
 use \stdClass;
+use Monolog\Logger;
+use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
@@ -423,16 +425,16 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCustomLog()
     {
-        /*
         Di::set(Di::KEY_FACTORY_TRACKER, false);
         // create a log channel
         $log = new Logger('SplitIO');
+        $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
-            'log' => array('psr3-instance' => $log),
+            'log' =>  array('psr3-instance' => $log, 'standard' => 'psr3-v3'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 
@@ -451,7 +453,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($splitSdk->isTreatment('user1', 'sample_feature', 'on'));
         $this->assertFalse($splitSdk->isTreatment('user1', 'sample_feature', 'invalid_treatment'));
-        */
     }
 
     public function testInvalidCacheAdapter()
