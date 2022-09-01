@@ -434,7 +434,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $options = array('prefix' => TEST_PREFIX);
 
         $sdkConfig = array(
-            'log' =>  array('psr3-instance' => $log, 'standard' => 'psr3-v3'),
+            'log' => array('psr3-instance' => $log),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
         );
 

@@ -1,4 +1,4 @@
-7.1.4 (Aug 30, 2022)
+7.1.4 (Sep XX, 2022)
  - Updated dependencies to allow `psr/log` 2 and 3.
  - Removed `phpdocumentor/phpdocumentor` dependency.
  - Updated `Logger` and `LoggerTrait` to be compliant with `psr/log` 3.
