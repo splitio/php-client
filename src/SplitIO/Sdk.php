@@ -3,6 +3,7 @@ namespace SplitIO;
 
 use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerFactory;
+use SplitIO\Component\Common\ServiceProvider;
 use SplitIO\Exception\Exception;
 use SplitIO\Sdk\Factory\LocalhostSplitFactory;
 use SplitIO\Sdk\Factory\SplitFactory;
@@ -61,7 +62,8 @@ class Sdk
      */
     private static function registerLogger(array $options)
     {
-        LoggerFactory::setupLogger($options);
+        $logger = LoggerFactory::setupLogger($options);
+        ServiceProvider::registerLogger($logger);
     }
 
     private static function registerCache(array $options)
