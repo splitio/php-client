@@ -475,8 +475,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
     public function testCacheExceptionReturnsControl()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
-        $log = new Logger('SplitIO');
-        $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
+
+        $log = $this
+            ->getMockBuilder('Psr\Log\LoggerInterface')
+            ->disableOriginalConstructor()
+            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'write', 'log'))
+            ->getMock();
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
