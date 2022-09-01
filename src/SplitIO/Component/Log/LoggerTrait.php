@@ -20,7 +20,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function emergency($message, array $context = array()): void
+    public function emergency($message, array $context = array())
     {
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
@@ -35,7 +35,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function alert($message, array $context = array()): void
+    public function alert($message, array $context = array())
     {
         $this->log(LogLevel::ALERT, $message, $context);
     }
@@ -49,7 +49,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function critical($message, array $context = array()): void
+    public function critical($message, array $context = array())
     {
         $this->log(LogLevel::CRITICAL, $message, $context);
     }
@@ -62,7 +62,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function error($message, array $context = array()): void
+    public function error($message, array $context = array())
     {
         $this->log(LogLevel::ERROR, $message, $context);
     }
@@ -77,7 +77,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function warning($message, array $context = array()): void
+    public function warning($message, array $context = array())
     {
         $this->log(LogLevel::WARNING, $message, $context);
     }
@@ -89,7 +89,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function notice($message, array $context = array()): void
+    public function notice($message, array $context = array())
     {
         $this->log(LogLevel::NOTICE, $message, $context);
     }
@@ -103,7 +103,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function info($message, array $context = array()): void
+    public function info($message, array $context = array())
     {
         $this->log(LogLevel::INFO, $message, $context);
     }
@@ -115,7 +115,7 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    public function debug($message, array $context = array()): void
+    public function debug($message, array $context = array())
     {
         $this->log(LogLevel::DEBUG, $message, $context);
     }
@@ -128,5 +128,5 @@ abstract class LoggerTrait
      * @param array $context
      * @return null
      */
-    abstract public function log($level, $message, array $context = array()): void;
+    abstract public function log($level, $message, array $context = array());
 }

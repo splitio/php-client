@@ -57,7 +57,7 @@ class Logger extends LoggerTrait
      * @param array $context
      * @return null
      */
-    public function log($level, $message, array $context = array()): void
+    public function log($level, $message, array $context = array())
     {
         if ($this->logLevels[$level] <= $this->logLevel) {
             $this->handler->write($level, $message);
