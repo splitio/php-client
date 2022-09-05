@@ -5,16 +5,16 @@ use Psr\Log\LoggerInterface;
 use SplitIO\Component\Log\Handler\LogHandlerInterface;
 
 /**
- * Class LoggerAdapterPSR
+ * Class PSR3LoggerAdapter
  * Logger Handler for PSR3
  * @package namespace SplitIO\Component\Log;
  */
-class LoggerAdapterPSR implements LogHandlerInterface
+class PSR3LoggerAdapter implements LogHandlerInterface
 {
     /**
      * @var LogHandlerInterface
      */
-    protected $logger;
+    private $logger;
 
     /**
      * Logger constructor
@@ -32,12 +32,14 @@ class LoggerAdapterPSR implements LogHandlerInterface
      */
     public function write($logLevel, $message)
     {
-        try {
-            if (!is_string($message) || !$message instanceof Stringable) {
-                $message = json_encode($message);
+        if (!is_string($message) || !$message instanceof Stringable) {
+            try {
+                $this->logger->log($logLevel, json_encode($message));
+            } catch (\Exception $e) {
+                $this->logger->log(LogLevel::ERROR, "error serializing non-stringable object when trying to log message of type " + gettype($message));
             }
+        } else {
             $this->logger->log($logLevel, $message);
-        } catch (\Exception $e) {
         }
     }
 }

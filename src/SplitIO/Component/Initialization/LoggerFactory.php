@@ -3,7 +3,7 @@ namespace SplitIO\Component\Initialization;
 
 use Psr\Log\LogLevel;
 use SplitIO\Component\Log\Logger;
-use SplitIO\Component\Log\LoggerAdapterPSR;
+use SplitIO\Component\Log\PSR3LoggerAdapter;
 use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Component\Log\Handler\Echos;
 use SplitIO\Component\Log\Handler\Stdout;
@@ -16,35 +16,26 @@ class LoggerFactory
      * Builds defaultLogger
      *
      * @param $options
-     * @param $level
-     * @return SplitIO\Component\Log\Logger
+     * @return SplitIO\Component\Log\Handler
      */
-    private static function setDefaultLogger(array $options, $level)
+    private static function buildAdapter(array $options)
     {
         $adapter = (isset($options['adapter'])) ? $options['adapter'] : null;
 
         switch ($adapter) {
             case 'stdout':
-                $logAdapter = new Stdout();
-                break;
+                return new Stdout();
 
             case 'echo':
-                $logAdapter = new Echos();
-                break;
+                return new Echos();
 
             case 'void':
-                $logAdapter = new VoidHandler();
-                break;
+                return new VoidHandler();
 
             case 'syslog':
             default:
-                $logAdapter = new Syslog();
-                break;
+                return new Syslog();
         }
-
-
-
-        return new Logger($logAdapter, $level);
     }
 
     /**
@@ -61,9 +52,9 @@ class LoggerFactory
         }
 
         if (!isset($options['psr3-instance'])) {
-            return self::setDefaultLogger($options, $level);
+            return new Logger(self::buildAdapter($options), $level);
         }
 
-        return new Logger(new LoggerAdapterPSR($options['psr3-instance']), $level);
+        return new Logger(new PSR3LoggerAdapter($options['psr3-instance']), $level);
     }
 }
