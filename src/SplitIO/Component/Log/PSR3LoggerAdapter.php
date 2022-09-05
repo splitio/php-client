@@ -36,7 +36,10 @@ class PSR3LoggerAdapter implements LogHandlerInterface
             try {
                 $this->logger->log($logLevel, json_encode($message));
             } catch (\Exception $e) {
-                $this->logger->log(LogLevel::ERROR, "error serializing non-stringable object when trying to log message of type " + gettype($message));
+                $this->logger->log(
+                    LogLevel::ERROR,
+                    "error serializing non-stringable object when trying to log message of type " + gettype($message)
+                );
             }
         } else {
             $this->logger->log($logLevel, $message);
