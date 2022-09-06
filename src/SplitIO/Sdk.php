@@ -2,7 +2,8 @@
 namespace SplitIO;
 
 use SplitIO\Component\Initialization\CacheTrait;
-use SplitIO\Component\Initialization\LoggerTrait;
+use SplitIO\Component\Initialization\LoggerFactory;
+use SplitIO\Component\Common\ServiceProvider;
 use SplitIO\Exception\Exception;
 use SplitIO\Sdk\Factory\LocalhostSplitFactory;
 use SplitIO\Sdk\Factory\SplitFactory;
@@ -61,14 +62,8 @@ class Sdk
      */
     private static function registerLogger(array $options)
     {
-        if (isset($options['psr3-instance'])) {
-            LoggerTrait::addLogger(null, null, $options['psr3-instance']);
-        } else {
-            $adapter = (isset($options['adapter'])) ? $options['adapter'] : null;
-            $level = (isset($options['level'])) ? $options['level'] : null;
-
-            LoggerTrait::addLogger($adapter, $level);
-        }
+        $logger = LoggerFactory::setupLogger($options);
+        ServiceProvider::registerLogger($logger);
     }
 
     private static function registerCache(array $options)
