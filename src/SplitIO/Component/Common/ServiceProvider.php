@@ -3,7 +3,7 @@ namespace SplitIO\Component\Common;
 
 class ServiceProvider
 {
-    public static function registerLogger(\Psr\Log\LoggerInterface $logger)
+    public static function registerLogger($logger)
     {
         Di::setLogger($logger);
     }

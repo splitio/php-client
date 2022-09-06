@@ -1,7 +1,8 @@
 <?php
 namespace SplitIO\Test\Suite\Engine;
 
-use SplitIO\Component\Initialization\LoggerTrait;
+use SplitIO\Component\Initialization\LoggerFactory;
+use SplitIO\Component\Common\ServiceProvider;
 use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition;
@@ -15,7 +16,8 @@ class SplitterTest extends \PHPUnit\Framework\TestCase
 
     public function testDiLog()
     {
-        LoggerTrait::addLogger('stdout', LogLevelEnum::ERROR);
+        $logger = LoggerFactory::setupLogger(array('adapter' => 'stdout', 'level' => 'error'));
+        ServiceProvider::registerLogger($logger);
 
         $this->assertTrue(true);
     }

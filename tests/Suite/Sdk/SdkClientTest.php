@@ -2,8 +2,6 @@
 namespace SplitIO\Test\Suite\Sdk;
 
 use \stdClass;
-use Monolog\Logger;
-use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
@@ -14,6 +12,7 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
 
+use SplitIO\Test\Suite\Sdk\Helpers\CustomLogger;
 use SplitIO\Test\Utils;
 
 class SdkClientTest extends \PHPUnit\Framework\TestCase
@@ -427,8 +426,12 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
         // create a log channel
-        $log = new Logger('SplitIO');
-        $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
+        $log = $this
+            ->getMockBuilder('Psr\Log\LoggerInterface')
+            ->disableOriginalConstructor()
+            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'write', 'log'))
+            ->getMock();
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
@@ -472,8 +475,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
     public function testCacheExceptionReturnsControl()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
-        $log = new Logger('SplitIO');
-        $log->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::INFO));
+
+        $log = $this
+            ->getMockBuilder('Psr\Log\LoggerInterface')
+            ->disableOriginalConstructor()
+            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'write', 'log'))
+            ->getMock();
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
