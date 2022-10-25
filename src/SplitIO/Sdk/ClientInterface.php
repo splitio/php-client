@@ -65,7 +65,6 @@ interface ClientInterface
      *
      * <p>
      * This method does not throw any exceptions.
-     * It also never returns null.
      *
      * This method returns null configuration if:
      * <ol>
@@ -74,7 +73,7 @@ interface ClientInterface
      * @param $key
      * @param $featureName
      * @param $attributes
-     * @return string
+     * @return string|array|null
      */
     public function getTreatmentWithConfig($key, $featureName, array $attributes = null);
 
