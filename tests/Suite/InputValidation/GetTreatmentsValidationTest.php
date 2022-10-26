@@ -407,6 +407,34 @@ class GetTreatmentsValidationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $treatmentResult['some_feature_non_existant']['treatment']);
     }
 
+    public function testGetTreatmenstConfigWithNullFeatures()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo('getTreatmentsWithConfig: featureNames must be a non-empty array.'));
+
+        $treatmentResult = $splitSdk->getTreatmentsWithConfig("some_key", null);
+        $this->assertEquals(array(), $treatmentResult);
+    }
+
+    public function testGetTreatmenstConfigWithEmptyFeatures()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo('getTreatmentsWithConfig: featureNames must be a non-empty array.'));
+
+        $treatmentResult = $splitSdk->getTreatmentsWithConfig("some_key", array());
+        $this->assertEquals(array(), $treatmentResult);
+    }
+
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();
