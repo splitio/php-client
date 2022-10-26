@@ -49,8 +49,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('on', $splitSdk->getTreatment('test', 'other_feature_2'));
         $this->assertEquals('off', $splitSdk->getTreatment('key', 'other_feature_3'));
         $this->assertEquals('on', $splitSdk->getTreatment('key_whitelist', 'other_feature_3'));
-
         $this->assertEquals('control', $splitSdk->getTreatment(true, 'other_feature_3'));
+        $this->assertEquals('control', $splitSdk->getTreatment('some', null));
 
         $result = $splitSdk->getTreatments('only_key', array('my_feature', 'other_feature'));
         $this->assertEquals('off', $result["my_feature"]);
@@ -62,6 +62,12 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $result = $splitSdk->getTreatments(true, array(true, 'other_feature'));
         $this->assertEquals('control', $result["other_feature"]);
+
+        $result = $splitSdk->getTreatments("some", array());
+        $this->assertEquals(array(), $result);
+
+        $result = $splitSdk->getTreatments("some", null);
+        $this->assertEquals(array(), $result);
 
         $result = $splitSdk->getTreatmentWithConfig('only_key', 'my_feature');
         $this->assertEquals('off', $result["treatment"]);
@@ -105,6 +111,10 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $result["treatment"]);
         $this->assertEquals(null, $result["config"]);
 
+        $result = $splitSdk->getTreatmentWithConfig('some', null);
+        $this->assertEquals('control', $result["treatment"]);
+        $this->assertEquals(null, $result["config"]);
+
         $result = $splitSdk->getTreatmentsWithConfig('only_key', array('my_feature', 'other_feature'));
         $this->assertEquals('off', $result['my_feature']["treatment"]);
         $this->assertEquals(
@@ -126,6 +136,12 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
             '{"desc" : "this applies only to OFF and only for only_key. The rest will receive ON"}',
             $result['my_feature']["config"]
         );
+
+        $result = $splitSdk->getTreatmentsWithConfig('some', array());
+        $this->assertEquals(array(), $result);
+
+        $result = $splitSdk->getTreatmentsWithConfig('some', null);
+        $this->assertEquals(array(), $result);
 
         $this->assertEquals(4, count($splitManager->splitNames()));
 

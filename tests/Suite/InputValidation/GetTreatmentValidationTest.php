@@ -366,6 +366,23 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $result['treatment']);
     }
 
+    public function testGetTreatmentWitConfigWithhNullFeatureName()
+    {
+        $splitSdk = $this->getFactoryClient();
+
+        $logger = $this->getMockedLogger();
+
+        $logger->expects($this->once())
+            ->method('critical')
+            ->with($this->equalTo("getTreatmentWithConfig: you passed a null split name, split name must be a non-empty"
+                . " string."));
+
+        $result = $splitSdk->getTreatmentWithConfig('some_key', null);
+        $this->assertEquals('control', $result['treatment']);
+        $this->assertEquals(null, $result['config']);
+
+    }
+
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();
