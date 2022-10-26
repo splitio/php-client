@@ -1,7 +1,7 @@
 # Split SDK for PHP
 
 [![build status](https://github.com/splitio/php-client/actions/workflows/ci.yml/badge.svg)](https://github.com/splitio/php-client/actions)
-[![Latest stable](https://img.shields.io/packagist/v/splitsoftware/split-sdk-php)[https://packagist.org/packages/splitsoftware/split-sdk-php]
+[![Latest stable](https://img.shields.io/packagist/v/splitsoftware/split-sdk-php)](https://packagist.org/packages/splitsoftware/split-sdk-php)
 [![Documentation](https://img.shields.io/badge/php_client-documentation-informational)](https://help.split.io/hc/en-us/articles/360020350372-PHP-SDK)
 
 This SDK is designed to work with Split, the platform for controlled rollouts, serving features to your users via the Split feature flag to manage your complete customer experience.
