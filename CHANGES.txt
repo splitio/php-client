@@ -1,3 +1,6 @@
+7.1.5 (Oct 28, 2022)
+ - Updated phpdocs for `ClientInterface`.
+
 7.1.4 (Sep 6, 2022)
  - Updated dependencies to allow `psr/log` 2 and 3.
  - Removed `phpdocumentor/phpdocumentor` dependency.
