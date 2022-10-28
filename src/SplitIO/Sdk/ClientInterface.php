@@ -29,7 +29,7 @@ interface ClientInterface
      *
      * <p>
      * This method does not throw any exceptions.
-     * It also never  returns null.
+     * It also never returns null.
      *
      * @param $key
      * @param $featureName
@@ -74,7 +74,7 @@ interface ClientInterface
      * @param $key
      * @param $featureName
      * @param $attributes
-     * @return string
+     * @return array
      */
     public function getTreatmentWithConfig($key, $featureName, array $attributes = null);
 
