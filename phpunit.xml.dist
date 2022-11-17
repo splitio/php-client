@@ -24,7 +24,7 @@
         <testsuite name="component">
             <directory suffix="Test.php">tests/Suite/Component/</directory>
         </testsuite>
-                <testsuite name="dynamic_configurations">
+        <testsuite name="dynamic_configurations">
             <directory suffix="Test.php">tests/Suite/DynamicConfigurations/</directory>
         </testsuite>
         <testsuite name="engine">

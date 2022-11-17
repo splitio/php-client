@@ -26,27 +26,27 @@ class Client implements ClientInterface
     /**
      * @var \SplitIO\Component\Cache\SplitCache
      */
-    private  $splitCache;
+    private $splitCache;
 
     /**
      * @var \SplitIO\Component\Cache\SegmentCache
      */
-    private  $segmentCache;
+    private $segmentCache;
 
     /**
      * @var \SplitIO\Component\Cache\ImpressionCache
      */
-    private  $impressionCache;
+    private $impressionCache;
 
     /**
      * @var \SplitIO\Component\Cache\EventCache
      */
-    private  $eventCache;
+    private $eventCache;
 
     /**
      * @var \SplitIO\Sdk\Validator\InputValidator
      */
-    private  $inputValidator;
+    private $inputValidator;
 
     /**
      * @param array $options

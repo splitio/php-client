@@ -19,7 +19,8 @@ class ImpressionCache
     /**
      * @param \SplitIO\Component\Cache\Pool $cache
      */
-    public function __construct(Pool $cache) {
+    public function __construct(Pool $cache)
+    {
         $this->cache = $cache;
     }
 

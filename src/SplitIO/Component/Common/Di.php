@@ -120,5 +120,4 @@ class Di
     {
         return self::get(self::KEY_LOG);
     }
-
 }

@@ -16,12 +16,12 @@ class Evaluator
     /**
      * @var \SplitIO\Component\Cache\SplitCache
      */
-    private  $splitCache;
+    private $splitCache;
 
     /**
      * @var \SplitIO\Component\Cache\SegmentCache
      */
-    private  $segmentCache;
+    private $segmentCache;
 
     public function __construct(SplitCache $splitCache, SegmentCache $segmentCache)
     {

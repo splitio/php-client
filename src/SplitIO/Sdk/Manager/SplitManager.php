@@ -14,9 +14,10 @@ class SplitManager implements SplitManagerInterface
     /**
      * @var \SplitIO\Component\Cache\SplitCache
      */
-    private  $splitCache;
+    private $splitCache;
 
-    public function __construct(SplitCache $splitCache) {
+    public function __construct(SplitCache $splitCache)
+    {
         $this->splitCache = $splitCache;
     }
 

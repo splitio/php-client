@@ -22,8 +22,13 @@ class Engine
      * @param array|null $context
      * @return array
      */
-    public static function getTreatment($matchingKey, $bucketingKey, SplitGrammar $split, array $attributes = null, array $context = null)
-    {
+    public static function getTreatment(
+        $matchingKey,
+        $bucketingKey,
+        SplitGrammar $split,
+        array $attributes = null,
+        array $context = null
+    ) {
         if ($bucketingKey === null) {
             $bucketingKey = $matchingKey;
         }
