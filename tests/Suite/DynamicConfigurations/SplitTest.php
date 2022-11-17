@@ -43,15 +43,14 @@ EOD;
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
 
         $redisClient->del('SPLITIO.split.mysplittest');
-
         $redisClient->set('SPLITIO.split.mysplittest', $this->split1);
 
-        $splitCache = new SplitCache();
+        $splitCache = new SplitCache($cachePool);
         $splitRepresentation = $splitCache->getSplit('mysplittest');
 
         $split = new Split(json_decode($splitRepresentation, true));
@@ -73,15 +72,15 @@ EOD;
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
 
         $redisClient->del('SPLITIO.split.mysplittest2');
 
         $redisClient->set('SPLITIO.split.mysplittest2', $this->split2);
 
-        $splitCache = new SplitCache();
+        $splitCache = new SplitCache($cachePool);
         $splitRepresentation = $splitCache->getSplit('mysplittest2');
         $split = new Split(json_decode($splitRepresentation, true));
 

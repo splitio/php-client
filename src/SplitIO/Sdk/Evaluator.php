@@ -3,7 +3,7 @@
 namespace SplitIO\Sdk;
 
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
@@ -13,12 +13,20 @@ use SplitIO\Split as SplitApp;
 
 class Evaluator
 {
+    /**
+     * @var \SplitIO\Component\Cache\SplitCache
+     */
+    private  $splitCache;
 
-    private $splitCache = null;
+    /**
+     * @var \SplitIO\Component\Cache\SegmentCache
+     */
+    private  $segmentCache;
 
-    public function __construct()
+    public function __construct(SplitCache $splitCache, SegmentCache $segmentCache)
     {
-        $this->splitCache = new SplitCache();
+        $this->splitCache = $splitCache;
+        $this->segmentCache = $segmentCache;
     }
 
 
@@ -72,6 +80,10 @@ class Evaluator
 
     private function evalTreatment($key, $bucketingKey, $split, array $attributes = null)
     {
+        $context = array(
+            'segmentCache' => $this->segmentCache,
+            'evaluator' => $this,
+        );
         $result = array(
             'treatment' => TreatmentEnum::CONTROL,
             'impression' => array(
@@ -98,7 +110,7 @@ class Evaluator
                 return $result;
             }
 
-            $evaluationResult = Engine::getTreatment($key, $bucketingKey, $split, $attributes);
+            $evaluationResult = Engine::getTreatment($key, $bucketingKey, $split, $attributes, $context);
             if (!is_null($evaluationResult[Engine::EVALUATION_RESULT_TREATMENT])) {
                 $result['treatment'] = $evaluationResult[Engine::EVALUATION_RESULT_TREATMENT];
                 $result['impression']['label'] = $evaluationResult[Engine::EVALUATION_RESULT_LABEL];

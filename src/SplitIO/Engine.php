@@ -19,9 +19,10 @@ class Engine
      * @param $bucketingKey
      * @param SplitGrammar $split
      * @param array|null $attributes
+     * @param array|null $context
      * @return array
      */
-    public static function getTreatment($matchingKey, $bucketingKey, SplitGrammar $split, array $attributes = null)
+    public static function getTreatment($matchingKey, $bucketingKey, SplitGrammar $split, array $attributes = null, array $context = null)
     {
         if ($bucketingKey === null) {
             $bucketingKey = $matchingKey;
@@ -38,7 +39,7 @@ class Engine
         foreach ($conditions as $condition) {
             if (!$inRollOut && $condition->getConditionType() == ConditionTypeEnum::ROLLOUT) {
                 if ($split->getTrafficAllocation() < 100) {
-                    $bucket = Di::get('splitter')->getBucket(
+                    $bucket = Splitter::getBucket(
                         $split->getAlgo(),
                         $bucketingKey,
                         $split->getTrafficAllocationSeed()
@@ -51,8 +52,8 @@ class Engine
                     $inRollOut = true;
                 }
             }
-            if ($condition->match($matchingKey, $attributes, $bucketingKey)) {
-                $result[self::EVALUATION_RESULT_TREATMENT] = Di::get('splitter')->getTreatment(
+            if ($condition->match($matchingKey, $attributes, $bucketingKey, $context)) {
+                $result[self::EVALUATION_RESULT_TREATMENT] = Splitter::getTreatment(
                     $bucketingKey,
                     $split->getSeed(),
                     $condition->getPartitions(),

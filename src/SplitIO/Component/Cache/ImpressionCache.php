@@ -4,11 +4,24 @@ namespace SplitIO\Component\Cache;
 use SplitIO\Component\Common\Di;
 use SplitIO\Component\Cache\KeyFactory;
 use SplitIO\Sdk\QueueMetadataMessage;
+use SplitIO\Component\Cache\Pool;
 
 class ImpressionCache
 {
     const IMPRESSIONS_QUEUE_KEY = "SPLITIO.impressions";
     const IMPRESSION_KEY_DEFAULT_TTL = 3600;
+
+    /**
+     * @var \SplitIO\Component\Cache\Pool
+     */
+    private $cache;
+
+    /**
+     * @param \SplitIO\Component\Cache\Pool $cache
+     */
+    public function __construct(Pool $cache) {
+        $this->cache = $cache;
+    }
 
     public function logImpressions($impressions, QueueMetadataMessage $metadata)
     {
@@ -30,10 +43,11 @@ class ImpressionCache
             $impressions
         );
 
+        // @TODO REMOVE LOGGER DI
         Di::getLogger()->debug("Adding impressions into queue: ". implode(",", $toStore));
-        $count = Di::getCache()->rightPushInList(self::IMPRESSIONS_QUEUE_KEY, $toStore);
+        $count = $this->cache->rightPushInList(self::IMPRESSIONS_QUEUE_KEY, $toStore);
         if ($count == count($impressions)) {
-            Di::getCache()->expireKey(self::IMPRESSIONS_QUEUE_KEY, self::IMPRESSION_KEY_DEFAULT_TTL);
+            $this->cache->expireKey(self::IMPRESSIONS_QUEUE_KEY, self::IMPRESSION_KEY_DEFAULT_TTL);
         }
         return ($count >= count($impressions));
     }

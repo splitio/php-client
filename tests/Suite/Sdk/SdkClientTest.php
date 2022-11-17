@@ -5,6 +5,7 @@ use \stdClass;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
+use SplitIO\Component\Cache\EventsCache;
 use SplitIO\Component\Cache\Storage\Adapter;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Pool;
@@ -236,7 +237,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
         Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('user1', 'sample_feature'));
@@ -524,8 +525,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
                 ->will($this->throwException(new \Exception()));
         }
 
-        Di::setCache($cachePool);
-
         $treatment = $splitSdk->getTreatment('key1', 'feature1');
         $this->assertEquals($treatment, 'control');
     }
@@ -563,7 +562,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
 
         //Check impressions generated
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'NA', 'NA');
     }
 
@@ -602,7 +601,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
 
         // Check impressions
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
     }
 
@@ -641,7 +640,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
 
         //Check impressions
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
@@ -668,9 +667,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $adapterProperty->setAccessible(true);
         $adapterProperty->setValue($pool, $adapter);
 
-        // use the newly created pool as cache
-        Di::setCache($pool);
-
         // Assert that MGET is called with the 3 splits.
         $predisMock->expects($this->once())
             ->method('mget')
@@ -680,7 +676,18 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $predisMock->expects($this->never())
             ->method('get');
 
-        $client = new Client();
+        $eventCache = new EventsCache($pool);
+        $impressionCache = new ImpressionCache($pool);
+        $segmentCache = new SegmentCache($pool);
+        $splitCache = new SplitCache($pool);
+        
+        $client = new Client(array(
+            'splitCache' => $splitCache,
+            'segmentCache' => $segmentCache,
+            'impressionCache' => $impressionCache,
+            'eventCache' => $eventCache,
+        ));
+
         $client->getTreatments('key1', array('split1', 'split2', 'split3'));
     }
 

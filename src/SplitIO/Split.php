@@ -13,12 +13,4 @@ class Split
     {
         return Di::getLogger();
     }
-
-    /**
-     * @return null|\SplitIO\Component\Cache\Pool
-     */
-    public static function cache()
-    {
-        return Di::getCache();
-    }
 }

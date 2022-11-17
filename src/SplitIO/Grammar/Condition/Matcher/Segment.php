@@ -4,7 +4,7 @@ namespace SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Engine\Hash\Murmur3Hash;
 use SplitIO\Grammar\Condition\Matcher;
-use SplitIO\Split as SplitApp;
+use SplitIO\Exception\Exception;
 
 class Segment extends AbstractMatcher
 {
@@ -34,11 +34,14 @@ class Segment extends AbstractMatcher
      * @param $key
      * @return bool
      */
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         $segmentName = $this->userDefinedSegmentMatcherData;
-
-        $segmentCache = new SegmentCache();
+        if (!isset($context['segmentCache'])) {
+            throw new Exception('Segment storage not present in matcher context.');
+            return false;
+        }
+        $segmentCache = $context['segmentCache'];
 
         if ($segmentCache->isInSegment($segmentName, $key)) {
             return true;

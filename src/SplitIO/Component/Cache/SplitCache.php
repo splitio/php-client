@@ -11,6 +11,18 @@ class SplitCache implements SplitCacheInterface
 
     const KEY_TRAFFIC_TYPE_CACHED = 'SPLITIO.trafficType.{trafficTypeName}';
 
+    /**
+     * @var \SplitIO\Component\Cache\Pool
+     */
+    private $cache;
+
+    /**
+     * @param \SplitIO\Component\Cache\Pool $cache
+     */
+    public function __construct(Pool $cache) {
+        $this->cache = $cache;
+    }
+
     private static function getCacheKeyForSinceParameter()
     {
         return self::KEY_TILL_CACHED_ITEM;
@@ -37,7 +49,7 @@ class SplitCache implements SplitCacheInterface
      */
     public function getChangeNumber()
     {
-        $since = Di::getCache()->get(self::getCacheKeyForSinceParameter());
+        $since = $this->cache->get(self::getCacheKeyForSinceParameter());
         // empty check for nullable value
         return (empty($since)) ? -1 : $since;
     }
@@ -48,8 +60,7 @@ class SplitCache implements SplitCacheInterface
      */
     public function getSplit($splitName)
     {
-        $cache = Di::getCache();
-        return $cache->get(self::getCacheKeyForSplit($splitName));
+        return $this->cache->get(self::getCacheKeyForSplit($splitName));
     }
 
     /**
@@ -58,8 +69,7 @@ class SplitCache implements SplitCacheInterface
      */
     public function getSplits($splitNames)
     {
-        $cache = Di::getCache();
-        $cacheItems = $cache->fetchMany(array_map('self::getCacheKeyForSplit', $splitNames));
+        $cacheItems = $this->cache->fetchMany(array_map('self::getCacheKeyForSplit', $splitNames));
         $toReturn = array();
         foreach ($cacheItems as $key => $value) {
             $toReturn[self::getSplitNameFromCacheKey($key)] = $value;
@@ -72,8 +82,7 @@ class SplitCache implements SplitCacheInterface
      */
     public function getSplitNames()
     {
-        $cache = Di::getCache();
-        $splitKeys = $cache->getKeys(self::getCacheKeySearchPattern());
+        $splitKeys = $this->cache->getKeys(self::getCacheKeySearchPattern());
         return array_map('self::getSplitNameFromCacheKey', $splitKeys);
     }
 
@@ -97,9 +106,7 @@ class SplitCache implements SplitCacheInterface
      */
     public function trafficTypeExists($trafficType)
     {
-        $cache = Di::getCache();
-
-        $count = $cache->get(self::getCacheKeyForTrafficType($trafficType));
+        $count = $this->cache->get(self::getCacheKeyForTrafficType($trafficType));
         // empty check for nullable value
         return (empty($count) || $count < 1) ? false : true;
     }

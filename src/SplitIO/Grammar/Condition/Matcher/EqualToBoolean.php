@@ -15,7 +15,7 @@ class EqualToBoolean extends AbstractMatcher
         $this->booleanMatcherData = $data;
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         if (is_string($key)) {
             $decodedKey = json_decode(strtolower($key));

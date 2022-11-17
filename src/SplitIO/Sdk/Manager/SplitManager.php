@@ -11,10 +11,18 @@ use SplitIO\Sdk\Validator\InputValidator;
 
 class SplitManager implements SplitManagerInterface
 {
+    /**
+     * @var \SplitIO\Component\Cache\SplitCache
+     */
+    private  $splitCache;
+
+    public function __construct(SplitCache $splitCache) {
+        $this->splitCache = $splitCache;
+    }
+
     public function splitNames()
     {
-        $cache = new SplitCache();
-        return $cache->getSplitNames();
+        return $this->splitCache->getSplitNames();
     }
 
     /**
@@ -22,8 +30,7 @@ class SplitManager implements SplitManagerInterface
      */
     public function splits()
     {
-        $cache = new SplitCache();
-        $rawSplits = $cache->getAllSplits();
+        $rawSplits = $this->splitCache->getAllSplits();
         return array_map('self::parseSplitView', $rawSplits);
     }
 
@@ -38,8 +45,7 @@ class SplitManager implements SplitManagerInterface
             return null;
         }
 
-        $cache = new SplitCache();
-        $raw = $cache->getSplit($featureName);
+        $raw = $this->splitCache->getSplit($featureName);
         if (is_null($raw)) {
             SplitApp::logger()->warning("split: you passed " . $featureName
             . " that does not exist in this environment, please double check what Splits exist"

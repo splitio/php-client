@@ -1,10 +1,9 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
-use SplitIO\Component\Common\Di;
 use SplitIO\Sdk\Key;
+use SplitIO\Exception\Exception;
 
 class Dependency
 {
@@ -28,9 +27,17 @@ class Dependency
         return $this->negate;
     }
 
-    public function evalKey($key, $attributes = null, $bucketingKey = null)
+    public function evalKey($key, $attributes = null, $bucketingKey = null, $context = null)
     {
-        $evaluator = Di::getEvaluator();
+        echo "SDASDASD" . json_encode($context) . "\n";
+        echo "SDASDASD" . json_encode($context) . "\n";
+        echo "SDASDASD" . json_encode($context) . "\n";
+        echo "SDASDASD" . json_encode($context) . "\n";
+        if (!isset($context['evaluator'])) {
+            throw new Exception('Evaluator not present in matcher context.');
+            return false;
+        }
+        $evaluator = $context['evaluator'];
         $result = $evaluator->evaluateFeature($key, $bucketingKey, $this->splitName, $attributes);
         return (is_array($this->treatments) && in_array($result['treatment'], $this->treatments));
     }

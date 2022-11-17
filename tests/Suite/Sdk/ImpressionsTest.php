@@ -2,7 +2,6 @@
 namespace SplitIO\Test\Suite\Sdk;
 
 use SplitIO\Component\Common\Di;
-use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
@@ -24,14 +23,15 @@ class ImpressionsTest extends \PHPUnit\Framework\TestCase
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
 
         $redisClient->del(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $queueMetadata = new QueueMetadataMessage();
 
-        TreatmentImpression::log(new Impression(
+        $impressionCache = new ImpressionCache($cachePool);
+        $impressionCache->logImpressions(array(new Impression(
             'someMatchingKey',
             'someFeature',
             'on',
@@ -39,7 +39,7 @@ class ImpressionsTest extends \PHPUnit\Framework\TestCase
             123456,
             321654,
             'someBucketingKey'
-        ), $queueMetadata);
+        )), $queueMetadata);
 
         // Assert that the TTL is within a 10-second range (between it was set and retrieved).
         $ttl = $redisClient->ttl(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
@@ -74,13 +74,15 @@ class ImpressionsTest extends \PHPUnit\Framework\TestCase
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
+        
         $redisClient->del(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $queueMetadata = new QueueMetadataMessage(false);
 
-        TreatmentImpression::log(new Impression(
+        $impressionCache = new ImpressionCache($cachePool);
+        $impressionCache->logImpressions(array(new Impression(
             'someMatchingKey',
             'someFeature',
             'on',
@@ -88,11 +90,11 @@ class ImpressionsTest extends \PHPUnit\Framework\TestCase
             123456,
             321654,
             'someBucketingKey'
-        ), $queueMetadata);
+        )), $queueMetadata);
 
         sleep(3);
 
-        TreatmentImpression::log(new Impression(
+        $impressionCache->logImpressions(array(new Impression(
             'someMatchingKey',
             'someFeature',
             'on',
@@ -100,7 +102,7 @@ class ImpressionsTest extends \PHPUnit\Framework\TestCase
             123456,
             321654,
             'someBucketingKey'
-        ), $queueMetadata);
+        )), $queueMetadata);
 
         $ttl = $redisClient->ttl(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         // $ttl should be lower than or equalt the default impressions TTL minus 3 seconds,

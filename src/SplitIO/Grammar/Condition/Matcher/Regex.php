@@ -15,7 +15,7 @@ class Regex extends AbstractMatcher
         $this->regexMatcherData = $data;
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         if (!is_string($this->regexMatcherData)) {
             return false;

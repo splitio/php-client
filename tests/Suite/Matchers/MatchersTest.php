@@ -8,12 +8,15 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use \ReflectionMethod;
 
 use SplitIO\Test\Utils;
 
 class MatcherTest extends \PHPUnit\Framework\TestCase
 {
+    private $context;
+
     private function setupSplitApp()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
@@ -33,6 +36,11 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
         );
 
         $splitFactory = \SplitIO\Sdk::factory('apikey', $sdkConfig);
+        $cachePool = ReflectiveTools::cacheFromFactory($splitFactory);
+        $segmentCache = new SegmentCache($cachePool);
+        $this->context = array(
+            'segmentCache' => $segmentCache,
+        );
         $splitFactory->client();
     }
 
@@ -152,12 +160,12 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
         );
 
         $matcher = Matcher::factory($condition);
-        $this->assertEquals($matcher->evaluate('id1'), true);
-        $this->assertEquals($matcher->evaluate('id2'), true);
-        $this->assertEquals($matcher->evaluate('id3'), true);
-        $this->assertEquals($matcher->evaluate('id4'), false);
-        $this->assertEquals($matcher->evaluate(''), false);
-        $this->assertEquals($matcher->evaluate(null), false);
+        $this->assertEquals($matcher->evaluate('id1', $this->context), true);
+        $this->assertEquals($matcher->evaluate('id2', $this->context), true);
+        $this->assertEquals($matcher->evaluate('id3', $this->context), true);
+        $this->assertEquals($matcher->evaluate('id4', $this->context), false);
+        $this->assertEquals($matcher->evaluate('', $this->context), false);
+        $this->assertEquals($matcher->evaluate(null, $this->context), false);
     }
 
     public function testWhitelistMatcher()
@@ -458,21 +466,21 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
             ->method('evaluateFeature')
             ->with('test_key', null, 'test_feature', array('test_attribute1' => 'test_value1'));
 
-        Di::setEvaluator($evaluator);
+        $this->context['evaluator'] = $evaluator;
     }
 
     public function testDependencyMatcherTrue()
     {
         $this->setDependencyMatcherTestMocks();
         $matcher = new Matcher\Dependency(array('split' => 'test_feature', 'treatments' => array('on')));
-        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1')), true);
+        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1'), null, $this->context), true);
     }
 
     public function testDependencyMatcherFalse()
     {
         $this->setDependencyMatcherTestMocks();
         $matcher = new Matcher\Dependency(array('split' => 'test_feature', 'treatments' => array('off')));
-        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1')), false);
+        $this->assertEquals($matcher->evalKey('test_key', array('test_attribute1' => 'test_value1'), null, $this->context), false);
     }
 
     public function testRegexMatcher()

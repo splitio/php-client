@@ -12,16 +12,6 @@ class Di
 {
     const KEY_LOG = 'SPLIT-LOGGER';
 
-    const KEY_CACHE = 'SPLIT-CACHE';
-
-    const KEY_SPLIT_CLIENT = 'SPLIT-CLIENT';
-
-    const KEY_SPLIT_CLIENT_CONFIG = 'SPLIT-CLIENT-CONFIG';
-
-    const KEY_SPLIT_SDK_CONFIG = 'SPLIT-SDK-CONFIG';
-
-    const KEY_EVALUATOR = 'EVALUATOR';
-
     const KEY_FACTORY_TRACKER = 'FACTORY-TRACKER';
 
     /**
@@ -131,29 +121,4 @@ class Di
         return self::get(self::KEY_LOG);
     }
 
-    /**
-     * @param \SplitIO\Component\Cache\Pool $cachePool
-     */
-    public static function setCache(Pool $cachePool)
-    {
-        self::set(self::KEY_CACHE, $cachePool);
-    }
-
-    /**
-     * @return null|\SplitIO\Component\Cache\Pool
-     */
-    public static function getCache()
-    {
-        return self::get(self::KEY_CACHE);
-    }
-
-    public static function setEvaluator(\SplitIO\Sdk\Evaluator $evaluator)
-    {
-        self::set(self::KEY_EVALUATOR, $evaluator);
-    }
-
-    public static function getEvaluator()
-    {
-        return self::get(self::KEY_EVALUATOR);
-    }
 }

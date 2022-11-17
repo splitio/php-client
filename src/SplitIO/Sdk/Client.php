@@ -1,14 +1,11 @@
 <?php
 namespace SplitIO\Sdk;
 
-use SplitIO\Component\Cache\EventsCache;
-use SplitIO\Component\Common\Di;
 use SplitIO\Metrics;
 use SplitIO\Sdk\Events\EventDTO;
 use SplitIO\Sdk\Events\EventQueueMessage;
 use SplitIO\Sdk\QueueMetadataMessage;
 use SplitIO\Sdk\Impressions\Impression;
-use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Split as SplitApp;
@@ -27,19 +24,49 @@ class Client implements ClientInterface
     private $labelsEnabled;
 
     /**
-     * @param array $options
+     * @var \SplitIO\Component\Cache\SplitCache
      */
-    public function __construct($options = array())
+    private  $splitCache;
+
+    /**
+     * @var \SplitIO\Component\Cache\SegmentCache
+     */
+    private  $segmentCache;
+
+    /**
+     * @var \SplitIO\Component\Cache\ImpressionCache
+     */
+    private  $impressionCache;
+
+    /**
+     * @var \SplitIO\Component\Cache\EventCache
+     */
+    private  $eventCache;
+
+    /**
+     * @var \SplitIO\Sdk\Validator\InputValidator
+     */
+    private  $inputValidator;
+
+    /**
+     * @param array $options
+     * @param array $storages
+     */
+    public function __construct($storages, $options = array())
     {
+        $this->splitCache = $storages['splitCache'];
+        $this->segmentCache = $storages['segmentCache'];
+        $this->impressionCache = $storages['impressionCache'];
+        $this->eventCache = $storages['eventCache'];
         $this->labelsEnabled = isset($options['labelsEnabled']) ? $options['labelsEnabled'] : true;
-        $this->evaluator = new Evaluator();
-        Di::setEvaluator($this->evaluator);
+        $this->evaluator = new Evaluator($this->splitCache, $this->segmentCache);
         if (isset($options['impressionListener'])) {
             $this->impressionListener = new \SplitIO\Sdk\ImpressionListenerWrapper($options['impressionListener']);
         }
         $this->queueMetadata = new QueueMetadataMessage(
             isset($options['IPAddressesEnabled']) ? $options['IPAddressesEnabled'] : true
         );
+        $this->inputValidator = new InputValidator($this->splitCache);
     }
 
     /**
@@ -76,17 +103,17 @@ class Client implements ClientInterface
      */
     private function doInputValidationForTreatment($key, $featureName, array $attributes = null, $operation)
     {
-        $key = InputValidator::validateKey($key, $operation);
+        $key = $this->inputValidator->validateKey($key, $operation);
         if (is_null($key)) {
             return null;
         }
 
-        $featureName = InputValidator::validateFeatureName($featureName, $operation);
+        $featureName = $this->inputValidator->validateFeatureName($featureName, $operation);
         if (is_null($featureName)) {
             return null;
         }
 
-        if (!InputValidator::validAttributes($attributes, $operation)) {
+        if (!$this->inputValidator->validAttributes($attributes, $operation)) {
             return null;
         }
 
@@ -121,7 +148,7 @@ class Client implements ClientInterface
         $featureName = $inputValidation['featureName'];
         try {
             $result = $this->evaluator->evaluateFeature($matchingKey, $bucketingKey, $featureName, $attributes);
-            if (!InputValidator::isSplitFound($result['impression']['label'], $featureName, $operation)) {
+            if (!$this->inputValidator->isSplitFound($result['impression']['label'], $featureName, $operation)) {
                 return $default;
             }
             // Creates impression
@@ -217,13 +244,13 @@ class Client implements ClientInterface
      */
     private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
     {
-        $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
+        $splitNames = $this->inputValidator->validateFeatureNames($featureNames, $operation);
         if (is_null($splitNames)) {
             return null;
         }
 
-        $key = InputValidator::validateKey($key, $operation);
-        if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
+        $key = $this->inputValidator->validateKey($key, $operation);
+        if (is_null($key) || !$this->inputValidator->validAttributes($attributes, $operation)) {
             return array(
                 'controlTreatments' => array_fill_keys(
                     $splitNames,
@@ -242,11 +269,16 @@ class Client implements ClientInterface
     private function registerData($impressions, $attributes, $metricName, $latency = null)
     {
         try {
-            TreatmentImpression::log($impressions, $this->queueMetadata);
+            if (is_null($impressions) || (is_array($impressions) && 0 == count($impressions))) {
+                return;
+            }
+            $toStore = (is_array($impressions)) ? $impressions : array($impressions);
+            $this->impressionCache->logImpressions($toStore, $this->queueMetadata);
             if (isset($this->impressionListener)) {
-                $this->impressionListener->sendDataToClient($impressions, $attributes);
+                $this->impressionListener->sendDataToClient($toStore, $attributes);
             }
         } catch (\Exception $e) {
+            SplitApp::logger()->warning($e->getMessage());
             SplitApp::logger()->critical(
                 ': An exception occurred when trying to store impressions.'
             );
@@ -288,7 +320,7 @@ class Client implements ClientInterface
                 $attributes
             );
             foreach ($evaluationResults['evaluations'] as $splitName => $evalResult) {
-                if (InputValidator::isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
+                if ($this->inputValidator->isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
                     // Creates impression
                     $impressions[] = $this->createImpression(
                         $matchingKey,
@@ -336,7 +368,7 @@ class Client implements ClientInterface
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatments method is throwing exceptions');
-            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
+            $splitNames = $this->inputValidator->validateFeatureNames($featureNames, 'getTreatments');
             return is_null($splitNames) ? array() : array_fill_keys($splitNames, TreatmentEnum::CONTROL);
         }
     }
@@ -356,7 +388,7 @@ class Client implements ClientInterface
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
-            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
+            $splitNames = $this->inputValidator->validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
             return is_null($splitNames) ? array() :
                 array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
         }
@@ -391,11 +423,11 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null, $properties = null)
     {
-        $key = InputValidator::validateTrackKey($key);
-        $trafficType = InputValidator::validateTrafficType($trafficType);
-        $eventType = InputValidator::validateEventType($eventType);
-        $value = InputValidator::validateValue($value);
-        $properties = InputValidator::validProperties($properties);
+        $key = $this->inputValidator->validateTrackKey($key);
+        $trafficType = $this->inputValidator->validateTrafficType($trafficType);
+        $eventType = $this->inputValidator->validateEventType($eventType);
+        $value = $this->inputValidator->validateValue($value);
+        $properties = $this->inputValidator->validProperties($properties);
 
         if (is_null($key) || is_null($trafficType) || is_null($eventType) || $value === false
             || $properties === false) {
@@ -405,7 +437,7 @@ class Client implements ClientInterface
         try {
             $eventDTO = new EventDTO($key, $trafficType, $eventType, $value, $properties);
             $eventQueueMessage = new EventQueueMessage($this->queueMetadata, $eventDTO);
-            return EventsCache::addEvent($eventQueueMessage);
+            return $this->eventCache->addEvent($eventQueueMessage);
         } catch (\Exception $exception) {
             // @codeCoverageIgnoreStart
             SplitApp::logger()->error("Error happened when trying to add events");

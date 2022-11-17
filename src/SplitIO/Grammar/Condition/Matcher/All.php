@@ -12,7 +12,7 @@ class All extends AbstractMatcher
         parent::__construct(Matcher::ALL_KEYS, $negate, $attribute);
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         SplitApp::logger()->info("Comparing: ALL_KEYS - $key");
         SplitApp::logger()->info("User found: $key");

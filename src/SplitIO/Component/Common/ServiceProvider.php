@@ -7,9 +7,4 @@ class ServiceProvider
     {
         Di::setLogger($logger);
     }
-
-    public static function registerCache(\SplitIO\Component\Cache\Pool $cache)
-    {
-        Di::setCache($cache);
-    }
 }

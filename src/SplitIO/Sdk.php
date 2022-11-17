@@ -9,6 +9,7 @@ use SplitIO\Sdk\Factory\LocalhostSplitFactory;
 use SplitIO\Sdk\Factory\SplitFactory;
 use SplitIO\Component\Common\Di;
 use SplitIO\Engine\Splitter;
+use SplitIO\Component\Cache\Pool;
 
 class Sdk
 {
@@ -45,15 +46,13 @@ class Sdk
             self::registerLogger((isset($options['log'])) ? $options['log'] : array());
 
             //Register Cache
-            self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
+            $cache = self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
 
             if (isset($options['ipAddress'])) {
                 self::setIP($options['ipAddress']);
             }
 
-            Di::set('splitter', new Splitter());
-
-            return new SplitFactory($apiKey, $options);
+            return new SplitFactory($apiKey, $cache, $options);
         }
     }
 
@@ -74,17 +73,40 @@ class Sdk
         if ($cacheAdapter == 'redis') {
             throw new Exception("'redis' adapter is not longer supported. Please use 'predis' instead");
         } elseif ($cacheAdapter == 'predis') {
-            $_options['predis-options'] = isset($options['options']) ? $options['options'] : null;
-            $_options['predis-parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
-            $_options['predis-sentinels'] = isset($options['sentinels']) ? $options['sentinels'] : null;
-            $_options['predis-clusterNodes'] = isset($options['clusterNodes']) ? $options['clusterNodes'] : null;
-            $_options['predis-distributedStrategy'] = isset($options['distributedStrategy'])
+            $_options['options'] = isset($options['options']) ? $options['options'] : null;
+            $_options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
+            $_options['sentinels'] = isset($options['sentinels']) ? $options['sentinels'] : null;
+            $_options['clusterNodes'] = isset($options['clusterNodes']) ? $options['clusterNodes'] : null;
+            $_options['distributedStrategy'] = isset($options['distributedStrategy'])
                 ? $options['distributedStrategy'] : null;
         } else {
             throw new Exception("A valid cache system is required. Given: $cacheAdapter");
         }
 
-        CacheTrait::addCache($cacheAdapter, $_options);
+        /*
+        $adapter_config = array(
+            'name' => 'predis',
+            'options' => array(
+                'options'               => isset($options['predis-options'])
+                    ? $options['predis-options'] : null,
+                'parameters'            => isset($options['predis-parameters'])
+                    ? $options['predis-parameters'] : null,
+                'sentinels'             => isset($options['predis-sentinels'])
+                    ? $options['predis-sentinels'] : null,
+                'clusterNodes'          => isset($options['predis-clusterNodes'])
+                    ? $options['predis-clusterNodes'] : null,
+                'distributedStrategy'   => isset($options['predis-distributedStrategy'])
+                    ? $options['predis-distributedStrategy'] : null,
+            )
+        );
+        */
+
+        $adapter_config = array(
+            'name' => 'predis',
+            'options' => $_options,
+        );
+
+        return new Pool(array('adapter' => $adapter_config));
     }
 
     private static function setIP($ip)
@@ -98,12 +120,15 @@ class Sdk
     private static function instanceExists()
     {
         $value = Di::get(Di::KEY_FACTORY_TRACKER);
+        /* TODO MULTIPLE ALLOW
         if (is_null($value) || !$value) {
             return false;
         }
         Di::getLogger()->critical("Factory Instantiation: creating multiple factories is not possible. "
             . "You have already created a factory.");
         return true;
+        */
+        return false;
     }
 
     /**

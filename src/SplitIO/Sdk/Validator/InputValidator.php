@@ -16,6 +16,15 @@ const MAX_PROPERTIES_LENGTH_BYTES = 32768;
 class InputValidator
 {
     /**
+     * @var \SplitIO\Component\Cache\SplitCache
+     */
+    private  $splitCache;
+
+    public function __construct(SplitCache $splitCache) {
+        $this->splitCache = $splitCache;
+    }
+
+    /**
      * @param $value
      * @param $name
      * @param $operation
@@ -173,7 +182,7 @@ class InputValidator
      * @param $trafficType
      * @return string|null
      */
-    public static function validateTrafficType($trafficType)
+    public function validateTrafficType($trafficType)
     {
         if (!self::validString($trafficType, 'traffic type', 'track')) {
             return null;
@@ -183,8 +192,7 @@ class InputValidator
             SplitApp::logger()->warning("track: '" . $trafficType . "' should be all lowercase - converting string to "
                 . "lowercase.");
         }
-        $splitCache = new SplitCache();
-        if (!$splitCache->trafficTypeExists($toLowercase)) {
+        if (!$this->splitCache->trafficTypeExists($toLowercase)) {
             SplitApp::logger()->warning("track: Traffic Type '". $toLowercase . "' does not have any corresponding "
                 . "Splits in this environment, make sure you’re tracking your events to a valid traffic type "
                 . "defined in the Split console.");

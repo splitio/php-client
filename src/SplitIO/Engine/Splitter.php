@@ -13,7 +13,7 @@ class Splitter
      * @param long $seed
      * @return int
      */
-    public function getBucket($algo, $key, $seed)
+    public static function getBucket($algo, $key, $seed)
     {
         $hashFactory = HashFactory::getHashAlgorithm($algo);
         $hash = $hashFactory->getHash($key, $seed);
@@ -28,7 +28,7 @@ class Splitter
      * @param HashAlgorithmEnum $algo
      * @return null|string
      */
-    public function getTreatment($key, $seed, $partitions, $algo)
+    public static function getTreatment($key, $seed, $partitions, $algo)
     {
         $logMsg = "Splitter evaluating partitions ... \n
         Bucketing Key: $key \n

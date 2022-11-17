@@ -7,6 +7,7 @@ use SplitIO\Engine\Hash\Murmur3Hash;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Split as SplitApp;
 use SplitIO\Component\Common\Di;
 
@@ -119,7 +120,8 @@ class HashTest extends \PHPUnit\Framework\TestCase
             ),
         );
 
-        $splitCache = new SplitCache();
+        $cachePool = ReflectiveTools::cacheFromFactory($splitFactory);
+        $splitCache = new SplitCache($cachePool);
         foreach ($cases as $case) {
             $split = new Split(json_decode($splitCache->getSplit($case['key']), true));
             $this->assertEquals($split->getAlgo(), $case['algo']);

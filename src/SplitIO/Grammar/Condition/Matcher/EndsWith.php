@@ -15,7 +15,7 @@ class EndsWith extends AbstractMatcher
         $this->endsWithMatcherData = $data;
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         if (!is_array($this->endsWithMatcherData) || !is_string($key) || strlen($key) == 0) {
             return false;
