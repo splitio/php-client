@@ -31,9 +31,6 @@ class Sdk
         //Adding API Key into args array.
         $options['apiKey'] = $apiKey;
 
-        if (self::instanceExists()) {
-            return null;
-        }
         self::registerInstance();
 
         if ($apiKey == 'localhost') {
@@ -93,24 +90,7 @@ class Sdk
 
     private static function setIP($ip)
     {
-        \SplitIO\Component\Common\Di::set('ipAddress', $ip);
-    }
-
-    /**
-     * Check factory instance
-     */
-    private static function instanceExists()
-    {
-        $value = Di::get(Di::KEY_FACTORY_TRACKER);
-        /* TODO MULTIPLE ALLOW
-        if (is_null($value) || !$value) {
-            return false;
-        }
-        Di::getLogger()->critical("Factory Instantiation: creating multiple factories is not possible. "
-            . "You have already created a factory.");
-        return true;
-        */
-        return false;
+        \SplitIO\Component\Common\Di::setIPAddress('ipAddress', $ip);
     }
 
     /**
@@ -118,6 +98,10 @@ class Sdk
      */
     private static function registerInstance()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, true);
+        if (Di::trackFactory() > 1) {
+            Di::getLogger()->warning("Factory Instantiation: You already have an instance of the Split factory. "
+            . "Make sure you definitely want this additional instance. We recommend keeping only one instance of "
+            . "the factory at all times (Singleton pattern) and reusing it throughout your application.");
+        }
     }
 }

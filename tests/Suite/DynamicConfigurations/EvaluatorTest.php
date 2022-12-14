@@ -4,7 +4,6 @@ namespace SplitIO\Test\Suite\Sdk;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Split;
 use SplitIO\Sdk\Evaluator;
 

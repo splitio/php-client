@@ -8,7 +8,6 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
-use SplitIO\Split as SplitApp;
 use SplitIO\Component\Common\Di;
 
 use SplitIO\Test\Utils;
