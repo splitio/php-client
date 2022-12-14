@@ -43,7 +43,7 @@ class Sdk
             self::registerLogger((isset($options['log'])) ? $options['log'] : array());
 
             //Register Cache
-            $cache = self::registerCache((isset($options['cache'])) ? $options['cache'] : array());
+            $cache = self::configureCache((isset($options['cache'])) ? $options['cache'] : array());
 
             if (isset($options['ipAddress'])) {
                 self::setIP($options['ipAddress']);
@@ -62,7 +62,7 @@ class Sdk
         ServiceProvider::registerLogger($logger);
     }
 
-    private static function registerCache(array $options)
+    private static function configureCache(array $options)
     {
         $_options = array();
         $cacheAdapter = isset($options['adapter']) ? $options['adapter'] : 'redis';

@@ -39,7 +39,6 @@ class Segment extends AbstractMatcher
         $segmentName = $this->userDefinedSegmentMatcherData;
         if (!isset($context['segmentCache'])) {
             throw new Exception('Segment storage not present in matcher context.');
-            return false;
         }
         $segmentCache = $context['segmentCache'];
 
