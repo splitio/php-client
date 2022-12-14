@@ -44,11 +44,6 @@ class Client implements ClientInterface
     private $eventCache;
 
     /**
-     * @var \SplitIO\Sdk\Validator\InputValidator
-     */
-    private $inputValidator;
-
-    /**
      * @param array $options
      * @param array $storages
      */
@@ -66,7 +61,6 @@ class Client implements ClientInterface
         $this->queueMetadata = new QueueMetadataMessage(
             isset($options['IPAddressesEnabled']) ? $options['IPAddressesEnabled'] : true
         );
-        $this->inputValidator = new InputValidator($this->splitCache);
     }
 
     /**
@@ -103,17 +97,17 @@ class Client implements ClientInterface
      */
     private function doInputValidationForTreatment($key, $featureName, array $attributes = null, $operation)
     {
-        $key = $this->inputValidator->validateKey($key, $operation);
+        $key = InputValidator::validateKey($key, $operation);
         if (is_null($key)) {
             return null;
         }
 
-        $featureName = $this->inputValidator->validateFeatureName($featureName, $operation);
+        $featureName = InputValidator::validateFeatureName($featureName, $operation);
         if (is_null($featureName)) {
             return null;
         }
 
-        if (!$this->inputValidator->validAttributes($attributes, $operation)) {
+        if (!InputValidator::validAttributes($attributes, $operation)) {
             return null;
         }
 
@@ -148,7 +142,7 @@ class Client implements ClientInterface
         $featureName = $inputValidation['featureName'];
         try {
             $result = $this->evaluator->evaluateFeature($matchingKey, $bucketingKey, $featureName, $attributes);
-            if (!$this->inputValidator->isSplitFound($result['impression']['label'], $featureName, $operation)) {
+            if (!InputValidator::isSplitFound($result['impression']['label'], $featureName, $operation)) {
                 return $default;
             }
             // Creates impression
@@ -244,13 +238,13 @@ class Client implements ClientInterface
      */
     private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
     {
-        $splitNames = $this->inputValidator->validateFeatureNames($featureNames, $operation);
+        $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
         if (is_null($splitNames)) {
             return null;
         }
 
-        $key = $this->inputValidator->validateKey($key, $operation);
-        if (is_null($key) || !$this->inputValidator->validAttributes($attributes, $operation)) {
+        $key = InputValidator::validateKey($key, $operation);
+        if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
             return array(
                 'controlTreatments' => array_fill_keys(
                     $splitNames,
@@ -320,7 +314,7 @@ class Client implements ClientInterface
                 $attributes
             );
             foreach ($evaluationResults['evaluations'] as $splitName => $evalResult) {
-                if ($this->inputValidator->isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
+                if (InputValidator::isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
                     // Creates impression
                     $impressions[] = $this->createImpression(
                         $matchingKey,
@@ -368,7 +362,7 @@ class Client implements ClientInterface
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatments method is throwing exceptions');
-            $splitNames = $this->inputValidator->validateFeatureNames($featureNames, 'getTreatments');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
             return is_null($splitNames) ? array() : array_fill_keys($splitNames, TreatmentEnum::CONTROL);
         }
     }
@@ -388,7 +382,7 @@ class Client implements ClientInterface
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
-            $splitNames = $this->inputValidator->validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
+            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
             return is_null($splitNames) ? array() :
                 array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
         }
@@ -423,11 +417,11 @@ class Client implements ClientInterface
      */
     public function track($key, $trafficType, $eventType, $value = null, $properties = null)
     {
-        $key = $this->inputValidator->validateTrackKey($key);
-        $trafficType = $this->inputValidator->validateTrafficType($trafficType);
-        $eventType = $this->inputValidator->validateEventType($eventType);
-        $value = $this->inputValidator->validateValue($value);
-        $properties = $this->inputValidator->validProperties($properties);
+        $key = InputValidator::validateTrackKey($key);
+        $trafficType = InputValidator::validateTrafficType($this->splitCache, $trafficType);
+        $eventType = InputValidator::validateEventType($eventType);
+        $value = InputValidator::validateValue($value);
+        $properties = InputValidator::validProperties($properties);
 
         if (is_null($key) || is_null($trafficType) || is_null($eventType) || $value === false
             || $properties === false) {

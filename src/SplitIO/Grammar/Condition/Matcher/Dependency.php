@@ -31,7 +31,6 @@ class Dependency
     {
         if (!isset($context['evaluator'])) {
             throw new Exception('Evaluator not present in matcher context.');
-            return false;
         }
         $evaluator = $context['evaluator'];
         $result = $evaluator->evaluateFeature($key, $bucketingKey, $this->splitName, $attributes);
