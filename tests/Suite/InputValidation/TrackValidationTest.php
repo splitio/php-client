@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Test\Suite\InputValidation;
 
-use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Sdk\Validator\InputValidator;
 
 use SplitIO\Test\Utils;
@@ -10,7 +10,6 @@ class TrackValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
@@ -36,7 +35,7 @@ class TrackValidationTest extends \PHPUnit\Framework\TestCase
                 'alert', 'notice', 'write', 'log'))
             ->getMock();
 
-        Di::set(Di::KEY_LOG, $logger);
+        ReflectiveTools::overrideLogger($logger);
 
         return $logger;
     }

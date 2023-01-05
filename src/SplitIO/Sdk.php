@@ -59,7 +59,7 @@ class Sdk
     private static function registerLogger(array $options)
     {
         $logger = LoggerFactory::setupLogger($options);
-        ServiceProvider::registerLogger($logger);
+        Di::setLogger($logger);
     }
 
     private static function configureCache(array $options)
@@ -90,7 +90,7 @@ class Sdk
 
     private static function setIP($ip)
     {
-        \SplitIO\Component\Common\Di::setIPAddress('ipAddress', $ip);
+        \SplitIO\Component\Common\Di::setIPAddress($ip);
     }
 
     /**

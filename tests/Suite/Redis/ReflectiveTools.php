@@ -3,6 +3,7 @@
 namespace SplitIO\Test\Suite\Redis;
 
 use ReflectionClass;
+use SplitIO\Component\Common\Di;
 
 class ReflectiveTools
 {
@@ -53,5 +54,23 @@ class ReflectiveTools
         $reflectionClient= $reflectionPRedis->getProperty('client');
         $reflectionClient->setAccessible(true);
         return $reflectionClient->getValue($adapter);
+    }
+
+    public static function overrideLogger($logger)
+    {
+        $di = Di::getInstance();
+        $reflection = new \ReflectionClass('SplitIO\Component\Common\Di');
+        $property = $reflection->getProperty('logger');
+        $property->setAccessible(true);
+        $property->setValue($di, $logger);
+    }
+
+    public static function resetIPAddress()
+    {
+        $di = Di::getInstance();
+        $reflection = new \ReflectionClass('SplitIO\Component\Common\Di');
+        $property = $reflection->getProperty('ipAddress');
+        $property->setAccessible(true);
+        $property->setValue($di, "");
     }
 }

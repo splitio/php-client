@@ -2,7 +2,6 @@
 namespace SplitIO\Test\Suite\Sdk;
 
 use \stdClass;
-use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\EventsCache;
@@ -20,7 +19,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
     public function testLocalClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/.splits';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -37,7 +35,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testLocalClientYAML()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/splits.yml';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -210,7 +207,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -441,7 +437,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCustomLog()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         // create a log channel
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
@@ -477,7 +472,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidCacheAdapter()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $this->expectException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
@@ -491,8 +485,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testCacheExceptionReturnsControl()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
@@ -531,7 +523,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTreatmentsWithDistinctFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -568,14 +559,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTreatmentsWithRepeteadedFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
+        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
@@ -607,18 +597,17 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTreatmentsWithRepeteadedAndNullFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-        Di::set('ipAddress', null); // unset ipaddress from previous test
-
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
+        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => ''
         );
 
         //Initializing the SDK instance.
@@ -689,6 +678,67 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         ));
 
         $client->getTreatments('key1', array('split1', 'split2', 'split3'));
+    }
+
+    public function testMultipleInstantiationNotOverrideIP()
+    {
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array('prefix' => TEST_PREFIX);
+
+        ReflectiveTools::resetIPAddress();
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => '1.2.3.4'
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature',
+        'sample_feature', 'sample_feature'), null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['sample_feature']);
+        $this->assertEquals('control', $treatmentResult['invalid_feature']);
+
+        // Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => '1.2.3.4.5'
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory2 = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk2 = $splitFactory2->client();
+
+        $treatmentResult2 = $splitSdk2->getTreatments('user1', array('sample_feature', 'invalid_feature',
+        'sample_feature', 'sample_feature'), null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult2)));
+
+        $this->assertEquals('on', $treatmentResult2['sample_feature']);
+        $this->assertEquals('control', $treatmentResult2['invalid_feature']);
+
+        // Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory2);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
     }
 
     public static function tearDownAfterClass(): void

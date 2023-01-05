@@ -13,7 +13,7 @@ class Di
 
     private int $factoryTracker = 0;
 
-    private string|null $ipAddress = null;
+    private string $ipAddress = "";
 
     /**
      * @var Singleton The reference to *Singleton* instance of this class
@@ -75,7 +75,9 @@ class Di
     {
         if (is_null($this->logger)) {
             $this->logger = $logger;
+            return;
         }
+        $this->logger->debug("logger was set before, ignoring new instance provided");
     }
 
     /**
@@ -84,6 +86,20 @@ class Di
     private function __getLogger()
     {
         return $this->logger;
+    }
+
+    /**
+     * @param string $ip
+     */
+    private function __setIPAddress(string $ip)
+    {
+        if (empty($this->ipAddress)) {
+            $this->ipAddress = $ip;
+            return;
+        }
+        if (!(is_null($this->logger))) {
+            $this->logger->debug("IPAddress was set before, ignoring new instance provided");
+        }
     }
 
     /**
@@ -123,9 +139,7 @@ class Di
      */
     public static function setIPAddress(string $ip)
     {
-        if (is_null($this->ip)) {
-            $this->ip = $ip;
-        }
+        self::getInstance()->__setIPAddress($ip);
     }
 
     /**

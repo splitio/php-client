@@ -17,7 +17,7 @@ class SplitterTest extends \PHPUnit\Framework\TestCase
     public function testDiLog()
     {
         $logger = LoggerFactory::setupLogger(array('adapter' => 'stdout', 'level' => 'error'));
-        ServiceProvider::registerLogger($logger);
+        Di::setLogger($logger);
 
         $this->assertTrue(true);
     }

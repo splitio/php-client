@@ -17,7 +17,7 @@ class TrafficTypeTest extends \PHPUnit\Framework\TestCase
                 'alert', 'notice', 'write', 'log'))
             ->getMock();
 
-        Di::set(Di::KEY_LOG, $logger);
+        Di::setLogger($logger);
 
         return $logger;
     }
