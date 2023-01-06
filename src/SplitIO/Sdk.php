@@ -31,17 +31,15 @@ class Sdk
         //Adding API Key into args array.
         $options['apiKey'] = $apiKey;
 
+        //Tracking Factory Instantiation
         self::registerInstance();
 
-        if ($apiKey == 'localhost') {
-            //Register Logger
-            self::registerLogger((isset($options['log'])) ? $options['log'] : array());
+        //Register Logger
+        self::registerLogger((isset($options['log'])) ? $options['log'] : array());
 
+        if ($apiKey == 'localhost') {
             return new LocalhostSplitFactory($options);
         } else {
-            //Register Logger
-            self::registerLogger((isset($options['log'])) ? $options['log'] : array());
-
             //Register Cache
             $cache = self::configureCache((isset($options['cache'])) ? $options['cache'] : array());
 

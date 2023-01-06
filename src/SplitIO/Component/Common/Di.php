@@ -9,7 +9,7 @@ use SplitIO\Component\Log\Logger;
  */
 class Di
 {
-    private \SplitIO\Component\Log\Logger|null $logger = null;
+    private \SplitIO\Component\Log\Logger $logger;
 
     private int $factoryTracker = 0;
 
@@ -62,60 +62,13 @@ class Di
     {
     }
 
-    private function __trackFactory()
-    {
-        $this->factoryTracker += 1;
-        return $this->factoryTracker;
-    }
-
-    /**
-     * @param \SplitIO\Component\Log\Logger $logger
-     */
-    private function __setLogger(Logger $logger)
-    {
-        if (is_null($this->logger)) {
-            $this->logger = $logger;
-            return;
-        }
-        $this->logger->debug("logger was set before, ignoring new instance provided");
-    }
-
-    /**
-     * @return null|\SplitIO\Component\Log\Logger
-     */
-    private function __getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * @param string $ip
-     */
-    private function __setIPAddress(string $ip)
-    {
-        if (empty($this->ipAddress)) {
-            $this->ipAddress = $ip;
-            return;
-        }
-        if (!(is_null($this->logger))) {
-            $this->logger->debug("IPAddress was set before, ignoring new instance provided");
-        }
-    }
-
-    /**
-     * @return null|string
-     */
-    private function __getIPAddress()
-    {
-        return $this->ipAddress;
-    }
-
     /**
      * @return int
      */
     public static function trackFactory()
     {
-        return self::getInstance()->__trackFactory();
+        self::getInstance()->factoryTracker += 1;
+        return self::getInstance()->factoryTracker;
     }
 
     /**
@@ -123,15 +76,22 @@ class Di
      */
     public static function setLogger(Logger $logger)
     {
-        self::getInstance()->__setLogger($logger);
+        if (!isset(self::getInstance()->logger)) {
+            self::getInstance()->logger = $logger;
+            return;
+        }
+        self::getInstance()->logger->debug("logger was set before, ignoring new instance provided");
     }
 
     /**
-     * @return null|\SplitIO\Component\Log\Logger
+     * @return \SplitIO\Component\Log\Logger
      */
     public static function getLogger()
     {
-        return self::getInstance()->__getLogger();
+        if (!isset(self::getInstance()->logger)) {
+            throw new Exception("logger was not set yet");
+        }
+        return self::getInstance()->logger;
     }
 
     /**
@@ -139,14 +99,18 @@ class Di
      */
     public static function setIPAddress(string $ip)
     {
-        self::getInstance()->__setIPAddress($ip);
+        if (empty(self::getInstance()->ipAddress)) {
+            self::getInstance()->ipAddress = $ip;
+            return;
+        }
+        self::getInstance()->getLogger()->debug("IPAddress was set before, ignoring new instance provided");
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public static function getIPAddress()
     {
-        return self::getInstance()->__getIPAddress();
+        return self::getInstance()->ipAddress;
     }
 }
