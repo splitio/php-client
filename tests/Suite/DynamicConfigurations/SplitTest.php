@@ -4,7 +4,6 @@ namespace SplitIO\Test\Suite\Sdk;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Split;
 
 class SplitTest extends \PHPUnit\Framework\TestCase

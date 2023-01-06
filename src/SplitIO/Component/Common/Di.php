@@ -1,8 +1,7 @@
 <?php
 namespace SplitIO\Component\Common;
 
-use Psr\Log\LoggerInterface;
-use SplitIO\Component\Cache\Pool;
+use SplitIO\Component\Log\Logger;
 
 /**
  * Class Di
@@ -10,19 +9,16 @@ use SplitIO\Component\Cache\Pool;
  */
 class Di
 {
-    const KEY_LOG = 'SPLIT-LOGGER';
+    private \SplitIO\Component\Log\Logger $logger;
 
-    const KEY_FACTORY_TRACKER = 'FACTORY-TRACKER';
+    private int $factoryTracker = 0;
+
+    private string $ipAddress = "";
 
     /**
      * @var Singleton The reference to *Singleton* instance of this class
      */
     private static $instance;
-
-    /**
-     * @var array
-     */
-    private $container = array();
 
     /**
      * Returns the *Singleton* instance of this class.
@@ -67,57 +63,54 @@ class Di
     }
 
     /**
-     * @param $key
-     * @param $instance
+     * @return int
      */
-    private function setKey($key, $instance)
+    public static function trackFactory()
     {
-        $this->container[$key] = $instance;
+        self::getInstance()->factoryTracker += 1;
+        return self::getInstance()->factoryTracker;
     }
 
     /**
-     * @param $key
-     * @return mixed
+     * @param \SplitIO\Component\Log\Logger $logger
      */
-    private function getKey($key)
+    public static function setLogger(Logger $logger)
     {
-        return (isset($this->container[$key])) ? $this->container[$key] : null;
+        if (!isset(self::getInstance()->logger)) {
+            self::getInstance()->logger = $logger;
+            return;
+        }
+        self::getInstance()->logger->debug("logger was set before, ignoring new instance provided");
     }
 
     /**
-     * Set an object instance with its key
-     * @param $key
-     * @param $instance
-     */
-    public static function set($key, $instance)
-    {
-        self::getInstance()->setKey($key, $instance);
-    }
-
-    /**
-     * Given a key returns the object instance associated with this.
-     * @param $key
-     * @return mixed
-     */
-    public static function get($key)
-    {
-        return self::getInstance()->getKey($key);
-    }
-
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public static function setLogger($logger)
-    {
-        self::set(self::KEY_LOG, $logger);
-    }
-
-    /**
-     * @return null|\Psr\Log\LoggerInterface
+     * @return \SplitIO\Component\Log\Logger
      */
     public static function getLogger()
     {
-        return self::get(self::KEY_LOG);
+        if (!isset(self::getInstance()->logger)) {
+            throw new Exception("logger was not set yet");
+        }
+        return self::getInstance()->logger;
+    }
+
+    /**
+     * @param string $ip
+     */
+    public static function setIPAddress(string $ip)
+    {
+        if (empty(self::getInstance()->ipAddress)) {
+            self::getInstance()->ipAddress = $ip;
+            return;
+        }
+        self::getInstance()->getLogger()->debug("IPAddress was set before, ignoring new instance provided");
+    }
+
+    /**
+     * @return string
+     */
+    public static function getIPAddress()
+    {
+        return self::getInstance()->ipAddress;
     }
 }

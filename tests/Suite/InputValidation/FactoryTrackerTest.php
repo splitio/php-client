@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Test\Suite\InputValidation;
 
-use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 
 class FactoryTrackerTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,29 +31,25 @@ class FactoryTrackerTest extends \PHPUnit\Framework\TestCase
                 'alert', 'notice', 'write', 'log'))
             ->getMock();
 
-        Di::set(Di::KEY_LOG, $logger);
+        ReflectiveTools::overrideLogger($logger);
 
         return $logger;
     }
 
     public function testMultipleClientInstantiation()
     {
-        // @TODO FIX WHEN WE ALLOW MULTIPLE
-        /*
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $splitFactory = $this->getFactoryClient();
         $this->assertNotNull($splitFactory->client());
 
         $logger = $this->getMockedLogger();
 
         $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("Factory Instantiation: creating multiple factories is not possible. "
-                . "You have already created a factory."));
+            ->method('warning')
+            ->with($this->equalTo("Factory Instantiation: You already have an instance of the Split factory. "
+                . "Make sure you definitely want this additional instance. We recommend keeping only one instance "
+                . "of the factory at all times (Singleton pattern) and reusing it throughout your application."));
         
         $splitFactory2 = $this->getFactoryClient();
-        $this->assertEquals(null, $splitFactory2);
-        */
-        $this->assertEquals(true, true);
+        $this->assertNotNull($splitFactory2->client());
     }
 }

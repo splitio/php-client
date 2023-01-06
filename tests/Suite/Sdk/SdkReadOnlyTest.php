@@ -18,8 +18,6 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
 {
     public function testClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
         $sdkConfig = array(
@@ -54,7 +52,7 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
                 $this->equalTo('The SPLIT definition for \'mockedPRedisInvalid\' has not been found')
             ));
 
-        Di::set(Di::KEY_LOG, $logger);
+        Di::setLogger($logger);
 
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'mockedPRedis'));
         $this->assertEquals('off', $splitSdk->getTreatment('invalid', 'mockedPRedis'));

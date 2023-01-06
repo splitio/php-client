@@ -13,8 +13,6 @@ class SdkAttributesTest extends \PHPUnit\Framework\TestCase
 {
     public function testClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
