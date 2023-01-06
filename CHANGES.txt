@@ -1,5 +1,5 @@
 8.0.0 (Jan XX, 2023)
- - BREAKING CHANGE: Removed support from versions older than PHP 8.0.
+ - BREAKING CHANGE: Removed support from versions older than PHP 7.4.
  - BREAKING CHANGE: Added support for Multiple Factory Instantiation.
 
 7.1.5 (Oct 28, 2022)
