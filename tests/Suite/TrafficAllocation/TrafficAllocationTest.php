@@ -4,6 +4,7 @@ namespace SplitIO\Test\Suite\TrafficAllocation;
 use SplitIO\Component\Initialization\LoggerFactory;
 use SplitIO\Component\Common\ServiceProvider;
 use SplitIO\Grammar\Split;
+use SplitIO\Component\Common\Di;
 
 class TrafficAllocationTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +21,7 @@ class TrafficAllocationTest extends \PHPUnit\Framework\TestCase
 		]);
 
         $logger = LoggerFactory::setupLogger(array('adapter' => 'stdout', 'level' => 'error'));
-        ServiceProvider::registerLogger($logger);
+        Di::setLogger($logger);
 
 		$rawSplit = array(
 		    'name' => 'test1',

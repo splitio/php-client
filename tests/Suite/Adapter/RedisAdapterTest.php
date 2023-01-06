@@ -6,7 +6,7 @@ use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use \Predis\Response\ServerException;
 use \Predis\ClientException;
-use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 
 class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +20,7 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
                 'alert', 'notice', 'write', 'log'))
             ->getMock();
 
-        Di::set(Di::KEY_LOG, $logger);
+        ReflectiveTools::overrideLogger($logger);
 
         return $logger;
     }

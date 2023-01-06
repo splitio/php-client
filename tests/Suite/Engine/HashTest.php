@@ -8,7 +8,6 @@ use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
-use SplitIO\Split as SplitApp;
 use SplitIO\Component\Common\Di;
 
 use SplitIO\Test\Utils;
@@ -80,8 +79,6 @@ class HashTest extends \PHPUnit\Framework\TestCase
 
     public function testAlgoField()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 

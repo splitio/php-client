@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
 
 class EndsWith extends AbstractMatcher
