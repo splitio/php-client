@@ -11,7 +11,7 @@ class Di
 {
     private \SplitIO\Component\Log\Logger $logger;
 
-    private int $factoryTracker = 0;
+    private array $factoryTracker = array();
 
     private string $ipAddress = "";
 
@@ -63,12 +63,31 @@ class Di
     }
 
     /**
+     * @param string $apiKey
      * @return int
      */
-    public static function trackFactory()
+    public static function trackFactory($apiKey)
     {
-        self::getInstance()->factoryTracker += 1;
-        return self::getInstance()->factoryTracker;
+        $tracked = 1;
+        if (isset(self::getInstance()->factoryTracker[$apiKey])) {
+            $currentInstances = self::getInstance()->factoryTracker[$apiKey];
+            self::getInstance()->getLogger()->warning(
+                "Factory Instantiation: You already have " . $currentInstances .
+                " factory/ies with this API Key. " .
+                "We recommend keeping only one instance of the factory at all times " .
+                "(Singleton pattern) and reusing it throughout your application."
+            );
+            $tracked = $currentInstances + $tracked;
+        } elseif (count(self::getInstance()->factoryTracker) > 0) {
+            self::getInstance()->getLogger()->warning(
+                "Factory Instantiation: You already have an instance of the Split factory. " .
+                "Make sure you definitely want this additional instance. " .
+                "We recommend keeping only one instance of the factory at all times " .
+                "(Singleton pattern) and reusing it throughout your application."
+            );
+        }
+        self::getInstance()->factoryTracker[$apiKey] = $tracked;
+        return $tracked;
     }
 
     /**
