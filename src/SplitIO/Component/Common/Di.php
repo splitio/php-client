@@ -71,12 +71,19 @@ class Di
         $tracked = 1;
         if (isset(self::getInstance()->factoryTracker[$apiKey])) {
             $currentInstances = self::getInstance()->factoryTracker[$apiKey];
-            self::getInstance()->getLogger()->warning(
-                "Factory Instantiation: You already have " . $currentInstances .
-                " factory/ies with this API Key. " .
-                "We recommend keeping only one instance of the factory at all times " .
-                "(Singleton pattern) and reusing it throughout your application."
-            );
+            if ($currentInstances == 1) {
+                self::getInstance()->getLogger()->warning(
+                    "Factory Instantiation: You already have 1 factory with this API Key. " .
+                    "We recommend keeping only one instance of the factory at all times " .
+                    "(Singleton pattern) and reusing it throughout your application."
+                );
+            } else {
+                self::getInstance()->getLogger()->warning(
+                    "Factory Instantiation: You already have " . $currentInstances . " factories with this API Key. " .
+                    "We recommend keeping only one instance of the factory at all times " .
+                    "(Singleton pattern) and reusing it throughout your application."
+                );
+            }
             $tracked = $currentInstances + $tracked;
         } elseif (count(self::getInstance()->factoryTracker) > 0) {
             self::getInstance()->getLogger()->warning(
