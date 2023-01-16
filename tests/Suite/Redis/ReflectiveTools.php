@@ -73,4 +73,13 @@ class ReflectiveTools
         $property->setAccessible(true);
         $property->setValue($di, "");
     }
+
+    public static function overrideTracker()
+    {
+        $di = Di::getInstance();
+        $reflection = new \ReflectionClass('SplitIO\Component\Common\Di');
+        $property = $reflection->getProperty('factoryTracker');
+        $property->setAccessible(true);
+        $property->setValue($di, array());
+    }
 }
