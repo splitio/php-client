@@ -39,10 +39,10 @@ class FactoryTrackerTest extends \PHPUnit\Framework\TestCase
         $logger->expects($this->any())
             ->method('warning')
             ->with($this->logicalOr(
-                $this->equalTo("Factory Instantiation: You already have 1 factory with this API Key. "
+                $this->equalTo("Factory Instantiation: You already have 1 factory/factories with this API Key. "
                     . "We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing "
                     . "it throughout your application."),
-                $this->equalTo("Factory Instantiation: You already have 2 factories with this API Key. "
+                $this->equalTo("Factory Instantiation: You already have 2 factory/factories with this API Key. "
                     . "We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing "
                     . "it throughout your application."),
                 $this->equalTo("Factory Instantiation: You already have an instance of the Split factory. "

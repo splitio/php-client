@@ -9,6 +9,13 @@ use SplitIO\Component\Log\Logger;
  */
 class Di
 {
+    const SAME_APIKEY = "Factory Instantiation: You already have %s factory/factories with this API Key. "
+        . "We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.";
+
+    const MULTIPLE_INSTANCES = "Factory Instantiation: You already have an instance of the Split factory. " .
+        "Make sure you definitely want this additional instance. We recommend keeping only one instance of the factory at all times " .
+        "(Singleton pattern) and reusing it throughout your application.";
+
     private \SplitIO\Component\Log\Logger $logger;
 
     private array $factoryTracker = array();
@@ -68,33 +75,15 @@ class Di
      */
     public static function trackFactory($apiKey)
     {
-        $tracked = 1;
-        if (isset(self::getInstance()->factoryTracker[$apiKey])) {
-            $currentInstances = self::getInstance()->factoryTracker[$apiKey];
-            if ($currentInstances == 1) {
-                self::getInstance()->getLogger()->warning(
-                    "Factory Instantiation: You already have 1 factory with this API Key. " .
-                    "We recommend keeping only one instance of the factory at all times " .
-                    "(Singleton pattern) and reusing it throughout your application."
-                );
-            } else {
-                self::getInstance()->getLogger()->warning(
-                    "Factory Instantiation: You already have " . $currentInstances . " factories with this API Key. " .
-                    "We recommend keeping only one instance of the factory at all times " .
-                    "(Singleton pattern) and reusing it throughout your application."
-                );
-            }
-            $tracked = $currentInstances + $tracked;
-        } elseif (count(self::getInstance()->factoryTracker) > 0) {
-            self::getInstance()->getLogger()->warning(
-                "Factory Instantiation: You already have an instance of the Split factory. " .
-                "Make sure you definitely want this additional instance. " .
-                "We recommend keeping only one instance of the factory at all times " .
-                "(Singleton pattern) and reusing it throughout your application."
-            );
+        $current = self::getInstance()->factoryTracker[$apiKey] ?? 0;
+        if ($current == 0) {
+            self::getInstance()->getLogger()->warning(self::MULTIPLE_INSTANCES);
+        } else {
+            self::getInstance()->getLogger()->warning(sprintf(self::SAME_APIKEY, $current));
         }
-        self::getInstance()->factoryTracker[$apiKey] = $tracked;
-        return $tracked;
+        $current += 1;
+        self::getInstance()->factoryTracker[$apiKey] = $current;
+        return $current;
     }
 
     /**
