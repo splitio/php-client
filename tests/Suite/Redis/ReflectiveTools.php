@@ -3,7 +3,7 @@
 namespace SplitIO\Test\Suite\Redis;
 
 use ReflectionClass;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 class ReflectiveTools
 {
@@ -58,8 +58,8 @@ class ReflectiveTools
 
     public static function overrideLogger($logger)
     {
-        $di = Di::getInstance();
-        $reflection = new \ReflectionClass('SplitIO\Component\Common\Di');
+        $di = Context::getInstance();
+        $reflection = new \ReflectionClass('SplitIO\Component\Common\Context');
         $property = $reflection->getProperty('logger');
         $property->setAccessible(true);
         $property->setValue($di, $logger);
@@ -67,8 +67,8 @@ class ReflectiveTools
 
     public static function resetIPAddress()
     {
-        $di = Di::getInstance();
-        $reflection = new \ReflectionClass('SplitIO\Component\Common\Di');
+        $di = Context::getInstance();
+        $reflection = new \ReflectionClass('SplitIO\Component\Common\Context');
         $property = $reflection->getProperty('ipAddress');
         $property->setAccessible(true);
         $property->setValue($di, "");
@@ -76,8 +76,8 @@ class ReflectiveTools
 
     public static function overrideTracker()
     {
-        $di = Di::getInstance();
-        $reflection = new \ReflectionClass('SplitIO\Component\Common\Di');
+        $di = Context::getInstance();
+        $reflection = new \ReflectionClass('SplitIO\Component\Common\Context');
         $property = $reflection->getProperty('factoryTracker');
         $property->setAccessible(true);
         $property->setValue($di, array());

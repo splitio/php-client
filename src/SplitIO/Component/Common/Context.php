@@ -4,10 +4,10 @@ namespace SplitIO\Component\Common;
 use SplitIO\Component\Log\Logger;
 
 /**
- * Class Di
+ * Class Context
  * @package SplitIO\Common
  */
-class Di
+class Context
 {
     const SAME_APIKEY = "Factory Instantiation: You already have %s factory/factories with this API Key. "
         . "We recommend keeping only one instance of the factory at all times (Singleton pattern) and "

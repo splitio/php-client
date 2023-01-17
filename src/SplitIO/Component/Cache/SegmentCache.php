@@ -1,8 +1,6 @@
 <?php
 namespace SplitIO\Component\Cache;
 
-use SplitIO\Component\Common\Di;
-
 class SegmentCache implements SegmentCacheInterface
 {
     const KEY_SEGMENT_DATA = 'SPLITIO.segment.{segmentName}';

@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Test\Suite\Sdk;
 
-use SplitIO\Component\Common\Di;
 use SplitIO\Sdk\Impressions\Impression;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;

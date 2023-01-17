@@ -4,7 +4,7 @@ namespace SplitIO\Component\Cache\Storage\Adapter;
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use SplitIO\Component\Cache\Item;
 use SplitIO\Component\Utils as SplitIOUtils;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 /**
  * Class SafeRedisWrapper
@@ -32,9 +32,9 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
         try {
             return $this->cacheAdapter->get($key);
         } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred getting " . $key . " from redis.");
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
+            Context::getLogger()->critical("An error occurred getting " . $key . " from redis.");
+            Context::getLogger()->critical($e->getMessage());
+            Context::getLogger()->critical($e->getTraceAsString());
             return null;
         }
     }
@@ -53,9 +53,9 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
         try {
             return $this->cacheAdapter->fetchMany($keys);
         } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred getting " . json_encode($keys) . " from redis.");
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
+            Context::getLogger()->critical("An error occurred getting " . json_encode($keys) . " from redis.");
+            Context::getLogger()->critical($e->getMessage());
+            Context::getLogger()->critical($e->getTraceAsString());
             return array();
         }
     }
@@ -70,9 +70,9 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
         try {
             return $this->cacheAdapter->isOnList($key, $value);
         } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred for " . $key);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
+            Context::getLogger()->critical("An error occurred for " . $key);
+            Context::getLogger()->critical($e->getMessage());
+            Context::getLogger()->critical($e->getTraceAsString());
             return false;
         }
     }
@@ -86,9 +86,9 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
         try {
             return $this->cacheAdapter->getKeys($pattern);
         } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred getting " . $pattern);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
+            Context::getLogger()->critical("An error occurred getting " . $pattern);
+            Context::getLogger()->critical($e->getMessage());
+            Context::getLogger()->critical($e->getTraceAsString());
             return array();
         }
     }
@@ -103,9 +103,9 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
         try {
             return $this->cacheAdapter->rightPushQueue($queueName, $item);
         } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred performing RPUSH into " . $queueName);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
+            Context::getLogger()->critical("An error occurred performing RPUSH into " . $queueName);
+            Context::getLogger()->critical($e->getMessage());
+            Context::getLogger()->critical($e->getTraceAsString());
             return 0;
         }
     }
@@ -120,9 +120,9 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
         try {
             return $this->cacheAdapter->expireKey($key, $ttl);
         } catch (\Exception $e) {
-            Di::getLogger()->critical("An error occurred setting expiration for " . $key);
-            Di::getLogger()->critical($e->getMessage());
-            Di::getLogger()->critical($e->getTraceAsString());
+            Context::getLogger()->critical("An error occurred setting expiration for " . $key);
+            Context::getLogger()->critical($e->getMessage());
+            Context::getLogger()->critical($e->getTraceAsString());
             return false;
         }
     }

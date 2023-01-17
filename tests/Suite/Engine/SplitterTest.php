@@ -9,7 +9,7 @@ use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Grammar\Split;
 use SplitIO\Engine;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 class SplitterTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +17,7 @@ class SplitterTest extends \PHPUnit\Framework\TestCase
     public function testDiLog()
     {
         $logger = LoggerFactory::setupLogger(array('adapter' => 'stdout', 'level' => 'error'));
-        Di::setLogger($logger);
+        Context::setLogger($logger);
 
         $this->assertTrue(true);
     }

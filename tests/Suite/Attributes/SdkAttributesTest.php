@@ -5,7 +5,6 @@ use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Common\Di;
 
 use SplitIO\Test\Utils;
 
