@@ -2,6 +2,7 @@
 namespace SplitIO\Test\Suite\Sdk;
 
 use \stdClass;
+use ReflectionClass;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\EventsCache;
@@ -19,6 +20,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
     public function testLocalClient()
     {
+        ReflectiveTools::resetContext();
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/.splits';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -35,6 +37,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testLocalClientYAML()
     {
+        ReflectiveTools::resetContext();
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/splits.yml';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -207,6 +210,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testClient()
     {
+        ReflectiveTools::resetContext();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -437,6 +441,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCustomLog()
     {
+        ReflectiveTools::resetContext();
         // create a log channel
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
@@ -472,6 +477,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidCacheAdapter()
     {
+        ReflectiveTools::resetContext();
         $this->expectException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
@@ -485,6 +491,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testCacheExceptionReturnsControl()
     {
+        ReflectiveTools::resetContext();
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
@@ -523,6 +530,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTreatmentsWithDistinctFeatures()
     {
+        ReflectiveTools::resetContext();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -559,13 +567,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTreatmentsWithRepeteadedFeatures()
     {
+        ReflectiveTools::resetContext();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
-        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
@@ -597,13 +605,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTreatmentsWithRepeteadedAndNullFeatures()
     {
+        ReflectiveTools::resetIPAddress();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
-        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
@@ -635,6 +643,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTreatmentsFetchesSplitsInOneCall()
     {
+        ReflectiveTools::resetIPAddress();
         // Set redis-library client mock
         $predisMock = $this
             ->getMockBuilder('\Predis\Client')
@@ -682,13 +691,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testMultipleInstantiationNotOverrideIP()
     {
+        ReflectiveTools::resetIPAddress();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
-        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),

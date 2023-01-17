@@ -2,6 +2,7 @@
 namespace SplitIO\Component\Common;
 
 use SplitIO\Component\Log\Logger;
+use SplitIO\Exception\Exception;
 
 /**
  * Class Context
@@ -77,10 +78,10 @@ class Context
     public static function trackFactory($apiKey)
     {
         $current = self::getInstance()->factoryTracker[$apiKey] ?? 0;
-        if ($current == 0) {
-            self::getInstance()->getLogger()->warning(self::MULTIPLE_INSTANCES);
-        } else {
+        if ($current > 0) {
             self::getInstance()->getLogger()->warning(sprintf(self::SAME_APIKEY, $current));
+        } elseif (count(self::getInstance()->factoryTracker) > 0) {
+            self::getInstance()->getLogger()->warning(self::MULTIPLE_INSTANCES);
         }
         $current += 1;
         self::getInstance()->factoryTracker[$apiKey] = $current;

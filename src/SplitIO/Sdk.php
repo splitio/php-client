@@ -31,11 +31,11 @@ class Sdk
         //Adding API Key into args array.
         $options['apiKey'] = $apiKey;
 
-        //Tracking Factory Instantiation
-        Context::trackFactory($apiKey);
-
         //Register Logger
         self::registerLogger((isset($options['log'])) ? $options['log'] : array());
+
+        //Tracking Factory Instantiation
+        Context::trackFactory($apiKey);
 
         if ($apiKey == 'localhost') {
             return new LocalhostSplitFactory($options);

@@ -82,4 +82,14 @@ class ReflectiveTools
         $property->setAccessible(true);
         $property->setValue($di, array());
     }
+
+    public static function resetContext()
+    {
+        $context = Context::getInstance();
+        $reflection = new \ReflectionClass($context);
+        $instance = $reflection->getProperty('instance');
+        $instance->setAccessible(true);
+        $instance->setValue(null, null);
+        $instance->setAccessible(false);
+    }
 }
