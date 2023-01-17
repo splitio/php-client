@@ -2,7 +2,7 @@
 namespace SplitIO\Sdk\Manager;
 
 use \stdClass;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 use SplitIO\Grammar\Condition;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;

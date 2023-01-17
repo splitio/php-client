@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Component\Cache;
 
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 class SplitCache implements SplitCacheInterface
 {

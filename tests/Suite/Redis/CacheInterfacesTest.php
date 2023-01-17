@@ -5,7 +5,7 @@ use SplitIO\Component\Cache\EventsCache;
 use SplitIO\Component\Cache\Pool;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Logger;
@@ -42,7 +42,7 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
 
         $logger = new Logger($logAdapter, LogLevelEnum::INFO);
 
-        Di::getInstance()->setLogger($logger);
+        Context::getInstance()->setLogger($logger);
 
         $this->assertTrue(true);
     }

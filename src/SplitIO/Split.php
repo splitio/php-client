@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 class Split
 {
@@ -11,6 +11,6 @@ class Split
      */
     public static function logger()
     {
-        return Di::getLogger();
+        return Context::getLogger();
     }
 }

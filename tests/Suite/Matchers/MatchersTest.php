@@ -7,7 +7,7 @@ use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use \ReflectionMethod;
 

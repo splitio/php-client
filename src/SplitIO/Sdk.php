@@ -7,7 +7,7 @@ use SplitIO\Component\Common\ServiceProvider;
 use SplitIO\Exception\Exception;
 use SplitIO\Sdk\Factory\LocalhostSplitFactory;
 use SplitIO\Sdk\Factory\SplitFactory;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 use SplitIO\Engine\Splitter;
 use SplitIO\Component\Cache\Pool;
 
@@ -32,7 +32,7 @@ class Sdk
         $options['apiKey'] = $apiKey;
 
         //Tracking Factory Instantiation
-        Di::trackFactory($apiKey);
+        Context::trackFactory($apiKey);
 
         //Register Logger
         self::registerLogger((isset($options['log'])) ? $options['log'] : array());
@@ -57,7 +57,7 @@ class Sdk
     private static function registerLogger(array $options)
     {
         $logger = LoggerFactory::setupLogger($options);
-        Di::setLogger($logger);
+        Context::setLogger($logger);
     }
 
     private static function configureCache(array $options)
@@ -88,6 +88,6 @@ class Sdk
 
     private static function setIP($ip)
     {
-        \SplitIO\Component\Common\Di::setIPAddress($ip);
+        \SplitIO\Component\Common\Context::setIPAddress($ip);
     }
 }

@@ -4,7 +4,7 @@ namespace SplitIO\Component\Cache\Storage\Adapter;
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use SplitIO\Component\Cache\Item;
 use SplitIO\Component\Utils as SplitIOUtils;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 /**
  * Class PRedis
@@ -170,7 +170,7 @@ class PRedis implements CacheStorageAdapterInterface
         } else {
             // @TODO remove this statement when replication will be deprecated
             if (isset($_options['replication'])) {
-                Di::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
+                Context::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
                 if (!isset($_options['distributedStrategy'])) {
                     $_options['distributedStrategy'] = $_options['replication'];
                 }

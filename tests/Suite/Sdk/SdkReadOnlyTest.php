@@ -5,7 +5,7 @@ namespace SplitIO\Test\Suite\Sdk;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 use SplitIO\Test\Suite\Redis\PRedisReadOnlyMock;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Sdk\Impressions\Impression;
@@ -52,7 +52,7 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
                 $this->equalTo('The SPLIT definition for \'mockedPRedisInvalid\' has not been found')
             ));
 
-        Di::setLogger($logger);
+        Context::setLogger($logger);
 
         $this->assertEquals('on', $splitSdk->getTreatment('valid', 'mockedPRedis'));
         $this->assertEquals('off', $splitSdk->getTreatment('invalid', 'mockedPRedis'));

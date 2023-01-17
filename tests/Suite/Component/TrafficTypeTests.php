@@ -3,7 +3,7 @@ namespace SplitIO\Test\Suite\Component;
 
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 class TrafficTypeTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +17,7 @@ class TrafficTypeTest extends \PHPUnit\Framework\TestCase
                 'alert', 'notice', 'write', 'log'))
             ->getMock();
 
-        Di::setLogger($logger);
+            Context::setLogger($logger);
 
         return $logger;
     }
@@ -42,7 +42,7 @@ class TrafficTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($keyTrafficType, 'SPLITIO.trafficType.abc');
 
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromCachePool(Context::getCache());
         $redisClient->del($keyTrafficType);
 
         $splitCache = new SplitCache();
