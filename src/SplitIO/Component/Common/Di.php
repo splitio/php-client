@@ -9,9 +9,16 @@ use SplitIO\Component\Log\Logger;
  */
 class Di
 {
+    const SAME_APIKEY = "Factory Instantiation: You already have %s factory/factories with this API Key. "
+        . "We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.";
+
+    const MULTIPLE_INSTANCES = "Factory Instantiation: You already have an instance of the Split factory. " .
+        "Make sure you definitely want this additional instance. We recommend keeping only one instance of the factory at all times " .
+        "(Singleton pattern) and reusing it throughout your application.";
+
     private \SplitIO\Component\Log\Logger $logger;
 
-    private int $factoryTracker = 0;
+    private array $factoryTracker = array();
 
     private string $ipAddress = "";
 
@@ -63,12 +70,20 @@ class Di
     }
 
     /**
+     * @param string $apiKey
      * @return int
      */
-    public static function trackFactory()
+    public static function trackFactory($apiKey)
     {
-        self::getInstance()->factoryTracker += 1;
-        return self::getInstance()->factoryTracker;
+        $current = self::getInstance()->factoryTracker[$apiKey] ?? 0;
+        if ($current == 0) {
+            self::getInstance()->getLogger()->warning(self::MULTIPLE_INSTANCES);
+        } else {
+            self::getInstance()->getLogger()->warning(sprintf(self::SAME_APIKEY, $current));
+        }
+        $current += 1;
+        self::getInstance()->factoryTracker[$apiKey] = $current;
+        return $current;
     }
 
     /**

@@ -10,6 +10,7 @@ class GetTreatmentsValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {
+        ReflectiveTools::overrideTracker();
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 

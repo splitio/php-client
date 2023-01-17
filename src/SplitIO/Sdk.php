@@ -32,7 +32,7 @@ class Sdk
         $options['apiKey'] = $apiKey;
 
         //Tracking Factory Instantiation
-        self::registerInstance();
+        Di::trackFactory($apiKey);
 
         //Register Logger
         self::registerLogger((isset($options['log'])) ? $options['log'] : array());
@@ -89,17 +89,5 @@ class Sdk
     private static function setIP($ip)
     {
         \SplitIO\Component\Common\Di::setIPAddress($ip);
-    }
-
-    /**
-     * Register factory instance
-     */
-    private static function registerInstance()
-    {
-        if (Di::trackFactory() > 1) {
-            Di::getLogger()->warning("Factory Instantiation: You already have an instance of the Split factory. "
-            . "Make sure you definitely want this additional instance. We recommend keeping only one instance of "
-            . "the factory at all times (Singleton pattern) and reusing it throughout your application.");
-        }
     }
 }
