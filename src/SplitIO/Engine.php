@@ -6,7 +6,6 @@ use SplitIO\Grammar\Condition;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\ConditionTypeEnum;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
-use SplitIO\Component\Common\Context;
 
 class Engine
 {

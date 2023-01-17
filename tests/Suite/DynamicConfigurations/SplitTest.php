@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Test\Suite\Sdk;
 
-use SplitIO\Component\Common\Context;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Split;
