@@ -1,8 +1,6 @@
 <?php
 namespace SplitIO\Component\Cache;
 
-use SplitIO\Component\Common\Di;
-
 class SplitCache implements SplitCacheInterface
 {
     const KEY_TILL_CACHED_ITEM = 'SPLITIO.splits.till';
