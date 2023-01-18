@@ -42,9 +42,8 @@ class TrafficTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($keyTrafficType, 'SPLITIO.trafficType.abc');
 
-        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-        $redisClient = ReflectiveTools::clientFromFactory($factory);
-        $cachePool = ReflectiveTools::cacheFromFactory($factory);
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
+        $cachePool = ReflectiveTools::cacheFromFactory($splitFactory);
         $redisClient->del($keyTrafficType);
 
         $splitCache = new SplitCache($cachePool);
