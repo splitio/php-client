@@ -3,9 +3,6 @@
 namespace SplitIO\Test\Suite\Adapter;
 
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
-use SplitIO\Component\Cache\Storage\Exception\AdapterException;
-use \Predis\Response\ServerException;
-use \Predis\ClientException;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 
 class RedisAdapterTest extends \PHPUnit\Framework\TestCase
@@ -16,8 +13,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         $logger = $this
             ->getMockBuilder('\SplitIO\Component\Log\Logger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
         ReflectiveTools::overrideLogger($logger);

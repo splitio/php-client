@@ -1,8 +1,6 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
-
 function version()
 {
     return Version::CURRENT;

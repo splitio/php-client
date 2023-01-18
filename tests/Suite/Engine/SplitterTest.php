@@ -2,13 +2,9 @@
 namespace SplitIO\Test\Suite\Engine;
 
 use SplitIO\Component\Initialization\LoggerFactory;
-use SplitIO\Component\Common\ServiceProvider;
-use SplitIO\Component\Log\LogLevelEnum;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\Partition;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
-use SplitIO\Grammar\Split;
-use SplitIO\Engine;
 use SplitIO\Component\Common\Context;
 
 class SplitterTest extends \PHPUnit\Framework\TestCase

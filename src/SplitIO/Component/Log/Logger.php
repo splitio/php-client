@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Component\Log;
 
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use \SplitIO\Component\Log\Handler\LogHandlerInterface;
 use SplitIO\Component\Log\Handler\VoidHandler;

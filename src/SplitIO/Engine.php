@@ -2,7 +2,6 @@
 namespace SplitIO;
 
 use SplitIO\Grammar\Split as SplitGrammar;
-use SplitIO\Grammar\Condition;
 use SplitIO\Engine\Splitter;
 use SplitIO\Grammar\Condition\ConditionTypeEnum;
 use SplitIO\Sdk\Impressions\ImpressionLabel;

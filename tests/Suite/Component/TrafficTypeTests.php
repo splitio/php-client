@@ -13,7 +13,7 @@ class TrafficTypeTest extends \PHPUnit\Framework\TestCase
         $logger = $this
             ->getMockBuilder('\SplitIO\Component\Log\Logger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
                 'alert', 'notice', 'write', 'log'))
             ->getMock();
 
@@ -42,10 +42,12 @@ class TrafficTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($keyTrafficType, 'SPLITIO.trafficType.abc');
 
-        $redisClient = ReflectiveTools::clientFromCachePool(Context::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
         $redisClient->del($keyTrafficType);
 
-        $splitCache = new SplitCache();
+        $splitCache = new SplitCache($cachePool);
 
         $this->assertEquals($splitCache->trafficTypeExists("abc"), false);
 

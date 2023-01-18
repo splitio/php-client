@@ -6,7 +6,7 @@ class HashFactory
 {
     /**
      * @param $algo
-     * @return \SplitIO\Engine\HashInterface
+     * @return \SplitIO\Engine\Hash\HashInterface
      */
     public static function getHashAlgorithm($algo)
     {

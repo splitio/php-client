@@ -3,11 +3,9 @@ namespace SplitIO\Test\Suite\Sdk;
 
 use SplitIO\Sdk\ImpressionListenerWrapper;
 use SplitIO\Sdk\Impressions\Impression;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClient;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
-use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 
 use SplitIO\Test\Utils;

@@ -16,7 +16,7 @@ class LoggerFactory
      * Builds defaultLogger
      *
      * @param $options
-     * @return SplitIO\Component\Log\Handler
+     * @return \SplitIO\Component\Log\Handler\LogHandlerInterface
      */
     private static function buildAdapter(array $options)
     {
@@ -42,7 +42,7 @@ class LoggerFactory
      * Builds logger
      *
      * @param $options
-     * @return SplitIO\Component\Log\Logger
+     * @return \SplitIO\Component\Log\Logger
      */
     public static function setupLogger(array $options)
     {

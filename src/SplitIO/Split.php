@@ -7,7 +7,7 @@ class Split
 {
 
     /**
-     * @return null|\Psr\Log\LoggerInterface
+     * @return \Splitio\Component\Log\Logger
      */
     public static function logger()
     {

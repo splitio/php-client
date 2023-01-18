@@ -18,14 +18,14 @@ class Context
         . "Make sure you definitely want this additional instance. We recommend keeping only one instance of "
         . "the factory at all times (Singleton pattern) and reusing it throughout your application.";
 
-    private \SplitIO\Component\Log\Logger $logger;
+    private Logger $logger;
 
     private array $factoryTracker = array();
 
     private string $ipAddress = "";
 
     /**
-     * @var Singleton The reference to *Singleton* instance of this class
+     * @var Context The reference to *Singleton* instance of this class
      */
     private static $instance;
 

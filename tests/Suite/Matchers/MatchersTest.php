@@ -1,12 +1,8 @@
 <?php
 namespace SplitIO\Test\Suite\Sdk;
 
-use Monolog\Logger;
-use Monolog\Handler\ErrorLogHandler;
 use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Matcher;
-use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use \ReflectionMethod;
 
@@ -456,7 +452,7 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
         $evaluator = $this
             ->getMockBuilder('\SplitIO\Sdk\Evaluator')
             ->disableOriginalConstructor()
-            ->setMethods(array('evaluateFeature'))
+            ->onlyMethods(array('evaluateFeature'))
             ->getMock();
 
         $evaluator->method('evaluateFeature')->willReturn(array('treatment' => 'on'));
