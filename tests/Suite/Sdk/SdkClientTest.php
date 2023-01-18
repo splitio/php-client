@@ -6,7 +6,6 @@ use ReflectionClass;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\EventsCache;
-use SplitIO\Component\Cache\Storage\Adapter;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Pool;
 use SplitIO\Component\Cache\SegmentCache;
@@ -436,9 +435,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('{"size":15,"test":20}', $configs['on']);
     }
 
-    /**
-     * @depends testClient
-     */
     public function testCustomLog()
     {
         ReflectiveTools::resetContext();
@@ -446,8 +442,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
@@ -495,8 +491,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
@@ -516,7 +512,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $cachePool = $this
             ->getMockBuilder('\SplitIO\Component\Cache\Pool')
             ->disableOriginalConstructor()
-            ->setMethods($cachePoolMethods)
+            ->onlyMethods($cachePoolMethods)
             ->getMock();
 
         foreach ($cachePoolMethods as $method) {
@@ -648,19 +644,19 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $predisMock = $this
             ->getMockBuilder('\Predis\Client')
             ->disableOriginalConstructor()
-            ->setMethods(array('get', 'mget', 'rpush', 'incr'))
+            ->addMethods(array('get', 'mget', 'rpush', 'incr'))
             ->getMock();
 
         // Create an adapter and inject mock via reflection
         $adapter = new PRedis(array('parameters' => array()));
-        $adapterReflection = new \ReflectionClass($adapter);
+        $adapterReflection = new ReflectionClass($adapter);
         $clientProperty = $adapterReflection->getProperty('client');
         $clientProperty->setAccessible(true);
         $clientProperty->setValue($adapter, $predisMock);
 
         // Create a pool and inject the adapter via reflection
         $pool = new Pool(array('adapter' => array('name' => 'predis', 'options' => array('parameters' => array()))));
-        $poolReflection = new \ReflectionClass($pool);
+        $poolReflection = new ReflectionClass($pool);
         $adapterProperty = $poolReflection->getProperty('adapter');
         $adapterProperty->setAccessible(true);
         $adapterProperty->setValue($pool, $adapter);

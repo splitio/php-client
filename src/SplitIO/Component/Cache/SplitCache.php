@@ -44,7 +44,7 @@ class SplitCache implements SplitCacheInterface
     }
 
     /**
-     * @return long
+     * @return int
      */
     public function getChangeNumber()
     {
@@ -64,7 +64,7 @@ class SplitCache implements SplitCacheInterface
 
     /**
      * @param array $splitNames
-     * @return string JSON representation
+     * @return array
      */
     public function getSplits($splitNames)
     {

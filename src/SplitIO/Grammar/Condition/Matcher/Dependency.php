@@ -2,7 +2,6 @@
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Grammar\Condition\Matcher;
-use SplitIO\Sdk\Key;
 use SplitIO\Exception\Exception;
 
 class Dependency

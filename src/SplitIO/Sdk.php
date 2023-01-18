@@ -1,14 +1,11 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Component\Initialization\CacheTrait;
 use SplitIO\Component\Initialization\LoggerFactory;
-use SplitIO\Component\Common\ServiceProvider;
 use SplitIO\Exception\Exception;
 use SplitIO\Sdk\Factory\LocalhostSplitFactory;
 use SplitIO\Sdk\Factory\SplitFactory;
 use SplitIO\Component\Common\Context;
-use SplitIO\Engine\Splitter;
 use SplitIO\Component\Cache\Pool;
 
 class Sdk
@@ -88,6 +85,6 @@ class Sdk
 
     private static function setIP($ip)
     {
-        \SplitIO\Component\Common\Context::setIPAddress($ip);
+        Context::setIPAddress($ip);
     }
 }

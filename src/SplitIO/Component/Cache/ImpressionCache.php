@@ -2,7 +2,6 @@
 namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Common\Context;
-use SplitIO\Component\Cache\KeyFactory;
 use SplitIO\Sdk\QueueMetadataMessage;
 use SplitIO\Component\Cache\Pool;
 

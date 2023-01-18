@@ -11,8 +11,8 @@ class FactoryTrackerTest extends \PHPUnit\Framework\TestCase
         $logger = $this
             ->getMockBuilder('\SplitIO\Component\Log\Logger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
         ReflectiveTools::overrideLogger($logger);

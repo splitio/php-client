@@ -4,7 +4,7 @@ namespace SplitIO\Component\Cache;
 interface SplitCacheInterface
 {
     /**
-     * @return long
+     * @return int
      */
     public function getChangeNumber();
 

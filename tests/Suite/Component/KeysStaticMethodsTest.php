@@ -2,10 +2,7 @@
 
 namespace SplitIO\Test\Suite\Component;
 
-use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\TrafficTypeCache;
 
 class KeyTest extends \PHPUnit\Framework\TestCase
 {
