@@ -108,7 +108,7 @@ class PRedis implements CacheStorageAdapterInterface
             return $this->getDefaultKeyHashTag($options); // defaulting to keyHashTag or {SPLITIO}
         }
         $keyHashTags = $options['keyHashTags'];
-        $msg = $this->isValidConfigArray($keyHashTags, 'keyHashTags'); // check if is valid array
+        $msg = $this->isValidConfigArray($keyHashTags, 'keyHashTag'); // check if is valid array
         if (!is_null($msg)) {
             throw new AdapterException($msg);
         }
