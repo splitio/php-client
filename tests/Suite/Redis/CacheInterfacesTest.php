@@ -6,7 +6,6 @@ use SplitIO\Component\Cache\Pool;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Common\Context;
-use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;

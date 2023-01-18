@@ -74,6 +74,11 @@ class LocalhostSplitManager implements SplitManagerInterface
         return $_splits;
     }
 
+    /**
+     * Return split
+     * @param mixed $featureName
+     * @return SplitView|null
+     */
     public function split($featureName)
     {
         $featureName = InputValidator::validateFeatureName($featureName, 'split');

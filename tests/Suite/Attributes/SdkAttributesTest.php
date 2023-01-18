@@ -1,11 +1,6 @@
 <?php
 namespace SplitIO\Test\Suite\Engine;
 
-use Monolog\Logger;
-use Monolog\Handler\ErrorLogHandler;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
-
 use SplitIO\Test\Utils;
 
 class SdkAttributesTest extends \PHPUnit\Framework\TestCase

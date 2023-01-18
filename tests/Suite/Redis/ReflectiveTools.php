@@ -59,7 +59,7 @@ class ReflectiveTools
     public static function overrideLogger($logger)
     {
         $di = Context::getInstance();
-        $reflection = new \ReflectionClass('SplitIO\Component\Common\Context');
+        $reflection = new ReflectionClass('SplitIO\Component\Common\Context');
         $property = $reflection->getProperty('logger');
         $property->setAccessible(true);
         $property->setValue($di, $logger);
@@ -68,7 +68,7 @@ class ReflectiveTools
     public static function resetIPAddress()
     {
         $di = Context::getInstance();
-        $reflection = new \ReflectionClass('SplitIO\Component\Common\Context');
+        $reflection = new ReflectionClass('SplitIO\Component\Common\Context');
         $property = $reflection->getProperty('ipAddress');
         $property->setAccessible(true);
         $property->setValue($di, "");
@@ -77,7 +77,7 @@ class ReflectiveTools
     public static function overrideTracker()
     {
         $di = Context::getInstance();
-        $reflection = new \ReflectionClass('SplitIO\Component\Common\Context');
+        $reflection = new ReflectionClass('SplitIO\Component\Common\Context');
         $property = $reflection->getProperty('factoryTracker');
         $property->setAccessible(true);
         $property->setValue($di, array());
@@ -86,7 +86,7 @@ class ReflectiveTools
     public static function resetContext()
     {
         $context = Context::getInstance();
-        $reflection = new \ReflectionClass($context);
+        $reflection = new ReflectionClass($context);
         $instance = $reflection->getProperty('instance');
         $instance->setAccessible(true);
         $instance->setValue(null, null);

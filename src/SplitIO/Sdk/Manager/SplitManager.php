@@ -2,7 +2,6 @@
 namespace SplitIO\Sdk\Manager;
 
 use \stdClass;
-use SplitIO\Grammar\Condition;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;
 use SplitIO\Component\Cache\SplitCache;
@@ -57,7 +56,7 @@ class SplitManager implements SplitManagerInterface
 
     /**
      * @param $splitRepresentation
-     * @return SplitView
+     * @return null|SplitView
      */
     private static function parseSplitView($splitRepresentation)
     {

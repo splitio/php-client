@@ -2,7 +2,6 @@
 namespace SplitIO\Component\Cache\Storage\Adapter;
 
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
-use SplitIO\Component\Cache\Item;
 use SplitIO\Component\Utils as SplitIOUtils;
 use SplitIO\Component\Common\Context;
 

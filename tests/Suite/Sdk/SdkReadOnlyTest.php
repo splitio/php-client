@@ -2,15 +2,8 @@
 
 namespace SplitIO\Test\Suite\Sdk;
 
-use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Common\Context;
-use SplitIO\Test\Suite\Redis\PRedisReadOnlyMock;
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
-use SplitIO\Sdk\Impressions\Impression;
-use SplitIO\Sdk\QueueMetadataMessage;
-use SplitIO\Test\Suite\Redis\ReflectiveTools;
 
 use SplitIO\Test\Utils;
 
@@ -39,8 +32,8 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
         $logger = $this
             ->getMockBuilder('\SplitIO\Component\Log\Logger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
         $logger->expects($this->any())

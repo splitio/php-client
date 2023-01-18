@@ -8,9 +8,9 @@ use SplitIO\Engine\Hash\HashFactory;
 class Splitter
 {
     /**
-     * @param HashAlgorithmEnum $algo
+     * @param \SplitIO\Engine\Hash\HashAlgorithmEnum $algo
      * @param string $key
-     * @param long $seed
+     * @param int $seed
      * @return int
      */
     public static function getBucket($algo, $key, $seed)
@@ -23,9 +23,9 @@ class Splitter
 
     /**
      * @param string $key
-     * @param long $seed
+     * @param int $seed
      * @param array $partitions
-     * @param HashAlgorithmEnum $algo
+     * @param \SplitIO\Engine\Hash\HashAlgorithmEnum $algo
      * @return null|string
      */
     public static function getTreatment($key, $seed, $partitions, $algo)

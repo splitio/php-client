@@ -1,10 +1,7 @@
 <?php
 namespace SplitIO\Sdk\Factory;
 
-use SplitIO\Component\Stats\Latency;
-use SplitIO\Exception\TimeOutException;
 use SplitIO\Sdk\Client;
-use SplitIO\Sdk\LocalhostClient;
 use SplitIO\Sdk\Manager\SplitManager;
 use SplitIO\Component\Cache\Pool;
 use SplitIO\Component\Cache\EventsCache;

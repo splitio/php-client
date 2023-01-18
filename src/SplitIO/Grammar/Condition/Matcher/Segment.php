@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Engine\Hash\Murmur3Hash;
 use SplitIO\Grammar\Condition\Matcher;
 use SplitIO\Exception\Exception;
