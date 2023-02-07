@@ -90,7 +90,7 @@ class SdkReadOnlyTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         // Discard (ignore) first logging statement
-        $logger->expects($this->exactly(2))
+        $logger->expects($this->exactly(1))
             ->method('debug');
 
         $logger->expects($this->exactly(2))
