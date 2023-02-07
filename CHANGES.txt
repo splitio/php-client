@@ -1,4 +1,4 @@
-7.1.6 (Feb XX, 2023)
+7.1.6 (Feb 08, 2023)
  - Fixed logging on array conversion.
 
 7.1.5 (Oct 28, 2022)
