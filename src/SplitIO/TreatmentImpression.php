@@ -15,8 +15,8 @@ class TreatmentImpression
     public static function log($impressions, QueueMetadataMessage $metadata)
     {
         try {
-            Di::getLogger()->debug($impressions);
             if (is_null($impressions) || (is_array($impressions) && 0 == count($impressions))) {
+                Di::getLogger()->debug("no impressions were sent");
                 return null;
             }
             $impressionCache = new ImpressionCache();
