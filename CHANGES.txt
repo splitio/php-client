@@ -1,3 +1,6 @@
+7.1.6 (Feb 14, 2023)
+ - Fixed logging on array conversion.
+
 7.1.5 (Oct 28, 2022)
  - Updated phpdocs for `ClientInterface`.
 
