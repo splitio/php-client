@@ -7,6 +7,8 @@ class ContainsString extends AbstractMatcher
 {
     protected $ContainsStringMatcherData = null;
 
+    private $containsStringMatcherData;
+
     public function __construct($data, $negate = false, $attribute = null)
     {
         parent::__construct(Matcher::CONTAINS_STRING, $negate, $attribute);

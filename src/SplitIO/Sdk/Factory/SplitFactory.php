@@ -37,6 +37,7 @@ class SplitFactory implements SplitFactoryInterface
 
     /**
      * @param string $apiKey
+     * @param Pool $cache
      * @param array $options
      */
     public function __construct($apiKey, Pool $cache, array $options = array())

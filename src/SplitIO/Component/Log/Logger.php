@@ -59,6 +59,9 @@ class Logger extends LoggerTrait
     public function log($level, $message, array $context = array())
     {
         if ($this->logLevels[$level] <= $this->logLevel) {
+            if (is_array($message)) {
+                $message = json_encode($message);
+            }
             $this->handler->write($level, $message);
         }
     }

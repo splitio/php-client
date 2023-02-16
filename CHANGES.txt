@@ -1,6 +1,9 @@
-8.0.0 (Jan XX, 2023)
+8.0.0 (Feb XX, 2023)
  - BREAKING CHANGE: Removed support from versions older than PHP 7.4.
  - BREAKING CHANGE: Added support for Multiple Factory Instantiation.
+
+7.1.6 (Feb 14, 2023)
+ - Fixed logging on array conversion.
 
 7.1.5 (Oct 28, 2022)
  - Updated phpdocs for `ClientInterface`.

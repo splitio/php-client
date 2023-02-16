@@ -16,6 +16,7 @@ class Client implements ClientInterface
 
     private $evaluator = null;
     private $impressionListener = null;
+    private $queueMetadata = null;
 
     /**
      * Flag to get Impression's labels feature enabled
@@ -39,13 +40,13 @@ class Client implements ClientInterface
     private $impressionCache;
 
     /**
-     * @var \SplitIO\Component\Cache\EventCache
+     * @var \SplitIO\Component\Cache\EventsCache
      */
     private $eventCache;
 
     /**
-     * @param array $options
      * @param array $storages
+     * @param array $options
      */
     public function __construct($storages, $options = array())
     {
