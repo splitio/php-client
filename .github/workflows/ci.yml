@@ -6,6 +6,7 @@ on:
       - master
   push:
     branches:
+      - develop
       - master
 
 jobs:
@@ -19,10 +20,16 @@ jobs:
           - 6379:6379
     strategy:
       matrix:
-        version: ['7.3', '8.0', '8.1']
+        version:
+          - '7.3'
+          - '8.0'
+          - '8.1'
+          - '8.2'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -30,57 +37,44 @@ jobs:
           php-version: ${{ matrix.version }}
           extensions: mbstring, intl
           ini-values: post_max_size=256M, max_execution_time=180
-          coverage: xdebug
+          coverage: pcov
 
       - name: Install dependencies
         run: |
           composer install --prefer-dist
           composer update
-          composer dumpautoload
 
       - name: Build
         run: |
           vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/
-          vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration
+          vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration --coverage-clover coverage.xml
 
-  sonarqube:
-    name: Sonarqube
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Set VERSION env
+        run: echo "VERSION=$(cat src/SplitIO/Version.php | grep 'const CURRENT' | cut -d "'" -f 2 | sed "s/'//g")" >> $GITHUB_ENV
 
       - name: SonarQube Scan (Push)
-        if: github.event_name == 'push'
-        uses: SonarSource/sonarcloud-github-action@v1.5
+        if: matrix.version == '8.2' && github.event_name
+        uses: SonarSource/sonarcloud-github-action@v1.9
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectBaseDir: .
           args: >
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-            -Dsonar.projectName=${{ github.event.repository.name }}
-            -Dsonar.projectKey=splitsoftware_split-sdk-php
-            -Dsonar.exclusions="**/tests/**/*.*"
-            -Dsonar.links.ci="https://github.com/splitio/${{ github.event.repository.name }}/actions"
-            -Dsonar.links.scm="https://github.com/splitio/${{ github.event.repository.name }}"
+            -Dsonar.projectVersion=${{ env.VERSION }}
 
       - name: SonarQube Scan (Pull Request)
-        if: github.event_name == 'pull_request'
-        uses: SonarSource/sonarcloud-github-action@v1.5
+        if: matrix.version == '8.2' && github.event_name == 'pull_request'
+        uses: SonarSource/sonarcloud-github-action@v1.9
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectBaseDir: .
           args: >
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-            -Dsonar.projectName=${{ github.event.repository.name }}
-            -Dsonar.projectKey=splitsoftware_split-sdk-php
-            -Dsonar.exclusions="**/tests/**/*.*"
-            -Dsonar.links.ci="https://github.com/splitio/${{ github.event.repository.name }}/actions"
-            -Dsonar.links.scm="https://github.com/splitio/${{ github.event.repository.name }}"
+            -Dsonar.projectVersion=${{ env.VERSION }}
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
             -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
