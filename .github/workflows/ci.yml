@@ -58,7 +58,7 @@ jobs:
         run: echo "VERSION=$(cat src/SplitIO/Version.php | grep 'const CURRENT' | cut -d "'" -f 2 | sed "s/'//g")" >> $GITHUB_ENV
 
       - name: SonarQube Scan (Push)
-        if: matrix.version == '8.2' && github.event_name
+        if: matrix.version == '8.2' && github.event_name == 'push'
         uses: SonarSource/sonarcloud-github-action@v1.9
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
