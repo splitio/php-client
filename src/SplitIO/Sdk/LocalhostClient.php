@@ -191,17 +191,17 @@ class LocalhostClient implements ClientInterface
      */
     public function getTreatments($key, $featureNames, array $attributes = null)
     {
+        $result = array();
+
         $splitNames = InputValidator::validateFeatureNames($featureNames, "getTreatments");
         if (is_null($splitNames)) {
-            return null;
+            return $result;
         }
 
         $key = InputValidator::validateKey($key, "getTreatments");
         if (is_null($key)) {
             return array_fill_keys($splitNames, TreatmentEnum::CONTROL);
         }
-
-        $result = array();
 
         foreach ($splitNames as $split) {
             $result[$split] = $this->getTreatment($key["matchingKey"], $split, $attributes);
@@ -215,17 +215,17 @@ class LocalhostClient implements ClientInterface
      */
     public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
     {
+        $result = array();
+
         $splitNames = InputValidator::validateFeatureNames($featureNames, "getTreatmentsWithConfig");
         if (is_null($splitNames)) {
-            return null;
+            return $result;
         }
 
         $key = InputValidator::validateKey($key, "getTreatmentsWithConfig");
         if (is_null($key)) {
             return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
         }
-
-        $result = array();
 
         foreach ($splitNames as $split) {
             $result[$split] = $this->getTreatmentWithConfig($key["matchingKey"], $split, $attributes);
