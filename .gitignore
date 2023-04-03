@@ -26,3 +26,7 @@ test.php
 
 # Sonarqube
 .scannerwork
+
+# Tests
+.phpunit.result.cache
+coverage.xml
