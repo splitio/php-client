@@ -118,27 +118,27 @@ class LocalhostClient implements ClientInterface
         return $this->splits;
     }
 
-    public function doValidation($key, $featureName, $operation)
+    public function doValidation($key, $featureFlagName, $operation)
     {
         $key = InputValidator::validateKey($key, $operation);
         if (is_null($key)) {
             return null;
         }
 
-        $featureName = InputValidator::validateFeatureName($featureName, $operation);
-        if (is_null($featureName)) {
+        $featureFlagName = InputValidator::validateFeatureFlagName($featureFlagName, $operation);
+        if (is_null($featureFlagName)) {
             return null;
         }
 
-        return is_null($key) ? $featureName : ($featureName . ":" .  $key["matchingKey"]);
+        return is_null($key) ? $featureFlagName : ($featureFlagName . ":" .  $key["matchingKey"]);
     }
 
     /**
      * @inheritdoc
      */
-    public function getTreatment($key, $featureName, array $attributes = null)
+    public function getTreatment($key, $featureFlagName, array $attributes = null)
     {
-        $key = $this->doValidation($key, $featureName, "getTreatment");
+        $key = $this->doValidation($key, $featureFlagName, "getTreatment");
         if (is_null($key)) {
             return TreatmentEnum::CONTROL;
         }
@@ -146,8 +146,8 @@ class LocalhostClient implements ClientInterface
         if (isset($this->splits[$key])) {
             return $this->splits[$key]["treatment"];
         } else {
-            if (isset($this->splits[$featureName])) {
-                return $this->splits[$featureName]["treatment"];
+            if (isset($this->splits[$featureFlagName])) {
+                return $this->splits[$featureFlagName]["treatment"];
             }
         }
 
@@ -157,14 +157,14 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
+    public function getTreatmentWithConfig($key, $featureFlagName, array $attributes = null)
     {
         $treatmentResult = array(
             "treatment" => TreatmentEnum::CONTROL,
             "config" => null,
         );
 
-        $key = $this->doValidation($key, $featureName, "getTreatmentWithConfig");
+        $key = $this->doValidation($key, $featureFlagName, "getTreatmentWithConfig");
         if (is_null($key)) {
             return $treatmentResult;
         }
@@ -175,10 +175,10 @@ class LocalhostClient implements ClientInterface
                 $treatmentResult["config"] = $this->splits[$key]["config"];
             }
         } else {
-            if (isset($this->splits[$featureName])) {
-                $treatmentResult["treatment"] = $this->splits[$featureName]["treatment"];
-                if (isset($this->splits[$featureName]["config"])) {
-                    $treatmentResult["config"] = $this->splits[$featureName]["config"];
+            if (isset($this->splits[$featureFlagName])) {
+                $treatmentResult["treatment"] = $this->splits[$featureFlagName]["treatment"];
+                if (isset($this->splits[$featureFlagName]["config"])) {
+                    $treatmentResult["config"] = $this->splits[$featureFlagName]["config"];
                 }
             }
         }
@@ -189,21 +189,21 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatments($key, $featureNames, array $attributes = null)
+    public function getTreatments($key, $featureFlagNames, array $attributes = null)
     {
         $result = array();
 
-        $splitNames = InputValidator::validateFeatureNames($featureNames, "getTreatments");
-        if (is_null($splitNames)) {
+        $featureFlags = InputValidator::validateFeatureFlagNames($featureFlagNames, "getTreatments");
+        if (is_null($featureFlags)) {
             return $result;
         }
 
         $key = InputValidator::validateKey($key, "getTreatments");
         if (is_null($key)) {
-            return array_fill_keys($splitNames, TreatmentEnum::CONTROL);
+            return array_fill_keys($featureFlags, TreatmentEnum::CONTROL);
         }
 
-        foreach ($splitNames as $split) {
+        foreach ($featureFlags as $split) {
             $result[$split] = $this->getTreatment($key["matchingKey"], $split, $attributes);
         };
 
@@ -213,21 +213,21 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
+    public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null)
     {
         $result = array();
 
-        $splitNames = InputValidator::validateFeatureNames($featureNames, "getTreatmentsWithConfig");
-        if (is_null($splitNames)) {
+        $featureFlags = InputValidator::validateFeatureFlagNames($featureFlagNames, "getTreatmentsWithConfig");
+        if (is_null($featureFlags)) {
             return $result;
         }
 
         $key = InputValidator::validateKey($key, "getTreatmentsWithConfig");
         if (is_null($key)) {
-            return array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
+            return array_fill_keys($featureFlags, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
         }
 
-        foreach ($splitNames as $split) {
+        foreach ($featureFlags as $split) {
             $result[$split] = $this->getTreatmentWithConfig($key["matchingKey"], $split, $attributes);
         };
 
@@ -237,9 +237,9 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function isTreatment($key, $featureName, $treatment)
+    public function isTreatment($key, $featureFlagName, $treatment)
     {
-        $calculatedTreatment = $this->getTreatment($key, $featureName);
+        $calculatedTreatment = $this->getTreatment($key, $featureFlagName);
 
         if ($calculatedTreatment !== TreatmentEnum::CONTROL) {
             if ($treatment == $calculatedTreatment) {

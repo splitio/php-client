@@ -12,7 +12,7 @@ interface ClientInterface
      *     <li>Any of the parameters were null</li>
      *     <li>There was an exception</li>
      *     <li>The SDK does not know this feature flag</li>
-     *     <li>The feature flag was deleted through the web console.</li>
+     *     <li>The feature flag was deleted through the Split user interface.</li>
      * </ol>
      * 'control' is a reserved treatment, to highlight these
      * exceptional circumstances.
@@ -48,7 +48,7 @@ interface ClientInterface
      *     <li>Any of the parameters were null</li>
      *     <li>There was an exception</li>
      *     <li>The SDK does not know this feature flag</li>
-     *     <li>The feature flag was deleted through the web console.</li>
+     *     <li>The feature flag was deleted through the Split user interface.</li>
      * </ol>
      * 'control' is a reserved treatment, to highlight these
      * exceptional circumstances.

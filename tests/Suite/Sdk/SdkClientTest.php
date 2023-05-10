@@ -337,7 +337,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('on', $result['all_feature']);
         $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
 
-        //testing multiple splitNames
+        //testing multiple featureFlags
         $result = $splitSdk->getTreatments('invalidKey', array(
             'all_feature',
             'killed_feature',
@@ -388,7 +388,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $result['all_feature']['config']);
         $this->validateLastImpression($redisClient, 'all_feature', 'invalidKey', 'on');
 
-        //testing multiple splitNames
+        //testing multiple featureFlags
         $result = $splitSdk->getTreatmentsWithConfig('invalidKey', array(
             'all_feature',
             'killed_feature',
