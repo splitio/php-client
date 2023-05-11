@@ -22,7 +22,7 @@ class SplitManager implements SplitManagerInterface
     {
         $cache = new SplitCache();
         $rawSplits = $cache->getAllSplits();
-        return array_map('self::parseSplitView', $rawSplits);
+        return array_map([self::class, 'parseSplitView'], $rawSplits);
     }
 
     /**

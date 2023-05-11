@@ -50,7 +50,7 @@ class Client implements ClientInterface
      * @param $featureFlag
      * @param $treatment
      * @param string $label
-     * @param null $time
+     * @param $time
      * @param int $changeNumber
      * @param string $bucketingKey
      *
