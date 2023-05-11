@@ -47,7 +47,7 @@ class Client implements ClientInterface
      * Builds new Impression object
      *
      * @param $matchingKey
-     * @param $feature
+     * @param $featureFlag
      * @param $treatment
      * @param string $label
      * @param null $time
@@ -56,12 +56,12 @@ class Client implements ClientInterface
      *
      * @return \SplitIO\Sdk\Impressions\Impression
      */
-    private function createImpression($key, $feature, $treatment, $changeNumber, $label = '', $bucketingKey = null)
+    private function createImpression($key, $featureFlag, $treatment, $changeNumber, $label = '', $bucketingKey = null)
     {
         if (!$this->labelsEnabled) {
             $label = null;
         }
-        $impression = new Impression($key, $feature, $treatment, $label, null, $changeNumber, $bucketingKey);
+        $impression = new Impression($key, $featureFlag, $treatment, $label, null, $changeNumber, $bucketingKey);
         return $impression;
     }
 
@@ -69,21 +69,21 @@ class Client implements ClientInterface
      * Verifies inputs for getTreatment and getTreatmentWithConfig methods
      *
      * @param $key
-     * @param $featureName
+     * @param $featureFlagName
      * @param $attributes
      * @param $operation
      *
      * @return null|mixed
      */
-    private function doInputValidationForTreatment($key, $featureName, array $attributes = null, $operation)
+    private function doInputValidationForTreatment($key, $featureFlagName, array $attributes = null, $operation)
     {
         $key = InputValidator::validateKey($key, $operation);
         if (is_null($key)) {
             return null;
         }
 
-        $featureName = InputValidator::validateFeatureName($featureName, $operation);
-        if (is_null($featureName)) {
+        $featureFlag = InputValidator::validateFeatureFlagName($featureFlagName, $operation);
+        if (is_null($featureFlag)) {
             return null;
         }
 
@@ -94,7 +94,7 @@ class Client implements ClientInterface
         return array(
             'matchingKey' => $key['matchingKey'],
             'bucketingKey' => $key['bucketingKey'],
-            'featureName' => $featureName
+            'featureFlagName' => $featureFlag
         );
     }
 
@@ -104,31 +104,31 @@ class Client implements ClientInterface
      * @param $operation
      * @param $metricName
      * @param $key
-     * @param $featureName
+     * @param $featureFlagName
      * @param $attributes
      *
      * @return mixed
      */
-    private function doEvaluation($operation, $metricName, $key, $featureName, $attributes)
+    private function doEvaluation($operation, $metricName, $key, $featureFlagName, $attributes)
     {
         $default = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
 
-        $inputValidation = $this->doInputValidationForTreatment($key, $featureName, $attributes, $operation);
+        $inputValidation = $this->doInputValidationForTreatment($key, $featureFlagName, $attributes, $operation);
         if (is_null($inputValidation)) {
             return $default;
         }
         $matchingKey = $inputValidation['matchingKey'];
         $bucketingKey = $inputValidation['bucketingKey'];
-        $featureName = $inputValidation['featureName'];
+        $featureFlagName = $inputValidation['featureFlagName'];
         try {
-            $result = $this->evaluator->evaluateFeature($matchingKey, $bucketingKey, $featureName, $attributes);
-            if (!InputValidator::isSplitFound($result['impression']['label'], $featureName, $operation)) {
+            $result = $this->evaluator->evaluateFeature($matchingKey, $bucketingKey, $featureFlagName, $attributes);
+            if (!InputValidator::isSplitFound($result['impression']['label'], $featureFlagName, $operation)) {
                 return $default;
             }
             // Creates impression
             $impression = $this->createImpression(
                 $matchingKey,
-                $featureName,
+                $featureFlagName,
                 $result['treatment'],
                 $result['impression']['changeNumber'],
                 $result['impression']['label'],
@@ -150,7 +150,7 @@ class Client implements ClientInterface
             // Creates impression
             $impression = $this->createImpression(
                 $matchingKey,
-                $featureName,
+                $featureFlagName,
                 TreatmentEnum::CONTROL,
                 -1, // At this point we have no information on the real changeNumber (redis might have failed)
                 ImpressionLabel::EXCEPTION,
@@ -160,7 +160,7 @@ class Client implements ClientInterface
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .
-                "feature: $featureName, key: $matchingKey"
+                "featureFlagName: $featureFlagName, key: $matchingKey"
             );
             SplitApp::logger()->critical($e);
         }
@@ -190,14 +190,14 @@ class Client implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatmentWithConfig($key, $featureName, array $attributes = null)
+    public function getTreatmentWithConfig($key, $featureFlagName, array $attributes = null)
     {
         try {
             return $this->doEvaluation(
                 'getTreatmentWithConfig',
                 Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
                 $key,
-                $featureName,
+                $featureFlagName,
                 $attributes
             );
         } catch (\Exception $e) {
@@ -216,10 +216,10 @@ class Client implements ClientInterface
      *
      * @return null|mixed
      */
-    private function doInputValidationForTreatments($key, $featureNames, array $attributes = null, $operation)
+    private function doInputValidationForTreatments($key, $featureFlagNames, array $attributes = null, $operation)
     {
-        $splitNames = InputValidator::validateFeatureNames($featureNames, $operation);
-        if (is_null($splitNames)) {
+        $featureFlags = InputValidator::validateFeatureFlagNames($featureFlagNames, $operation);
+        if (is_null($featureFlags)) {
             return null;
         }
 
@@ -227,7 +227,7 @@ class Client implements ClientInterface
         if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
             return array(
                 'controlTreatments' => array_fill_keys(
-                    $splitNames,
+                    $featureFlags,
                     array('treatment' => TreatmentEnum::CONTROL, 'config' => null)
                 ),
             );
@@ -236,7 +236,7 @@ class Client implements ClientInterface
         return array(
             'matchingKey' => $key['matchingKey'],
             'bucketingKey' => $key['bucketingKey'],
-            'featureNames' => $splitNames,
+            'featureFlagNames' => $featureFlags,
         );
     }
 
@@ -260,14 +260,14 @@ class Client implements ClientInterface
      * @param $operation
      * @param $metricName
      * @param $key
-     * @param $featureNames
+     * @param $featureFlagNames
      * @param $attributes
      *
      * @return mixed
      */
-    private function doEvaluationForTreatments($operation, $metricName, $key, $featureNames, $attributes)
+    private function doEvaluationForTreatments($operation, $metricName, $key, $featureFlagNames, $attributes)
     {
-        $inputValidation = $this->doInputValidationForTreatments($key, $featureNames, $attributes, $operation);
+        $inputValidation = $this->doInputValidationForTreatments($key, $featureFlagNames, $attributes, $operation);
         if (is_null($inputValidation)) {
             return array();
         }
@@ -277,7 +277,7 @@ class Client implements ClientInterface
 
         $matchingKey = $inputValidation['matchingKey'];
         $bucketingKey = $inputValidation['bucketingKey'];
-        $splitNames = $inputValidation['featureNames'];
+        $featureFlags = $inputValidation['featureFlagNames'];
 
         try {
             $result = array();
@@ -285,26 +285,26 @@ class Client implements ClientInterface
             $evaluationResults = $this->evaluator->evaluateFeatures(
                 $matchingKey,
                 $bucketingKey,
-                $splitNames,
+                $featureFlags,
                 $attributes
             );
-            foreach ($evaluationResults['evaluations'] as $splitName => $evalResult) {
-                if (InputValidator::isSplitFound($evalResult['impression']['label'], $splitName, $operation)) {
+            foreach ($evaluationResults['evaluations'] as $featureFlag => $evalResult) {
+                if (InputValidator::isSplitFound($evalResult['impression']['label'], $featureFlag, $operation)) {
                     // Creates impression
                     $impressions[] = $this->createImpression(
                         $matchingKey,
-                        $splitName,
+                        $featureFlag,
                         $evalResult['treatment'],
                         $evalResult['impression']['changeNumber'],
                         $evalResult['impression']['label'],
                         $bucketingKey
                     );
-                    $result[$splitName] = array(
+                    $result[$featureFlag] = array(
                         'treatment' => $evalResult['treatment'],
                         'config' => $evalResult['config'],
                     );
                 } else {
-                    $result[$splitName] = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
+                    $result[$featureFlag] = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
                 }
             }
             $this->registerData($impressions, $attributes, $metricName, $evaluationResults['latency']);
@@ -320,7 +320,7 @@ class Client implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatments($key, $featureNames, array $attributes = null)
+    public function getTreatments($key, $featureFlagNames, array $attributes = null)
     {
         try {
             return array_map(
@@ -331,45 +331,45 @@ class Client implements ClientInterface
                     'getTreatments',
                     Metrics::MNAME_SDK_GET_TREATMENTS,
                     $key,
-                    $featureNames,
+                    $featureFlagNames,
                     $attributes
                 )
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatments method is throwing exceptions');
-            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatments');
-            return is_null($splitNames) ? array() : array_fill_keys($splitNames, TreatmentEnum::CONTROL);
+            $featureFlags = InputValidator::validateFeatureFlagNames($featureFlagNames, 'getTreatments');
+            return is_null($featureFlags) ? array() : array_fill_keys($featureFlags, TreatmentEnum::CONTROL);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null)
+    public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null)
     {
         try {
             return $this->doEvaluationForTreatments(
                 'getTreatmentsWithConfig',
                 Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
                 $key,
-                $featureNames,
+                $featureFlagNames,
                 $attributes
             );
         } catch (\Exception $e) {
             SplitApp::logger()->critical('getTreatmentsWithConfig method is throwing exceptions');
-            $splitNames = InputValidator::validateFeatureNames($featureNames, 'getTreatmentsWithConfig');
-            return is_null($splitNames) ? array() :
-                array_fill_keys($splitNames, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
+            $featureFlags = InputValidator::validateFeatureFlagNames($featureFlagNames, 'getTreatmentsWithConfig');
+            return is_null($featureFlags) ? array() :
+                array_fill_keys($featureFlags, array('treatment' => TreatmentEnum::CONTROL, 'config' => null));
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function isTreatment($key, $featureName, $treatment)
+    public function isTreatment($key, $featureFlagName, $treatment)
     {
         try {
-            $calculatedTreatment = $this->getTreatment($key, $featureName);
+            $calculatedTreatment = $this->getTreatment($key, $featureFlagName);
 
             if ($calculatedTreatment !== TreatmentEnum::CONTROL) {
                 if ($treatment == $calculatedTreatment) {

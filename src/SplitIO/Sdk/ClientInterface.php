@@ -4,64 +4,64 @@ namespace SplitIO\Sdk;
 interface ClientInterface
 {
     /**
-     * Returns the treatment to show this id for this feature.
-     * The set of treatments for a feature can be configured
-     * on the Split web console.
+     * Returns the treatment to show this id for this feature flag.
+     * The set of treatments for a feature flag can be configured
+     * on the Split user interface.
      * This method returns the string 'control' if:
      * <ol>
      *     <li>Any of the parameters were null</li>
      *     <li>There was an exception</li>
-     *     <li>The SDK does not know this feature</li>
-     *     <li>The feature was deleted through the web console.</li>
+     *     <li>The SDK does not know this feature flag</li>
+     *     <li>The feature flag was deleted through the Split user interface.</li>
      * </ol>
      * 'control' is a reserved treatment, to highlight these
      * exceptional circumstances.
      *
      * <p>
-     * The sdk returns the default treatment of this feature if:
+     * The sdk returns the default treatment of this feature flag if:
      * <ol>
-     *     <li>The feature was killed</li>
+     *     <li>The feature flag was killed</li>
      *     <li>The id did not match any of the conditions in the
-     * feature roll-out plan</li>
+     * feature flag roll-out plan</li>
      * </ol>
-     * The default treatment of a feature is set on the Split web
-     * console.
+     * The default treatment of a feature flag is set on the Split user
+     * interface.
      *
      * <p>
      * This method does not throw any exceptions.
      * It also never returns null.
      *
      * @param $key
-     * @param $featureName
+     * @param $featureFlagName
      * @param $attributes
      * @return string
      */
-    public function getTreatment($key, $featureName, array $attributes = null);
+    public function getTreatment($key, $featureFlagName, array $attributes = null);
 
     /**
      * Returns an object with the treatment to show this id for this feature
-     * and the config provided.
-     * The set of treatments and config for a feature can be configured
-     * on the Split web console.
+     * flag and the config provided.
+     * The set of treatments and config for a feature flag can be configured
+     * on the Split user interface.
      * This method returns the string 'control' if:
      * <ol>
      *     <li>Any of the parameters were null</li>
      *     <li>There was an exception</li>
-     *     <li>The SDK does not know this feature</li>
-     *     <li>The feature was deleted through the web console.</li>
+     *     <li>The SDK does not know this feature flag</li>
+     *     <li>The feature flag was deleted through the Split user interface.</li>
      * </ol>
      * 'control' is a reserved treatment, to highlight these
      * exceptional circumstances.
      *
      * <p>
-     * The sdk returns the default treatment of this feature if:
+     * The sdk returns the default treatment of this feature flag if:
      * <ol>
-     *     <li>The feature was killed</li>
+     *     <li>The feature flag was killed</li>
      *     <li>The id did not match any of the conditions in the
-     * feature roll-out plan</li>
+     * feature flag roll-out plan</li>
      * </ol>
-     * The default treatment of a feature is set on the Split web
-     * console.
+     * The default treatment of a feature flag is set on the Split user
+     * interface.
      *
      * <p>
      * This method does not throw any exceptions.
@@ -72,95 +72,95 @@ interface ClientInterface
      *     <li>config was not set up</li>
      * </ol>
      * @param $key
-     * @param $featureName
+     * @param $featureFlagName
      * @param $attributes
      * @return array
      */
-    public function getTreatmentWithConfig($key, $featureName, array $attributes = null);
+    public function getTreatmentWithConfig($key, $featureFlagName, array $attributes = null);
 
     /**
      * Returns an associative array which each key will be
-     * the treatment result for each feature passed as parameter.
-     * The set of treatments for a feature can be configured
-     * on the Split web console.
+     * the treatment result for each feature flag passed as parameter.
+     * The set of treatments for a feature flag can be configured
+     * on the Split user interface.
      * This method returns the string 'control' if:
      * <ol>
-     *     <li>featureNames is invalid/li>
+     *     <li>featureFlagNames is invalid/li>
      * </ol>
      * 'control' is a reserved treatment, to highlight these
      * exceptional circumstances.
      *
      * <p>
-     * The sdk returns the default treatment of this feature if:
+     * The sdk returns the default treatment of this feature flag if:
      * <ol>
-     *     <li>The feature was killed</li>
+     *     <li>The feature flag was killed</li>
      *     <li>The id did not match any of the conditions in the
-     * feature roll-out plan</li>
+     * feature flag roll-out plan</li>
      * </ol>
-     * The default treatment of a feature is set on the Split web
-     * console.
+     * The default treatment of a feature flag is set on the Split user
+     * interface.
      *
      * <p>
      * This method does not throw any exceptions.
      * It also never returns null.
      *
      * @param $key
-     * @param $featureNames
+     * @param $featureFlagNames
      * @param $attributes
      * @return array
      */
-    public function getTreatments($key, $featureNames, array $attributes = null);
+    public function getTreatments($key, $featureFlagNames, array $attributes = null);
 
     /**
      * Returns an associative array which each key will be
      * the treatment result and the config for each
-     * feature passed as parameter.
-     * The set of treatments for a feature can be configured
-     * on the Split web console and the config for
+     * feature flag passed as parameter.
+     * The set of treatments for a feature flag can be configured
+     * on the Split user interface and the config for
      * that treatment.
      * This method returns the string 'control' if:
      * <ol>
-     *     <li>featureNames is invalid/li>
+     *     <li>featureFlagNames is invalid/li>
      * </ol>
      * 'control' is a reserved treatment, to highlight these
      * exceptional circumstances.
      *
      * <p>
-     * The sdk returns the default treatment of this feature if:
+     * The sdk returns the default treatment of this feature flag if:
      * <ol>
-     *     <li>The feature was killed</li>
+     *     <li>The feature flag was killed</li>
      *     <li>The id did not match any of the conditions in the
-     * feature roll-out plan</li>
+     * feature flag roll-out plan</li>
      * </ol>
-     * The default treatment of a feature is set on the Split web
-     * console.
+     * The default treatment of a feature flag is set on the Split user
+     * interface.
      *
      * <p>
      * This method does not throw any exceptions.
      * It also never returns null.
      *
      * @param $key
-     * @param $featureNames
+     * @param $featureFlagNames
      * @param $attributes
      * @return array
      */
-    public function getTreatmentsWithConfig($key, $featureNames, array $attributes = null);
+    public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null);
 
     /**
      * A short-hand for
      * <pre>
-     *     (getTreatment(key, feature) == treatment) ? true : false;
+     *     (getTreatment(key, featureFlagName) == treatment) ? true : false;
      * </pre>
      *
      * This method never throws exceptions.
      * Instead of throwing  exceptions, it returns false.
      *
      * @param $key
-     * @param $featureName
+     * @param $featureFlagName
      * @param $treatment
      * @return bool
      */
-    public function isTreatment($key, $featureName, $treatment);
+    public function isTreatment($key, $featureFlagName, $treatment);
 
     /**
      * Method to send events
