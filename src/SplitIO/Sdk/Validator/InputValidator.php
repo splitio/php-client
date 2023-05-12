@@ -23,7 +23,8 @@ class InputValidator
      */
     public static function validString($value, $name, $nameType, $operation)
     {
-        if (self::checkIsNull($value, $name, $nameType, $operation) or self::checkIsNotString($value, $name, $nameType, $operation)
+        if (self::checkIsNull($value, $name, $nameType, $operation)
+        or self::checkIsNotString($value, $name, $nameType, $operation)
         or self::checkIsEmpty($value, $name, $nameType, $operation)) {
             return false;
         }
@@ -118,7 +119,8 @@ class InputValidator
                 . ' key must be a non-empty string.');
             return null;
         }
-        if (self::checkIsEmpty($strKey, "key", "key", $operation) or self::checkNotProperLength($strKey, "key", $operation)) {
+        if (self::checkIsEmpty($strKey, "key", "key", $operation)
+        or self::checkNotProperLength($strKey, "key", $operation)) {
             return null;
         }
 
@@ -252,7 +254,9 @@ class InputValidator
                     array_filter(
                         $featureFlagNames,
                         function ($featureFlagName) use ($operation) {
-                            return InputValidator::validString($featureFlagName, 'featureFlagName', 'flag name', $operation);
+                            return InputValidator::validString(
+                                $featureFlagName, 'featureFlagName', 'flag name', $operation
+                            );
                         }
                     )
                 )
