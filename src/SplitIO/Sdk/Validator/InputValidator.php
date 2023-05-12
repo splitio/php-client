@@ -255,7 +255,10 @@ class InputValidator
                         $featureFlagNames,
                         function ($featureFlagName) use ($operation) {
                             return InputValidator::validString(
-                                $featureFlagName, 'featureFlagName', 'flag name', $operation
+                                $featureFlagName,
+                                'featureFlagName',
+                                'flag name',
+                                $operation
                             );
                         }
                     )
