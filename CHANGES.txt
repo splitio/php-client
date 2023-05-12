@@ -1,3 +1,7 @@
+7.1.7 (May 15, 2023)
+ - Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and phpdoc comments.
+ - Fixed php 8.2 warnings in code.
+
 7.1.6 (Feb 14, 2023)
  - Fixed logging on array conversion.
 
