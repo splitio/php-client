@@ -1,3 +1,7 @@
+7.1.7 (May 16, 2023)
+ - Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and phpdoc comments.
+ - Fixed php 8.2 warnings in code.
+
 7.1.6 (Feb 14, 2023)
  - Fixed logging on array conversion.
 
@@ -41,7 +45,7 @@
  - Added flag `IPAddressesEnabled` into options to enable/disable sending MachineName and MachineIP when data is posted in headers.
 
 6.2.2 (Sep 18, 2019)
- - Fetch multiple splits at once on getTreatments/getTreatmentsWithConfig
+ - Fetch multiple feature flags at once on getTreatments/getTreatmentsWithConfig
  - Removed MatcherClient (DependencyMatcher now uses Evaluator directly)
  - Removed shared memory.
  - Several code cleanups
@@ -52,7 +56,7 @@
 
 6.2.0 (May 30, 2019)
  - Added validation for TrafficType in track calls.
- - Added validation when split does not exist on treatments and manager calls.
+ - Added validation when feature flag does not exist on treatments and manager calls.
  - Added multiple factory instantiation check.
  - Removed producer modules.
  - Added properties to track method.
@@ -94,7 +98,7 @@
  - Downgrade logging level for shared memory messages
 
 5.2.3: (Sep 5, 2017)
- - Adding hotfix to return empty splits array in SplitManager when redis is empty.
+ - Adding hotfix to return empty feature flags array in SplitManager when redis is empty.
 
 5.2.2: (Aug 1, 2017)
  - Adding hotfix to return CONTROL if redis is down instead of failing.
