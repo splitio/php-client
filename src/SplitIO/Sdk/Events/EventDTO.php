@@ -10,6 +10,7 @@ class EventDTO
     private $eventTypeId;
     private $value;
     private $timestamp;
+    private $properties;
 
     public function __construct($key, $trafficTypeName, $eventTypeId, $value, $properties)
     {

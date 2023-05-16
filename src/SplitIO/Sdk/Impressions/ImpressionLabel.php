@@ -8,7 +8,7 @@ namespace SplitIO\Sdk\Impressions;
 class ImpressionLabel
 {
     /**
-     * Condition: Split Was Killed
+     * Condition: Feature flag Was Killed
      * Treatment: Default treatment
      * Label: killed
      */
@@ -22,7 +22,7 @@ class ImpressionLabel
     const NO_CONDITION_MATCHED = "default rule";
 
     /**
-     * Condition: Split definition was not found
+     * Condition: Feature flag definition was not found
      * Treatment: control
      * Label: split not found
      */
