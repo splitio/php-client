@@ -19,22 +19,22 @@ class Sdk
     }
 
     /**
-     * @param $apiKey
+     * @param $sdkKey
      * @param array $options
      * @return \SplitIO\Sdk\Factory\SplitFactoryInterface
      */
-    public static function factory($apiKey = 'localhost', array $options = array())
+    public static function factory($sdkKey = 'localhost', array $options = array())
     {
-        //Adding API Key into args array.
-        $options['apiKey'] = $apiKey;
+        //Adding SDK Key into args array.
+        $options['sdkKey'] = $sdkKey;
 
         //Register Logger
         self::registerLogger((isset($options['log'])) ? $options['log'] : array());
 
         //Tracking Factory Instantiation
-        Context::trackFactory($apiKey);
+        Context::trackFactory($sdkKey);
 
-        if ($apiKey == 'localhost') {
+        if ($sdkKey == 'localhost') {
             return new LocalhostSplitFactory($options);
         } else {
             //Register Cache
@@ -44,7 +44,7 @@ class Sdk
                 self::setIP($options['ipAddress']);
             }
 
-            return new SplitFactory($apiKey, $cache, $options);
+            return new SplitFactory($sdkKey, $cache, $options);
         }
     }
 

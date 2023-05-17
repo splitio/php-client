@@ -30,25 +30,25 @@ class SplitManager implements SplitManagerInterface
     public function splits()
     {
         $rawSplits = $this->splitCache->getAllSplits();
-        return array_map('self::parseSplitView', $rawSplits);
+        return array_map([self::class, 'parseSplitView'], $rawSplits);
     }
 
     /**
-     * @param $featureName
+     * @param $featureFlagName
      * @return null|SplitView
      */
-    public function split($featureName)
+    public function split($featureFlagName)
     {
-        $featureName = InputValidator::validateFeatureName($featureName, 'split');
-        if (is_null($featureName)) {
+        $featureFlagName = InputValidator::validateFeatureFlagName($featureFlagName, 'split');
+        if (is_null($featureFlagName)) {
             return null;
         }
 
-        $raw = $this->splitCache->getSplit($featureName);
+        $raw = $this->splitCache->getSplit($featureFlagName);
         if (is_null($raw)) {
-            SplitApp::logger()->warning("split: you passed " . $featureName
-            . " that does not exist in this environment, please double check what Splits exist"
-            . " in the web console.");
+            SplitApp::logger()->warning("split: you passed " . $featureFlagName
+            . " that does not exist in this environment, please double check what"
+            . " feature flags exist in the Split user interface.");
             return null;
         }
         return self::parseSplitView($raw);

@@ -36,11 +36,11 @@ class SplitFactory implements SplitFactoryInterface
     private $cache;
 
     /**
-     * @param string $apiKey
+     * @param string $sdkKey
      * @param Pool $cache
      * @param array $options
      */
-    public function __construct($apiKey, Pool $cache, array $options = array())
+    public function __construct($sdkKey, Pool $cache, array $options = array())
     {
         $this->options = $options;
         $this->cache = $cache;

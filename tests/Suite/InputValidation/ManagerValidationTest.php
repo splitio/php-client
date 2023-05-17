@@ -46,7 +46,7 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed a null split name, split name must be a non-empty string."));
+            ->with($this->equalTo("split: you passed a null featureFlagName, flag name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(null));
     }
@@ -59,7 +59,7 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed an empty split name, split name must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an empty featureFlagName, flag name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(''));
     }
@@ -72,7 +72,7 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed an invalid split name, split name must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an invalid featureFlagName, flag name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(true));
     }
@@ -85,7 +85,7 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed an invalid split name, split name must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an invalid featureFlagName, flag name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(array()));
     }
@@ -98,7 +98,7 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
 
         $logger->expects($this->once())
             ->method('critical')
-            ->with($this->equalTo("split: you passed an invalid split name, split name must be a non-empty string."));
+            ->with($this->equalTo("split: you passed an invalid featureFlagName, flag name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(1));
     }
@@ -112,7 +112,7 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
         $logger->expects($this->once())
             ->method('warning')
             ->with($this->equalTo("split: you passed this_is_a_non_existing_split that does"
-                . " not exist in this environment, please double check what Splits exist in the web console."));
+                . " not exist in this environment, please double check what feature flags exist in the Split user interface."));
 
         $this->assertEquals(null, $splitSdk->split('this_is_a_non_existing_split'));
     }

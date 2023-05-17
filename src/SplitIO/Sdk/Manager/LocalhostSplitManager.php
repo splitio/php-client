@@ -14,25 +14,25 @@ class LocalhostSplitManager implements SplitManagerInterface
         if ($splits) {
             foreach (array_keys($splits) as $concatenated) {
                 $splitted = explode(":", $concatenated);
-                $featureName = $splitted[0];
+                $featureFlagName = $splitted[0];
                 $split = $splits[$concatenated];
-                if (isset($splitDefinitions[$featureName])) {
+                if (isset($splitDefinitions[$featureFlagName])) {
                     array_push(
-                        $splitDefinitions[$featureName]["treatments"],
+                        $splitDefinitions[$featureFlagName]["treatments"],
                         $split["treatment"]
                     );
-                    $splitDefinitions[$featureName]["treatments"] = array_unique(
-                        $splitDefinitions[$featureName]["treatments"]
+                    $splitDefinitions[$featureFlagName]["treatments"] = array_unique(
+                        $splitDefinitions[$featureFlagName]["treatments"]
                     );
                     if (isset($split["config"])) {
-                        $splitDefinitions[$featureName]["config"][ $split["treatment"]] = $split["config"];
+                        $splitDefinitions[$featureFlagName]["config"][ $split["treatment"]] = $split["config"];
                     }
                 } else {
-                    $splitDefinitions[$featureName] = array(
+                    $splitDefinitions[$featureFlagName] = array(
                         "treatments" => array($split["treatment"]),
                     );
                     if (isset($split["config"])) {
-                        $splitDefinitions[$featureName]["config"] = array($split["treatment"] => $split["config"]);
+                        $splitDefinitions[$featureFlagName]["config"] = array($split["treatment"] => $split["config"]);
                     }
                 }
             }
@@ -57,14 +57,14 @@ class LocalhostSplitManager implements SplitManagerInterface
         $_splits = array();
 
         if ($this->splits) {
-            foreach (array_keys($this->splits) as $featureName) {
-                $configs = isset($this->splits[$featureName]["config"]) ?
-                    $this->splits[$featureName]["config"] : new StdClass;
+            foreach (array_keys($this->splits) as $featureFlagName) {
+                $configs = isset($this->splits[$featureFlagName]["config"]) ?
+                    $this->splits[$featureFlagName]["config"] : new StdClass;
                 $_splits[] = new SplitView(
-                    $featureName,
+                    $featureFlagName,
                     null,
                     false,
-                    $this->splits[$featureName]["treatments"],
+                    $this->splits[$featureFlagName]["treatments"],
                     0,
                     $configs
                 );
@@ -79,21 +79,21 @@ class LocalhostSplitManager implements SplitManagerInterface
      * @param mixed $featureName
      * @return SplitView|null
      */
-    public function split($featureName)
+    public function split($featureFlagName)
     {
-        $featureName = InputValidator::validateFeatureName($featureName, 'split');
-        if (is_null($featureName)) {
+        $featureFlagName = InputValidator::validateFeatureFlagName($featureFlagName, 'split');
+        if (is_null($featureFlagName)) {
             return null;
         }
 
-        if (isset($this->splits[$featureName])) {
-            $configs = isset($this->splits[$featureName]["config"]) ?
-                    $this->splits[$featureName]["config"] : new StdClass;
+        if (isset($this->splits[$featureFlagName])) {
+            $configs = isset($this->splits[$featureFlagName]["config"]) ?
+                    $this->splits[$featureFlagName]["config"] : new StdClass;
             return new SplitView(
-                $featureName,
+                $featureFlagName,
                 null,
                 false,
-                $this->splits[$featureName]["treatments"],
+                $this->splits[$featureFlagName]["treatments"],
                 0,
                 $configs
             );

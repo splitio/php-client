@@ -5,9 +5,7 @@ use SplitIO\Grammar\Condition\Matcher;
 
 class ContainsString extends AbstractMatcher
 {
-    protected $ContainsStringMatcherData = null;
-
-    private $containsStringMatcherData;
+    private $containsStringMatcherData = null;
 
     public function __construct($data, $negate = false, $attribute = null)
     {

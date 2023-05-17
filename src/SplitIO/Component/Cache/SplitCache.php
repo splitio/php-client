@@ -68,7 +68,9 @@ class SplitCache implements SplitCacheInterface
      */
     public function getSplits($splitNames)
     {
-        $cacheItems = $this->cache->fetchMany(array_map(self::class . '::getCacheKeyForSplit', $splitNames));
+        $cacheItems = $this->cache->fetchMany(array_map([
+            self::class, 'getCacheKeyForSplit'
+        ], $splitNames));
         $toReturn = array();
         foreach ($cacheItems as $key => $value) {
             $toReturn[self::getSplitNameFromCacheKey($key)] = $value;
@@ -81,8 +83,8 @@ class SplitCache implements SplitCacheInterface
      */
     public function getSplitNames()
     {
-        $splitKeys = $this->cache->getKeys(self::getCacheKeySearchPattern());
-        return array_map('self::getSplitNameFromCacheKey', $splitKeys);
+        $splitKeys =  $this->cache->getKeys(self::getCacheKeySearchPattern());
+        return array_map([self::class, 'getSplitNameFromCacheKey'], $splitKeys);
     }
 
     /**

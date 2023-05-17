@@ -51,7 +51,7 @@ class Split
         $this->configurations = isset($split['configurations']) && count($split['configurations']) > 0 ?
             $split['configurations'] : null;
         
-        SplitApp::logger()->info("Constructing Split: ".$this->name);
+        SplitApp::logger()->info("Constructing Feature Flag: ".$this->name);
 
         if (isset($split['conditions']) && is_array($split['conditions'])) {
             $this->conditions = array();

@@ -29,7 +29,7 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $splitFactory = \SplitIO\Sdk::factory('apikey', $sdkConfig);
+        $splitFactory = \SplitIO\Sdk::factory('sdkKey', $sdkConfig);
         $cachePool = ReflectiveTools::cacheFromFactory($splitFactory);
         $segmentCache = new SegmentCache($cachePool);
         $this->context = array(

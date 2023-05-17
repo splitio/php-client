@@ -10,7 +10,7 @@ use SplitIO\Exception\Exception;
  */
 class Context
 {
-    const SAME_APIKEY = "Factory Instantiation: You already have %s factory/factories with this API Key. "
+    const SAME_SDK_KEY = "Factory Instantiation: You already have %s factory/factories with this SDK Key. "
         . "We recommend keeping only one instance of the factory at all times (Singleton pattern) and "
         . "reusing it throughout your application.";
 
@@ -72,19 +72,19 @@ class Context
     }
 
     /**
-     * @param string $apiKey
+     * @param string $sdkKey
      * @return int
      */
-    public static function trackFactory($apiKey)
+    public static function trackFactory($sdkKey)
     {
-        $current = self::getInstance()->factoryTracker[$apiKey] ?? 0;
+        $current = self::getInstance()->factoryTracker[$sdkKey] ?? 0;
         if ($current > 0) {
-            self::getInstance()->getLogger()->warning(sprintf(self::SAME_APIKEY, $current));
+            self::getInstance()->getLogger()->warning(sprintf(self::SAME_SDK_KEY, $current));
         } elseif (count(self::getInstance()->factoryTracker) > 0) {
             self::getInstance()->getLogger()->warning(self::MULTIPLE_INSTANCES);
         }
         $current += 1;
-        self::getInstance()->factoryTracker[$apiKey] = $current;
+        self::getInstance()->factoryTracker[$sdkKey] = $current;
         return $current;
     }
 
