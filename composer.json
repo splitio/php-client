@@ -22,7 +22,7 @@
   "bin": ["bin/splitio"],
 
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "psr/log": "1 - 3",
     "predis/predis": "^2.0",
     "symfony/yaml": "^5.3|^6.0"
