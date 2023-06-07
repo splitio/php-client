@@ -1,20 +1,12 @@
 <?php
 namespace SplitIO\Test\Suite\Engine;
 
-use Monolog\Logger;
-use Monolog\Handler\ErrorLogHandler;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Common\Di;
-
 use SplitIO\Test\Utils;
 
 class SdkAttributesTest extends \PHPUnit\Framework\TestCase
 {
     public function testClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 

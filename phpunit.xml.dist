@@ -30,11 +30,14 @@
         <testsuite name="component">
             <directory suffix="Test.php">tests/Suite/Component/</directory>
         </testsuite>
-                <testsuite name="dynamic_configurations">
+        <testsuite name="dynamic_configurations">
             <directory suffix="Test.php">tests/Suite/DynamicConfigurations/</directory>
         </testsuite>
         <testsuite name="engine">
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
+        </testsuite>
+        <testsuite name="traffic_allocation">
+            <directory suffix="Test.php">tests/Suite/TrafficAllocation/</directory>
         </testsuite>
         <testsuite name="input_validation">
             <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
@@ -59,6 +62,7 @@
             <directory suffix="Test.php">tests/Suite/Component/</directory>
             <directory suffix="Test.php">tests/Suite/DynamicConfigurations/</directory>
             <directory suffix="Test.php">tests/Suite/Engine/</directory>
+            <directory suffix="Test.php">tests/Suite/TrafficAllocation/</directory>
             <directory suffix="Test.php">tests/Suite/InputValidation/</directory>
             <directory suffix="Test.php">tests/Suite/Matchers/</directory>
             <directory suffix="Test.php">tests/Suite/Metrics/</directory>

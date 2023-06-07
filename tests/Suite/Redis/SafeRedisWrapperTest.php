@@ -12,17 +12,20 @@ class SafeRedisWrapperTest extends \PHPUnit\Framework\TestCase
     public function testAllMethodsException()
     {
         // Set redis-library client mock
-        $cachePoolMethods = array('get', 'mget', 'rpush', 'keys', 'sismember', 'expire', 'getOptions');
+        $cachePoolMethods = array('get', 'mget', 'rpush', 'keys', 'sismember', 'expire');
         $predisMock = $this
             ->getMockBuilder('\Predis\Client')
             ->disableOriginalConstructor()
-            ->setMethods($cachePoolMethods)
+            ->addMethods($cachePoolMethods)
+            ->onlyMethods(array('getOptions'))
             ->getMock();
 
         foreach ($cachePoolMethods as $method) {
             $predisMock->method($method)
                 ->will($this->throwException(new \Exception()));
         }
+        $predisMock->method('getOptions')
+            ->will($this->throwException(new \Exception()));
 
         $predisMock->method('getOptions')
             ->willReturn(array());

@@ -1,11 +1,13 @@
 <?php
 namespace SplitIO\Sdk\Factory;
 
-use SplitIO\Component\Stats\Latency;
-use SplitIO\Exception\TimeOutException;
 use SplitIO\Sdk\Client;
-use SplitIO\Sdk\LocalhostClient;
 use SplitIO\Sdk\Manager\SplitManager;
+use SplitIO\Component\Cache\Pool;
+use SplitIO\Component\Cache\EventsCache;
+use SplitIO\Component\Cache\ImpressionCache;
+use SplitIO\Component\Cache\SegmentCache;
+use SplitIO\Component\Cache\SplitCache;
 
 /**
  * Class SplitFactory
@@ -24,24 +26,41 @@ class SplitFactory implements SplitFactoryInterface
     private $client;
 
     /**
-     * @var SplitManager
+     * @var \SplitIO\SDK\Manager\SplitManagerInterface
      */
     private $manager;
 
     /**
-     * @param string $apiKey
+     * @var \SplitIO\Component\Cache\Pool
+     */
+    private $cache;
+
+    /**
+     * @param string $sdkKey
+     * @param Pool $cache
      * @param array $options
      */
-    public function __construct($apiKey, array $options = array())
+    public function __construct($sdkKey, Pool $cache, array $options = array())
     {
         $this->options = $options;
+        $this->cache = $cache;
 
         //Block until ready
         $this->doBUR();
 
-        $this->client = new Client($options);
+        $eventCache = new EventsCache($cache);
+        $impressionCache = new ImpressionCache($cache);
+        $segmentCache = new SegmentCache($cache);
+        $splitCache = new SplitCache($cache);
 
-        $this->manager = new SplitManager();
+        $this->client = new Client(array(
+            'splitCache' => $splitCache,
+            'segmentCache' => $segmentCache,
+            'impressionCache' => $impressionCache,
+            'eventCache' => $eventCache,
+        ), $options);
+
+        $this->manager = new SplitManager($splitCache);
     }
 
     private function doBUR()

@@ -1,7 +1,7 @@
 <?php
 namespace SplitIO\Test\Suite\InputValidation;
 
-use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Sdk\Key;
 
 use SplitIO\Test\Utils;
@@ -10,7 +10,7 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
 {
     private function getFactoryClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        ReflectiveTools::overrideTracker();
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array('prefix' => TEST_PREFIX);
 
@@ -32,11 +32,11 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
         $logger = $this
             ->getMockBuilder('\SplitIO\Component\Log\Logger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
-        Di::set(Di::KEY_LOG, $logger);
+        ReflectiveTools::overrideLogger($logger);
 
         return $logger;
     }

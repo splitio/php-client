@@ -1,11 +1,9 @@
 <?php
 namespace SplitIO\Test\Suite\Sdk;
 
-use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Split as SplitApp;
-use SplitIO\Grammar\Split;
+use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Sdk\Evaluator;
 
 class EvaluatorTest extends \PHPUnit\Framework\TestCase
@@ -69,15 +67,17 @@ EOD;
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
 
         $redisClient->del('SPLITIO.split.mysplittest');
-
         $redisClient->set('SPLITIO.split.mysplittest', $this->split1);
 
-        $evaluator = new Evaluator($options);
+        $segmentCache = new SegmentCache($cachePool);
+        $splitCache = new SplitCache($cachePool);
+        $evaluator = new Evaluator($splitCache, $segmentCache);
+
         $result = $evaluator->evaluateFeature('test', '', 'mysplittest', null);
 
         $this->assertEquals('off', $result['treatment']);
@@ -97,15 +97,16 @@ EOD;
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
 
         $redisClient->del('SPLITIO.split.mysplittest2');
-
         $redisClient->set('SPLITIO.split.mysplittest2', $this->split2);
 
-        $evaluator = new Evaluator($options);
+        $segmentCache = new SegmentCache($cachePool);
+        $splitCache = new SplitCache($cachePool);
+        $evaluator = new Evaluator($splitCache, $segmentCache);
         $result = $evaluator->evaluateFeature('test', '', 'mysplittest2', null);
 
         $this->assertEquals('on', $result['treatment']);
@@ -125,15 +126,16 @@ EOD;
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
 
         $redisClient->del('SPLITIO.split.mysplittest3');
-
         $redisClient->set('SPLITIO.split.mysplittest3', $this->split3);
 
-        $evaluator = new Evaluator($options);
+        $segmentCache = new SegmentCache($cachePool);
+        $splitCache = new SplitCache($cachePool);
+        $evaluator = new Evaluator($splitCache, $segmentCache);
         $result = $evaluator->evaluateFeature('test', '', 'mysplittest3', null);
 
         $this->assertEquals('killed', $result['treatment']);
@@ -153,15 +155,16 @@ EOD;
         );
 
         //Initializing the SDK instance.
-        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
-
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $factory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $cachePool = ReflectiveTools::cacheFromFactory($factory);
+        $redisClient = ReflectiveTools::clientFromFactory($factory);
 
         $redisClient->del('SPLITIO.split.mysplittest4');
-
         $redisClient->set('SPLITIO.split.mysplittest4', $this->split4);
 
-        $evaluator = new Evaluator($options);
+        $segmentCache = new SegmentCache($cachePool);
+        $splitCache = new SplitCache($cachePool);
+        $evaluator = new Evaluator($splitCache, $segmentCache);
         $result = $evaluator->evaluateFeature('test', '', 'mysplittest4', null);
 
         $this->assertEquals('killed', $result['treatment']);

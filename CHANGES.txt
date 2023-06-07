@@ -1,3 +1,7 @@
+8.0.0 (Feb XX, 2023)
+ - BREAKING CHANGE: Removed support from versions older than PHP 7.4.
+ - BREAKING CHANGE: Added support for Multiple Factory Instantiation.
+
 7.1.7 (May 16, 2023)
  - Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and phpdoc comments.
  - Fixed php 8.2 warnings in code.

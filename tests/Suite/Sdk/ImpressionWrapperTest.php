@@ -3,12 +3,10 @@ namespace SplitIO\Test\Suite\Sdk;
 
 use SplitIO\Sdk\ImpressionListenerWrapper;
 use SplitIO\Sdk\Impressions\Impression;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClient;
 use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWithException;
-use SplitIO\Test\Suite\Sdk\Helpers\ListenerClientWrong;
-use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 
 use SplitIO\Test\Utils;
 
@@ -42,7 +40,6 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
 
     private function getFactoryClient($sdkConfig)
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
         $options = array();
 
@@ -121,6 +118,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
 
         $impressionClient = new ListenerClient();
 
+        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'impressionListener' => $impressionClient,
@@ -162,6 +160,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
 
         $impressionClient3 = new ListenerClient();
 
+        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'impressionListener' => $impressionClient3,
@@ -194,6 +193,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
 
         $impressionClient4 = new ListenerClient();
 
+        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'impressionListener' => $impressionClient4,
@@ -226,6 +226,7 @@ class ImpressionListenerTest extends \PHPUnit\Framework\TestCase
 
         $impressionClient4 = new ListenerClient();
 
+        ReflectiveTools::resetIPAddress();
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
             'impressionListener' => $impressionClient4,

@@ -16,7 +16,7 @@ class ContainsAllOfSet extends AbstractMatcher
         $this->set = Set::fromArray($data);
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         if (!is_array($key)) {
             return false;

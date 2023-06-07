@@ -2,9 +2,8 @@
 namespace SplitIO\Component\Cache\Storage\Adapter;
 
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
-use SplitIO\Component\Cache\Item;
 use SplitIO\Component\Utils as SplitIOUtils;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 /**
  * Class PRedis
@@ -109,7 +108,7 @@ class PRedis implements CacheStorageAdapterInterface
             return $this->getDefaultKeyHashTag($options); // defaulting to keyHashTag or {SPLITIO}
         }
         $keyHashTags = $options['keyHashTags'];
-        $msg = $this->isValidConfigArray($keyHashTags, 'keyHashTags'); // check if is valid array
+        $msg = $this->isValidConfigArray($keyHashTags, 'keyHashTag'); // check if is valid array
         if (!is_null($msg)) {
             throw new AdapterException($msg);
         }
@@ -170,7 +169,7 @@ class PRedis implements CacheStorageAdapterInterface
         } else {
             // @TODO remove this statement when replication will be deprecated
             if (isset($_options['replication'])) {
-                Di::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
+                Context::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
                 if (!isset($_options['distributedStrategy'])) {
                     $_options['distributedStrategy'] = $_options['replication'];
                 }

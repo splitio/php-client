@@ -3,7 +3,7 @@ namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Cache\Storage\Adapter\PRedis as PRedisAdapter;
 use SplitIO\Component\Cache\Storage\Adapter\SafeRedisWrapper;
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 class Pool extends CacheKeyTrait
 {
@@ -39,7 +39,7 @@ class Pool extends CacheKeyTrait
     public function get($key)
     {
         $this->assertValidKey($key);
-        Di::getLogger()->debug("Fetching item ** $key ** from cache");
+        Context::getLogger()->debug("Fetching item ** $key ** from cache");
         return $this->adapter->get($key);
     }
 

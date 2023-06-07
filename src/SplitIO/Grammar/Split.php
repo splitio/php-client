@@ -146,7 +146,7 @@ class Split
     }
 
     /**
-     * @return HashAlgorithmEnum
+     * @return \SplitIO\Engine\Hash\HashAlgorithmEnum
      */
     public function getAlgo()
     {

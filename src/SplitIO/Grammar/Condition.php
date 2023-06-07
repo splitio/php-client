@@ -66,7 +66,7 @@ class Condition
      * @param array|null $attributes
      * @return bool
      */
-    public function match($key, array $attributes = null, $bucketingKey = null)
+    public function match($key, array $attributes = null, $bucketingKey = null, array $context = null)
     {
         $eval = array();
         foreach ($this->matcherGroup as $matcher) {
@@ -76,7 +76,7 @@ class Condition
                 if (!$matcher->hasAttribute()) {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
-                    $_evaluation = $matcher->evaluate($key);
+                    $_evaluation = $matcher->evaluate($key, $context);
                 } else {
                     // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                     // e.g. if user.age is >= 10 then split 100:on
@@ -96,7 +96,7 @@ class Condition
                 $printableAttributes = is_array($attributes) ? implode($attributes) : $attributes;
                 SplitApp::logger()->info("Evaluating on IN_SPLIT_TREATMENT the KEY $printable");
                 SplitApp::logger()->info("with the following attributes: $printableAttributes");
-                $_evaluation = $matcher->evalKey($key, $attributes, $bucketingKey);
+                $_evaluation = $matcher->evalKey($key, $attributes, $bucketingKey, $context);
                 $eval[] = ($matcher->isNegate()) ? NotFactor::evaluate($_evaluation) : $_evaluation ;
             } else {
                 //Throwing catchable exception the SDK client will return CONTROL

@@ -1,9 +1,6 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Split as SplitApp;
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
-
 function version()
 {
     return Version::CURRENT;
@@ -72,7 +69,7 @@ function parseSplitsFile($fileContent)
 
 function getHostIpAddress()
 {
-    $diIpAddress = \SplitIO\Component\Common\Di::get('ipAddress');
+    $diIpAddress = \SplitIO\Component\Common\Context::getIPAddress();
     if (!is_null($diIpAddress) && is_string($diIpAddress) && trim($diIpAddress)) {
         return $diIpAddress;
     } elseif (isset($_SERVER['SERVER_ADDR']) && is_string($_SERVER['SERVER_ADDR'])

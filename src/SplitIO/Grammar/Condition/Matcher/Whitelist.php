@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
 
 class Whitelist extends AbstractMatcher
@@ -15,7 +14,7 @@ class Whitelist extends AbstractMatcher
         $this->whitelistMatcherData = $data;
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         return (is_array($this->whitelistMatcherData)) ? in_array($key, $this->whitelistMatcherData) : false;
     }

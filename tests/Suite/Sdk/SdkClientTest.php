@@ -2,10 +2,10 @@
 namespace SplitIO\Test\Suite\Sdk;
 
 use \stdClass;
-use SplitIO\Component\Common\Di;
+use ReflectionClass;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
-use SplitIO\Component\Cache\Storage\Adapter;
+use SplitIO\Component\Cache\EventsCache;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Pool;
 use SplitIO\Component\Cache\SegmentCache;
@@ -19,7 +19,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 {
     public function testLocalClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        ReflectiveTools::resetContext();
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/.splits';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -36,7 +36,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testLocalClientYAML()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        ReflectiveTools::resetContext();
         $options['splitFile'] = dirname(dirname(__DIR__)).'/files/splits.yml';
         $splitFactory = \SplitIO\Sdk::factory('localhost', $options);
         $splitSdk = $splitFactory->client();
@@ -209,7 +209,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testClient()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        ReflectiveTools::resetContext();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -236,7 +236,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
         Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
 
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
 
         //Assertions
         $this->assertEquals('on', $splitSdk->getTreatment('user1', 'sample_feature'));
@@ -435,18 +435,15 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('{"size":15,"test":20}', $configs['on']);
     }
 
-    /**
-     * @depends testClient
-     */
     public function testCustomLog()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        ReflectiveTools::resetContext();
         // create a log channel
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
@@ -476,7 +473,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidCacheAdapter()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        ReflectiveTools::resetContext();
         $this->expectException('\SplitIO\Exception\Exception');
 
         $sdkConfig = array(
@@ -490,13 +487,12 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public function testCacheExceptionReturnsControl()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
+        ReflectiveTools::resetContext();
         $log = $this
             ->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
         $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
@@ -516,7 +512,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $cachePool = $this
             ->getMockBuilder('\SplitIO\Component\Cache\Pool')
             ->disableOriginalConstructor()
-            ->setMethods($cachePoolMethods)
+            ->onlyMethods($cachePoolMethods)
             ->getMock();
 
         foreach ($cachePoolMethods as $method) {
@@ -524,15 +520,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
                 ->will($this->throwException(new \Exception()));
         }
 
-        Di::setCache($cachePool);
-
         $treatment = $splitSdk->getTreatment('key1', 'feature1');
         $this->assertEquals($treatment, 'control');
     }
 
     public function testGetTreatmentsWithDistinctFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        ReflectiveTools::resetContext();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -563,14 +557,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
 
         //Check impressions generated
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'NA', 'NA');
     }
 
     public function testGetTreatmentsWithRepeteadedFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-
+        ReflectiveTools::resetContext();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -602,15 +595,13 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
 
         // Check impressions
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
     }
 
     public function testGetTreatmentsWithRepeteadedAndNullFeatures()
     {
-        Di::set(Di::KEY_FACTORY_TRACKER, false);
-        Di::set('ipAddress', null); // unset ipaddress from previous test
-
+        ReflectiveTools::resetIPAddress();
         //Testing version string
         $this->assertTrue(is_string(\SplitIO\version()));
 
@@ -619,7 +610,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $sdkConfig = array(
             'log' => array('adapter' => 'stdout'),
-            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => ''
         );
 
         //Initializing the SDK instance.
@@ -641,35 +633,33 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $treatmentResult['invalid_feature']);
 
         //Check impressions
-        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on');
     }
 
     public function testGetTreatmentsFetchesSplitsInOneCall()
     {
+        ReflectiveTools::resetIPAddress();
         // Set redis-library client mock
         $predisMock = $this
             ->getMockBuilder('\Predis\Client')
             ->disableOriginalConstructor()
-            ->setMethods(array('get', 'mget', 'rpush', 'incr'))
+            ->addMethods(array('get', 'mget', 'rpush', 'incr'))
             ->getMock();
 
         // Create an adapter and inject mock via reflection
         $adapter = new PRedis(array('parameters' => array()));
-        $adapterReflection = new \ReflectionClass($adapter);
+        $adapterReflection = new ReflectionClass($adapter);
         $clientProperty = $adapterReflection->getProperty('client');
         $clientProperty->setAccessible(true);
         $clientProperty->setValue($adapter, $predisMock);
 
         // Create a pool and inject the adapter via reflection
         $pool = new Pool(array('adapter' => array('name' => 'predis', 'options' => array('parameters' => array()))));
-        $poolReflection = new \ReflectionClass($pool);
+        $poolReflection = new ReflectionClass($pool);
         $adapterProperty = $poolReflection->getProperty('adapter');
         $adapterProperty->setAccessible(true);
         $adapterProperty->setValue($pool, $adapter);
-
-        // use the newly created pool as cache
-        Di::setCache($pool);
 
         // Assert that MGET is called with the 3 splits.
         $predisMock->expects($this->once())
@@ -680,8 +670,80 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $predisMock->expects($this->never())
             ->method('get');
 
-        $client = new Client();
+        $eventCache = new EventsCache($pool);
+        $impressionCache = new ImpressionCache($pool);
+        $segmentCache = new SegmentCache($pool);
+        $splitCache = new SplitCache($pool);
+        
+        $client = new Client(array(
+            'splitCache' => $splitCache,
+            'segmentCache' => $segmentCache,
+            'impressionCache' => $impressionCache,
+            'eventCache' => $eventCache,
+        ));
+
         $client->getTreatments('key1', array('split1', 'split2', 'split3'));
+    }
+
+    public function testMultipleInstantiationNotOverrideIP()
+    {
+        ReflectiveTools::resetIPAddress();
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => '1.2.3.4'
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $treatmentResult = $splitSdk->getTreatments('user1', array('sample_feature', 'invalid_feature',
+        'sample_feature', 'sample_feature'), null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['sample_feature']);
+        $this->assertEquals('control', $treatmentResult['invalid_feature']);
+
+        // Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options),
+            'ipAddress' => '1.2.3.4.5'
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory2 = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk2 = $splitFactory2->client();
+
+        $treatmentResult2 = $splitSdk2->getTreatments('user1', array('sample_feature', 'invalid_feature',
+        'sample_feature', 'sample_feature'), null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult2)));
+
+        $this->assertEquals('on', $treatmentResult2['sample_feature']);
+        $this->assertEquals('control', $treatmentResult2['invalid_feature']);
+
+        // Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory2);
+        $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
     }
 
     public static function tearDownAfterClass(): void

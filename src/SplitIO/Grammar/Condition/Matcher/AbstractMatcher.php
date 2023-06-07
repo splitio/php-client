@@ -22,12 +22,12 @@ abstract class AbstractMatcher
         $this->attribute = $attribute;
     }
 
-    public function evaluate($key)
+    public function evaluate($key, array $context = null)
     {
         $printable = is_array($key) ? implode($key) : $key;
         SplitApp::logger()->info("Evaluating on {$this->type} the KEY $printable");
 
-        return $this->evalKey($key);
+        return $this->evalKey($key, $context);
     }
 
     public function isNegate()
@@ -45,5 +45,5 @@ abstract class AbstractMatcher
         return $this->attribute;
     }
 
-    abstract protected function evalKey($key);
+    abstract protected function evalKey($key, array $context);
 }

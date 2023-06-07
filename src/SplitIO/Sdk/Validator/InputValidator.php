@@ -5,8 +5,6 @@ namespace SplitIO\Sdk\Validator;
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Key;
 use SplitIO\Component\Utils as SplitIOUtils;
-use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 
 const MAX_LENGTH = 250;
@@ -175,7 +173,7 @@ class InputValidator
      * @param $trafficType
      * @return string|null
      */
-    public static function validateTrafficType($trafficType)
+    public static function validateTrafficType(\SplitIO\Component\Cache\SplitCache $splitCache, $trafficType)
     {
         if (!self::validString($trafficType, 'traffic type', 'traffic type', 'track')) {
             return null;
@@ -185,7 +183,6 @@ class InputValidator
             SplitApp::logger()->warning("track: '" . $trafficType . "' should be all lowercase - converting string to "
                 . "lowercase.");
         }
-        $splitCache = new SplitCache();
         if (!$splitCache->trafficTypeExists($toLowercase)) {
             SplitApp::logger()->warning("track: Traffic Type '". $toLowercase . "' does not have any corresponding "
                 . "Splits in this environment, make sure you’re tracking your events to a valid traffic type "

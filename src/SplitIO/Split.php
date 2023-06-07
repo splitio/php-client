@@ -1,24 +1,16 @@
 <?php
 namespace SplitIO;
 
-use SplitIO\Component\Common\Di;
+use SplitIO\Component\Common\Context;
 
 class Split
 {
 
     /**
-     * @return null|\Psr\Log\LoggerInterface
+     * @return \Splitio\Component\Log\Logger
      */
     public static function logger()
     {
-        return Di::getLogger();
-    }
-
-    /**
-     * @return null|\SplitIO\Component\Cache\Pool
-     */
-    public static function cache()
-    {
-        return Di::getCache();
+        return Context::getLogger();
     }
 }

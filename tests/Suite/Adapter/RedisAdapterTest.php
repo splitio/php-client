@@ -3,10 +3,7 @@
 namespace SplitIO\Test\Suite\Adapter;
 
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
-use SplitIO\Component\Cache\Storage\Exception\AdapterException;
-use \Predis\Response\ServerException;
-use \Predis\ClientException;
-use SplitIO\Component\Common\Di;
+use SplitIO\Test\Suite\Redis\ReflectiveTools;
 
 class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,18 +13,19 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
         $logger = $this
             ->getMockBuilder('\SplitIO\Component\Log\Logger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
-                'alert', 'notice', 'write', 'log'))
+            ->onlyMethods(array('warning', 'debug', 'error', 'info', 'critical', 'emergency',
+                'alert', 'notice', 'log'))
             ->getMock();
 
-        Di::set(Di::KEY_LOG, $logger);
+        ReflectiveTools::overrideLogger($logger);
 
         return $logger;
     }
 
     public function testRedisWithNullValues()
     {
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("Wrong configuration of redis.");
 
         $predis = new PRedis(array());
     }
@@ -110,7 +108,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithEmptySentinels()
     {
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one sentinel is required.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage('At least one sentinel is required.');
 
         $predis = new PRedis(array(
             'sentinels' => array(),
@@ -122,7 +121,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithSentinelsWithoutOptions()
     {
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("Wrong configuration of redis.");
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -133,7 +133,9 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithSentinelsWithoutReplicationOption()
     {
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', );
+        $this->expectExceptionMessage("Wrong configuration of redis.");
+
         $predis = new PRedis(array(
             'sentinels' => array(
                 '127.0.0.1'
@@ -149,7 +151,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis 'distributedStrategy'.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("Wrong configuration of redis 'distributedStrategy'.");
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -168,10 +171,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
             ->method('warning')
             ->with($this->equalTo("'replication' option was deprecated please use 'distributedStrategy'"));
 
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            'Master name is required in replication mode for sentinel.'
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage('Master name is required in replication mode for sentinel.');
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -187,7 +188,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
     {
         $logger = $this->getMockedLogger();
 
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'sentinels must be an array.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException',);
+        $this->expectExceptionMessage('sentinels must be an array.');
 
         $predis = new PRedis(array(
             'sentinels' => "test",
@@ -199,10 +201,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisSentinelWithWrongRedisDistributedStrategy()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "Wrong configuration of redis 'distributedStrategy'."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("Wrong configuration of redis 'distributedStrategy'.");
 
         $predis = new PRedis(array(
             'sentinels' => array(
@@ -253,7 +253,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithEmptyClusters()
     {
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'At least one clusterNode is required.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage('At least one clusterNode is required.');
 
         $predis = new PRedis(array(
             'clusterNodes' => array(),
@@ -266,7 +267,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithClustersWithoutOptions()
     {
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', "Wrong configuration of redis.");
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("Wrong configuration of redis.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -277,7 +279,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithWrongTypeOfClusters()
     {
-        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException', 'clusterNodes must be an array.');
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage('clusterNodes must be an array.');
 
         $predis = new PRedis(array(
             'clusterNodes' => "test",
@@ -290,10 +293,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisClusterWithWrongRedisDistributedStrategy()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "Wrong configuration of redis 'distributedStrategy'."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("Wrong configuration of redis 'distributedStrategy'.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -307,10 +308,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithInvalidKeyHashtagInClusters()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "keyHashTag is not valid."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("keyHashTag is not valid.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -327,10 +326,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithInvalidBeginingKeyHashtagInClusters()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "keyHashTag is not valid."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("keyHashTag is not valid.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -347,10 +344,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithWrongTypeKeyHashtagInClusters()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "keyHashTag must be string."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("keyHashTag must be string.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -367,10 +362,8 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithWrongLengthKeyHashtagInClusters()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "keyHashTag is not valid."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("keyHashTag is not valid.");
 
         $predis = new PRedis(array(
             'clusterNodes' => array(
@@ -418,10 +411,9 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithClustersKeyHashTags()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "keyHashTags must be array."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("keyHashTags must be an array.");
+
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
@@ -437,10 +429,9 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithClustersKeyHashTagsInvalid()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "keyHashTags size is zero after filtering valid elements."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("keyHashTags size is zero after filtering valid elements.");
+
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'
@@ -456,10 +447,9 @@ class RedisAdapterTest extends \PHPUnit\Framework\TestCase
 
     public function testRedisWithClustersKeyHashTagsInvalidHashTags()
     {
-        $this->expectException(
-            'SplitIO\Component\Cache\Storage\Exception\AdapterException',
-            "keyHashTags size is zero after filtering valid elements."
-        );
+        $this->expectException('SplitIO\Component\Cache\Storage\Exception\AdapterException');
+        $this->expectExceptionMessage("keyHashTags size is zero after filtering valid elements.");
+
         $predis = new PRedis(array(
             'clusterNodes' => array(
                 'tcp://MYIP:26379?timeout=3'

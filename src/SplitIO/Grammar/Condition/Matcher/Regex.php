@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar\Condition\Matcher;
 
-use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Matcher;
 
 class Regex extends AbstractMatcher
@@ -15,7 +14,7 @@ class Regex extends AbstractMatcher
         $this->regexMatcherData = $data;
     }
 
-    protected function evalKey($key)
+    protected function evalKey($key, array $context = null)
     {
         if (!is_string($this->regexMatcherData)) {
             return false;
