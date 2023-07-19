@@ -265,7 +265,7 @@ class InputValidator
                 )
             )
         );
-        if (empty($filteredArray)) {
+        if (0 == count($filteredArray)) {
             SplitApp::logger()->critical($operation . ': featureFlagNames must be a non-empty array.');
             return null;
         }
