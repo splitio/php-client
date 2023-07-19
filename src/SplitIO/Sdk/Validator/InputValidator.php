@@ -21,10 +21,11 @@ class InputValidator
      * @param $operation
      * @return true|false
      */
-    public static function validString($value, $name, $operation)
+    public static function validString($value, $name, $nameType, $operation)
     {
-        if (self::checkIsNull($value, $name, $operation) or self::checkIsNotString($value, $name, $operation)
-        or self::checkIsEmpty($value, $name, $operation)) {
+        if (self::checkIsNull($value, $name, $nameType, $operation)
+        or self::checkIsNotString($value, $name, $nameType, $operation)
+        or self::checkIsEmpty($value, $name, $nameType, $operation)) {
             return false;
         }
         return true;
@@ -55,31 +56,31 @@ class InputValidator
         return false;
     }
 
-    private static function checkIsNull($value, $name, $operation)
+    private static function checkIsNull($value, $name, $nameType, $operation)
     {
         if (is_null($value)) {
-            SplitApp::logger()->critical($operation . ": you passed a null " . $name . ", " . $name .
+            SplitApp::logger()->critical($operation . ": you passed a null " . $name . ", " . $nameType .
                 " must be a non-empty string.");
             return true;
         }
         return false;
     }
 
-    private static function checkIsEmpty($value, $name, $operation)
+    private static function checkIsEmpty($value, $name, $nameType, $operation)
     {
         $trimmed = trim($value);
-        if (0 == strlen($trimmed)) {
-            SplitApp::logger()->critical($operation . ": you passed an empty " . $name . ", " . $name .
+        if (0 == strlen($trimmed)) 
+            SplitApp::logger()->critical($operation . ": you passed an empty " . $name . ", " . $nameType .
                 " must be a non-empty string.");
             return true;
         }
         return false;
     }
 
-    private static function checkIsNotString($value, $name, $operation)
+    private static function checkIsNotString($value, $name, $nameType, $operation)
     {
         if (!is_string($value)) {
-            SplitApp::logger()->critical($operation . ": you passed an invalid " . $name . ", " . $name .
+            SplitApp::logger()->critical($operation . ": you passed an invalid " . $name . ", " . $nameType .
                 " must be a non-empty string.");
             return true;
         }
@@ -103,7 +104,7 @@ class InputValidator
      */
     public static function validateKey($key, $operation)
     {
-        if (self::checkIsNull($key, "key", $operation)) {
+        if (self::checkIsNull($key, "key", "key", $operation)) {
             return null;
         }
         if ($key instanceof Key) {
@@ -118,7 +119,8 @@ class InputValidator
                 . ' key must be a non-empty string.');
             return null;
         }
-        if (self::checkIsEmpty($strKey, "key", $operation) or self::checkNotProperLength($strKey, "key", $operation)) {
+        if (self::checkIsEmpty($strKey, "key", "key", $operation)
+        or self::checkNotProperLength($strKey, "key", $operation)) {
             return null;
         }
 
@@ -132,7 +134,7 @@ class InputValidator
     {
         $trimmed = trim($featureName);
         if ($trimmed !== $featureName) {
-            SplitApp::logger()->warning($operation . ": split name " . json_encode($featureName) . " has extra " .
+            SplitApp::logger()->warning($operation . ": featureFlagName " . json_encode($featureName) . " has extra " .
             "whitespace, trimming.");
         }
         return $trimmed;
@@ -143,10 +145,10 @@ class InputValidator
      * @param $operation
      * @return string|null
      */
-    public static function validateFeatureName($featureName, $operation)
+    public static function validateFeatureFlagName($featureFlagName, $operation)
     {
-        return self::validString($featureName, 'split name', $operation) ?
-            self::trimFeatureName($featureName, $operation) : null;
+        return self::validString($featureFlagName, 'featureFlagName', 'flag name', $operation) ?
+            self::trimFeatureName($featureFlagName, $operation) : null;
     }
 
     /**
@@ -155,7 +157,7 @@ class InputValidator
      */
     public static function validateTrackKey($key)
     {
-        if (self::checkIsNull($key, "key", "track")) {
+        if (self::checkIsNull($key, "key", "key", "track")) {
             return null;
         }
         $strKey = self::toString($key, 'key', 'track');
@@ -163,7 +165,7 @@ class InputValidator
             SplitApp::logger()->critical('track: you passed an invalid key type, key must be a non-empty string.');
             return null;
         }
-        if (self::checkIsEmpty($strKey, "key", "track") or self::checkNotProperLength($strKey, "key", "track")) {
+        if (self::checkIsEmpty($strKey, "key", "key", "track") or self::checkNotProperLength($strKey, "key", "track")) {
             return null;
         }
         return $strKey;
@@ -175,7 +177,7 @@ class InputValidator
      */
     public static function validateTrafficType($trafficType)
     {
-        if (!self::validString($trafficType, 'traffic type', 'track')) {
+        if (!self::validString($trafficType, 'traffic type', 'traffic type', 'track')) {
             return null;
         }
         $toLowercase = strtolower($trafficType);
@@ -198,7 +200,7 @@ class InputValidator
      */
     public static function validateEventType($eventType)
     {
-        if (!self::validString($eventType, 'event type', 'track')) {
+        if (!self::validString($eventType, 'event type', 'event type', 'track')) {
             return null;
         }
         if (!preg_match(REG_EXP_EVENT_TYPE, $eventType)) {
@@ -232,34 +234,39 @@ class InputValidator
      * @param $operation
      * @return array|null
      */
-    public static function validateFeatureNames($featureNames, $operation)
+    public static function validateFeatureFlagNames($featureFlagNames, $operation)
     {
-        if (is_null($featureNames) || !is_array($featureNames)) {
-            SplitApp::logger()->critical($operation . ': featureNames must be a non-empty array.');
+        if (is_null($featureFlagNames) || !is_array($featureFlagNames)) {
+            SplitApp::logger()->critical($operation . ': featureFlagNames must be a non-empty array.');
             return null;
         }
         $filteredArray = array_values(
             array_map(
-                function ($featureName) use ($operation) {
-                    $trimmed = trim($featureName);
-                    if ($trimmed !== $featureName) {
-                        SplitApp::logger()->warning($operation . ": split name " . json_encode($featureName)
+                function ($featureFlagName) use ($operation) {
+                    $trimmed = trim($featureFlagName);
+                    if ($trimmed !== $featureFlagName) {
+                        SplitApp::logger()->warning($operation . ": featureFlagName " . json_encode($featureFlagName)
                         . " has extra " . "whitespace, trimming.");
                     }
                     return $trimmed;
                 },
                 array_unique(
                     array_filter(
-                        $featureNames,
-                        function ($featureName) use ($operation) {
-                            return InputValidator::validString($featureName, 'split name', $operation);
+                        $featureFlagNames,
+                        function ($featureFlagName) use ($operation) {
+                            return InputValidator::validString(
+                                $featureFlagName,
+                                'featureFlagName',
+                                'flag name',
+                                $operation
+                            );
                         }
                     )
                 )
             )
         );
         if (empty($filteredArray)) {
-            SplitApp::logger()->critical($operation . ': featureNames must be a non-empty array.');
+            SplitApp::logger()->critical($operation . ': featureFlagNames must be a non-empty array.');
             return null;
         }
         return $filteredArray;
@@ -344,8 +351,8 @@ class InputValidator
     {
         if ($label == ImpressionLabel::SPLIT_NOT_FOUND) {
             SplitApp::logger()->warning($operation . ": you passed " . $splitName
-                . " that does not exist in this environment, please double check what Splits exist"
-                . " in the web console.");
+                . " that does not exist in this environment, please double check what feature flags exist"
+                . " in the Split user interface.");
             return false;
         }
         return true;

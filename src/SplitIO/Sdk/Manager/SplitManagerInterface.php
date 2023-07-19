@@ -14,8 +14,8 @@ interface SplitManagerInterface
     public function splits();
 
     /**
-     * @param $featureName
+     * @param $featureFlagName
      * @return \SplitIO\Sdk\Manager\SplitView
      */
-    public function split($featureName);
+    public function split($featureFlagName);
 }
