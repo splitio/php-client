@@ -69,7 +69,7 @@ class InputValidator
     private static function checkIsEmpty($value, $name, $nameType, $operation)
     {
         $trimmed = trim($value);
-        if (0 == strlen($trimmed)) 
+        if (0 == strlen($trimmed)) {
             SplitApp::logger()->critical($operation . ": you passed an empty " . $name . ", " . $nameType .
                 " must be a non-empty string.");
             return true;
