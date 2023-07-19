@@ -1,3 +1,6 @@
+7.1.7 (TBD)
+ - Fixed input validation for empty keys.
+
 7.1.6 (Feb 14, 2023)
  - Fixed logging on array conversion.
 
