@@ -69,7 +69,7 @@ class InputValidator
     private static function checkIsEmpty($value, $name, $nameType, $operation)
     {
         $trimmed = trim($value);
-        if (empty($trimmed)) {
+        if (0 == strlen($trimmed)) {
             SplitApp::logger()->critical($operation . ": you passed an empty " . $name . ", " . $nameType .
                 " must be a non-empty string.");
             return true;
@@ -265,7 +265,7 @@ class InputValidator
                 )
             )
         );
-        if (empty($filteredArray)) {
+        if (0 == count($filteredArray)) {
             SplitApp::logger()->critical($operation . ': featureFlagNames must be a non-empty array.');
             return null;
         }
