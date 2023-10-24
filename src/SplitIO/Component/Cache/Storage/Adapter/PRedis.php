@@ -3,7 +3,6 @@ namespace SplitIO\Component\Cache\Storage\Adapter;
 
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
 use SplitIO\Component\Utils as SplitIOUtils;
-use SplitIO\Component\Common\Context;
 
 /**
  * Class PRedis
@@ -26,7 +25,7 @@ class PRedis implements CacheStorageAdapterInterface
         }
         $_redisConfig = $this->getRedisConfiguration($options);
 
-        $this->client = new \Predis\Client($_redisConfig['redis'], $_redisConfig['options']);
+        $this->client = new \Predis\Client($_redisConfig['parameters'], $_redisConfig['options']);
     }
 
     /**
@@ -46,24 +45,6 @@ class PRedis implements CacheStorageAdapterInterface
             return $type . "s must not be an associative array.";
         }
         return null;
-    }
-
-    /**
-     * @param array $sentinels
-     * @param array $options
-     * @return bool
-     * @throws AdapterException
-     */
-    private function isValidSentinelConfig($sentinels, $options)
-    {
-        $msg = $this->isValidConfigArray($sentinels, 'sentinel');
-        if (!is_null($msg)) {
-            throw new AdapterException($msg);
-        }
-        if (!isset($options['service'])) {
-            throw new AdapterException('Master name is required in replication mode for sentinel.');
-        }
-        return true;
     }
 
     private function validateKeyHashTag($keyHashTag)
@@ -121,83 +102,32 @@ class PRedis implements CacheStorageAdapterInterface
         if (empty($filteredArray)) {
             throw new AdapterException('keyHashTags size is zero after filtering valid elements.');
         }
-        return $selected = $filteredArray[array_rand($filteredArray, 1)];
+        return $filteredArray[array_rand($filteredArray, 1)];
     }
 
-
-    /**
-     * @param array $clusters
-     * @return bool
-     * @throws AdapterException
-     */
-    private function isValidClusterConfig($clusters)
-    {
-        $msg = $this->isValidConfigArray($clusters, 'clusterNode');
-        if (!is_null($msg)) {
-            throw new AdapterException($msg);
-        }
-        return true;
-    }
 
     /**
      * @param mixed $options
      * @return array
-     * @throws AdapterException
      */
     private function getRedisConfiguration($options)
     {
         $redisConfigutation = array(
-            'redis' => null,
-            'options' => null
+            'parameters' => (isset($options['parameters'])) ? $options['parameters'] : null,
+            'options' => null,
         );
 
-        $parameters = (isset($options['parameters'])) ? $options['parameters'] : null;
-        $sentinels = (isset($options['sentinels'])) ? $options['sentinels'] : null;
-        $clusters = (isset($options['clusterNodes'])) ? $options['clusterNodes'] : null;
         $_options = (isset($options['options'])) ? $options['options'] : null;
-
-        if (isset($_options['distributedStrategy']) && isset($parameters['tls'])) {
-            throw new AdapterException("SSL/TLS cannot be used together with sentinel/cluster yet");
-        }
-
         if ($_options && isset($_options['prefix'])) {
             $_options['prefix'] = self::normalizePrefix($_options['prefix']);
         }
 
-        if (isset($parameters)) {
-            $redisConfigutation['redis'] = $parameters;
-        } else {
-            // @TODO remove this statement when replication will be deprecated
-            if (isset($_options['replication'])) {
-                Context::getLogger()->warning("'replication' option was deprecated please use 'distributedStrategy'");
-                if (!isset($_options['distributedStrategy'])) {
-                    $_options['distributedStrategy'] = $_options['replication'];
-                }
-            }
-            if (isset($_options['distributedStrategy'])) {
-                switch ($_options['distributedStrategy']) {
-                    case 'cluster':
-                        if ($this->isValidClusterConfig($clusters)) {
-                            $keyHashTag = $this->selectKeyHashTag($_options);
-                            $_options['cluster'] = 'redis';
-                            $redisConfigutation['redis'] = $clusters;
-                            $prefix = isset($_options['prefix']) ? $_options['prefix'] : '';
-                            $_options['prefix'] = $keyHashTag . $prefix;
-                        }
-                        break;
-                    case 'sentinel':
-                        if ($this->isValidSentinelConfig($sentinels, $_options)) {
-                            $_options['replication'] = 'sentinel';
-                            $redisConfigutation['redis'] = $sentinels;
-                        }
-                        break;
-                    default:
-                        throw new AdapterException("Wrong configuration of redis 'distributedStrategy'.");
-                }
-            } else {
-                throw new AdapterException("Wrong configuration of redis.");
-            }
+        if (isset($_options['cluster'])) {
+            $keyHashTag = $this->selectKeyHashTag($_options);
+            $prefix = isset($_options['prefix']) ? $_options['prefix'] : '';
+            $_options['prefix'] = $keyHashTag . $prefix;
         }
+
         $redisConfigutation['options'] = $_options;
         return $redisConfigutation;
     }
@@ -254,8 +184,7 @@ class PRedis implements CacheStorageAdapterInterface
             $prefix = $this->client->getOptions()->__get("prefix")->getPrefix();
         }
 
-        if ($this->client->getOptions()->__isset("distributedStrategy") &&
-            $this->client->getOptions()->__get("distributedStrategy") == "cluster") {
+        if ($this->client->getOptions()->__isset("cluster")) {
             $keys = array();
             foreach ($this->client as $nodeClient) {
                 $nodeClientKeys = $nodeClient->keys($pattern);

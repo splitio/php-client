@@ -67,10 +67,6 @@ class Sdk
         } elseif ($cacheAdapter == 'predis') {
             $_options['options'] = isset($options['options']) ? $options['options'] : null;
             $_options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
-            $_options['sentinels'] = isset($options['sentinels']) ? $options['sentinels'] : null;
-            $_options['clusterNodes'] = isset($options['clusterNodes']) ? $options['clusterNodes'] : null;
-            $_options['distributedStrategy'] = isset($options['distributedStrategy'])
-                ? $options['distributedStrategy'] : null;
         } else {
             throw new Exception("A valid cache system is required. Given: $cacheAdapter");
         }
