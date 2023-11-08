@@ -684,6 +684,56 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $client->getTreatments('key1', array('split1', 'split2', 'split3'));
     }
 
+    public function testDatabaseParameterIsPropagatedToPredisClient() {
+        $database = 1;
+        
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
+
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+            'database' => $database
+        );
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+        
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+        
+        //Storing the split in Redis in a non-default database
+        $predis = new \Predis\Client([
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'database' => $database,
+        ], ['prefix' => TEST_PREFIX]);
+        
+        $split = [
+            "orgId" => null,
+            "environment" => null,
+            "trafficTypeId" => null,
+            "trafficTypeName" => null,
+            "name" => "simple-split",
+            "seed" => -1222652054,
+            "status" => "ACTIVE",
+            "killed" => false,
+            "defaultTreatment" => "on",
+            "conditions" => []
+        ];
+        $splitName = $split['name'];
+        $predis->set("SPLITIO.split." . $splitName, json_encode($split));
+        $predis->set("SPLITIO.splits.till", 1457726098069);
+        
+        //Asserting we can read the split even in a different database
+        $this->assertEquals('on', $splitSdk->getTreatment('user1', $splitName));
+    }
+
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();
