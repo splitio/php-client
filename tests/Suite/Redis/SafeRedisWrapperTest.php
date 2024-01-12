@@ -1,9 +1,6 @@
 <?php
 namespace SplitIO\Test\Suite\Redis;
 
-use ReflectionClass;
-
-
 use SplitIO\Component\Cache\Storage\Adapter\SafeRedisWrapper;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 
@@ -12,7 +9,7 @@ class SafeRedisWrapperTest extends \PHPUnit\Framework\TestCase
     public function testAllMethodsException()
     {
         // Set redis-library client mock
-        $cachePoolMethods = array('get', 'mget', 'rpush', 'keys', 'sismember', 'expire', 'getOptions');
+        $cachePoolMethods = array('get', 'mget', 'rpush', 'keys', 'sismember', 'expire', 'getOptions', 'smembers');
         $predisMock = $this
             ->getMockBuilder('\Predis\Client')
             ->disableOriginalConstructor()
@@ -46,5 +43,6 @@ class SafeRedisWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(array(), $safeRedisWrapper->getKeys("some"));
         $this->assertEquals(0, $safeRedisWrapper->rightPushQueue("some", "another"));
         $this->assertEquals(false, $safeRedisWrapper->expireKey("some", 12345));
+        $this->assertEquals(array(), $safeRedisWrapper->sMembers("key"));
     }
 }

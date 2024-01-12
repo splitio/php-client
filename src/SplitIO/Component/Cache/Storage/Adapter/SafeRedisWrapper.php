@@ -1,9 +1,6 @@
 <?php
 namespace SplitIO\Component\Cache\Storage\Adapter;
 
-use SplitIO\Component\Cache\Storage\Exception\AdapterException;
-use SplitIO\Component\Cache\Item;
-use SplitIO\Component\Utils as SplitIOUtils;
 use SplitIO\Component\Common\Di;
 
 /**
@@ -124,6 +121,22 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
             Di::getLogger()->critical($e->getMessage());
             Di::getLogger()->critical($e->getTraceAsString());
             return false;
+        }
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function sMembers($key)
+    {
+        try {
+            return $this->cacheAdapter->sMembers($key);
+        } catch (\Exception $e) {
+            Di::getLogger()->critical("An error occurred performing SMEMBERS for " . $key);
+            Di::getLogger()->critical($e->getMessage());
+            Di::getLogger()->critical($e->getTraceAsString());
+            return array();
         }
     }
 }

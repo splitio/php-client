@@ -2,7 +2,6 @@
 namespace SplitIO\Component\Cache\Storage\Adapter;
 
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
-use SplitIO\Component\Cache\Item;
 use SplitIO\Component\Utils as SplitIOUtils;
 use SplitIO\Component\Common\Di;
 
@@ -246,6 +245,15 @@ class PRedis implements CacheStorageAdapterInterface
     public function isOnList($key, $value)
     {
         return $this->client->sIsMember($key, $value);
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function sMembers($key)
+    {
+        return $this->client->smembers($key);
     }
 
     public function getKeys($pattern = '*')
