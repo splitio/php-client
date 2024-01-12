@@ -37,4 +37,10 @@ interface CacheStorageAdapterInterface
      * @return boolean
      */
     public function expireKey($key, $ttl);
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function sMembers($key);
 }
