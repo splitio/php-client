@@ -91,10 +91,9 @@ class SplitCache implements SplitCacheInterface
     public function getNamesByFlagSets($flagSets)
     {
         $toReturn = array();
-        if (empty($flagSets)){
+        if (empty($flagSets)) {
             return $toReturn;
         }
-
         $cache = Di::getCache();
         foreach ($flagSets as $flagSet) {
             $toReturn[$flagSet] = $cache->sMembers(self::getCacheKeyForFlagSet($flagSet));
