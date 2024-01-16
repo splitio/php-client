@@ -5,14 +5,9 @@ use \stdClass;
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
 use SplitIO\Component\Cache\ImpressionCache;
-use SplitIO\Component\Cache\Storage\Adapter;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Pool;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
-
-use SplitIO\Test\Suite\Sdk\Helpers\CustomLogger;
 use SplitIO\Test\Utils;
 
 class SdkClientTest extends \PHPUnit\Framework\TestCase
@@ -205,6 +200,40 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($parsed['i']['t'], $treatment);
         $this->assertEquals($parsed['m']['i'], $machineIP);
         $this->assertEquals($parsed['m']['n'], $machineName);
+    }
+
+    public function testSplitManager()
+    {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitManager = $splitFactory->manager();
+
+        //Assertions
+        $split_view = $splitManager->split("flagsets_feature");
+        $this->assertEquals("flagsets_feature", $split_view->getName());
+        $this->assertEquals('off', $split_view->getDefaultTreatment());
+        $this->assertEquals('["set_a","set_b","set_c"]', json_encode($split_view->getSets()));
+
+        $split_views = $splitManager->splits();
+        $this->assertEquals('off', $split_views["flagsets_feature"]->getDefaultTreatment());
+        $this->assertEquals('["set_a","set_b","set_c"]', json_encode($split_views["flagsets_feature"]->getSets()));
     }
 
     public function testClient()
