@@ -90,7 +90,9 @@ class LocalhostSplitManager implements SplitManagerInterface
                 false,
                 $this->splits[$featureFlagName]["treatments"],
                 0,
-                $configs
+                $configs,
+                null,
+                array()
             );
         }
 
