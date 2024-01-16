@@ -374,6 +374,66 @@
                     ]
                 }
             ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "flagsets_feature",
+            "seed": -1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "sets": ["set_a", "set_b", "set_c"],
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "WHITELIST",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": {
+                                    "whitelist": [
+                                        "whitelisted_user"
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 100
+                        }
+                    ]
+                },
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "ALL_KEYS",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 0
+                        },
+                        {
+                            "treatment": "off",
+                            "size": 100
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "since": -1,
