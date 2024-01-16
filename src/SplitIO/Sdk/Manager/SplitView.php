@@ -23,8 +23,16 @@ class SplitView
      * @param $defaultTreatment
      * @param $sets
      */
-    public function __construct($name, $trafficType, $killed, $treatments, $changeNumber, $configs, $defaultTreatment, $sets)
-    {
+    public function __construct(
+        $name,
+        $trafficType,
+        $killed,
+        $treatments,
+        $changeNumber,
+        $configs,
+        $defaultTreatment,
+        $sets
+    ) {
         $this->name = $name;
         $this->trafficType = $trafficType;
         $this->killed = $killed;
