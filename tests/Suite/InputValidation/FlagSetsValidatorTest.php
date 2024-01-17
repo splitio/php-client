@@ -91,7 +91,7 @@ class FlagSetsValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("set_3", $result[3]);
     }
 
-    public function testAreValidWith()
+    public function testAreValidWithIncorrectTypes()
     {
         $logger = $this->getMockedLogger();
 
@@ -101,5 +101,36 @@ class FlagSetsValidatorTest extends \PHPUnit\Framework\TestCase
 
         $result = FlagSetsValidator::areValid([null, 123, "set_1", "SET_1"], "test");
         $this->assertEquals(1, count($result));
+    }
+
+    public function testAreValidConsecutive()
+    {
+        $logger = $this->getMockedLogger();
+
+        $logger
+            ->expects($this->exactly(6))
+            ->method('warning')
+            ->withConsecutive(
+                ['test: Flag Set name "   A  " has extra whitespace, trimming.'],
+                ['test: Flag Set name "   A  " should be all lowercase - converting string to lowercase.'],
+                ['test: Flag Set name "@FAIL" should be all lowercase - converting string to lowercase.'],
+                ['test: you passed "@FAIL", Flag Set must adhere to the regular expressions ' .
+                    '{/^[a-z0-9][_a-z0-9]{0,49}$/} This means a Flag Set must start with a letter or number, be in lowercase, alphanumeric and ' .
+                    'have a max length of 50 characters. "@FAIL" was discarded.'],
+                ['test: Flag Set name "TEST" should be all lowercase - converting string to lowercase.'],
+                ['test: Flag Set name "  a" has extra whitespace, trimming.'],
+            );
+        $logger
+            ->expects($this->exactly(2))
+            ->method('error')
+            ->withConsecutive(
+                ['test: FlagSets must be a non-empty list.'],
+                ['test: FlagSets must be a non-empty list.']
+            );
+
+        $this->assertEquals(['a', 'test'], FlagSetsValidator::areValid(['   A  ', '@FAIL', 'TEST'], 'test'));
+        $this->assertEquals(array(), FlagSetsValidator::areValid([], 'test'));
+        $this->assertEquals(array(), FlagSetsValidator::areValid(['some' => 'some1'], 'test'));
+        $this->assertEquals(['a', 'test'], FlagSetsValidator::areValid(['a', 'test', '  a'], 'test'));
     }
 }

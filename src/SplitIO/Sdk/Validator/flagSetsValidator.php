@@ -2,6 +2,7 @@
 
 namespace SplitIO\Sdk\Validator;
 
+use SplitIO\Component\Utils as SplitIOUtils;
 use SplitIO\Split as SplitApp;
 
 const REG_EXP_FLAG_SET = "/^[a-z0-9][_a-z0-9]{0,49}$/";
@@ -10,7 +11,7 @@ class FlagSetsValidator
 {
     public static function areValid(array $flagSets, string $operation)
     {
-        if (!is_array($flagSets) || count($flagSets) == 0) {
+        if (!is_array($flagSets) || SplitIOUtils\isAssociativeArray($flagSets) || count($flagSets) == 0) {
             SplitApp::logger()->error($operation . ': FlagSets must be a non-empty list.');
             return array();
         }
@@ -20,12 +21,13 @@ class FlagSetsValidator
             if ($flagSet == null) {
                 continue;
             }
+
             if (!is_string($flagSet)) {
                 SplitApp::logger()->error($operation . ': FlagSet must be a string and not null. ' .
                 $flagSet . ' was discarded.');
                 continue;
             }
-            $sanitizedFlagSet = self::flagSetSanitize($flagSet, $operation);
+            $sanitizedFlagSet = self::sanitize($flagSet, $operation);
             if (!is_null($sanitizedFlagSet)) {
                 array_push($sanitized, $sanitizedFlagSet);
             }
@@ -34,7 +36,7 @@ class FlagSetsValidator
         return array_values(array_unique($sanitized));
     }
 
-    private static function flagSetSanitize(string $flagSet, string $operation)
+    private static function sanitize(string $flagSet, string $operation)
     {
         $trimmed = trim($flagSet);
         if ($trimmed !== $flagSet) {
