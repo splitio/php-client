@@ -59,7 +59,7 @@ class Evaluator
             array_push($toReturn, ...$flagNames);
         }
 
-        return array_unique($toReturn);
+        return array_values(array_unique($toReturn));
     }
 
     public function evaluateFeature($matchingKey, $bucketingKey, $featureName, array $attributes = null)
