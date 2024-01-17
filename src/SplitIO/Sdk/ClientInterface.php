@@ -204,7 +204,8 @@ interface ClientInterface
 
     /**
      * Returns an associative array which each key will be
-     * the treatment result for each feature passed as parameter.
+     * the treatment result for each feature associated with
+     * flag set passed as parameter.
      * The set of treatments for a feature can be configured
      * on the Split web console.
      * This method returns the string 'control' if:
