@@ -9,7 +9,7 @@ const REG_EXP_FLAG_SET = "/^[a-z0-9][_a-z0-9]{0,49}$/";
 
 class FlagSetsValidator
 {
-    public static function areValid(array $flagSets, string $operation)
+    public static function areValid($flagSets, $operation)
     {
         if (!is_array($flagSets) || SplitIOUtils\isAssociativeArray($flagSets) || count($flagSets) == 0) {
             SplitApp::logger()->error($operation . ': FlagSets must be a non-empty list.');
@@ -36,7 +36,7 @@ class FlagSetsValidator
         return array_values(array_unique($sanitized));
     }
 
-    private static function sanitize(string $flagSet, string $operation)
+    private static function sanitize($flagSet, $operation)
     {
         $trimmed = trim($flagSet);
         if ($trimmed !== $flagSet) {
