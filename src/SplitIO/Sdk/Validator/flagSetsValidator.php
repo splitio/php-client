@@ -18,15 +18,6 @@ class FlagSetsValidator
 
         $sanitized = [];
         foreach ($flagSets as $flagSet) {
-            if ($flagSet == null) {
-                continue;
-            }
-
-            if (!is_string($flagSet)) {
-                SplitApp::logger()->error($operation . ': FlagSet must be a string and not null. ' .
-                $flagSet . ' was discarded.');
-                continue;
-            }
             $sanitizedFlagSet = self::sanitize($flagSet, $operation);
             if (!is_null($sanitizedFlagSet)) {
                 array_push($sanitized, $sanitizedFlagSet);
@@ -38,6 +29,16 @@ class FlagSetsValidator
 
     private static function sanitize($flagSet, $operation)
     {
+        if ($flagSet == null) {
+            return null;
+        }
+
+        if (!is_string($flagSet)) {
+            SplitApp::logger()->error($operation . ': FlagSet must be a string and not null. ' .
+            $flagSet . ' was discarded.');
+            return null;
+        }
+
         $trimmed = trim($flagSet);
         if ($trimmed !== $flagSet) {
             SplitApp::logger()->warning($operation . ': Flag Set name "' . $flagSet .
