@@ -287,7 +287,14 @@ class Client implements ClientInterface
                 $featureFlags,
                 $attributes
             );
-            return $this->processEvaluationResult($matchingKey, $bucketingKey, $operation, $attributes, $metricName, $evaluationResults);
+            return $this->processEvaluationResult(
+                $matchingKey,
+                $bucketingKey,
+                $operation,
+                $attributes,
+                $metricName,
+                $evaluationResults
+            );
         } catch (\Exception $e) {
             SplitApp::logger()->critical($operation . ' method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
@@ -433,6 +440,43 @@ class Client implements ClientInterface
         }
     }
 
+    public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null)
+    {
+        try {
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                $this->doEvaluationByFlagSets(
+                    'getTreatmentsByFlagSet',
+                    Metrics::MNAME_SDK_GET_TREATMENTS_BY_FLAG_SET,
+                    $key,
+                    array($flagSet),
+                    $attributes
+                )
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsByFlagSet method is throwing exceptions');
+            return array();
+        }
+    }
+
+    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, array $attributes = null)
+    {
+        try {
+            return $this->doEvaluationByFlagSets(
+                'getTreatmentsWithConfigByFlagSet',
+                Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG_BY_FLAG_SET,
+                $key,
+                array($flagSet),
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsWithConfigByFlagSet method is throwing exceptions');
+            return array();
+        }
+    }
+
     private function doInputValidationByFlagSets($key, $flagSets, array $attributes = null, $operation)
     {
         $key = InputValidator::validateKey($key, $operation);
@@ -470,7 +514,14 @@ class Client implements ClientInterface
                 $flagSets,
                 $attributes
             );
-            return $this->processEvaluationResult($matchingKey, $bucketingKey, $operation, $attributes, $metricName, $evaluationResults);
+            return $this->processEvaluationResult(
+                $matchingKey,
+                $bucketingKey,
+                $operation,
+                $attributes,
+                $metricName,
+                $evaluationResults
+            );
         } catch (\Exception $e) {
             SplitApp::logger()->critical($operation . ' method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
@@ -479,8 +530,14 @@ class Client implements ClientInterface
         return array();
     }
 
-    private function processEvaluationResult($matchingKey, $bucketingKey, $operation, $attributes, $metricName, $evaluationResults)
-    {
+    private function processEvaluationResult(
+        $matchingKey,
+        $bucketingKey,
+        $operation,
+        $attributes,
+        $metricName,
+        $evaluationResults
+    ) {
         $result = array();
         $impressions = array();
         foreach ($evaluationResults['evaluations'] as $featureFlagName => $evalResult) {
