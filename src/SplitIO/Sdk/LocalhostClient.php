@@ -269,4 +269,16 @@ class LocalhostClient implements ClientInterface
         // no-op
         return array();
     }
+
+    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, array $attributes = null)
+    {
+        // no-op
+        return array();
+    }
+    
+    public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null)
+    {
+        // no-op
+        return array();
+    }
 }
