@@ -147,6 +147,62 @@ interface ClientInterface
     public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null);
 
     /**
+     * Returns an associative array which each key will be
+     * the treatment result and the config for each
+     * feature associated with flag sets passed as parameter.
+     * The set of treatments for a feature can be configured
+     * on the Split web console and the config for
+     * that treatment.
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     * 
+     * @param $key
+     * @param $flagSets
+     * @param $attributes
+     * @return array
+     */
+    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, array $attributes = null);
+
+    /**
+     * Returns an associative array which each key will be
+     * the treatment result and the config for each
+     * feature associated with flag sets passed as parameter.
+     * The set of treatments for a feature can be configured
+     * on the Split web console and the config for
+     * that treatment.
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     * 
+     * @param $key
+     * @param $flagSets
+     * @param $attributes
+     * @return array
+     */
+    public function getTreatmentsByFlagSets($key, $flagSets, array $attributes = null);
+
+    /**
      * A short-hand for
      * <pre>
      *     (getTreatment(key, featureFlagName) == treatment) ? true : false;
