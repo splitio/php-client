@@ -9,7 +9,7 @@ const REG_EXP_FLAG_SET = "/^[a-z0-9][_a-z0-9]{0,49}$/";
 
 class FlagSetsValidator
 {
-    public static function areValid($flagSets, string $operation)
+    public static function areValid($flagSets, $operation)
     {
         if (!is_array($flagSets) || SplitIOUtils\isAssociativeArray($flagSets) || count($flagSets) == 0) {
             SplitApp::logger()->error($operation . ': FlagSets must be a non-empty list.');
@@ -18,15 +18,6 @@ class FlagSetsValidator
 
         $sanitized = [];
         foreach ($flagSets as $flagSet) {
-            if ($flagSet == null) {
-                continue;
-            }
-
-            if (!is_string($flagSet)) {
-                SplitApp::logger()->error($operation . ': FlagSet must be a string and not null. ' .
-                $flagSet . ' was discarded.');
-                continue;
-            }
             $sanitizedFlagSet = self::sanitize($flagSet, $operation);
             if (!is_null($sanitizedFlagSet)) {
                 array_push($sanitized, $sanitizedFlagSet);
@@ -36,8 +27,18 @@ class FlagSetsValidator
         return array_values(array_unique($sanitized));
     }
 
-    private static function sanitize(string $flagSet, string $operation)
+    private static function sanitize($flagSet, $operation)
     {
+        if ($flagSet == null) {
+            return null;
+        }
+
+        if (!is_string($flagSet)) {
+            SplitApp::logger()->error($operation . ': FlagSet must be a string and not null. ' .
+            $flagSet . ' was discarded.');
+            return null;
+        }
+
         $trimmed = trim($flagSet);
         if ($trimmed !== $flagSet) {
             SplitApp::logger()->warning($operation . ': Flag Set name "' . $flagSet .
