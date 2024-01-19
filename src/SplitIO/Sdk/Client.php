@@ -7,12 +7,12 @@ use SplitIO\Sdk\Events\EventDTO;
 use SplitIO\Sdk\Events\EventQueueMessage;
 use SplitIO\Sdk\QueueMetadataMessage;
 use SplitIO\Sdk\Impressions\Impression;
-use SplitIO\Sdk\Validator\FlagSetsValidator;
 use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Validator\InputValidator;
+use SplitIO\Sdk\Validator\FlagSetsValidator;
 
 class Client implements ClientInterface
 {
