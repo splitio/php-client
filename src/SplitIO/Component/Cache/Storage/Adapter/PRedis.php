@@ -14,6 +14,9 @@ class PRedis implements CacheStorageAdapterInterface
     /** @var \Predis\Client|null  */
     private $client = null;
 
+    /** @var string  */
+    private $prefix = "";
+
     /**
      * @param array $options
      * @throws AdapterException
@@ -26,6 +29,10 @@ class PRedis implements CacheStorageAdapterInterface
         $_redisConfig = $this->getRedisConfiguration($options);
 
         $this->client = new \Predis\Client($_redisConfig['parameters'], $_redisConfig['options']);
+
+        if (isset($_redisConfig['options']['prefix'])) {
+            $this->prefix = $_redisConfig['options']['prefix'];
+        }
     }
 
     /**
@@ -179,30 +186,8 @@ class PRedis implements CacheStorageAdapterInterface
 
     public function getKeys($pattern = '*')
     {
-        $prefix = null;
-        if ($this->client->getOptions()->__isset("prefix")) {
-            $prefix = $this->client->getOptions()->__get("prefix")->getPrefix();
-        }
-
-        if ($this->client->getOptions()->__isset("cluster")) {
-            $keys = array();
-            foreach ($this->client as $nodeClient) {
-                $nodeClientKeys = $nodeClient->keys($pattern);
-                $keys = array_merge($keys, $nodeClientKeys);
-            }
-        } else {
-            $keys = $this->client->keys($pattern);
-        }
-        if ($prefix) {
-            if (is_array($keys)) {
-                foreach ($keys as $index => $key) {
-                    $keys[$index] = str_replace($prefix, '', $key);
-                }
-            } else {
-                $keys = str_replace($prefix, '', $keys);
-            }
-        }
-        return $keys;
+        $keys = $this->client->keys($pattern);
+        return str_replace($this->prefix, '', $keys);
     }
 
     private static function normalizePrefix($prefix)

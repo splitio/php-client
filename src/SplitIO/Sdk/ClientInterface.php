@@ -168,8 +168,9 @@ interface ClientInterface
      * @param $key
      * @param $trafficType
      * @param $eventType
-     * @param null $value
+     * @param $value
+     * @param $properties
      * @return boolean
      */
-    public function track($key, $trafficType, $eventType, $value = null);
+    public function track($key, $trafficType, $eventType, $value = null, $properties = null);
 }
