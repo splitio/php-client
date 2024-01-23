@@ -52,7 +52,8 @@ class Evaluator
         foreach ($namesByFlagSets as $flagSet => $flagNames) {
             if (empty($flagNames)) {
                 SplitApp::logger()->warning("you passed $flagSet Flag Set that does not contain" .
-                'cached feature flag names, please double check what Flag Sets are in use in the Split user interface.');
+                'cached feature flag names, please double check what Flag Sets are in use in the' .
+                'Split user interface.');
                 continue;
             }
 
