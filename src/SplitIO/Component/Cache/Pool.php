@@ -83,4 +83,9 @@ class Pool extends CacheKeyTrait
     {
         return $this->adapter->expireKey($key, $ttl);
     }
+
+    public function sMembers($key)
+    {
+        return $this->adapter->sMembers($key);
+    }
 }

@@ -3,7 +3,6 @@
 namespace SplitIO\Sdk;
 
 use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Component\Common\Di;
 use SplitIO\Engine;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Grammar\Split;
@@ -13,14 +12,12 @@ use SplitIO\Split as SplitApp;
 
 class Evaluator
 {
-
     private $splitCache = null;
 
     public function __construct()
     {
         $this->splitCache = new SplitCache();
     }
-
 
     private function fetchSplit($featureName)
     {
@@ -47,6 +44,25 @@ class Evaluator
         return $toReturn;
     }
 
+    private function fetchFeatureFlagNamesByFlagSets($flagSets)
+    {
+        $namesByFlagSets = $this->splitCache->getNamesByFlagSets($flagSets);
+        $toReturn = array();
+
+        foreach ($namesByFlagSets as $flagSet => $flagNames) {
+            if (empty($flagNames)) {
+                SplitApp::logger()->warning("you passed $flagSet Flag Set that does not contain" .
+                'cached feature flag names, please double check what Flag Sets are in use in the' .
+                'Split user interface.');
+                continue;
+            }
+
+            array_push($toReturn, ...$flagNames);
+        }
+
+        return array_values(array_unique($toReturn));
+    }
+
     public function evaluateFeature($matchingKey, $bucketingKey, $featureName, array $attributes = null)
     {
         $timeStart = Metrics::startMeasuringLatency();
@@ -66,6 +82,15 @@ class Evaluator
         foreach ($this->fetchSplits($featureNames) as $name => $split) {
             $toReturn['evaluations'][$name] = $this->evalTreatment($matchingKey, $bucketingKey, $split, $attributes);
         }
+        $toReturn['latency'] = Metrics::calculateLatency($timeStart);
+        return $toReturn;
+    }
+
+    public function evaluateFeaturesByFlagSets($matchingKey, $bucketingKey, array $flagSets, array $attributes = null)
+    {
+        $timeStart = Metrics::startMeasuringLatency();
+        $featureFlagNames = $this->fetchFeatureFlagNamesByFlagSets($flagSets);
+        $toReturn = $this->evaluateFeatures($matchingKey, $bucketingKey, $featureFlagNames, $attributes);
         $toReturn['latency'] = Metrics::calculateLatency($timeStart);
         return $toReturn;
     }

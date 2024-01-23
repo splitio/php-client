@@ -7,6 +7,7 @@ class Utils
     {
         $splitKey = "SPLITIO.split.";
         $tillKey = "SPLITIO.splits.till";
+        $flagSetKey = "SPLITIO.flagSet.";
 
         $predis = new \Predis\Client([
             'host' => REDIS_HOST,
@@ -23,6 +24,11 @@ class Utils
         foreach ($splits as $split) {
             $splitName = $split['name'];
             $predis->set($splitKey . $splitName, json_encode($split));
+
+            $sets = $split['sets'];
+            foreach ($sets as $set) {
+                $predis->sadd($flagSetKey . $set, $splitName);
+            }
         }
         $till = -1;
         if (isset($splitChanges['till'])) {

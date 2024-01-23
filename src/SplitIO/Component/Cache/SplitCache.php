@@ -11,6 +11,8 @@ class SplitCache implements SplitCacheInterface
 
     const KEY_TRAFFIC_TYPE_CACHED = 'SPLITIO.trafficType.{trafficTypeName}';
 
+    const KEY_FLAG_SET_CACHED = 'SPLITIO.flagSet.{set}';
+
     private static function getCacheKeyForSinceParameter()
     {
         return self::KEY_TILL_CACHED_ITEM;
@@ -24,6 +26,11 @@ class SplitCache implements SplitCacheInterface
     private static function getCacheKeyForSplit($splitName)
     {
         return str_replace('{splitName}', $splitName, self::KEY_SPLIT_CACHED_ITEM);
+    }
+
+    private static function getCacheKeyForFlagSet($flagSet)
+    {
+        return str_replace('{set}', $flagSet, self::KEY_FLAG_SET_CACHED);
     }
 
     private static function getSplitNameFromCacheKey($key)
@@ -77,6 +84,23 @@ class SplitCache implements SplitCacheInterface
         $cache = Di::getCache();
         $splitKeys = $cache->getKeys(self::getCacheKeySearchPattern());
         return array_map([self::class, 'getSplitNameFromCacheKey'], $splitKeys);
+    }
+
+    /**
+     * @param array(string) List of flag set names
+     * @return array(string) List of all feature flag names by flag sets
+     */
+    public function getNamesByFlagSets($flagSets)
+    {
+        $toReturn = array();
+        if (empty($flagSets)) {
+            return $toReturn;
+        }
+        $cache = Di::getCache();
+        foreach ($flagSets as $flagSet) {
+            $toReturn[$flagSet] = $cache->sMembers(self::getCacheKeyForFlagSet($flagSet));
+        }
+        return $toReturn;
     }
 
     /**
