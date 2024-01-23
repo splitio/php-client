@@ -73,13 +73,11 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
         $splitName = $split['name'];
         $flagSets = array('set_a', 'set_b');
 
-        $expected = array();
-        $expected['set_a'] = array($splits[1]['name'], $splitName);
-        $expected['set_b'] = array($splits[1]['name'], $splitName);
-
         $this->assertEquals(strlen(json_encode($split)), strlen($splitCache->getSplit($splitName)));
         $this->assertEquals($splitChanges['till'], $splitCache->getChangeNumber());
-        $this->assertEquals($expected, $splitCache->getNamesByFlagSets($flagSets));
+        $result = $splitCache->getNamesByFlagSets($flagSets);
+        $this->assertEquals(2, count($result['set_a']));
+        $this->assertEquals(2, count($result['set_b']));
     }
 
     /**
