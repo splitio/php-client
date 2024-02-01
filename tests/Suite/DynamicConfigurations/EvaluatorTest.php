@@ -3,9 +3,6 @@ namespace SplitIO\Test\Suite\Sdk;
 
 use SplitIO\Component\Common\Di;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
-use SplitIO\Component\Cache\SplitCache;
-use SplitIO\Split as SplitApp;
-use SplitIO\Grammar\Split;
 use SplitIO\Sdk\Evaluator;
 
 class EvaluatorTest extends \PHPUnit\Framework\TestCase
@@ -167,6 +164,51 @@ EOD;
         $this->assertEquals('killed', $result['treatment']);
         $this->assertEquals($result['config'], '{"color": "orange","size": 13}');
 
+        $redisClient->del('SPLITIO.split.mysplittest4');
+    }
+
+    public function testEvaluateFeaturesByFlagSets()
+    {
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+
+        $redisClient->del('SPLITIO.flagSet.set_1');
+        $redisClient->del('SPLITIO.flagSet.set_2');
+        $redisClient->del('SPLITIO.split.mysplittest');
+        $redisClient->del('SPLITIO.split.mysplittest2');
+        $redisClient->del('SPLITIO.split.mysplittest4');
+        
+        $redisClient->set('SPLITIO.split.mysplittest', $this->split1);
+        $redisClient->set('SPLITIO.split.mysplittest2', $this->split2);
+        $redisClient->set('SPLITIO.split.mysplittest4', $this->split4);
+        $redisClient->sadd('SPLITIO.flagSet.set_1', 'mysplittest2');
+        $redisClient->sadd('SPLITIO.flagSet.set_2', 'mysplittest2');
+        $redisClient->sadd('SPLITIO.flagSet.set_2', 'mysplittest4');
+        $redisClient->sadd('SPLITIO.flagSet.set_5', 'mysplittest');
+
+        $evaluator = new Evaluator();
+
+        $result = $evaluator->evaluateFeaturesByFlagSets('test', '', ['set_1', 'set_2', 'set_3']);
+
+        $this->assertEquals('on', $result['evaluations']['mysplittest2']['treatment']);
+        $this->assertEquals('killed', $result['evaluations']['mysplittest4']['treatment']);
+        $this->assertFalse(array_key_exists('mysplittest', $result['evaluations']));
+        $this->assertGreaterThan(0, $result['latency']);
+
+        $redisClient->del('SPLITIO.flagSet.set_1');
+        $redisClient->del('SPLITIO.flagSet.set_2');
+        $redisClient->del('SPLITIO.split.mysplittest');
+        $redisClient->del('SPLITIO.split.mysplittest2');
         $redisClient->del('SPLITIO.split.mysplittest4');
     }
 }

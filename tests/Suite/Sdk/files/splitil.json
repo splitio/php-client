@@ -10,6 +10,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {

@@ -31,6 +31,7 @@ class Split
     private $trafficAllocationSeed = null;
 
     private $configurations = null;
+    private $sets = null;
 
     public function __construct(array $split)
     {
@@ -50,6 +51,7 @@ class Split
             $split['trafficAllocationSeed'] : null;
         $this->configurations = isset($split['configurations']) && count($split['configurations']) > 0 ?
             $split['configurations'] : null;
+        $this->sets = isset($split['sets']) ? $split['sets'] : array();
         
         SplitApp::logger()->info("Constructing Feature Flag: ".$this->name);
 
@@ -166,5 +168,13 @@ class Split
     public function getConfigurations()
     {
         return $this->configurations;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getSets()
+    {
+        return $this->sets;
     }
 }

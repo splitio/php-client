@@ -57,6 +57,7 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
         $splitSdk = $this->getFactoryClient();
 
         $this->assertEquals('control', $splitSdk->getTreatment(new Key('', 'some_bucketing_key'), 'some_feature'));
+        $this->assertNotEquals('control', $splitSdk->getTreatment(new Key("0", 'some_bucketing_key'), 'some_feature'));
     }
 
     public function testGetTreatmentWithWrongTypeMatchingKeyObject()

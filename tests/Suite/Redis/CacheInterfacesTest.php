@@ -6,7 +6,6 @@ use SplitIO\Component\Cache\Pool;
 use SplitIO\Component\Cache\SegmentCache;
 use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Common\Di;
-use SplitIO\Component\Cache\BlockUntilReadyCache;
 use SplitIO\Component\Log\Handler\Stdout;
 use SplitIO\Component\Log\Logger;
 use SplitIO\Component\Log\LogLevelEnum;
@@ -71,11 +70,14 @@ class CacheInterfacesTest extends \PHPUnit\Framework\TestCase
         $splitChanges = json_decode($splitChanges, true);
         $splits = $splitChanges['splits'];
         $split = $splits[0];
-
         $splitName = $split['name'];
+        $flagSets = array('set_a', 'set_b');
 
         $this->assertEquals(strlen(json_encode($split)), strlen($splitCache->getSplit($splitName)));
         $this->assertEquals($splitChanges['till'], $splitCache->getChangeNumber());
+        $result = $splitCache->getNamesByFlagSets($flagSets);
+        $this->assertEquals(2, count($result['set_a']));
+        $this->assertEquals(2, count($result['set_b']));
     }
 
     /**
