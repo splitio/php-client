@@ -11,6 +11,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -71,6 +72,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -108,6 +110,7 @@
             "status": "ACTIVE",
             "killed": true,
             "defaultTreatment": "defTreatment",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -144,6 +147,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {

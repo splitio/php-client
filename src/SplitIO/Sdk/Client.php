@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Sdk;
 
-use SplitIO\Metrics;
 use SplitIO\Sdk\Events\EventDTO;
 use SplitIO\Sdk\Events\EventQueueMessage;
 use SplitIO\Sdk\QueueMetadataMessage;
@@ -10,10 +9,10 @@ use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
 use SplitIO\Split as SplitApp;
 use SplitIO\Sdk\Validator\InputValidator;
+use SplitIO\Sdk\Validator\FlagSetsValidator;
 
 class Client implements ClientInterface
 {
-
     private $evaluator = null;
     private $impressionListener = null;
     private $queueMetadata = null;
@@ -130,7 +129,7 @@ class Client implements ClientInterface
      *
      * @return mixed
      */
-    private function doEvaluation($operation, $metricName, $key, $featureFlagName, $attributes)
+    private function doEvaluation($operation, $key, $featureFlagName, $attributes)
     {
         $default = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
 
@@ -156,7 +155,7 @@ class Client implements ClientInterface
                 $bucketingKey
             );
 
-            $this->registerData($impression, $attributes, $metricName, $result['latency']);
+            $this->registerData($impression, $attributes);
             return array(
                 'treatment' => $result['treatment'],
                 'config' => $result['config'],
@@ -177,7 +176,7 @@ class Client implements ClientInterface
                 ImpressionLabel::EXCEPTION,
                 $bucketingKey
             );
-            $this->registerData($impression, $attributes, $metricName);
+            $this->registerData($impression, $attributes);
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .
@@ -196,7 +195,6 @@ class Client implements ClientInterface
         try {
             $result = $this->doEvaluation(
                 'getTreatment',
-                Metrics::MNAME_SDK_GET_TREATMENT,
                 $key,
                 $featureName,
                 $attributes
@@ -216,7 +214,6 @@ class Client implements ClientInterface
         try {
             return $this->doEvaluation(
                 'getTreatmentWithConfig',
-                Metrics::MNAME_SDK_GET_TREATMENT_WITH_CONFIG,
                 $key,
                 $featureFlagName,
                 $attributes
@@ -261,7 +258,7 @@ class Client implements ClientInterface
         );
     }
 
-    private function registerData($impressions, $attributes, $metricName, $latency = null)
+    private function registerData($impressions, $attributes)
     {
         try {
             if (is_null($impressions) || (is_array($impressions) && 0 == count($impressions))) {
@@ -291,7 +288,7 @@ class Client implements ClientInterface
      *
      * @return mixed
      */
-    private function doEvaluationForTreatments($operation, $metricName, $key, $featureFlagNames, $attributes)
+    private function doEvaluationForTreatments($operation, $key, $featureFlagNames, $attributes)
     {
         $inputValidation = $this->doInputValidationForTreatments($key, $featureFlagNames, $attributes, $operation);
         if (is_null($inputValidation)) {
@@ -306,35 +303,19 @@ class Client implements ClientInterface
         $featureFlags = $inputValidation['featureFlagNames'];
 
         try {
-            $result = array();
-            $impressions = array();
             $evaluationResults = $this->evaluator->evaluateFeatures(
                 $matchingKey,
                 $bucketingKey,
                 $featureFlags,
                 $attributes
             );
-            foreach ($evaluationResults['evaluations'] as $featureFlag => $evalResult) {
-                if (InputValidator::isSplitFound($evalResult['impression']['label'], $featureFlag, $operation)) {
-                    // Creates impression
-                    $impressions[] = $this->createImpression(
-                        $matchingKey,
-                        $featureFlag,
-                        $evalResult['treatment'],
-                        $evalResult['impression']['changeNumber'],
-                        $evalResult['impression']['label'],
-                        $bucketingKey
-                    );
-                    $result[$featureFlag] = array(
-                        'treatment' => $evalResult['treatment'],
-                        'config' => $evalResult['config'],
-                    );
-                } else {
-                    $result[$featureFlag] = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
-                }
-            }
-            $this->registerData($impressions, $attributes, $metricName, $evaluationResults['latency']);
-            return $result;
+            return $this->processEvaluations(
+                $matchingKey,
+                $bucketingKey,
+                $operation,
+                $attributes,
+                $evaluationResults['evaluations']
+            );
         } catch (\Exception $e) {
             SplitApp::logger()->critical($operation . ' method is throwing exceptions');
             SplitApp::logger()->critical($e->getMessage());
@@ -355,7 +336,6 @@ class Client implements ClientInterface
                 },
                 $this->doEvaluationForTreatments(
                     'getTreatments',
-                    Metrics::MNAME_SDK_GET_TREATMENTS,
                     $key,
                     $featureFlagNames,
                     $attributes
@@ -376,7 +356,6 @@ class Client implements ClientInterface
         try {
             return $this->doEvaluationForTreatments(
                 'getTreatmentsWithConfig',
-                Metrics::MNAME_SDK_GET_TREATMENTS_WITH_CONFIG,
                 $key,
                 $featureFlagNames,
                 $attributes
@@ -441,5 +420,159 @@ class Client implements ClientInterface
         }
 
         return false;
+    }
+
+    public function getTreatmentsByFlagSets($key, $flagSets, array $attributes = null)
+    {
+        try {
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                $this->doEvaluationByFlagSets(
+                    'getTreatmentsByFlagSets',
+                    $key,
+                    $flagSets,
+                    $attributes
+                )
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsByFlagSets method is throwing exceptions');
+            return array();
+        }
+    }
+
+    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, array $attributes = null)
+    {
+        try {
+            return $this->doEvaluationByFlagSets(
+                'getTreatmentsWithConfigByFlagSets',
+                $key,
+                $flagSets,
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsWithConfigByFlagSets method is throwing exceptions');
+            return array();
+        }
+    }
+
+    public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null)
+    {
+        try {
+            return array_map(
+                function ($feature) {
+                    return $feature['treatment'];
+                },
+                $this->doEvaluationByFlagSets(
+                    'getTreatmentsByFlagSet',
+                    $key,
+                    array($flagSet),
+                    $attributes
+                )
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsByFlagSet method is throwing exceptions');
+            return array();
+        }
+    }
+
+    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, array $attributes = null)
+    {
+        try {
+            return $this->doEvaluationByFlagSets(
+                'getTreatmentsWithConfigByFlagSet',
+                $key,
+                array($flagSet),
+                $attributes
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical('getTreatmentsWithConfigByFlagSet method is throwing exceptions');
+            return array();
+        }
+    }
+
+    private function doInputValidationByFlagSets($key, $flagSets, array $attributes = null, $operation)
+    {
+        $key = InputValidator::validateKey($key, $operation);
+        if (is_null($key) || !InputValidator::validAttributes($attributes, $operation)) {
+            return null;
+        }
+
+        $sets = FlagSetsValidator::areValid($flagSets, $operation);
+        if (is_null($sets)) {
+            return null;
+        }
+
+        return array(
+            'matchingKey' => $key['matchingKey'],
+            'bucketingKey' => $key['bucketingKey'],
+            'flagSets' => $sets,
+        );
+    }
+
+    private function doEvaluationByFlagSets($operation, $key, $flagSets, $attributes)
+    {
+        $inputValidation = $this->doInputValidationByFlagSets($key, $flagSets, $attributes, $operation);
+        if (is_null($inputValidation)) {
+            return array();
+        }
+
+        $matchingKey = $inputValidation['matchingKey'];
+        $bucketingKey = $inputValidation['bucketingKey'];
+        $flagSets = $inputValidation['flagSets'];
+
+        try {
+            $evaluationResults = $this->evaluator->evaluateFeaturesByFlagSets(
+                $matchingKey,
+                $bucketingKey,
+                $flagSets,
+                $attributes
+            );
+            return $this->processEvaluations(
+                $matchingKey,
+                $bucketingKey,
+                $operation,
+                $attributes,
+                $evaluationResults['evaluations']
+            );
+        } catch (\Exception $e) {
+            SplitApp::logger()->critical($operation . ' method is throwing exceptions');
+            SplitApp::logger()->critical($e->getMessage());
+            SplitApp::logger()->critical($e->getTraceAsString());
+        }
+        return array();
+    }
+
+    private function processEvaluations(
+        $matchingKey,
+        $bucketingKey,
+        $operation,
+        $attributes,
+        $evaluations
+    ) {
+        $result = array();
+        $impressions = array();
+        foreach ($evaluations as $featureFlagName => $evalResult) {
+            if (InputValidator::isSplitFound($evalResult['impression']['label'], $featureFlagName, $operation)) {
+                // Creates impression
+                $impressions[] = $this->createImpression(
+                    $matchingKey,
+                    $featureFlagName,
+                    $evalResult['treatment'],
+                    $evalResult['impression']['changeNumber'],
+                    $evalResult['impression']['label'],
+                    $bucketingKey
+                );
+                $result[$featureFlagName] = array(
+                    'treatment' => $evalResult['treatment'],
+                    'config' => $evalResult['config'],
+                );
+            } else {
+                $result[$featureFlagName] = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
+            }
+        }
+        $this->registerData($impressions, $attributes);
+        return $result;
     }
 }
