@@ -123,4 +123,20 @@ class SafeRedisWrapper implements CacheStorageAdapterInterface
             return false;
         }
     }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function sMembers($key)
+    {
+        try {
+            return $this->cacheAdapter->sMembers($key);
+        } catch (\Exception $e) {
+            Context::getLogger()->critical("An error occurred performing SMEMBERS for " . $key);
+            Context::getLogger()->critical($e->getMessage());
+            Context::getLogger()->critical($e->getTraceAsString());
+            return array();
+        }
+    }
 }
