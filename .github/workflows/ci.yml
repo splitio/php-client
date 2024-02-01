@@ -1,13 +1,11 @@
 name: ci
 on:
-  pull_request:
-    branches:
-      - develop
-      - master
   push:
-    branches:
-      - develop
-      - master
+    branches-ignore:
+      - none
+  pull_request:
+    branches-ignore:
+      - none
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
@@ -31,7 +29,7 @@ jobs:
           - '8.2'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -66,7 +64,6 @@ jobs:
           projectBaseDir: .
           args: >
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-            -Dsonar.projectVersion=${{ env.VERSION }}
 
       - name: SonarQube Scan (Pull Request)
         if: matrix.version == '8.2' && github.event_name == 'pull_request'
@@ -78,7 +75,6 @@ jobs:
           projectBaseDir: .
           args: >
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-            -Dsonar.projectVersion=${{ env.VERSION }}
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
             -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
