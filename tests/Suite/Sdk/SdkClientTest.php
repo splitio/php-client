@@ -4,15 +4,13 @@ namespace SplitIO\Test\Suite\Sdk;
 use \stdClass;
 use ReflectionClass;
 use SplitIO\Test\Suite\Redis\ReflectiveTools;
+use SplitIO\Component\Cache\SegmentCache;
+use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Component\Cache\ImpressionCache;
 use SplitIO\Component\Cache\EventsCache;
 use SplitIO\Component\Cache\Storage\Adapter\PRedis;
 use SplitIO\Component\Cache\Pool;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Sdk\Client;
-
-use SplitIO\Test\Suite\Sdk\Helpers\CustomLogger;
 use SplitIO\Test\Utils;
 
 class SdkClientTest extends \PHPUnit\Framework\TestCase
@@ -205,6 +203,40 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($parsed['i']['t'], $treatment);
         $this->assertEquals($parsed['m']['i'], $machineIP);
         $this->assertEquals($parsed['m']['n'], $machineName);
+    }
+
+    public function testSplitManager()
+    {
+        ReflectiveTools::resetContext();
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitManager = $splitFactory->manager();
+
+        //Assertions
+        $split_view = $splitManager->split("flagsets_feature");
+        $this->assertEquals("flagsets_feature", $split_view->getName());
+        $this->assertEquals('off', $split_view->getDefaultTreatment());
+        $this->assertEquals('["set_a","set_b","set_c"]', json_encode($split_view->getSets()));
+
+        $split_views = $splitManager->splits();
+        $this->assertEquals('off', $split_views["flagsets_feature"]->getDefaultTreatment());
+        $this->assertEquals('["set_a","set_b","set_c"]', json_encode($split_views["flagsets_feature"]->getSets()));
     }
 
     public function testClient()
@@ -746,6 +778,189 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->validateLastImpression($redisClient, 'sample_feature', 'user1', 'on', 'ip-1-2-3-4', '1.2.3.4');
     }
 
+    public function testGetTreatmentsWithConfigByFlagSets()
+    {
+        ReflectiveTools::resetContext();
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSets('user1', array('set_a', null, 'invalid-set', 'set_a', null, 'set_b'), null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['flagsets_feature']["treatment"]);
+        $this->assertEquals("{\"size\":15,\"test\":20}", $treatmentResult['flagsets_feature']["config"]);
+        $this->assertEquals('off', $treatmentResult['boolean_test']["treatment"]);
+        $this->assertNull($treatmentResult['boolean_test']["config"]);
+
+        //Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
+        $this->validateLastImpression($redisClient, 'boolean_test', 'user1', 'off');
+        $this->validateLastImpression($redisClient, 'flagsets_feature', 'user1', 'on');
+
+        // With Incorrect Values
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSets('user1', array(null, 123, ""=>"", "fake_name", "###", ["set"], ["set"=>"set"]), null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // Empty array
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSets('user1', array(), null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // null
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSets('user1', null, null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+    }
+
+    public function testGetTreatmentsByFlagSets()
+    {
+        ReflectiveTools::resetContext();
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSets('user1', array('set_a', null, 'invalid-set', 'set_a', null, 'set_b'), null);
+
+        //Assertions
+        $this->assertEquals(2, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['flagsets_feature']);
+        $this->assertEquals('off', $treatmentResult['boolean_test']);
+
+        //Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
+        $this->validateLastImpression($redisClient, 'boolean_test', 'user1', 'off');
+        $this->validateLastImpression($redisClient, 'flagsets_feature', 'user1', 'on');
+
+        // With Incorrect Values
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSets('user1', array(null, 123, "set"=>"set", "fake_name", "###", ["set"], ["set"=>"set"]), null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // Empty array
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSets('user1', array(), null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // null
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSets('user1', null, null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+    }
+
+    public function testGetTreatmentsWithConfigByFlagSet()
+    {
+        ReflectiveTools::resetContext();
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSet('user1', 'set_a', null);
+
+        //Assertions
+        $this->assertEquals(1, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['flagsets_feature']["treatment"]);
+        $this->assertEquals("{\"size\":15,\"test\":20}", $treatmentResult['flagsets_feature']["config"]);
+
+        //Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
+        $this->validateLastImpression($redisClient, 'flagsets_feature', 'user1', 'on');
+
+        // With Incorrect Values
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSet('user1', 123, null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // Empty array
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSet('user1', array(), null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // null
+        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSet('user1', null, null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+    }
+
+    public function testGetTreatmentsByFlagSet()
+    {
+        ReflectiveTools::resetContext();
+        $parameters = array('scheme' => 'redis', 'host' => REDIS_HOST, 'port' => REDIS_PORT, 'timeout' => 881);
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSet('user1', 'set_a', null);
+
+        //Assertions
+        $this->assertEquals(1, count(array_keys($treatmentResult)));
+
+        $this->assertEquals('on', $treatmentResult['flagsets_feature']);
+
+        //Check impressions
+        $redisClient = ReflectiveTools::clientFromFactory($splitFactory);
+        $this->validateLastImpression($redisClient, 'flagsets_feature', 'user1', 'on');
+
+        // With Incorrect Values
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSet('user1', 123, null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // Empty array
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSet('user1', array(), null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+
+        // null
+        $treatmentResult = $splitSdk->getTreatmentsByFlagSet('user1', null, null);
+        $this->assertEquals(0, count(array_keys($treatmentResult)));
+    }
+    
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();

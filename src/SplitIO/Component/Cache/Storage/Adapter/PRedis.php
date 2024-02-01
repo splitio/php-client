@@ -184,6 +184,15 @@ class PRedis implements CacheStorageAdapterInterface
         return $this->client->sIsMember($key, $value);
     }
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function sMembers($key)
+    {
+        return $this->client->smembers($key);
+    }
+
     public function getKeys($pattern = '*')
     {
         $keys = $this->client->keys($pattern);

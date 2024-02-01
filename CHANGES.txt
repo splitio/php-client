@@ -2,6 +2,16 @@
  - BREAKING CHANGE: Removed support from versions older than PHP 7.4.
  - BREAKING CHANGE: Added support for Multiple Factory Instantiation.
 
+7.2.0 (Jan 24, 2024)
+ - Added support for Flag Sets on the SDK, which enables grouping feature flags and interacting with the group rather than individually (more details in our documentation):
+  - Added new variations of the get treatment methods to support evaluating flags in given flag set/s.
+   - getTreatmentsByFlagSet and getTreatmentsByFlagSets
+   - getTreatmentWithConfigByFlagSets and getTreatmentsWithConfigByFlagSets
+  - Added `defaultTreatment` and `sets` properties to the `SplitView` object returned by the `split` and `splits` methods of the SDK manager.
+
+7.1.8 (Jul 24, 2023)
+ - Fixed input validation for empty keys.
+
 7.1.7 (May 16, 2023)
  - Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and phpdoc comments.
  - Fixed php 8.2 warnings in code.

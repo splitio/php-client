@@ -10,6 +10,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -69,6 +70,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -128,6 +130,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -164,6 +167,7 @@
             "status": "ACTIVE",
             "killed": true,
             "defaultTreatment": "defTreatment",
+            "sets": [],
             "configurations": {
                 "off": "{\"size\":15,\"test\":20}",
                 "defTreatment": "{\"size\":15,\"defTreatment\":true}"
@@ -204,6 +208,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "configurations": {
                 "on": "{\"size\":15,\"test\":20}"
             },
@@ -266,6 +271,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -305,6 +311,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": [],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -341,6 +348,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
+            "sets": ["set_b", "set_c"],
             "conditions": [
                 {
                     "matcherGroup": {
@@ -351,6 +359,70 @@
                                 "negate": false,
                                 "userDefinedSegmentMatcherData": null,
                                 "booleanMatcherData": true
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "off",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "flagsets_feature",
+            "seed": -1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "sets": ["set_a", "set_b", "set_c"],
+            "configurations": {
+                "on": "{\"size\":15,\"test\":20}",
+                "of": "{\"size\":15,\"defTreatment\":true}"
+            },
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "WHITELIST",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": {
+                                    "whitelist": [
+                                        "whitelisted_user"
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "on",
+                            "size": 100
+                        }
+                    ]
+                },
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "matcherType": "ALL_KEYS",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null
                             }
                         ]
                     },

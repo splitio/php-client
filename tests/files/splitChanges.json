@@ -9,6 +9,72 @@
       "seed": 301711069,
       "status": "ACTIVE",
       "killed": false,
+      "sets": ["set_a", "set_b", "set_c"],
+      "configurations": {
+        "on": "{\"size\":15,\"test\":20}"
+      },
+      "conditions": [
+        {
+          "matcherGroup": {
+            "combiner": "AND",
+            "matchers": [
+              {
+                "matcherType": "WHITELIST",
+                "negate": false,
+                "userDefinedSegmentMatcherData": null,
+                "whitelistMatcherData": {
+                  "whitelist": [
+                    "fake_user_id_6",
+                    "fake_user_id_7999"
+                  ]
+                }
+              }
+            ]
+          },
+          "partitions": [
+            {
+              "treatment": "on",
+              "size": 100
+            }
+          ]
+        },
+        {
+          "matcherGroup": {
+            "combiner": "AND",
+            "matchers": [
+              {
+                "matcherType": "IN_SEGMENT",
+                "negate": false,
+                "userDefinedSegmentMatcherData": {
+                  "segmentName": "employees"
+                },
+                "whitelistMatcherData": null
+              }
+            ]
+          },
+          "partitions": [
+            {
+              "treatment": "on",
+              "size": 80
+            },
+            {
+              "treatment": "control",
+              "size": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "orgId": "bf083ab0-b402-11e5-b7d5-024293b5d101",
+      "environment": "bf9d9ce0-b402-11e5-b7d5-024293b5d101",
+      "name": "sample_feature_2",
+      "trafficTypeId": "u",
+      "trafficTypeName": "User",
+      "seed": 301711069,
+      "status": "ACTIVE",
+      "killed": false,
+      "sets": ["set_a", "set_b", "set_c"],
       "configurations": {
         "on": "{\"size\":15,\"test\":20}"
       },

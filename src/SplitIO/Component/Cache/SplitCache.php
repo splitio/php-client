@@ -9,6 +9,8 @@ class SplitCache implements SplitCacheInterface
 
     const KEY_TRAFFIC_TYPE_CACHED = 'SPLITIO.trafficType.{trafficTypeName}';
 
+    const KEY_FLAG_SET_CACHED = 'SPLITIO.flagSet.{set}';
+
     /**
      * @var \SplitIO\Component\Cache\Pool
      */
@@ -35,6 +37,11 @@ class SplitCache implements SplitCacheInterface
     private static function getCacheKeyForSplit($splitName)
     {
         return str_replace('{splitName}', $splitName, self::KEY_SPLIT_CACHED_ITEM);
+    }
+
+    private static function getCacheKeyForFlagSet($flagSet)
+    {
+        return str_replace('{set}', $flagSet, self::KEY_FLAG_SET_CACHED);
     }
 
     private static function getSplitNameFromCacheKey($key)
@@ -85,6 +92,22 @@ class SplitCache implements SplitCacheInterface
     {
         $splitKeys =  $this->cache->getKeys(self::getCacheKeySearchPattern());
         return array_map([self::class, 'getSplitNameFromCacheKey'], $splitKeys);
+    }
+
+    /**
+     * @param array(string) List of flag set names
+     * @return array(string) List of all feature flag names by flag sets
+     */
+    public function getNamesByFlagSets($flagSets)
+    {
+        $toReturn = array();
+        if (empty($flagSets)) {
+            return $toReturn;
+        }
+        foreach ($flagSets as $flagSet) {
+            $toReturn[$flagSet] = $this->cache->sMembers(self::getCacheKeyForFlagSet($flagSet));
+        }
+        return $toReturn;
     }
 
     /**
