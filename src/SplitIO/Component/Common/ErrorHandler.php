@@ -1,11 +1,11 @@
 <?php
+
 namespace SplitIO\Component\Common;
 
 use ErrorException;
 
 class ErrorHandler
 {
-
     /**
      * Errors stack
      * @var array

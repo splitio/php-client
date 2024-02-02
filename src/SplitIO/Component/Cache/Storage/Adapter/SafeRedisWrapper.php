@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Component\Cache\Storage\Adapter;
 
 use SplitIO\Component\Common\Context;

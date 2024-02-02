@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Grammar\Condition\Matcher;
@@ -32,14 +33,16 @@ class Between extends AbstractMatcher
         SplitApp::logger()->info('---> Evaluating BETWEEN');
 
         if (isset($this->betweenMatcherData['start']) && isset($this->betweenMatcherData['end'])) {
-            $logMsg = '---> KEY: '.$key;
-            $logMsg .= PHP_EOL.'---> START: '.$this->betweenMatcherData['start'];
-            $logMsg .= PHP_EOL.'---> END: '.$this->betweenMatcherData['end'];
-            $logMsg .= PHP_EOL.'---> ATR: '.$this->attribute;
+            $logMsg = '---> KEY: ' . $key;
+            $logMsg .= PHP_EOL . '---> START: ' . $this->betweenMatcherData['start'];
+            $logMsg .= PHP_EOL . '---> END: ' . $this->betweenMatcherData['end'];
+            $logMsg .= PHP_EOL . '---> ATR: ' . $this->attribute;
             SplitApp::logger()->info($logMsg);
 
-            if (isset($this->betweenMatcherData['dataType'])
-                && DataTypeEnum::isValid($this->betweenMatcherData['dataType'])) {
+            if (
+                isset($this->betweenMatcherData['dataType'])
+                && DataTypeEnum::isValid($this->betweenMatcherData['dataType'])
+            ) {
                 if (DataTypeEnum::DATETIME == $this->betweenMatcherData['dataType']) {
                     $phpTimestampStart = DateTime::millisecondToPHPTimestamp($this->betweenMatcherData['start']);
                     $phpTimestampEnd   = DateTime::millisecondToPHPTimestamp($this->betweenMatcherData['end']);

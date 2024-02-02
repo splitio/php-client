@@ -51,7 +51,7 @@ class FlagSetsValidator
         }
         if (!preg_match(REG_EXP_FLAG_SET, $toLowercase)) {
             SplitApp::logger()->warning($operation . ': you passed "' . $flagSet .
-                '", Flag Set must adhere to the regular expressions {' .REG_EXP_FLAG_SET .
+                '", Flag Set must adhere to the regular expressions {' . REG_EXP_FLAG_SET .
                 '} This means a Flag Set must start with a letter or number, be in lowercase, alphanumeric and ' .
                 'have a max length of 50 characters. "' . $flagSet . '" was discarded.');
             return null;

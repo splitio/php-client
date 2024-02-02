@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Engine\Hash\Murmur3Hash;
@@ -56,6 +57,6 @@ class Segment extends AbstractMatcher
     private function getSmKey($segmentName, $key)
     {
         $murmurHashFn = new Murmur3Hash();
-        return $murmurHashFn->getHash("segment::".$segmentName."::".$key, $this->smKeySeed);
+        return $murmurHashFn->getHash("segment::" . $segmentName . "::" . $key, $this->smKeySeed);
     }
 }

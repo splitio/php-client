@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Combiner\Factor;
 
 class NotFactor implements FactorInterface

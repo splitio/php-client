@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk;
 
 // Declaration of ImpressionListener interface

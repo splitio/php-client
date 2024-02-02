@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Component\Initialization;
 
 use Psr\Log\LogLevel;

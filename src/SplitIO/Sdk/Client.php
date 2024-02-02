@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk;
 
 use SplitIO\Sdk\Events\EventDTO;
@@ -403,8 +404,10 @@ class Client implements ClientInterface
         $value = InputValidator::validateValue($value);
         $properties = InputValidator::validProperties($properties);
 
-        if (is_null($key) || is_null($trafficType) || is_null($eventType) || $value === false
-            || $properties === false) {
+        if (
+            is_null($key) || is_null($trafficType) || is_null($eventType) || $value === false
+            || $properties === false
+        ) {
             return false;
         }
 

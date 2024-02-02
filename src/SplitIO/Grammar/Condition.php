@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar;
 
 use SplitIO\Exception\InvalidMatcherException;

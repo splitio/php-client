@@ -1,11 +1,12 @@
 <?php
+
 namespace SplitIO\Component\Cache;
 
 class SegmentCache implements SegmentCacheInterface
 {
-    const KEY_SEGMENT_DATA = 'SPLITIO.segment.{segmentName}';
+    public const KEY_SEGMENT_DATA = 'SPLITIO.segment.{segmentName}';
 
-    const KEY_TILL_CACHED_ITEM = 'SPLITIO.segment.{segment_name}.till';
+    public const KEY_TILL_CACHED_ITEM = 'SPLITIO.segment.{segment_name}.till';
 
     /**
      * @var \SplitIO\Component\Cache\Pool

@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Grammar\Condition\Matcher;
@@ -23,7 +24,7 @@ class Regex extends AbstractMatcher
         // If there are already escaped forwarded slashes, unescape them so that they don't get
         // escaped twice
         $unescaped = str_replace('\\/', '/', $this->regexMatcherData);
-        
+
         // Escape ALL forward slashes.
         $reEscaped = str_replace('/', '\\/', $unescaped);
 

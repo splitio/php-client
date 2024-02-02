@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Component\Common;
 
 use SplitIO\Component\Log\Logger;
@@ -10,11 +11,11 @@ use SplitIO\Exception\Exception;
  */
 class Context
 {
-    const SAME_SDK_KEY = "Factory Instantiation: You already have %s factory/factories with this SDK Key. "
+    private const SAME_SDK_KEY = "Factory Instantiation: You already have %s factory/factories with this SDK Key. "
         . "We recommend keeping only one instance of the factory at all times (Singleton pattern) and "
         . "reusing it throughout your application.";
 
-    const MULTIPLE_INSTANCES = "Factory Instantiation: You already have an instance of the Split factory. "
+    private const MULTIPLE_INSTANCES = "Factory Instantiation: You already have an instance of the Split factory. "
         . "Make sure you definitely want this additional instance. We recommend keeping only one instance of "
         . "the factory at all times (Singleton pattern) and reusing it throughout your application.";
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk;
 
 interface ClientInterface
@@ -235,7 +236,7 @@ interface ClientInterface
      * @return array
      */
     public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null);
-    
+
     /**
      * Returns an associative array which each key will be
      * the treatment result and the config for each

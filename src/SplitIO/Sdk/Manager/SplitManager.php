@@ -1,7 +1,8 @@
 <?php
+
 namespace SplitIO\Sdk\Manager;
 
-use \stdClass;
+use stdClass;
 use SplitIO\Grammar\Split;
 use SplitIO\Split as SplitApp;
 use SplitIO\Component\Cache\SplitCache;
@@ -65,7 +66,7 @@ class SplitManager implements SplitManagerInterface
         }
 
         $split = new Split(json_decode($splitRepresentation, true));
-        $configs = !is_null($split->getConfigurations()) ? $split->getConfigurations() : new StdClass;
+        $configs = !is_null($split->getConfigurations()) ? $split->getConfigurations() : new StdClass();
 
         return new SplitView(
             $split->getName(),

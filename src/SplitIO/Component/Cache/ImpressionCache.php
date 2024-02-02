@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Common\Context;
@@ -7,8 +8,8 @@ use SplitIO\Component\Cache\Pool;
 
 class ImpressionCache
 {
-    const IMPRESSIONS_QUEUE_KEY = "SPLITIO.impressions";
-    const IMPRESSION_KEY_DEFAULT_TTL = 3600;
+    public const IMPRESSIONS_QUEUE_KEY = "SPLITIO.impressions";
+    public const IMPRESSION_KEY_DEFAULT_TTL = 3600;
 
     /**
      * @var \SplitIO\Component\Cache\Pool
@@ -43,7 +44,7 @@ class ImpressionCache
             $impressions
         );
 
-        Context::getLogger()->debug("Adding impressions into queue: ". implode(",", $toStore));
+        Context::getLogger()->debug("Adding impressions into queue: " . implode(",", $toStore));
         $count = $this->cache->rightPushInList(self::IMPRESSIONS_QUEUE_KEY, $toStore);
         if ($count == count($impressions)) {
             $this->cache->expireKey(self::IMPRESSIONS_QUEUE_KEY, self::IMPRESSION_KEY_DEFAULT_TTL);

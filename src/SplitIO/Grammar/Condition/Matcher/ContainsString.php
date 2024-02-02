@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Grammar\Condition\Matcher;
@@ -25,7 +26,7 @@ class ContainsString extends AbstractMatcher
                 return true;
             }
         }
-    
+
         return false;
     }
 }

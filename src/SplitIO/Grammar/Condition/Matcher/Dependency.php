@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Grammar\Condition\Matcher;

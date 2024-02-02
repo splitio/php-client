@@ -1,9 +1,10 @@
 <?php
+
 namespace SplitIO\Component\Stats;
 
 class Latency
 {
-    const MAX_LATENCY = 7481828;
+    public const MAX_LATENCY = 7481828;
 
     private static $buckets = array(1000, 1500, 2250, 3375, 5063, 7594, 11391, 17086, 25629, 38443,
         57665, 86498, 129746, 194620, 291929, 437894, 656841, 985261, 1477892, 2216838,

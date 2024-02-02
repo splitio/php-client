@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Grammar\Condition\Matcher;
@@ -32,13 +33,15 @@ class GreaterThanOrEqualTo extends AbstractMatcher
         SplitApp::logger()->info('---> Evaluating GREATER_THAN_OR_EQUAL_TO');
 
         if (isset($this->unaryNumericMatcherData['value'])) {
-            $logMsg = '---> KEY: '.$key;
-            $logMsg .= PHP_EOL.'---> VAL: '.$this->unaryNumericMatcherData['value'];
-            $logMsg .= PHP_EOL.'---> ATR: '.$this->attribute;
+            $logMsg = '---> KEY: ' . $key;
+            $logMsg .= PHP_EOL . '---> VAL: ' . $this->unaryNumericMatcherData['value'];
+            $logMsg .= PHP_EOL . '---> ATR: ' . $this->attribute;
             SplitApp::logger()->info($logMsg);
 
-            if (isset($this->unaryNumericMatcherData['dataType'])
-                && DataTypeEnum::isValid($this->unaryNumericMatcherData['dataType'])) {
+            if (
+                isset($this->unaryNumericMatcherData['dataType'])
+                && DataTypeEnum::isValid($this->unaryNumericMatcherData['dataType'])
+            ) {
                 if (DataTypeEnum::DATETIME == $this->unaryNumericMatcherData['dataType']) {
                     $phpTimestamp = DateTime::millisecondToPHPTimestamp($this->unaryNumericMatcherData['value']);
                     return DateTime::zeroOutSeconds($key) >= DateTime::zeroOutSeconds($phpTimestamp);

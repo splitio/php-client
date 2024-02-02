@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Split as SplitApp;
@@ -13,7 +14,7 @@ abstract class AbstractMatcher
 
     protected function __construct($type, $negate = false, $attribute = null)
     {
-        SplitApp::logger()->info("Constructing matcher of type: ".$type);
+        SplitApp::logger()->info("Constructing matcher of type: " . $type);
 
         $this->type = $type;
 

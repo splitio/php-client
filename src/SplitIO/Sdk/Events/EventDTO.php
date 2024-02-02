@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk\Events;
 
 use SplitIO\Exception\Exception;
@@ -139,7 +140,7 @@ class EventDTO
             'trafficTypeName' => $this->trafficTypeName,
             'eventTypeId' => $this->eventTypeId,
             'value' => $this->value,
-            'timestamp'=> $this->timestamp,
+            'timestamp' => $this->timestamp,
             'properties' => $this->properties,
         );
     }

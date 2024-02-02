@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Common\Context;
@@ -7,7 +8,7 @@ use SplitIO\Component\Cache\Pool;
 
 class EventsCache
 {
-    const KEY_EVENTS_LIST = "SPLITIO.events";
+    private const KEY_EVENTS_LIST = "SPLITIO.events";
 
     /**
      * @var \SplitIO\Component\Cache\Pool
@@ -26,7 +27,7 @@ class EventsCache
     {
         $queueJSONmessage =  json_encode($message->toArray());
 
-        Context::getLogger()->debug("Adding event item into queue: ". $queueJSONmessage);
+        Context::getLogger()->debug("Adding event item into queue: " . $queueJSONmessage);
         return ($this->cache->rightPushInList(self::KEY_EVENTS_LIST, $queueJSONmessage) > 0);
     }
 }

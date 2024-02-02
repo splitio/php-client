@@ -21,9 +21,11 @@ class InputValidator
      */
     public static function validString($value, $name, $nameType, $operation)
     {
-        if (self::checkIsNull($value, $name, $nameType, $operation)
-        or self::checkIsNotString($value, $name, $nameType, $operation)
-        or self::checkIsEmpty($value, $name, $nameType, $operation)) {
+        if (
+            self::checkIsNull($value, $name, $nameType, $operation)
+            or self::checkIsNotString($value, $name, $nameType, $operation)
+            or self::checkIsEmpty($value, $name, $nameType, $operation)
+        ) {
             return false;
         }
         return true;
@@ -117,8 +119,10 @@ class InputValidator
                 . ' key must be a non-empty string.');
             return null;
         }
-        if (self::checkIsEmpty($strKey, "key", "key", $operation)
-        or self::checkNotProperLength($strKey, "key", $operation)) {
+        if (
+            self::checkIsEmpty($strKey, "key", "key", $operation)
+            or self::checkNotProperLength($strKey, "key", $operation)
+        ) {
             return null;
         }
 
@@ -184,7 +188,7 @@ class InputValidator
                 . "lowercase.");
         }
         if (!$splitCache->trafficTypeExists($toLowercase)) {
-            SplitApp::logger()->warning("track: Traffic Type '". $toLowercase . "' does not have any corresponding "
+            SplitApp::logger()->warning("track: Traffic Type '" . $toLowercase . "' does not have any corresponding "
                 . "Splits in this environment, make sure you’re tracking your events to a valid traffic type "
                 . "defined in the Split console.");
         }

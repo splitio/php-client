@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk;
 
 use SplitIO\Sdk\Validator\InputValidator;

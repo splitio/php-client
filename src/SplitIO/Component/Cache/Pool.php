@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Component\Cache;
 
 use SplitIO\Component\Cache\Storage\Adapter\PRedis as PRedisAdapter;

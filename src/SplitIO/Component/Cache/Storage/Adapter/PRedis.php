@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Component\Cache\Storage\Adapter;
 
 use SplitIO\Component\Cache\Storage\Exception\AdapterException;
@@ -59,9 +60,11 @@ class PRedis implements CacheStorageAdapterInterface
         if (!is_string($keyHashTag)) {
             return array('valid' => false, 'msg' => 'keyHashTag must be string.');
         }
-        if ((strlen($keyHashTag) < 3) || ($keyHashTag[0] != "{") ||
+        if (
+            (strlen($keyHashTag) < 3) || ($keyHashTag[0] != "{") ||
             (substr($keyHashTag, -1) != "}") || (substr_count($keyHashTag, "{") != 1) ||
-            (substr_count($keyHashTag, "}") != 1)) {
+            (substr_count($keyHashTag, "}") != 1)
+        ) {
             return array('valid' => false, 'msg' => 'keyHashTag is not valid.');
         }
         return array('valid' => true, 'msg' => '');
@@ -205,7 +208,7 @@ class PRedis implements CacheStorageAdapterInterface
             if ($prefix[strlen($prefix) - 1] == '.') {
                 return $prefix;
             } else {
-                return $prefix.'.';
+                return $prefix . '.';
             }
         } else {
             return null;

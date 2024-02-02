@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk;
 
 use Symfony\Component\Yaml\Parser;
@@ -26,16 +27,16 @@ class LocalhostClient implements ClientInterface
         if (!is_null($path) && file_exists($path)) {
             return $path;
         }
-        if (file_exists($this->getUserHome().'/split.yaml')) {
-            return $this->getUserHome().'/split.yaml';
+        if (file_exists($this->getUserHome() . '/split.yaml')) {
+            return $this->getUserHome() . '/split.yaml';
         }
-        if (file_exists($this->getUserHome().'/split.yml')) {
-            return $this->getUserHome().'/split.yml';
+        if (file_exists($this->getUserHome() . '/split.yml')) {
+            return $this->getUserHome() . '/split.yml';
         }
-        if (file_exists($this->getUserHome().'/.split')) {
+        if (file_exists($this->getUserHome() . '/.split')) {
             SplitApp::logger()->warning("Localhost mode: .split mocks will be deprecated soon in favor of YAML "
             . "files, which provide more targeting power. Take a look in our documentation.");
-            return $this->getUserHome().'/.split';
+            return $this->getUserHome() . '/.split';
         }
         return null;
     }
@@ -263,7 +264,7 @@ class LocalhostClient implements ClientInterface
         // no-op
         return array();
     }
-    
+
     public function getTreatmentsByFlagSets($key, $flagSets, array $attributes = null)
     {
         // no-op
@@ -275,7 +276,7 @@ class LocalhostClient implements ClientInterface
         // no-op
         return array();
     }
-    
+
     public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null)
     {
         // no-op

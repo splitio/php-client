@@ -1,15 +1,16 @@
 <?php
+
 namespace SplitIO\Component\Cache;
 
 class SplitCache implements SplitCacheInterface
 {
-    const KEY_TILL_CACHED_ITEM = 'SPLITIO.splits.till';
+    public const KEY_TILL_CACHED_ITEM = 'SPLITIO.splits.till';
 
-    const KEY_SPLIT_CACHED_ITEM = 'SPLITIO.split.{splitName}';
+    public const KEY_SPLIT_CACHED_ITEM = 'SPLITIO.split.{splitName}';
 
-    const KEY_TRAFFIC_TYPE_CACHED = 'SPLITIO.trafficType.{trafficTypeName}';
+    public const KEY_TRAFFIC_TYPE_CACHED = 'SPLITIO.trafficType.{trafficTypeName}';
 
-    const KEY_FLAG_SET_CACHED = 'SPLITIO.flagSet.{set}';
+    public const KEY_FLAG_SET_CACHED = 'SPLITIO.flagSet.{set}';
 
     /**
      * @var \SplitIO\Component\Cache\Pool

@@ -1,8 +1,9 @@
 <?php
+
 namespace SplitIO\Component\Log;
 
 use Psr\Log\LogLevel;
-use \SplitIO\Component\Log\Handler\LogHandlerInterface;
+use SplitIO\Component\Log\Handler\LogHandlerInterface;
 use SplitIO\Component\Log\Handler\VoidHandler;
 
 /**
@@ -15,7 +16,7 @@ class Logger extends LoggerTrait
     /**
      * @var null|LogHandlerInterface
      */
-    protected $handler=null;
+    protected $handler = null;
 
     /**
      * @var null

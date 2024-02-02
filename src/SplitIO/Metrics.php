@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO;
 
 use SplitIO\Component\Stats\Latency;

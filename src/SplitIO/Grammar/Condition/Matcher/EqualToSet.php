@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher;
 
 use SplitIO\Split as SplitApp;
@@ -7,7 +8,6 @@ use SplitIO\Grammar\Condition\Matcher\DataType\Set;
 
 class EqualToSet extends AbstractMatcher
 {
-
     private $set;
 
     public function __construct($data, $negate = false, $attribute = null)
@@ -23,8 +23,8 @@ class EqualToSet extends AbstractMatcher
         }
 
         SplitApp::logger()->info('---> Evaluating IS_EQUAL_TO_SET');
-        SplitApp::logger()->info('---> Key elements: '.implode($key));
-        SplitApp::logger()->info('---> Set elements: '.implode($this->set->toArray()));
+        SplitApp::logger()->info('---> Key elements: ' . implode($key));
+        SplitApp::logger()->info('---> Set elements: ' . implode($this->set->toArray()));
 
         return $this->set->equals(Set::fromArray($key));
     }

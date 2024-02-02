@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk\Events;
 
 use SplitIO\Sdk\QueueMetadataMessage;

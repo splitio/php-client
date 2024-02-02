@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Sdk\Factory;
 
 interface SplitFactoryInterface

@@ -1,9 +1,9 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher\DataType;
 
 class Set
 {
-
     private $values;
 
     public function __construct()

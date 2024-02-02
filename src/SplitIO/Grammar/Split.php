@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar;
 
 use SplitIO\Split as SplitApp;
@@ -6,7 +7,7 @@ use SplitIO\Engine\Hash\HashAlgorithmEnum;
 
 class Split
 {
-    const DEFAULT_TRAFFIC_ALLOCATION = 100;
+    private const DEFAULT_TRAFFIC_ALLOCATION = 100;
 
     private $name = null;
 
@@ -52,8 +53,8 @@ class Split
         $this->configurations = isset($split['configurations']) && count($split['configurations']) > 0 ?
             $split['configurations'] : null;
         $this->sets = isset($split['sets']) ? $split['sets'] : array();
-        
-        SplitApp::logger()->info("Constructing Feature Flag: ".$this->name);
+
+        SplitApp::logger()->info("Constructing Feature Flag: " . $this->name);
 
         if (isset($split['conditions']) && is_array($split['conditions'])) {
             $this->conditions = array();

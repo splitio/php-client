@@ -1,7 +1,8 @@
 <?php
+
 namespace SplitIO\Sdk\Manager;
 
-use \stdClass;
+use stdClass;
 use SplitIO\Sdk\Validator\InputValidator;
 
 class LocalhostSplitManager implements SplitManagerInterface
@@ -59,7 +60,7 @@ class LocalhostSplitManager implements SplitManagerInterface
         if ($this->splits) {
             foreach (array_keys($this->splits) as $featureFlagName) {
                 $configs = isset($this->splits[$featureFlagName]["config"]) ?
-                    $this->splits[$featureFlagName]["config"] : new StdClass;
+                    $this->splits[$featureFlagName]["config"] : new StdClass();
                 $_splits[] = new SplitView(
                     $featureFlagName,
                     null,
@@ -88,7 +89,7 @@ class LocalhostSplitManager implements SplitManagerInterface
 
         if (isset($this->splits[$featureFlagName])) {
             $configs = isset($this->splits[$featureFlagName]["config"]) ?
-                    $this->splits[$featureFlagName]["config"] : new StdClass;
+                    $this->splits[$featureFlagName]["config"] : new StdClass();
             return new SplitView(
                 $featureFlagName,
                 null,

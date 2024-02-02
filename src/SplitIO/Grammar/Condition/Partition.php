@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition;
 
 use SplitIO\Split as SplitApp;

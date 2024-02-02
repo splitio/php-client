@@ -1,9 +1,9 @@
 <?php
+
 namespace SplitIO\Grammar\Condition\Matcher\DataType;
 
 class DateTime
 {
-
     /**
      * @param $milliseconds
      * @return float

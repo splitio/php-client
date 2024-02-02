@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO;
 
 use SplitIO\Grammar\Split as SplitGrammar;
@@ -8,9 +9,9 @@ use SplitIO\Sdk\Impressions\ImpressionLabel;
 
 class Engine
 {
-    const EVALUATION_RESULT_TREATMENT = 'treatment';
+    public const EVALUATION_RESULT_TREATMENT = 'treatment';
 
-    const EVALUATION_RESULT_LABEL = 'label';
+    public const EVALUATION_RESULT_LABEL = 'label';
 
     /**
      * @param $matchingKey

@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Grammar\Condition;
 
 use SplitIO\Grammar\Condition\Matcher\All;
@@ -21,24 +22,23 @@ use SplitIO\Grammar\Condition\Matcher\Regex;
 
 class Matcher
 {
-
-    const ALL_KEYS = 'ALL_KEYS';
-    const IN_SEGMENT = 'IN_SEGMENT';
-    const WHITELIST = 'WHITELIST';
-    const EQUAL_TO = 'EQUAL_TO';
-    const GREATER_THAN_OR_EQUAL_TO = 'GREATER_THAN_OR_EQUAL_TO';
-    const LESS_THAN_OR_EQUAL_TO = 'LESS_THAN_OR_EQUAL_TO';
-    const BETWEEN = 'BETWEEN';
-    const STARTS_WITH = 'STARTS_WITH';
-    const ENDS_WITH = 'ENDS_WITH';
-    const CONTAINS_STRING = 'CONTAINS_STRING';
-    const CONTAINS_ALL_OF_SET = 'CONTAINS_ALL_OF_SET';
-    const CONTAINS_ANY_OF_SET = 'CONTAINS_ANY_OF_SET';
-    const EQUAL_TO_SET = 'EQUAL_TO_SET';
-    const PART_OF_SET = 'PART_OF_SET';
-    const IN_SPLIT_TREATMENT = 'IN_SPLIT_TREATMENT';
-    const EQUAL_TO_BOOLEAN = 'EQUAL_TO_BOOLEAN';
-    const MATCHES_STRING = 'MATCHES_STRING';
+    public const ALL_KEYS = 'ALL_KEYS';
+    public const IN_SEGMENT = 'IN_SEGMENT';
+    public const WHITELIST = 'WHITELIST';
+    public const EQUAL_TO = 'EQUAL_TO';
+    public const GREATER_THAN_OR_EQUAL_TO = 'GREATER_THAN_OR_EQUAL_TO';
+    public const LESS_THAN_OR_EQUAL_TO = 'LESS_THAN_OR_EQUAL_TO';
+    public const BETWEEN = 'BETWEEN';
+    public const STARTS_WITH = 'STARTS_WITH';
+    public const ENDS_WITH = 'ENDS_WITH';
+    public const CONTAINS_STRING = 'CONTAINS_STRING';
+    public const CONTAINS_ALL_OF_SET = 'CONTAINS_ALL_OF_SET';
+    public const CONTAINS_ANY_OF_SET = 'CONTAINS_ANY_OF_SET';
+    public const EQUAL_TO_SET = 'EQUAL_TO_SET';
+    public const PART_OF_SET = 'PART_OF_SET';
+    public const IN_SPLIT_TREATMENT = 'IN_SPLIT_TREATMENT';
+    public const EQUAL_TO_BOOLEAN = 'EQUAL_TO_BOOLEAN';
+    public const MATCHES_STRING = 'MATCHES_STRING';
 
     public static function factory($matcher)
     {

@@ -1,10 +1,11 @@
 <?php
+
 namespace SplitIO\Grammar\Condition;
 
 use SplitIO\Component\Common\Enum;
 
 class ConditionTypeEnum extends Enum
 {
-    const WHITELIST = 'WHITELIST';
-    const ROLLOUT = 'ROLLOUT';
+    public const WHITELIST = 'WHITELIST';
+    public const ROLLOUT = 'ROLLOUT';
 }

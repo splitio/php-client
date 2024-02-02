@@ -1,4 +1,5 @@
 <?php
+
 namespace SplitIO\Engine;
 
 use SplitIO\Split as SplitApp;
@@ -33,12 +34,12 @@ class Splitter
         $logMsg = "Splitter evaluating partitions ... \n
         Bucketing Key: $key \n
         Seed: $seed \n
-        Partitions: ". print_r($partitions, true);
+        Partitions: " . print_r($partitions, true);
 
         SplitApp::logger()->debug($logMsg);
-        
+
         $bucket = self::getBucket($algo, $key, $seed);
-        SplitApp::logger()->info("Bucket: ".$bucket);
+        SplitApp::logger()->info("Bucket: " . $bucket);
 
         $accumulatedSize = 0;
         foreach ($partitions as $partition) {
