@@ -20,11 +20,11 @@ class Sdk
     }
 
     /**
-     * @param $sdkKey
+     * @param string $sdkKey
      * @param array $options
      * @return \SplitIO\Sdk\Factory\SplitFactoryInterface
      */
-    public static function factory($sdkKey = 'localhost', array $options = array())
+    public static function factory(string $sdkKey = 'localhost', array $options = array())
     {
         //Adding SDK Key into args array.
         $options['sdkKey'] = $sdkKey;

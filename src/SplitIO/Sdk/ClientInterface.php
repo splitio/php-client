@@ -32,12 +32,12 @@ interface ClientInterface
      * This method does not throw any exceptions.
      * It also never returns null.
      *
-     * @param $key
-     * @param $featureFlagName
-     * @param $attributes
+     * @param string|Key $key
+     * @param string $feature
+     * @param array|null $attributes
      * @return string
      */
-    public function getTreatment($key, $featureFlagName, array $attributes = null);
+    public function getTreatment(string|Key $key, string $feature, ?array $attributes): string;
 
     /**
      * Returns an object with the treatment to show this id for this feature
@@ -72,12 +72,12 @@ interface ClientInterface
      * <ol>
      *     <li>config was not set up</li>
      * </ol>
-     * @param $key
-     * @param $featureFlagName
-     * @param $attributes
-     * @return array
+     * @param string $key
+     * @param string $feature
+     * @param array|null $attributes
+     * @return string
      */
-    public function getTreatmentWithConfig($key, $featureFlagName, array $attributes = null);
+    public function getTreatmentWithConfig(string|Key $key, string $feature, ?array $attributes): array;
 
     /**
      * Returns an associative array which each key will be
@@ -105,12 +105,12 @@ interface ClientInterface
      * This method does not throw any exceptions.
      * It also never returns null.
      *
-     * @param $key
-     * @param $featureFlagNames
-     * @param $attributes
+     * @param string|Key $key
+     * @param array $features
+     * @param array|null $attributes
      * @return array
      */
-    public function getTreatments($key, $featureFlagNames, array $attributes = null);
+    public function getTreatments(string|Key $key, array $features, ?array $attributes): array;
 
     /**
      * Returns an associative array which each key will be
@@ -140,70 +140,14 @@ interface ClientInterface
      * This method does not throw any exceptions.
      * It also never returns null.
      *
-     * @param $key
-     * @param $featureFlagNames
-     * @param $attributes
+     * @param string|Key $key
+     * @param array $features
+     * @param array|null $attributes
      * @return array
      */
-    public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null);
+    public function getTreatmentsWithConfig(string|Key $key, array $features, ?array $attributes): array;
 
-    /**
-     * Returns an associative array which each key will be
-     * the treatment result and the config for each
-     * feature associated with flag sets passed as parameter.
-     * The set of treatments for a feature can be configured
-     * on the Split web console and the config for
-     * that treatment.
-     * <p>
-     * The sdk returns the default treatment of this feature if:
-     * <ol>
-     *     <li>The feature was killed</li>
-     *     <li>The id did not match any of the conditions in the
-     * feature roll-out plan</li>
-     * </ol>
-     * The default treatment of a feature is set on the Split web
-     * console.
-     *
-     * <p>
-     * This method does not throw any exceptions.
-     * It also never returns null.
-     *
-     * @param $key
-     * @param $flagSets
-     * @param $attributes
-     * @return array
-     */
-    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, array $attributes = null);
-
-    /**
-     * Returns an associative array which each key will be
-     * the treatment result and the config for each
-     * feature associated with flag sets passed as parameter.
-     * The set of treatments for a feature can be configured
-     * on the Split web console and the config for
-     * that treatment.
-     * <p>
-     * The sdk returns the default treatment of this feature if:
-     * <ol>
-     *     <li>The feature was killed</li>
-     *     <li>The id did not match any of the conditions in the
-     * feature roll-out plan</li>
-     * </ol>
-     * The default treatment of a feature is set on the Split web
-     * console.
-     *
-     * <p>
-     * This method does not throw any exceptions.
-     * It also never returns null.
-     *
-     * @param $key
-     * @param $flagSets
-     * @param $attributes
-     * @return array
-     */
-    public function getTreatmentsByFlagSets($key, $flagSets, array $attributes = null);
-
-    /**
+        /**
      * Returns an associative array which each key will be
      * the treatment result for each feature associated with
      * flag set passed as parameter.
@@ -230,12 +174,40 @@ interface ClientInterface
      * This method does not throw any exceptions.
      * It also never returns null.
      *
-     * @param $key
-     * @param $flagSet
+     * @param string|Key $key
+     * @param array|null string $flagSet
      * @param $attributes
      * @return array
      */
-    public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null);
+    public function getTreatmentsByFlagSet(string|Key $key, string $flagSet, ?array $attributes): array;
+
+        /**
+     * Returns an associative array which each key will be
+     * the treatment result and the config for each
+     * feature associated with flag sets passed as parameter.
+     * The set of treatments for a feature can be configured
+     * on the Split web console and the config for
+     * that treatment.
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     *
+     * @param string|Key $key
+     * @param string $flagSet
+     * @param array|null $attributes
+     * @return array
+     */
+    public function getTreatmentsWithConfigByFlagSet(string|Key $key, string $flagSet, ?array $attributes);
 
     /**
      * Returns an associative array which each key will be
@@ -258,12 +230,40 @@ interface ClientInterface
      * This method does not throw any exceptions.
      * It also never returns null.
      *
-     * @param $key
-     * @param $flagSet
-     * @param $attributes
+     * @param string|Key $key
+     * @param array $flagSets
+     * @param array|null $attributes
      * @return array
      */
-    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, array $attributes = null);
+    public function getTreatmentsByFlagSets(string|Key $key, array $flagSets, ?array $attributes);
+
+    /**
+     * Returns an associative array which each key will be
+     * the treatment result and the config for each
+     * feature associated with flag sets passed as parameter.
+     * The set of treatments for a feature can be configured
+     * on the Split web console and the config for
+     * that treatment.
+     * <p>
+     * The sdk returns the default treatment of this feature if:
+     * <ol>
+     *     <li>The feature was killed</li>
+     *     <li>The id did not match any of the conditions in the
+     * feature roll-out plan</li>
+     * </ol>
+     * The default treatment of a feature is set on the Split web
+     * console.
+     *
+     * <p>
+     * This method does not throw any exceptions.
+     * It also never returns null.
+     *
+     * @param string|Key $key
+     * @param array $flagSets
+     * @param array|null $attributes
+     * @return array
+     */
+    public function getTreatmentsWithConfigByFlagSets(string|Key $key, array $flagSets, ?array $attributes);
 
     /**
      * A short-hand for
@@ -274,22 +274,22 @@ interface ClientInterface
      * This method never throws exceptions.
      * Instead of throwing  exceptions, it returns false.
      *
-     * @param $key
-     * @param $featureFlagName
-     * @param $treatment
+     * @param string $key
+     * @param string $featureFlagName
+     * @param string $treatment
      * @return bool
      */
-    public function isTreatment($key, $featureFlagName, $treatment);
+    public function isTreatment(string $key, string $featureFlagName, string $treatment);
 
     /**
      * Method to send events
      *
-     * @param $key
-     * @param $trafficType
-     * @param $eventType
-     * @param $value
-     * @param $properties
+     * @param string $key
+     * @param string $trafficType
+     * @param string $eventType
+     * @param float|null $value
+     * @param array|null $properties
      * @return boolean
      */
-    public function track($key, $trafficType, $eventType, $value = null, $properties = null);
+    public function track(string $key, string $trafficType, string $eventType, ?float $value = null, ?array $properties = null): bool;
 }

@@ -7,16 +7,16 @@ interface SplitManagerInterface
     /**
      * @return array
      */
-    public function splitNames();
+    public function splitNames() :array;
 
     /**
      * @return array
      */
-    public function splits();
+    public function splits() :array;
 
     /**
-     * @param $featureFlagName
+     * @param string $featureFlagName
      * @return \SplitIO\Sdk\Manager\SplitView
      */
-    public function split($featureFlagName);
+    public function split(string $featureFlagName): ?SplitView;
 }

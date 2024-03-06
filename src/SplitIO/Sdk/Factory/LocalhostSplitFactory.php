@@ -23,12 +23,12 @@ class LocalhostSplitFactory implements SplitFactoryInterface
         $this->manager = new LocalhostSplitManager($this->client()->getSplits());
     }
 
-    public function client()
+    public function client(): \SplitIO\Sdk\ClientInterface
     {
         return $this->client;
     }
 
-    public function manager()
+    public function manager(): \SplitIO\Sdk\Manager\SplitManagerInterface
     {
         return $this->manager;
     }

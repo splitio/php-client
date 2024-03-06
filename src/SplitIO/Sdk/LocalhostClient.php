@@ -9,7 +9,7 @@ use SplitIO\Split as SplitApp;
 
 class LocalhostClient implements ClientInterface
 {
-    private $splits = null;
+    private ?array $splits = null;
 
     /**
      * Try to get the user home directory
@@ -22,7 +22,7 @@ class LocalhostClient implements ClientInterface
         return (isset($userData['dir'])) ? $userData['dir'] : null;
     }
 
-    private function getExistingFile($path)
+    private function getExistingFile($path): ?string
     {
         if (!is_null($path) && file_exists($path)) {
             return $path;
@@ -43,10 +43,10 @@ class LocalhostClient implements ClientInterface
 
     /**
      * Constructor of the FakeClient for development purpose
-     * @param null $splitFilePath
+     * @param string|null $splitFilePath
      * @throws \Exception
      */
-    public function __construct($splitFilePath = null)
+    public function __construct(?string $splitFilePath = null)
     {
         $filePath = $this->getExistingFile($splitFilePath);
         // @codeCoverageIgnoreStart
@@ -69,7 +69,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @param $splitFilePath
      */
-    private function loadSplits($splitFilePath)
+    private function loadSplits(string $splitFilePath)
     {
         $fileContent = file_get_contents($splitFilePath);
         $this->splits = \SplitIO\parseSplitsFile($fileContent);
@@ -78,7 +78,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @param $splitFilePath
      */
-    private function loadSplitsFromYAML($splitFilePath)
+    private function loadSplitsFromYAML(string $splitFilePath)
     {
         $yaml = new Parser();
         $parsed = $yaml->parse(file_get_contents($splitFilePath));
@@ -114,12 +114,12 @@ class LocalhostClient implements ClientInterface
         $this->splits = $splits;
     }
 
-    public function getSplits()
+    public function getSplits(): array
     {
         return $this->splits;
     }
 
-    public function doValidation($key, $featureFlagName, $operation)
+    public function doValidation(string|Key $key, string $featureFlagName, string $operation): ?string
     {
         $key = InputValidator::validateKey($key, $operation);
         if (is_null($key)) {
@@ -137,7 +137,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatment($key, $featureFlagName, array $attributes = null)
+    public function getTreatment(string|Key $key, string $featureFlagName, ?array $attributes = null): string
     {
         $key = $this->doValidation($key, $featureFlagName, "getTreatment");
         if (is_null($key)) {
@@ -158,7 +158,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatmentWithConfig($key, $featureFlagName, array $attributes = null)
+    public function getTreatmentWithConfig(string|Key $key, string $featureFlagName, ?array $attributes = null): array
     {
         $treatmentResult = array(
             "treatment" => TreatmentEnum::CONTROL,
@@ -190,7 +190,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatments($key, $featureFlagNames, array $attributes = null)
+    public function getTreatments(string|Key $key, array $featureFlagNames, ?array $attributes = null): array
     {
         $result = array();
 
@@ -214,7 +214,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null)
+    public function getTreatmentsWithConfig(string|Key $key, array $featureFlagNames, ?array $attributes = null): array
     {
         $result = array();
 
@@ -238,7 +238,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function isTreatment($key, $featureFlagName, $treatment)
+    public function isTreatment(string|Key $key, string $featureFlagName, string $treatment): bool
     {
         $calculatedTreatment = $this->getTreatment($key, $featureFlagName);
 
@@ -254,30 +254,42 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function track($key, $trafficType, $eventType, $value = null, $properties = null)
+    public function track(string $key, string $trafficType, string $eventType, ?float $value = null, ?array $properties = null): bool
     {
         return true;
     }
 
-    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, array $attributes = null)
+    /**
+     * @inheritdoc
+     */
+    public function getTreatmentsWithConfigByFlagSets(string|Key $key, array $flagSets, ?array $attributes = null): array
     {
         // no-op
         return array();
     }
 
-    public function getTreatmentsByFlagSets($key, $flagSets, array $attributes = null)
+    /**
+     * @inheritdoc
+     */
+    public function getTreatmentsByFlagSets(string|Key $key, array $flagSets, ?array $attributes = null): array
     {
         // no-op
         return array();
     }
 
-    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, array $attributes = null)
+    /**
+     * @inheritdoc
+     */
+    public function getTreatmentsWithConfigByFlagSet(string|Key $key, string $flagSet, ?array $attributes = null): array
     {
         // no-op
         return array();
     }
 
-    public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null)
+    /**
+     * @inheritdoc
+     */
+    public function getTreatmentsByFlagSet(string|Key $key, string $flagSet, ?array $attributes = null): array
     {
         // no-op
         return array();

@@ -104,30 +104,21 @@ class InputValidator
      */
     public static function validateKey($key, $operation)
     {
-        if (self::checkIsNull($key, "key", "key", $operation)) {
-            return null;
-        }
         if ($key instanceof Key) {
             return array(
                 'matchingKey' => $key->getMatchingKey(),
                 'bucketingKey' => $key->getBucketingKey()
             );
         }
-        $strKey = self::toString($key, 'key', $operation);
-        if ($strKey === false) {
-            SplitApp::logger()->critical($operation . ': you passed an invalid key type,'
-                . ' key must be a non-empty string.');
-            return null;
-        }
         if (
-            self::checkIsEmpty($strKey, "key", "key", $operation)
-            or self::checkNotProperLength($strKey, "key", $operation)
+            self::checkIsEmpty($key, "key", "key", $operation)
+            or self::checkNotProperLength($key, "key", $operation)
         ) {
             return null;
         }
 
         return array(
-            'matchingKey' => $strKey,
+            'matchingKey' => $key,
             'bucketingKey' => null
         );
     }
@@ -159,18 +150,10 @@ class InputValidator
      */
     public static function validateTrackKey($key)
     {
-        if (self::checkIsNull($key, "key", "key", "track")) {
+        if (self::checkIsEmpty($key, "key", "key", "track") or self::checkNotProperLength($key, "key", "track")) {
             return null;
         }
-        $strKey = self::toString($key, 'key', 'track');
-        if ($strKey === false) {
-            SplitApp::logger()->critical('track: you passed an invalid key type, key must be a non-empty string.');
-            return null;
-        }
-        if (self::checkIsEmpty($strKey, "key", "key", "track") or self::checkNotProperLength($strKey, "key", "track")) {
-            return null;
-        }
-        return $strKey;
+        return $key;
     }
 
     /**
@@ -179,7 +162,7 @@ class InputValidator
      */
     public static function validateTrafficType(\SplitIO\Component\Cache\SplitCache $splitCache, $trafficType)
     {
-        if (!self::validString($trafficType, 'traffic type', 'traffic type', 'track')) {
+        if (self::checkIsEmpty($trafficType, 'traffic type', 'traffic type', 'track')) {
             return null;
         }
         $toLowercase = strtolower($trafficType);
@@ -201,7 +184,7 @@ class InputValidator
      */
     public static function validateEventType($eventType)
     {
-        if (!self::validString($eventType, 'event type', 'event type', 'track')) {
+        if (self::checkIsEmpty($eventType, 'event type', 'event type', 'track')) {
             return null;
         }
         if (!preg_match(REG_EXP_EVENT_TYPE, $eventType)) {
@@ -237,10 +220,6 @@ class InputValidator
      */
     public static function validateFeatureFlagNames($featureFlagNames, $operation)
     {
-        if (is_null($featureFlagNames) || !is_array($featureFlagNames)) {
-            SplitApp::logger()->critical($operation . ': featureFlagNames must be a non-empty array.');
-            return null;
-        }
         $filteredArray = array_values(
             array_map(
                 function ($featureFlagName) use ($operation) {

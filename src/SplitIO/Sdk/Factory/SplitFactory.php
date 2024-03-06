@@ -41,7 +41,7 @@ class SplitFactory implements SplitFactoryInterface
      * @param Pool $cache
      * @param array $options
      */
-    public function __construct($sdkKey, Pool $cache, array $options = array())
+    public function __construct(string $sdkKey, Pool $cache, array $options = array())
     {
         $this->options = $options;
         $this->cache = $cache;
@@ -64,15 +64,15 @@ class SplitFactory implements SplitFactoryInterface
     /**
      * @return \SplitIO\Sdk\ClientInterface
      */
-    public function client()
+    public function client(): \SplitIO\Sdk\ClientInterface
     {
         return $this->client;
     }
 
     /**
-     * @return \SplitIO\Sdk\Manager\SplitManager
+     * @return \SplitIO\Sdk\Manager\SplitManagerInterface
      */
-    public function manager()
+    public function manager(): \SplitIO\Sdk\Manager\SplitManagerInterface
     {
         return $this->manager;
     }

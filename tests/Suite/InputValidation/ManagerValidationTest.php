@@ -38,19 +38,6 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
         return $logger;
     }
 
-    public function testManagerWithNullSplitName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("split: you passed a null featureFlagName, flag name must be a non-empty string."));
-
-        $this->assertEquals(null, $splitSdk->split(null));
-    }
-
     public function testManagerWithEmptySplitName()
     {
         $splitSdk = $this->getFactoryClient();
@@ -62,45 +49,6 @@ class ManagerValidationTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo("split: you passed an empty featureFlagName, flag name must be a non-empty string."));
 
         $this->assertEquals(null, $splitSdk->split(''));
-    }
-
-    public function testManagerWithBooleanSplitName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("split: you passed an invalid featureFlagName, flag name must be a non-empty string."));
-
-        $this->assertEquals(null, $splitSdk->split(true));
-    }
-
-    public function testManagerWithArraySplitName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("split: you passed an invalid featureFlagName, flag name must be a non-empty string."));
-
-        $this->assertEquals(null, $splitSdk->split(array()));
-    }
-
-    public function testManagerWithNumberSplitName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("split: you passed an invalid featureFlagName, flag name must be a non-empty string."));
-
-        $this->assertEquals(null, $splitSdk->split(1));
     }
 
     public function testManagerWithValidFeatureName()

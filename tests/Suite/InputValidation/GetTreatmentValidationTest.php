@@ -152,19 +152,6 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
             );
     }
 
-    public function testGetTreatmentWithNullKey()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed a null key, key must be a non-empty string."));
-
-        $this->assertEquals('control', $splitSdk->getTreatment(null, 'some_feature'));
-    }
-
     public function testGetTreatmentKeyLong()
     {
         $splitSdk = $this->getFactoryClient();
@@ -224,33 +211,6 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $splitSdk->getTreatment(123456, 'some_feature'));
     }
 
-    public function testGetTreatmentWitKeyDifferentFromNumberObjectOrString()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed an invalid key type, key must be a non-empty string."));
-
-        $this->assertEquals('control', $splitSdk->getTreatment(true, 'some_feature'));
-    }
-
-    public function testGetTreatmentWithNullFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed a null featureFlagName, flag name must be a non-empty"
-                . " string."));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', null));
-    }
-
     public function testGetTreatmentWithEmptyFeatureName()
     {
         $splitSdk = $this->getFactoryClient();
@@ -263,20 +223,6 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
                 . " string."));
 
         $this->assertEquals('control', $splitSdk->getTreatment('some_key', ''));
-    }
-
-    public function testGetTreatmentWithNumericFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed an invalid featureFlagName, flag name must be a non-empty"
-                . " string."));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', 12345));
     }
 
     public function testGetTreatmentWithFeatureNameWithWhitespaces()
@@ -310,34 +256,6 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $splitSdk->getTreatment("some_key", '   some_feature  '));
     }
 
-    public function testGetTreatmentWitBooleanFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed an invalid featureFlagName, flag name must be a non-empty"
-                . " string."));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', true));
-    }
-
-    public function testGetTreatmentWitArrayFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("getTreatment: you passed an invalid featureFlagName, flag name must be a non-empty"
-                . " string."));
-
-        $this->assertEquals('control', $splitSdk->getTreatment('some_key', array()));
-    }
-
     public function testGetTreatmentWithNotExistantSplitName()
     {
         $splitSdk = $this->getFactoryClient();
@@ -365,23 +283,6 @@ class GetTreatmentValidationTest extends \PHPUnit\Framework\TestCase
 
         $result = $splitSdk->getTreatmentWithConfig('some_key_non_existant', 'some_feature_non_existant');
         $this->assertEquals('control', $result['treatment']);
-    }
-
-    public function testGetTreatmentWitConfigWithhNullFeatureName()
-    {
-        $splitSdk = $this->getFactoryClient();
-
-        $logger = $this->getMockedLogger();
-
-        $logger->expects($this->once())
-            ->method('critical')
-            ->with($this->equalTo("getTreatmentWithConfig: you passed a null featureFlagName, flag name must be a non-empty"
-                . " string."));
-
-        $result = $splitSdk->getTreatmentWithConfig('some_key', null);
-        $this->assertEquals('control', $result['treatment']);
-        $this->assertEquals(null, $result['config']);
-
     }
 
     public static function tearDownAfterClass(): void

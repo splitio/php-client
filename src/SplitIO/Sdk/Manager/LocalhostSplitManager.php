@@ -7,7 +7,7 @@ use SplitIO\Sdk\Validator\InputValidator;
 
 class LocalhostSplitManager implements SplitManagerInterface
 {
-    private $splits;
+    private array $splits;
 
     public function __construct(array $splits)
     {
@@ -42,7 +42,7 @@ class LocalhostSplitManager implements SplitManagerInterface
         $this->splits = $splitDefinitions;
     }
 
-    public function splitNames()
+    public function splitNames(): array
     {
         $_splits = array();
 
@@ -53,7 +53,21 @@ class LocalhostSplitManager implements SplitManagerInterface
         return $_splits;
     }
 
-    public function splits()
+    private function createSplitView(string $name, array $treatments, array|StdClass $configs): SplitView
+    {
+        return new SplitView(
+            $name,
+            "user",
+            false,
+            $treatments,
+            0,
+            $configs,
+            "",
+            array()
+        );
+    }
+
+    public function splits(): array
     {
         $_splits = array();
 
@@ -61,12 +75,9 @@ class LocalhostSplitManager implements SplitManagerInterface
             foreach (array_keys($this->splits) as $featureFlagName) {
                 $configs = isset($this->splits[$featureFlagName]["config"]) ?
                     $this->splits[$featureFlagName]["config"] : new StdClass();
-                $_splits[] = new SplitView(
+                $_splits[] = $this->createSplitView(
                     $featureFlagName,
-                    null,
-                    false,
                     $this->splits[$featureFlagName]["treatments"],
-                    0,
                     $configs
                 );
             }
@@ -77,10 +88,10 @@ class LocalhostSplitManager implements SplitManagerInterface
 
     /**
      * Return split
-     * @param mixed $featureName
+     * @param string $featureName
      * @return SplitView|null
      */
-    public function split($featureFlagName)
+    public function split(string $featureFlagName): ?SplitView
     {
         $featureFlagName = InputValidator::validateFeatureFlagName($featureFlagName, 'split');
         if (is_null($featureFlagName)) {
@@ -90,15 +101,10 @@ class LocalhostSplitManager implements SplitManagerInterface
         if (isset($this->splits[$featureFlagName])) {
             $configs = isset($this->splits[$featureFlagName]["config"]) ?
                     $this->splits[$featureFlagName]["config"] : new StdClass();
-            return new SplitView(
+            return $this->createSplitView(
                 $featureFlagName,
-                null,
-                false,
                 $this->splits[$featureFlagName]["treatments"],
-                0,
-                $configs,
-                null,
-                array()
+                $configs
             );
         }
 

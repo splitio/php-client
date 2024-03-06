@@ -47,8 +47,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('on', $splitSdk->getTreatment('test', 'other_feature_2'));
         $this->assertEquals('off', $splitSdk->getTreatment('key', 'other_feature_3'));
         $this->assertEquals('on', $splitSdk->getTreatment('key_whitelist', 'other_feature_3'));
-        $this->assertEquals('control', $splitSdk->getTreatment(true, 'other_feature_3'));
-        $this->assertEquals('control', $splitSdk->getTreatment('some', null));
 
         $result = $splitSdk->getTreatments('only_key', array('my_feature', 'other_feature'));
         $this->assertEquals('off', $result["my_feature"]);
@@ -62,9 +60,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('control', $result["other_feature"]);
 
         $result = $splitSdk->getTreatments("some", array());
-        $this->assertEquals(array(), $result);
-
-        $result = $splitSdk->getTreatments("some", null);
         $this->assertEquals(array(), $result);
 
         $result = $splitSdk->getTreatmentWithConfig('only_key', 'my_feature');
@@ -101,15 +96,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('on', $result["treatment"]);
         $this->assertEquals(null, $result["config"]);
 
-        $result = $splitSdk->getTreatmentWithConfig(true, 'other_feature_3');
-        $this->assertEquals('control', $result["treatment"]);
-        $this->assertEquals(null, $result["config"]);
-
         $result = $splitSdk->getTreatmentWithConfig('key_whitelist', true);
-        $this->assertEquals('control', $result["treatment"]);
-        $this->assertEquals(null, $result["config"]);
-
-        $result = $splitSdk->getTreatmentWithConfig('some', null);
         $this->assertEquals('control', $result["treatment"]);
         $this->assertEquals(null, $result["config"]);
 
@@ -136,9 +123,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         );
 
         $result = $splitSdk->getTreatmentsWithConfig('some', array());
-        $this->assertEquals(array(), $result);
-
-        $result = $splitSdk->getTreatmentsWithConfig('some', null);
         $this->assertEquals(array(), $result);
 
         $this->assertEquals(4, count($splitManager->splitNames()));
@@ -440,7 +424,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         //Assertions Manager
         $result = $splitManager->split('all_feature');
         $this->assertEquals('all_feature', $result->getName());
-        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals('user', $result->getTrafficType());
         $this->assertEquals(false, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
@@ -448,7 +432,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $result = $splitManager->split('killed_feature');
         $this->assertEquals('killed_feature', $result->getName());
-        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals('user', $result->getTrafficType());
         $this->assertEquals(true, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
@@ -459,7 +443,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         $result = $splitManager->split('sample_feature');
         $this->assertEquals('sample_feature', $result->getName());
-        $this->assertEquals(null, $result->getTrafficType());
+        $this->assertEquals('user', $result->getTrafficType());
         $this->assertEquals(false, $result->getKilled());
         $this->assertEquals(2, count($result->getTreatments()));
         $this->assertEquals(-1, $result->getChangeNumber());
@@ -820,10 +804,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         // Empty array
         $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSets('user1', array(), null);
         $this->assertEquals(0, count(array_keys($treatmentResult)));
-
-        // null
-        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSets('user1', null, null);
-        $this->assertEquals(0, count(array_keys($treatmentResult)));
     }
 
     public function testGetTreatmentsByFlagSets()
@@ -866,10 +846,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         // Empty array
         $treatmentResult = $splitSdk->getTreatmentsByFlagSets('user1', array(), null);
         $this->assertEquals(0, count(array_keys($treatmentResult)));
-
-        // null
-        $treatmentResult = $splitSdk->getTreatmentsByFlagSets('user1', null, null);
-        $this->assertEquals(0, count(array_keys($treatmentResult)));
     }
 
     public function testGetTreatmentsWithConfigByFlagSet()
@@ -907,14 +883,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         // With Incorrect Values
         $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSet('user1', 123, null);
         $this->assertEquals(0, count(array_keys($treatmentResult)));
-
-        // Empty array
-        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSet('user1', array(), null);
-        $this->assertEquals(0, count(array_keys($treatmentResult)));
-
-        // null
-        $treatmentResult = $splitSdk->getTreatmentsWithConfigByFlagSet('user1', null, null);
-        $this->assertEquals(0, count(array_keys($treatmentResult)));
     }
 
     public function testGetTreatmentsByFlagSet()
@@ -950,14 +918,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         // With Incorrect Values
         $treatmentResult = $splitSdk->getTreatmentsByFlagSet('user1', 123, null);
-        $this->assertEquals(0, count(array_keys($treatmentResult)));
-
-        // Empty array
-        $treatmentResult = $splitSdk->getTreatmentsByFlagSet('user1', array(), null);
-        $this->assertEquals(0, count(array_keys($treatmentResult)));
-
-        // null
-        $treatmentResult = $splitSdk->getTreatmentsByFlagSet('user1', null, null);
         $this->assertEquals(0, count(array_keys($treatmentResult)));
     }
     

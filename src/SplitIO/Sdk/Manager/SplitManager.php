@@ -13,14 +13,14 @@ class SplitManager implements SplitManagerInterface
     /**
      * @var \SplitIO\Component\Cache\SplitCache
      */
-    private $splitCache;
+    private SplitCache $splitCache;
 
     public function __construct(SplitCache $splitCache)
     {
         $this->splitCache = $splitCache;
     }
 
-    public function splitNames()
+    public function splitNames(): array
     {
         return $this->splitCache->getSplitNames();
     }
@@ -28,7 +28,7 @@ class SplitManager implements SplitManagerInterface
     /**
      * @return array
      */
-    public function splits()
+    public function splits(): array
     {
         $rawSplits = $this->splitCache->getAllSplits();
         return array_map([self::class, 'parseSplitView'], $rawSplits);
@@ -38,7 +38,7 @@ class SplitManager implements SplitManagerInterface
      * @param $featureFlagName
      * @return null|SplitView
      */
-    public function split($featureFlagName)
+    public function split(string $featureFlagName): ?SplitView
     {
         $featureFlagName = InputValidator::validateFeatureFlagName($featureFlagName, 'split');
         if (is_null($featureFlagName)) {
@@ -56,10 +56,10 @@ class SplitManager implements SplitManagerInterface
     }
 
     /**
-     * @param $splitRepresentation
+     * @param ?string $splitRepresentation
      * @return null|SplitView
      */
-    private static function parseSplitView($splitRepresentation)
+    private static function parseSplitView(?string $splitRepresentation): ?SplitView
     {
         if (empty($splitRepresentation)) {
             return null;

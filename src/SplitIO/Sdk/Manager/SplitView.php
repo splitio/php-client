@@ -4,35 +4,35 @@ namespace SplitIO\Sdk\Manager;
 
 class SplitView
 {
-    private $name;
-    private $trafficType; // the name of the traffic type
-    private $killed;
-    private $treatments;
-    private $changeNumber;
-    private $configs;
-    private $defaultTreatment;
-    private $sets;
+    private string $name;
+    private string $trafficType; // the name of the traffic type
+    private bool $killed;
+    private array $treatments;
+    private int $changeNumber;
+    private array|\StdClass $configs;
+    private string $defaultTreatment;
+    private ?array $sets;
 
     /**
      * SplitView constructor.
-     * @param $name
-     * @param $trafficType
-     * @param $killed
-     * @param $treatments
-     * @param $changeNumber
-     * @param $configurations
-     * @param $defaultTreatment
-     * @param $sets
+     * @param string $name
+     * @param string $trafficType
+     * @param bool $killed
+     * @param array $treatments
+     * @param int $changeNumber
+     * @param array|\StdClass $configurations
+     * @param string $defaultTreatment
+     * @param ?array $sets
      */
     public function __construct(
-        $name,
-        $trafficType,
-        $killed,
-        $treatments,
-        $changeNumber,
-        $configs,
-        $defaultTreatment,
-        $sets
+        string $name,
+        string $trafficType,
+        bool $killed,
+        array $treatments,
+        int $changeNumber,
+        array|\StdClass $configs,
+        string $defaultTreatment,
+        ?array $sets
     ) {
         $this->name = $name;
         $this->trafficType = $trafficType;
@@ -46,129 +46,129 @@ class SplitView
 
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getTrafficType()
+    public function getTrafficType(): string
     {
         return $this->trafficType;
     }
 
     /**
-     * @param mixed $trafficType
+     * @param string $trafficType
      */
-    public function setTrafficType($trafficType)
+    public function setTrafficType(string $trafficType)
     {
         $this->trafficType = $trafficType;
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getKilled()
+    public function getKilled(): bool
     {
         return $this->killed;
     }
 
     /**
-     * @param mixed $killed
+     * @param bool $killed
      */
-    public function setKilled($killed)
+    public function setKilled(bool $killed)
     {
         $this->killed = $killed;
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getTreatments()
+    public function getTreatments(): array
     {
         return $this->treatments;
     }
 
     /**
-     * @param mixed $treatments
+     * @param array $treatments
      */
-    public function setTreatments($treatments)
+    public function setTreatments(array $treatments)
     {
         $this->treatments = $treatments;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getChangeNumber()
+    public function getChangeNumber(): int
     {
         return $this->changeNumber;
     }
 
     /**
-     * @param mixed $changeNumber
+     * @param int $changeNumber
      */
-    public function setChangeNumber($changeNumber)
+    public function setChangeNumber(int $changeNumber)
     {
         $this->changeNumber = $changeNumber;
     }
 
     /**
-     * @return mixed
+     * @return array|\StdClass
      */
-    public function getConfigs()
+    public function getConfigs(): array|\StdClass
     {
         return $this->configs;
     }
 
     /**
-     * @param mixed $configs
+     * @param array|\StdClass $configs
      */
-    public function setConfigs($configs)
+    public function setConfigs(array|\StdClass $configs)
     {
         $this->configs = $configs;
     }
 
     /**
-     * @param mixed $defaultTreatment
+     * @param string $defaultTreatment
      */
-    public function setDefaultTreatment($defaultTreatment)
+    public function setDefaultTreatment(string $defaultTreatment)
     {
         $this->defaultTreatment = $defaultTreatment;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDefaultTreatment()
+    public function getDefaultTreatment(): string
     {
         return $this->defaultTreatment;
     }
 
     /**
-     * @param mixed $sets
+     * @param array|null $sets
      */
-    public function setSets($sets)
+    public function setSets(?array $sets)
     {
         $this->sets = $sets;
     }
 
     /**
-     * @return mixed
+     * @return array|null
      */
-    public function getSets()
+    public function getSets(): ?array
     {
         return $this->sets;
     }
