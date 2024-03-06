@@ -1,3 +1,6 @@
+7.2.1 (March 6, 2024)
+ - Fix error on duplicated file flagSetsValidator.
+
 7.2.0 (Jan 24, 2024)
  - Added support for Flag Sets on the SDK, which enables grouping feature flags and interacting with the group rather than individually (more details in our documentation):
   - Added new variations of the get treatment methods to support evaluating flags in given flag set/s.
