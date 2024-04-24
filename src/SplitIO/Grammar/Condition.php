@@ -2,15 +2,17 @@
 namespace SplitIO\Grammar;
 
 use SplitIO\Exception\InvalidMatcherException;
-use SplitIO\Split as SplitApp;
 use SplitIO\Grammar\Condition\Combiner\AndCombiner;
 use SplitIO\Grammar\Condition\Combiner\CombinerEnum;
 use SplitIO\Grammar\Condition\Combiner\Factor\NotFactor;
-use SplitIO\Grammar\Condition\Matcher;
-use SplitIO\Grammar\Condition\Partition;
-use SplitIO\Grammar\Condition\Matcher\AbstractMatcher;
 use SplitIO\Grammar\Condition\ConditionTypeEnum;
+use SplitIO\Grammar\Condition\Matcher;
+use SplitIO\Grammar\Condition\Matcher\AbstractMatcher;
 use SplitIO\Grammar\Condition\Matcher\Dependency;
+use SplitIO\Grammar\Condition\Partition;
+use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
+use SplitIO\Sdk\Impressions\ImpressionLabel;
+use SplitIO\Split as SplitApp;
 
 class Condition
 {
@@ -113,6 +115,31 @@ class Condition
         }
 
         return false;
+    }
+
+    public static function getDefaultCondition()
+    {
+        return new Condition(array(
+            'conditionType' => ConditionTypeEnum::WHITELIST,
+            'matcherGroup' => array(
+                'combiner' => CombinerEnum::_AND,
+                'matchers' => array(
+                    array(
+                        'matcherType' => Matcher::ALL_KEYS,
+                        'negate' => false,
+                        'userDefinedSegmentMatcherData' => null,
+                        'whitelistMatcherData' => null
+                    )
+                )
+            ),
+            'partitions' => array(
+                array(
+                    'treatment' => TreatmentEnum::CONTROL,
+                    'size' => 100
+                )
+            ),
+            'label' => ImpressionLabel::UNSUPPORTED_MATCHER
+        ));
     }
 
     /**

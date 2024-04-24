@@ -191,7 +191,8 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $key,
         $treatment,
         $machineName = 'unknown',
-        $machineIP = 'unknown'
+        $machineIP = 'unknown',
+        $label = ''
     ) {
         $raw = $redisClient->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $parsed = json_decode($raw, true);
@@ -200,6 +201,10 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($parsed['i']['t'], $treatment);
         $this->assertEquals($parsed['m']['i'], $machineIP);
         $this->assertEquals($parsed['m']['n'], $machineName);
+
+        if ($label != '') {
+            $this->assertEquals($parsed['i']['r'], $label);
+        }
     }
 
     public function testSplitManager()
@@ -234,6 +239,42 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $split_views = $splitManager->splits();
         $this->assertEquals('off', $split_views["flagsets_feature"]->getDefaultTreatment());
         $this->assertEquals('["set_a","set_b","set_c"]', json_encode($split_views["flagsets_feature"]->getSets()));
+    }
+
+    public function testClientWithUnsupportedMatcher()
+    {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+        $splitManager = $splitFactory->manager();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+
+        //Assertions
+        $this->assertEquals('control', $splitSdk->getTreatment('user1', 'unsupported_matcher'));
+        $this->validateLastImpression($redisClient, 'unsupported_matcher', 'user1', 'control', 'unknown', 'unknown', 'targeting rule type unsupported by sdk');
     }
 
     public function testClient()

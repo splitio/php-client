@@ -1,6 +1,7 @@
 <?php
 namespace SplitIO\Grammar\Condition;
 
+use SplitIO\Exception\UnsupportedMatcherException;
 use SplitIO\Grammar\Condition\Matcher\All;
 use SplitIO\Grammar\Condition\Matcher\Between;
 use SplitIO\Grammar\Condition\Matcher\EqualTo;
@@ -131,7 +132,7 @@ class Matcher
                 return new Regex($data, $negate, $attribute);
             // @codeCoverageIgnoreStart
             default:
-                return null;
+                throw new UnsupportedMatcherException("Unable to create matcher for matcher type: ");
         }
         // @codeCoverageIgnoreEnd
     }

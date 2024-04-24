@@ -1,18 +1,13 @@
 <?php
 namespace SplitIO\Test\Suite\Sdk;
 
-use Monolog\Logger;
-use Monolog\Handler\ErrorLogHandler;
-use SplitIO\Component\Cache\SegmentCache;
-use SplitIO\Component\Cache\SplitCache;
 use SplitIO\Grammar\Condition\Matcher;
-use SplitIO\Grammar\Condition\Matcher\DataType\DateTime;
 use SplitIO\Component\Common\Di;
 use \ReflectionMethod;
 
 use SplitIO\Test\Utils;
 
-class MatcherTest extends \PHPUnit\Framework\TestCase
+class MatchersTest extends \PHPUnit\Framework\TestCase
 {
     private function setupSplitApp()
     {
@@ -501,6 +496,16 @@ class MatcherTest extends \PHPUnit\Framework\TestCase
 
         $matcher2 = new Matcher\EqualToBoolean(false);
         $this->assertEquals($meth->invoke($matcher2, 'ff'), false);
+    }
+
+    public function testUnsupportedMatcher()
+    {
+        $condition = array(
+            'matcherType' => 'NEW_MATCHER_TYPE',
+        );
+
+        $this->expectException('\SplitIO\Exception\UnsupportedMatcherException');
+        Matcher::factory($condition);
     }
 
     public static function tearDownAfterClass(): void
