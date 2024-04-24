@@ -132,7 +132,7 @@ class Matcher
                 return new Regex($data, $negate, $attribute);
             // @codeCoverageIgnoreStart
             default:
-                throw new UnsupportedMatcherException("Unable to create matcher for matcher type: ");
+                throw new UnsupportedMatcherException("Unable to create matcher for matcher type: " . $matcherType);
         }
         // @codeCoverageIgnoreEnd
     }
