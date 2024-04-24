@@ -449,7 +449,7 @@
             "status": "ACTIVE",
             "killed": false,
             "defaultTreatment": "off",
-            "sets": ["set_a", "set_b", "set_c"],
+            "sets": [],
             "configurations": {
                 "on": "{\"size\":15,\"test\":20}",
                 "of": "{\"size\":15,\"defTreatment\":true}"
