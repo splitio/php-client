@@ -5,7 +5,6 @@ use SplitIO\Component\Common\Di;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Split as SplitApp;
 
-
 class Split
 {
     const DEFAULT_TRAFFIC_ALLOCATION = 100;
