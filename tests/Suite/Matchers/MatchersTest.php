@@ -561,6 +561,37 @@ class MatchersTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($matcher->evaluate('2.2.2'));
     }
 
+    public function testLessThanOrEqualToSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'LESS_THAN_OR_EQUAL_TO_SEMVER',
+            'stringMatcherData' => '2.2.2'
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('1.2.2'));
+        $this->assertTrue($matcher->evaluate('2.1.2'));
+        $this->assertTrue($matcher->evaluate('2.2.2-rc.1'));
+        $this->assertTrue($matcher->evaluate('0.2.2'));
+        $this->assertTrue($matcher->evaluate('2.2.1'));
+        $this->assertTrue($matcher->evaluate('2.2.2'));
+        $this->assertFalse($matcher->evaluate('2.2.3'));
+        $this->assertFalse($matcher->evaluate('2.3.2'));
+        $this->assertFalse($matcher->evaluate('3.2.2'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+
+        $condition = array(
+            'matcherType' => 'GREATER_THAN_OR_EQUAL_TO_SEMVER',
+            'stringMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();

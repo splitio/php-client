@@ -288,6 +288,18 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->validateLastImpression($redisClient, 'gtoet_semver_flag', 'user1', 'v1');
         $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'gtoet_semver_flag', array('version' => '34.57.89')));
         $this->validateLastImpression($redisClient, 'gtoet_semver_flag', 'user1', 'v1');
+
+        //Assertions LessThanOrEqualToSemver
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.22.33')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.1.33')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.1.3')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.22.34')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'off');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.22.33-rc.1')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
     }
 
     public function testClientWithUnsupportedMatcher()
