@@ -1,7 +1,6 @@
 <?php
 namespace SplitIO\Grammar;
 
-use SplitIO\Component\Common\Di;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
 use SplitIO\Split as SplitApp;
 
@@ -63,7 +62,7 @@ class Split
                     $this->conditions[] = new Condition($condition);
                 }
             } catch (\Exception $e) {
-                Di::getLogger()->debug($e->getMessage());
+                SplitApp::logger()->debug($e->getMessage());
                 $this->conditions = array(Condition::getDefaultCondition());
             }
         }
