@@ -508,6 +508,30 @@ class MatchersTest extends \PHPUnit\Framework\TestCase
         Matcher::factory($condition);
     }
 
+    public function testEqualToSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'EQUAL_TO_SEMVER',
+            'stringMatcherData' => '2.2.2'
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('2.2.2'));
+        $this->assertFalse($matcher->evaluate('1.1.1'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+
+        $condition = array(
+            'matcherType' => 'EQUAL_TO_SEMVER',
+            'stringMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();

@@ -241,6 +241,43 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('["set_a","set_b","set_c"]', json_encode($split_views["flagsets_feature"]->getSets()));
     }
 
+    public function testClientSemverMatchers()
+    {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+
+        //Assertions EqualToSemver
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'equal_to_semver_flag', array('version' => '34.56.89-rc.1+meta')));
+        $this->validateLastImpression($redisClient, 'equal_to_semver_flag', 'user1', 'v1');
+        $this->assertEquals('off', $splitSdk->getTreatment('user2', 'equal_to_semver_flag', array('version' => '34.56.89')));
+        $this->validateLastImpression($redisClient, 'equal_to_semver_flag', 'user2', 'off');
+    }
+
     public function testClientWithUnsupportedMatcher()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
@@ -263,7 +300,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         //Initializing the SDK instance.
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
         $splitSdk = $splitFactory->client();
-        $splitManager = $splitFactory->manager();
 
         //Populating the cache.
         Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
@@ -939,6 +975,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public static function tearDownAfterClass(): void
     {
-        Utils\Utils::cleanCache();
+        //Utils\Utils::cleanCache();
     }
 }
