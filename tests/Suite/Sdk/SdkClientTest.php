@@ -975,6 +975,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
     public static function tearDownAfterClass(): void
     {
-        //Utils\Utils::cleanCache();
+        Utils\Utils::cleanCache();
     }
 }
