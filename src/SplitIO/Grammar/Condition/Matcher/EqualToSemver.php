@@ -32,7 +32,7 @@ class EqualToSemver extends AbstractMatcher
             return false;
         }
 
-        $result = SemverComparer::Equals($this->toCompare, $keySemver);
+        $result = SemverComparer::equals($this->toCompare, $keySemver);
 
         SplitApp::logger()->debug($this->toCompare->getVersion() . " == "
             . $keySemver->getVersion() . " | Result: " . $result);
