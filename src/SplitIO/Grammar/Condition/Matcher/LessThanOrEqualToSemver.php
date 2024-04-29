@@ -12,7 +12,7 @@ class LessThanOrEqualToSemver extends AbstractMatcher
 
     public function __construct($toCompare, $negate = false, $attribute = null)
     {
-        parent::__construct(Matcher::GREATER_THAN_OR_EQUAL_TO_SEMVER, $negate, $attribute);
+        parent::__construct(Matcher::LESS_THAN_OR_EQUAL_TO_SEMVER, $negate, $attribute);
         
         $this->target = Semver::build($toCompare);
     }

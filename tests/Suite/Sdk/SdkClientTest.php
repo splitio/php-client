@@ -300,6 +300,20 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'off');
         $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.22.33-rc.1')));
         $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+
+        //Assertions BetweenSemver 
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '6.9.0')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '8.0.0-rc.22')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '9.0.0+metadata')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '10.4.4-rc.1+metadata')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '10.4.7-rc.1+metadata')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'off');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '1.4.7')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'off');
     }
 
     public function testClientWithUnsupportedMatcher()

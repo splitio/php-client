@@ -4,6 +4,7 @@ namespace SplitIO\Grammar\Condition;
 use SplitIO\Exception\UnsupportedMatcherException;
 use SplitIO\Grammar\Condition\Matcher\All;
 use SplitIO\Grammar\Condition\Matcher\Between;
+use SplitIO\Grammar\Condition\Matcher\BetweenSemver;
 use SplitIO\Grammar\Condition\Matcher\EqualTo;
 use SplitIO\Grammar\Condition\Matcher\EqualToSemver;
 use SplitIO\Grammar\Condition\Matcher\GreaterThanOrEqualTo;
@@ -46,6 +47,7 @@ class Matcher
     const EQUAL_TO_SEMVER = 'EQUAL_TO_SEMVER';
     const GREATER_THAN_OR_EQUAL_TO_SEMVER = 'GREATER_THAN_OR_EQUAL_TO_SEMVER';
     const LESS_THAN_OR_EQUAL_TO_SEMVER = 'LESS_THAN_OR_EQUAL_TO_SEMVER';
+    const BETWEEN_SEMVER = 'BETWEEN_SEMVER';
 
     public static function factory($matcher)
     {
@@ -151,6 +153,11 @@ class Matcher
                     is_string($matcher['stringMatcherData']) ?
                     $matcher['stringMatcherData'] : null;
                 return new LessThanOrEqualToSemver($data, $negate, $attribute);
+            case self::BETWEEN_SEMVER:
+                $data = (isset($matcher['betweenStringMatcherData']) &&
+                    is_array($matcher['betweenStringMatcherData']))
+                    ? $matcher['betweenStringMatcherData'] : null;
+                return new BetweenSemver($data, $negate, $attribute);
             // @codeCoverageIgnoreStart
             default:
                 throw new UnsupportedMatcherException("Unable to create matcher for matcher type: " . $matcherType);
