@@ -622,6 +622,39 @@ class MatchersTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($matcher->evaluate('2.2.2'));
     }
 
+    public function testInListSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'IN_LIST_SEMVER',
+            'whitelistMatcherData' => array(
+                'whitelist' => array(
+                    '1.1.1',
+                    '2.2.2',
+                    '3.3.3',
+                )
+            )
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('1.1.1'));
+        $this->assertTrue($matcher->evaluate('2.2.2'));
+        $this->assertTrue($matcher->evaluate('3.3.3'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+        $this->assertFalse($matcher->evaluate('4.22.25'));
+        $this->assertFalse($matcher->evaluate('10.0.0'));
+
+        $condition = array(
+            'matcherType' => 'IN_LIST_SEMVER',
+            'whitelistMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();

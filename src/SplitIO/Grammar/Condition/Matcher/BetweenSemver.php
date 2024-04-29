@@ -34,7 +34,8 @@ class BetweenSemver extends AbstractMatcher
             return false;
         }
 
-        $result = SemverComparer::do($keySemver, $this->startTarget) >= 0 && SemverComparer::do($keySemver, $this->endTarget) <= 0;
+        $result = SemverComparer::do($keySemver, $this->startTarget) >= 0
+               && SemverComparer::do($keySemver, $this->endTarget) <= 0;
 
         SplitApp::logger()->debug($this->startTarget->getVersion() . " <= "
             . $keySemver->getVersion() . " <= " . $this->endTarget->getVersion()
