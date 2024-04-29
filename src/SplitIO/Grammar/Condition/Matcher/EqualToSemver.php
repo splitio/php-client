@@ -21,7 +21,8 @@ class EqualToSemver extends AbstractMatcher
      *
      * @param mixed $key
      */
-    protected function evalKey($key) {
+    protected function evalKey($key)
+    {
         if ($key == null || $this->toCompare == null || !is_string($key)) {
             return false;
         }
@@ -33,7 +34,8 @@ class EqualToSemver extends AbstractMatcher
 
         $result = SemverComparer::Equals($this->toCompare, $keySemver);
 
-        SplitApp::logger()->debug($this->toCompare->getVersion() . " == " . $keySemver->getVersion() . " | Result: " . $result);
+        SplitApp::logger()->debug($this->toCompare->getVersion() . " == "
+            . $keySemver->getVersion() . " | Result: " . $result);
 
         return $result;
     }
