@@ -3,7 +3,7 @@ namespace SplitIO\Grammar\Semver;
 
 class SemverComparer
 {
-    public static function Equals($version, $toCompare)
+    public static function equals($version, $toCompare)
     {
         if (strcmp($version->getVersion(), $toCompare->getVersion()) == 0) {
             return true;
@@ -12,9 +12,9 @@ class SemverComparer
         return false;
     }
 
-    public static function Do($version, $toCompare)
+    public static function do($version, $toCompare)
     {
-        if (self::Equals($version, $toCompare)) {
+        if (self::equals($version, $toCompare)) {
             return 0;
         }
 

@@ -117,12 +117,9 @@ class Semver
     {
         $toReturn = $this->major . self::VALUE_DELIMITER . $this->minor . self::VALUE_DELIMITER . $this->patch;
 
-        if ($this->preRelease != null && count($this->preRelease) > 0)
-        {
-            foreach ($this->preRelease as $index => $item) 
-            {
-                if (is_numeric($item))
-                {
+        if ($this->preRelease != null && count($this->preRelease) > 0) {
+            foreach ($this->preRelease as $index => $item) {
+                if (is_numeric($item)) {
                     $this->preRelease[$index] = (int)$this->preRelease[$index];
                 }
             }
@@ -130,8 +127,7 @@ class Semver
             $toReturn = $toReturn . self::PRERELEASE_DELIMITER . implode(self::VALUE_DELIMITER, $this->preRelease);
         }
 
-        if ($this->metadata != null && $this->metadata != "")
-        {
+        if ($this->metadata != null && $this->metadata != "") {
             $toReturn = $toReturn . self::METADATA_DELIMITER . $this->metadata;
         }
 
