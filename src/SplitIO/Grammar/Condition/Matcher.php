@@ -4,11 +4,14 @@ namespace SplitIO\Grammar\Condition;
 use SplitIO\Exception\UnsupportedMatcherException;
 use SplitIO\Grammar\Condition\Matcher\All;
 use SplitIO\Grammar\Condition\Matcher\Between;
+use SplitIO\Grammar\Condition\Matcher\BetweenSemver;
 use SplitIO\Grammar\Condition\Matcher\EqualTo;
 use SplitIO\Grammar\Condition\Matcher\EqualToSemver;
 use SplitIO\Grammar\Condition\Matcher\GreaterThanOrEqualTo;
 use SplitIO\Grammar\Condition\Matcher\GreaterThanOrEqualToSemver;
+use SplitIO\Grammar\Condition\Matcher\InListSemver;
 use SplitIO\Grammar\Condition\Matcher\LessThanOrEqualTo;
+use SplitIO\Grammar\Condition\Matcher\LessThanOrEqualToSemver;
 use SplitIO\Grammar\Condition\Matcher\Segment;
 use SplitIO\Grammar\Condition\Matcher\Whitelist;
 use SplitIO\Grammar\Condition\Matcher\StartsWith;
@@ -44,6 +47,9 @@ class Matcher
     const MATCHES_STRING = 'MATCHES_STRING';
     const EQUAL_TO_SEMVER = 'EQUAL_TO_SEMVER';
     const GREATER_THAN_OR_EQUAL_TO_SEMVER = 'GREATER_THAN_OR_EQUAL_TO_SEMVER';
+    const LESS_THAN_OR_EQUAL_TO_SEMVER = 'LESS_THAN_OR_EQUAL_TO_SEMVER';
+    const BETWEEN_SEMVER = 'BETWEEN_SEMVER';
+    const IN_LIST_SEMVER = 'IN_LIST_SEMVER';
 
     public static function factory($matcher)
     {
@@ -144,6 +150,21 @@ class Matcher
                     is_string($matcher['stringMatcherData']) ?
                     $matcher['stringMatcherData'] : null;
                 return new GreaterThanOrEqualToSemver($data, $negate, $attribute);
+            case self::LESS_THAN_OR_EQUAL_TO_SEMVER:
+                $data = isset($matcher['stringMatcherData']) &&
+                    is_string($matcher['stringMatcherData']) ?
+                    $matcher['stringMatcherData'] : null;
+                return new LessThanOrEqualToSemver($data, $negate, $attribute);
+            case self::BETWEEN_SEMVER:
+                $data = (isset($matcher['betweenStringMatcherData']) &&
+                    is_array($matcher['betweenStringMatcherData']))
+                    ? $matcher['betweenStringMatcherData'] : null;
+                return new BetweenSemver($data, $negate, $attribute);
+            case self::IN_LIST_SEMVER:
+                $data = (isset($matcher['whitelistMatcherData']['whitelist']) &&
+                    is_array($matcher['whitelistMatcherData']['whitelist']))
+                    ? $matcher['whitelistMatcherData']['whitelist'] : null;
+                return new InListSemver($data, $negate, $attribute);
             // @codeCoverageIgnoreStart
             default:
                 throw new UnsupportedMatcherException("Unable to create matcher for matcher type: " . $matcherType);
