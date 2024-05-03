@@ -1,8 +1,8 @@
 <?php
 namespace SplitIO\Grammar;
 
-use SplitIO\Split as SplitApp;
 use SplitIO\Engine\Hash\HashAlgorithmEnum;
+use SplitIO\Split as SplitApp;
 
 class Split
 {
@@ -56,9 +56,14 @@ class Split
         SplitApp::logger()->info("Constructing Feature Flag: ".$this->name);
 
         if (isset($split['conditions']) && is_array($split['conditions'])) {
-            $this->conditions = array();
-            foreach ($split['conditions'] as $condition) {
-                $this->conditions[] = new Condition($condition);
+            try {
+                $this->conditions = array();
+                foreach ($split['conditions'] as $condition) {
+                    $this->conditions[] = new Condition($condition);
+                }
+            } catch (\Exception $e) {
+                SplitApp::logger()->debug($e->getMessage());
+                $this->conditions = array(Condition::getDefaultCondition());
             }
         }
     }
