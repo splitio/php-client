@@ -6,24 +6,24 @@ use SplitIO\Grammar\Semver\Semver;
 use SplitIO\Grammar\Semver\SemverComparer;
 use SplitIO\Split as SplitApp;
 
-class EqualToSemver extends AbstractMatcher
+class GreaterThanOrEqualToSemver extends AbstractMatcher
 {
-    private $toCompare;
+    private $target;
 
     public function __construct($toCompare, $negate = false, $attribute = null)
     {
-        parent::__construct(Matcher::EQUAL_TO_SEMVER, $negate, $attribute);
+        parent::__construct(Matcher::GREATER_THAN_OR_EQUAL_TO_SEMVER, $negate, $attribute);
         
-        $this->toCompare = Semver::build($toCompare);
+        $this->target = Semver::build($toCompare);
     }
-    
+
     /**
      *
      * @param mixed $key
      */
     protected function evalKey($key)
     {
-        if ($key == null || $this->toCompare == null || !is_string($key)) {
+        if ($key == null || $this->target == null || !is_string($key)) {
             return false;
         }
 
@@ -32,9 +32,9 @@ class EqualToSemver extends AbstractMatcher
             return false;
         }
 
-        $result = SemverComparer::equals($this->toCompare, $keySemver);
+        $result = SemverComparer::do($keySemver, $this->target) >= 0;
 
-        SplitApp::logger()->debug($this->toCompare->getVersion() . " == "
+        SplitApp::logger()->debug($this->target->getVersion() . " >= "
             . $keySemver->getVersion() . " | Result: " . $result);
 
         return $result;

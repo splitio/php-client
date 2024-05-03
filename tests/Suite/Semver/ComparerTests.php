@@ -19,10 +19,10 @@ class ComparerTests extends \PHPUnit\Framework\TestCase
                 $semver1 = Semver::build($v1);
                 $semver2 = Semver::build($v2);
 
-                $this->assertTrue(SemverComparer::Do($semver1, $semver2) >= 0);
-                $this->assertTrue(SemverComparer::Do($semver1, $semver1) >= 0);
-                $this->assertTrue(SemverComparer::Do($semver2, $semver2) >= 0);
-                $this->assertFalse(SemverComparer::Do($semver2, $semver1) >= 0);
+                $this->assertTrue(SemverComparer::do($semver1, $semver2) >= 0);
+                $this->assertTrue(SemverComparer::do($semver1, $semver1) >= 0);
+                $this->assertTrue(SemverComparer::do($semver2, $semver2) >= 0);
+                $this->assertFalse(SemverComparer::do($semver2, $semver1) >= 0);
             }
 
             fclose($handle);
@@ -44,10 +44,10 @@ class ComparerTests extends \PHPUnit\Framework\TestCase
                 $semver1 = Semver::build($v1);
                 $semver2 = Semver::build($v2);
 
-                $this->assertFalse(SemverComparer::Do($semver1, $semver2) <= 0);
-                $this->assertTrue(SemverComparer::Do($semver2, $semver1) <= 0);
-                $this->assertTrue(SemverComparer::Do($semver1, $semver1) <= 0);
-                $this->assertTrue(SemverComparer::Do($semver2, $semver2) <= 0);
+                $this->assertFalse(SemverComparer::do($semver1, $semver2) <= 0);
+                $this->assertTrue(SemverComparer::do($semver2, $semver1) <= 0);
+                $this->assertTrue(SemverComparer::do($semver1, $semver1) <= 0);
+                $this->assertTrue(SemverComparer::do($semver2, $semver2) <= 0);
             }
 
             fclose($handle);
@@ -71,7 +71,7 @@ class ComparerTests extends \PHPUnit\Framework\TestCase
                 $semver2 = Semver::build($c2);
                 $expected = (bool) $c3;
 
-                $this->assertEquals($expected, SemverComparer::Equals($semver1, $semver2), $semver1->getVersion() . " - " . $semver2->getVersion() . " | " . $expected);
+                $this->assertEquals($expected, SemverComparer::equals($semver1, $semver2), $semver1->getVersion() . " - " . $semver2->getVersion() . " | " . $expected);
             }
 
             fclose($handle);
@@ -96,7 +96,7 @@ class ComparerTests extends \PHPUnit\Framework\TestCase
                 $semver2 = Semver::build($c2);
                 $semver3 = Semver::build($c3);
                 
-                $result = SemverComparer::Do($semver2, $semver1) >= 0 && SemverComparer::Do($semver2, $semver3) <= 0;
+                $result = SemverComparer::do($semver2, $semver1) >= 0 && SemverComparer::do($semver2, $semver3) <= 0;
 
                 $this->assertEquals((bool) $c4, $result);
             }
