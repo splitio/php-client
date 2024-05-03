@@ -508,6 +508,153 @@ class MatchersTest extends \PHPUnit\Framework\TestCase
         Matcher::factory($condition);
     }
 
+    public function testEqualToSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'EQUAL_TO_SEMVER',
+            'stringMatcherData' => '2.2.2'
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('2.2.2'));
+        $this->assertFalse($matcher->evaluate('1.1.1'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+
+        $condition = array(
+            'matcherType' => 'EQUAL_TO_SEMVER',
+            'stringMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
+    public function testGreaterThanOrEqualToSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'GREATER_THAN_OR_EQUAL_TO_SEMVER',
+            'stringMatcherData' => '2.2.2'
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('2.2.2'));
+        $this->assertTrue($matcher->evaluate('2.2.3'));
+        $this->assertTrue($matcher->evaluate('2.3.2'));
+        $this->assertTrue($matcher->evaluate('3.2.2'));
+        $this->assertFalse($matcher->evaluate('1.2.2'));
+        $this->assertFalse($matcher->evaluate('2.1.2'));
+        $this->assertFalse($matcher->evaluate('2.2.2-rc.1'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+
+        $condition = array(
+            'matcherType' => 'GREATER_THAN_OR_EQUAL_TO_SEMVER',
+            'stringMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
+    public function testLessThanOrEqualToSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'LESS_THAN_OR_EQUAL_TO_SEMVER',
+            'stringMatcherData' => '2.2.2'
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('1.2.2'));
+        $this->assertTrue($matcher->evaluate('2.1.2'));
+        $this->assertTrue($matcher->evaluate('2.2.2-rc.1'));
+        $this->assertTrue($matcher->evaluate('0.2.2'));
+        $this->assertTrue($matcher->evaluate('2.2.1'));
+        $this->assertTrue($matcher->evaluate('2.2.2'));
+        $this->assertFalse($matcher->evaluate('2.2.3'));
+        $this->assertFalse($matcher->evaluate('2.3.2'));
+        $this->assertFalse($matcher->evaluate('3.2.2'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+
+        $condition = array(
+            'matcherType' => 'GREATER_THAN_OR_EQUAL_TO_SEMVER',
+            'stringMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
+    public function testBetweenSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'BETWEEN_SEMVER',
+            'betweenStringMatcherData' => array(
+                'start' => '11.11.11',
+                'end' => '22.22.22',
+            )
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('20.2.2'));
+        $this->assertTrue($matcher->evaluate('16.5.6'));
+        $this->assertTrue($matcher->evaluate('19.0.1'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+        $this->assertFalse($matcher->evaluate('22.22.25'));
+        $this->assertFalse($matcher->evaluate('10.0.0'));
+
+        $condition = array(
+            'matcherType' => 'BETWEEN_SEMVER',
+            'betweenStringMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
+    public function testInListSemverMatcher()
+    {
+        $this->setupSplitApp();
+
+        $condition = array(
+            'matcherType' => 'IN_LIST_SEMVER',
+            'whitelistMatcherData' => array(
+                'whitelist' => array(
+                    '1.1.1',
+                    '2.2.2',
+                    '3.3.3',
+                )
+            )
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertTrue($matcher->evaluate('1.1.1'));
+        $this->assertTrue($matcher->evaluate('2.2.2'));
+        $this->assertTrue($matcher->evaluate('3.3.3'));
+        $this->assertFalse($matcher->evaluate(null));
+        $this->assertFalse($matcher->evaluate(''));
+        $this->assertFalse($matcher->evaluate('4.22.25'));
+        $this->assertFalse($matcher->evaluate('10.0.0'));
+
+        $condition = array(
+            'matcherType' => 'IN_LIST_SEMVER',
+            'whitelistMatcherData' => null
+        );
+
+        $matcher = Matcher::factory($condition);
+        $this->assertFalse($matcher->evaluate('2.2.2'));
+    }
+
     public static function tearDownAfterClass(): void
     {
         Utils\Utils::cleanCache();

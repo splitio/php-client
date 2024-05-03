@@ -241,6 +241,97 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('["set_a","set_b","set_c"]', json_encode($split_views["flagsets_feature"]->getSets()));
     }
 
+    public function testClientSemverMatchers()
+    {
+        Di::set(Di::KEY_FACTORY_TRACKER, false);
+        //Testing version string
+        $this->assertTrue(is_string(\SplitIO\version()));
+
+        $parameters = array(
+            'scheme' => 'redis',
+            'host' => REDIS_HOST,
+            'port' => REDIS_PORT,
+            'timeout' => 881,
+        );
+        $options = array('prefix' => TEST_PREFIX);
+
+        $sdkConfig = array(
+            'log' => array('adapter' => 'stdout'),
+            'cache' => array('adapter' => 'predis', 'parameters' => $parameters, 'options' => $options)
+        );
+
+        //Initializing the SDK instance.
+        $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
+        $splitSdk = $splitFactory->client();
+
+        //Populating the cache.
+        Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentEmployeesChanges.json"));
+        Utils\Utils::addSegmentsInCache(file_get_contents(__DIR__."/files/segmentHumanBeignsChanges.json"));
+
+        $redisClient = ReflectiveTools::clientFromCachePool(Di::getCache());
+
+        //Assertions EqualToSemver
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'equal_to_semver_flag', array('version' => '34.56.89-rc.1+meta')));
+        $this->validateLastImpression($redisClient, 'equal_to_semver_flag', 'user1', 'v1');
+        $this->assertEquals('off', $splitSdk->getTreatment('user2', 'equal_to_semver_flag', array('version' => '34.56.89')));
+        $this->validateLastImpression($redisClient, 'equal_to_semver_flag', 'user2', 'off');
+        
+        //Assertions GreaterThanOrEqualToSemver
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'gtoet_semver_flag', array('version' => '34.56.89-rc.12.2.3.4+meta')));
+        $this->validateLastImpression($redisClient, 'gtoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'gtoet_semver_flag', array('version' => '34.56.89-rc.12.3.3.4+meta')));
+        $this->validateLastImpression($redisClient, 'gtoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'gtoet_semver_flag', array('version' => '34.56.89-rc.12.2.1.4+meta')));
+        $this->validateLastImpression($redisClient, 'gtoet_semver_flag', 'user1', 'off');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'gtoet_semver_flag', array('version' => '34.56.89')));
+        $this->validateLastImpression($redisClient, 'gtoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'gtoet_semver_flag', array('version' => '34.57.89')));
+        $this->validateLastImpression($redisClient, 'gtoet_semver_flag', 'user1', 'v1');
+
+        //Assertions LessThanOrEqualToSemver
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.22.33')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.1.33')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.1.3')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.22.34')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'off');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'ltoet_semver_flag', array('version' => '11.22.33-rc.1')));
+        $this->validateLastImpression($redisClient, 'ltoet_semver_flag', 'user1', 'v1');
+
+        //Assertions BetweenSemver 
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '6.9.0')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '8.0.0-rc.22')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '9.0.0+metadata')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '10.4.4-rc.1+metadata')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'v1');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '10.4.7-rc.1+metadata')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'off');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'between_semver_flag', array('version' => '1.4.7')));
+        $this->validateLastImpression($redisClient, 'between_semver_flag', 'user1', 'off');
+        
+        //Assertions InListSemver
+        //
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'inlist_semver_flag', array('version' => '6.7.8')));
+        $this->validateLastImpression($redisClient, 'inlist_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'inlist_semver_flag', array('version' => '1.1.1-alpha')));
+        $this->validateLastImpression($redisClient, 'inlist_semver_flag', 'user1', 'v1');
+        $this->assertEquals('v1', $splitSdk->getTreatment('user1', 'inlist_semver_flag', array('version' => '2.2.2+meta')));
+        $this->validateLastImpression($redisClient, 'inlist_semver_flag', 'user1', 'v1');
+
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'inlist_semver_flag', array('version' => '2.2.2')));
+        $this->validateLastImpression($redisClient, 'inlist_semver_flag', 'user1', 'off');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'inlist_semver_flag', array('version' => '1.1.1')));
+        $this->validateLastImpression($redisClient, 'inlist_semver_flag', 'user1', 'off');
+        $this->assertEquals('off', $splitSdk->getTreatment('user1', 'inlist_semver_flag', array('version' => '8.6.0-rc.2')));
+        $this->validateLastImpression($redisClient, 'inlist_semver_flag', 'user1', 'off');
+    }
+
     public function testClientWithUnsupportedMatcher()
     {
         Di::set(Di::KEY_FACTORY_TRACKER, false);
@@ -263,7 +354,6 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
         //Initializing the SDK instance.
         $splitFactory = \SplitIO\Sdk::factory('asdqwe123456', $sdkConfig);
         $splitSdk = $splitFactory->client();
-        $splitManager = $splitFactory->manager();
 
         //Populating the cache.
         Utils\Utils::addSplitsInCache(file_get_contents(__DIR__."/files/splitChanges.json"));

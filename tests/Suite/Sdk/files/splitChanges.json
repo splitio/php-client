@@ -502,6 +502,246 @@
                     ]
                 }
             ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "equal_to_semver_flag",
+            "seed": -1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "sets": [],
+            "configurations": {
+                "on": "{\"size\":15,\"test\":20}",
+                "of": "{\"size\":15,\"defTreatment\":true}"
+            },
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "user",
+                                    "attribute": "version"
+                                },
+                                "matcherType": "EQUAL_TO_SEMVER",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "stringMatcherData": "34.56.89-rc.1+meta"
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "v1",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "v2",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "gtoet_semver_flag",
+            "seed": -1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "sets": [],
+            "configurations": {
+                "on": "{\"size\":15,\"test\":20}",
+                "of": "{\"size\":15,\"defTreatment\":true}"
+            },
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "user",
+                                    "attribute": "version"
+                                },
+                                "matcherType": "GREATER_THAN_OR_EQUAL_TO_SEMVER",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "stringMatcherData": "34.56.89-rc.12.2.3.4+meta"
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "v1",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "v2",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "ltoet_semver_flag",
+            "seed": -1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "sets": [],
+            "configurations": {
+                "on": "{\"size\":15,\"test\":20}",
+                "of": "{\"size\":15,\"defTreatment\":true}"
+            },
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "user",
+                                    "attribute": "version"
+                                },
+                                "matcherType": "LESS_THAN_OR_EQUAL_TO_SEMVER",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "stringMatcherData": "11.22.33"
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "v1",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "v2",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "between_semver_flag",
+            "seed": -1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "sets": [],
+            "configurations": {
+                "on": "{\"size\":15,\"test\":20}",
+                "of": "{\"size\":15,\"defTreatment\":true}"
+            },
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "user",
+                                    "attribute": "version"
+                                },
+                                "matcherType": "BETWEEN_SEMVER",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "betweenStringMatcherData": {
+                                    "start": "5.0.0",
+                                    "end": "10.4.6"
+                                }
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "v1",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "v2",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "orgId": null,
+            "environment": null,
+            "trafficTypeId": null,
+            "trafficTypeName": null,
+            "name": "inlist_semver_flag",
+            "seed": -1222652054,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "sets": [],
+            "configurations": {
+                "on": "{\"size\":15,\"test\":20}",
+                "of": "{\"size\":15,\"defTreatment\":true}"
+            },
+            "conditions": [
+                {
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "user",
+                                    "attribute": "version"
+                                },
+                                "matcherType": "IN_LIST_SEMVER",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": {
+                                    "whitelist": [
+                                        "6.7.8",
+                                        "2.2.2+meta",
+                                        "1.1.1-alpha",
+                                        "8.6.0-rc.1",
+                                        "9.6.0-beta.1"
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "v1",
+                            "size": 100
+                        },
+                        {
+                            "treatment": "v2",
+                            "size": 0
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "since": -1,
