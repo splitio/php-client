@@ -14,9 +14,11 @@ class BetweenSemver extends AbstractMatcher
     public function __construct($data, $negate = false, $attribute = null)
     {
         parent::__construct(Matcher::BETWEEN_SEMVER, $negate, $attribute);
-        
-        $this->startTarget = Semver::build($data['start']);
-        $this->endTarget = Semver::build($data['end']);
+
+        if ($data != null) {
+            $this->startTarget = Semver::build($data['start']);
+            $this->endTarget = Semver::build($data['end']);
+        }
     }
     
     /**
