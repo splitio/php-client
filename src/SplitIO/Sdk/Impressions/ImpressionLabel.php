@@ -48,4 +48,11 @@ class ImpressionLabel
      * Label: exception
      */
     const EXCEPTION = "exception";
+
+    /**
+     * Condition: unsupported matcher
+     * Treatment: control
+     * Label: targeting rule type unsupported by sdk
+     */
+    const UNSUPPORTED_MATCHER = "targeting rule type unsupported by sdk";
 }
