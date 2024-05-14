@@ -332,7 +332,7 @@ class SdkClientTest extends \PHPUnit\Framework\TestCase
 
         // Assertions UnSupported
         $this->assertEquals('control', $splitSdk->getTreatment('user1', 'semver_demo_test', array('version' => '2.2.2')));
-        $this->validateLastImpression($redisClient, 'semver_demo_test', 'user1', 'control');
+        $this->validateLastImpression($redisClient, 'semver_demo_test', 'user1', 'control', 'unknown', 'unknown', 'targeting rule type unsupported by sdk');
     }
 
     public function testClientWithUnsupportedMatcher()
