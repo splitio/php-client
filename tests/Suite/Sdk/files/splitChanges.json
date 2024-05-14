@@ -742,6 +742,50 @@
                     ]
                 }
             ]
+        },
+        {
+            "changeNumber": 1715263640336,
+            "trafficTypeName": "user",
+            "name": "semver_demo_test",
+            "trafficAllocation": 100,
+            "trafficAllocationSeed": -109105559,
+            "seed": 1836161355,
+            "status": "ACTIVE",
+            "killed": false,
+            "defaultTreatment": "off",
+            "algo": 2,
+            "conditions": [
+                {
+                    "conditionType": "WHITELIST",
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": null,
+                                "matcherType": "ALL_KEYS",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "unaryNumericMatcherData": null,
+                                "betweenMatcherData": null,
+                                "dependencyMatcherData": null,
+                                "booleanMatcherData": null,
+                                "stringMatcherData": null,
+                                "betweenStringMatcherData": null
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "control",
+                            "size": 100
+                        }
+                    ],
+                    "label": "targeting rule type unsupported by sdk"
+                }
+            ],
+            "configurations": {},
+            "sets": []
         }
     ],
     "since": -1,
