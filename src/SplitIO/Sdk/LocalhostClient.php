@@ -136,7 +136,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatment($key, $featureFlagName, array $attributes = null)
+    public function getTreatment($key, $featureFlagName, ?array $attributes = null)
     {
         $key = $this->doValidation($key, $featureFlagName, "getTreatment");
         if (is_null($key)) {
@@ -157,7 +157,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatmentWithConfig($key, $featureFlagName, array $attributes = null)
+    public function getTreatmentWithConfig($key, $featureFlagName, ?array $attributes = null)
     {
         $treatmentResult = array(
             "treatment" => TreatmentEnum::CONTROL,
@@ -189,7 +189,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatments($key, $featureFlagNames, array $attributes = null)
+    public function getTreatments($key, $featureFlagNames, ?array $attributes = null)
     {
         $result = array();
 
@@ -213,7 +213,7 @@ class LocalhostClient implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null)
+    public function getTreatmentsWithConfig($key, $featureFlagNames, ?array $attributes = null)
     {
         $result = array();
 
@@ -258,25 +258,25 @@ class LocalhostClient implements ClientInterface
         return true;
     }
 
-    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, array $attributes = null)
+    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, ?array $attributes = null)
     {
         // no-op
         return array();
     }
     
-    public function getTreatmentsByFlagSets($key, $flagSets, array $attributes = null)
+    public function getTreatmentsByFlagSets($key, $flagSets, ?array $attributes = null)
     {
         // no-op
         return array();
     }
 
-    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, array $attributes = null)
+    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, ?array $attributes = null)
     {
         // no-op
         return array();
     }
     
-    public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null)
+    public function getTreatmentsByFlagSet($key, $flagSet, ?array $attributes = null)
     {
         // no-op
         return array();

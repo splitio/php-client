@@ -8,7 +8,7 @@
 This SDK is designed to work with Split, the platform for controlled rollouts, which serves features to your users via feature flags to manage your complete customer experience.
 
 ## Compatibility
-This SDK is compatible with PHP 7.3 and above.
+This SDK is compatible with PHP 7.3 and above, including PHP 8.4 and 8.5.
 
 ## Getting started
 Below is a simple example that describes the instantiation and most basic usage of our SDK.

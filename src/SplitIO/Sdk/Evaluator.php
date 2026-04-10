@@ -63,7 +63,7 @@ class Evaluator
         return array_values(array_unique($toReturn));
     }
 
-    public function evaluateFeature($matchingKey, $bucketingKey, $featureName, array $attributes = null)
+    public function evaluateFeature($matchingKey, $bucketingKey, $featureName, ?array $attributes = null)
     {
         $timeStart = Metrics::startMeasuringLatency();
         $split = $this->fetchSplit($featureName);
@@ -72,7 +72,7 @@ class Evaluator
         return $toReturn;
     }
 
-    public function evaluateFeatures($matchingKey, $bucketingKey, array $featureNames, array $attributes = null)
+    public function evaluateFeatures($matchingKey, $bucketingKey, array $featureNames, ?array $attributes = null)
     {
         $toReturn = array(
             'evaluations' => array(),
@@ -86,7 +86,7 @@ class Evaluator
         return $toReturn;
     }
 
-    public function evaluateFeaturesByFlagSets($matchingKey, $bucketingKey, array $flagSets, array $attributes = null)
+    public function evaluateFeaturesByFlagSets($matchingKey, $bucketingKey, array $flagSets, ?array $attributes = null)
     {
         $timeStart = Metrics::startMeasuringLatency();
         $featureFlagNames = $this->fetchFeatureFlagNamesByFlagSets($flagSets);
@@ -95,7 +95,7 @@ class Evaluator
         return $toReturn;
     }
 
-    private function evalTreatment($key, $bucketingKey, $split, array $attributes = null)
+    private function evalTreatment($key, $bucketingKey, $split, ?array $attributes = null)
     {
         $result = array(
             'treatment' => TreatmentEnum::CONTROL,
