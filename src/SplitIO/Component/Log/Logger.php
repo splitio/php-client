@@ -38,7 +38,7 @@ class Logger extends LoggerTrait
      * Logger constructor
      * @param LogHandlerInterface|null $handler
      */
-    public function __construct(LogHandlerInterface|null $handler = null, $level = LogLevel::WARNING)
+    public function __construct(?LogHandlerInterface $handler = null, $level = LogLevel::WARNING)
     {
         $this->logLevel = $this->logLevels[$level];
 
