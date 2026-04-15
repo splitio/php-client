@@ -36,7 +36,7 @@ interface ClientInterface
      * @param $attributes
      * @return string
      */
-    public function getTreatment($key, $featureFlagName, array $attributes = null);
+    public function getTreatment($key, $featureFlagName, ?array $attributes = null);
 
     /**
      * Returns an object with the treatment to show this id for this feature
@@ -76,7 +76,7 @@ interface ClientInterface
      * @param $attributes
      * @return array
      */
-    public function getTreatmentWithConfig($key, $featureFlagName, array $attributes = null);
+    public function getTreatmentWithConfig($key, $featureFlagName, ?array $attributes = null);
 
     /**
      * Returns an associative array which each key will be
@@ -109,7 +109,7 @@ interface ClientInterface
      * @param $attributes
      * @return array
      */
-    public function getTreatments($key, $featureFlagNames, array $attributes = null);
+    public function getTreatments($key, $featureFlagNames, ?array $attributes = null);
 
     /**
      * Returns an associative array which each key will be
@@ -144,7 +144,7 @@ interface ClientInterface
      * @param $attributes
      * @return array
      */
-    public function getTreatmentsWithConfig($key, $featureFlagNames, array $attributes = null);
+    public function getTreatmentsWithConfig($key, $featureFlagNames, ?array $attributes = null);
 
     /**
      * Returns an associative array which each key will be
@@ -172,7 +172,7 @@ interface ClientInterface
      * @param $attributes
      * @return array
      */
-    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, array $attributes = null);
+    public function getTreatmentsWithConfigByFlagSets($key, $flagSets, ?array $attributes = null);
 
     /**
      * Returns an associative array which each key will be
@@ -200,7 +200,7 @@ interface ClientInterface
      * @param $attributes
      * @return array
      */
-    public function getTreatmentsByFlagSets($key, $flagSets, array $attributes = null);
+    public function getTreatmentsByFlagSets($key, $flagSets, ?array $attributes = null);
 
     /**
      * Returns an associative array which each key will be
@@ -234,7 +234,7 @@ interface ClientInterface
      * @param $attributes
      * @return array
      */
-    public function getTreatmentsByFlagSet($key, $flagSet, array $attributes = null);
+    public function getTreatmentsByFlagSet($key, $flagSet, ?array $attributes = null);
     
     /**
      * Returns an associative array which each key will be
@@ -262,7 +262,7 @@ interface ClientInterface
      * @param $attributes
      * @return array
      */
-    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, array $attributes = null);
+    public function getTreatmentsWithConfigByFlagSet($key, $flagSet, ?array $attributes = null);
 
     /**
      * A short-hand for
