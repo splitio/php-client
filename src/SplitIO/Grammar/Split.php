@@ -33,6 +33,8 @@ class Split
     private $configurations = null;
     private $sets = null;
 
+    private $impressionsDisabled = false;
+
     public function __construct(array $split)
     {
         SplitApp::logger()->debug(print_r($split, true));
@@ -52,7 +54,8 @@ class Split
         $this->configurations = isset($split['configurations']) && count($split['configurations']) > 0 ?
             $split['configurations'] : null;
         $this->sets = isset($split['sets']) ? $split['sets'] : array();
-        
+        $this->impressionsDisabled = isset($split['impressionsDisabled']) ? $split['impressionsDisabled'] : false;
+
         SplitApp::logger()->info("Constructing Feature Flag: ".$this->name);
 
         if (isset($split['conditions']) && is_array($split['conditions'])) {
@@ -181,5 +184,13 @@ class Split
     public function getSets()
     {
         return $this->sets;
+    }
+
+    /**
+     * @return bool
+     */
+    public function impressionsDisabled()
+    {
+        return (bool) $this->impressionsDisabled;
     }
 }
