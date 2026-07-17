@@ -146,7 +146,7 @@ class ImpressionsDisabledE2ETest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        // Fixture 5: truthy (numeric 1)
+        // Fixture 5: impressionsDisabled is numeric 1 (not boolean true) -> tracked
         $split5 = array(
             'name' => 'flag_e2e_truthy',
             'trafficTypeName' => 'user',
@@ -220,15 +220,19 @@ class ImpressionsDisabledE2ETest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('off', $treatments['flag_e2e_disabled_killed']); // killed
         $this->assertEquals('on', $treatments['flag_e2e_truthy']);
 
-        // Redis: only enabled and legacy should be queued
+        // Redis: only flags that are NOT explicitly disabled are queued.
+        // flag_e2e_truthy has impressionsDisabled=1 (not boolean true), so it IS tracked.
         $queuedFeatures = array();
         while ($raw = $redis->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY)) {
             $parsed = json_decode($raw, true);
             $queuedFeatures[] = $parsed['i']['f'];
         }
-        $this->assertCount(2, $queuedFeatures);
+        $this->assertCount(3, $queuedFeatures);
         $this->assertContains('flag_e2e_enabled', $queuedFeatures);
         $this->assertContains('flag_e2e_legacy', $queuedFeatures);
+        $this->assertContains('flag_e2e_truthy', $queuedFeatures);
+        $this->assertNotContains('flag_e2e_disabled', $queuedFeatures);
+        $this->assertNotContains('flag_e2e_disabled_killed', $queuedFeatures);
 
         // Listener: all 5 should be sent
         $this->assertCount(5, $listener->receivedImpressions);
@@ -388,8 +392,8 @@ class ImpressionsDisabledE2ETest extends \PHPUnit\Framework\TestCase
 
     public function testE2EEnabledImpressionPayloadFidelity()
     {
-        // Full-field assertion for ENABLED impression payload (brief 3b).
-        // Assert every field in the serialized impression, plus TTL unchanged.
+        // Assert every field in the serialized impression payload for an enabled
+        // flag, plus that the queue TTL is unchanged.
         $factory = $this->createFactory();
         $client = $factory->client();
         $redis = $this->getRedisClient();

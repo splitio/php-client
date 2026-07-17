@@ -54,7 +54,9 @@ class Split
         $this->configurations = isset($split['configurations']) && count($split['configurations']) > 0 ?
             $split['configurations'] : null;
         $this->sets = isset($split['sets']) ? $split['sets'] : array();
-        $this->impressionsDisabled = isset($split['impressionsDisabled']) ? $split['impressionsDisabled'] : false;
+        // Only an explicit boolean true disables impression tracking. Any other value
+        // (numbers, strings, null, missing or malformed) leaves impressions tracked.
+        $this->impressionsDisabled = isset($split['impressionsDisabled']) && $split['impressionsDisabled'] === true;
 
         SplitApp::logger()->info("Constructing Feature Flag: ".$this->name);
 
@@ -191,6 +193,6 @@ class Split
      */
     public function impressionsDisabled()
     {
-        return (bool) $this->impressionsDisabled;
+        return $this->impressionsDisabled;
     }
 }

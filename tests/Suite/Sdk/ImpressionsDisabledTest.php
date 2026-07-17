@@ -140,12 +140,13 @@ class ImpressionsDisabledTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('flag_legacy', $parsed['i']['f']);
     }
 
-    public function testNonBooleanJsonValueTruthy()
+    public function testNonBooleanJsonValueNumericOneIsTracked()
     {
-        // Seed with numeric 1 (truthy)
+        // Only an explicit boolean true disables impressions. A numeric 1 is not
+        // boolean true, so the impression must still be tracked.
         $redis = $this->getRedisClient();
         $split = array(
-            'name' => 'flag_truthy',
+            'name' => 'flag_numeric_one',
             'trafficTypeName' => 'user',
             'seed' => 123456789,
             'status' => 'ACTIVE',
@@ -170,18 +171,20 @@ class ImpressionsDisabledTest extends \PHPUnit\Framework\TestCase
                 )
             )
         );
-        $redis->set('SPLITIO.split.flag_truthy', json_encode($split));
+        $redis->set('SPLITIO.split.flag_numeric_one', json_encode($split));
         $redis->set('SPLITIO.splits.till', 1750000000000);
 
         $factory = $this->createFactory();
         $client = $factory->client();
 
-        $treatment = $client->getTreatment('e2e_user_1', 'flag_truthy');
+        $treatment = $client->getTreatment('e2e_user_1', 'flag_numeric_one');
         $this->assertEquals('on', $treatment);
 
-        // (bool)1 === true, so should NOT be queued
+        // 1 is not boolean true, so the impression IS queued
         $raw = $redis->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
-        $this->assertNull($raw);
+        $this->assertNotNull($raw);
+        $parsed = json_decode($raw, true);
+        $this->assertEquals('flag_numeric_one', $parsed['i']['f']);
     }
 
     public function testMixedBatchGetTreatments()
@@ -345,8 +348,8 @@ class ImpressionsDisabledTest extends \PHPUnit\Framework\TestCase
 
     public function testNonBooleanJsonValueNull()
     {
-        // Non-boolean JSON value null must cast to false → impression IS logged.
-        // (bool)null === false, so tracking is enabled (back-compat critical).
+        // Only an explicit boolean true disables impressions. An explicit null is
+        // not true, so the impression IS tracked (back-compat critical).
         // The existing helper omits null, so seed manually with explicit null.
         $redis = $this->getRedisClient();
         $split = array(
@@ -391,10 +394,9 @@ class ImpressionsDisabledTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('flag_null', $parsed['i']['f']);
     }
 
-    public function testNonBooleanJsonValueStringTrue()
+    public function testNonBooleanJsonValueStringTrueIsTracked()
     {
-        // Non-boolean JSON string "true" casts truthy → NOT queued.
-        // (bool)"true" === true in PHP (any non-empty string is truthy).
+        // The string "true" is not the boolean true, so the impression IS tracked.
         $redis = $this->getRedisClient();
         $split = array(
             'name' => 'flag_string_true',
@@ -431,9 +433,11 @@ class ImpressionsDisabledTest extends \PHPUnit\Framework\TestCase
         $treatment = $client->getTreatment('e2e_user_1', 'flag_string_true');
         $this->assertEquals('on', $treatment);
 
-        // Should NOT be queued: (bool)"true" === true
+        // The string "true" is not boolean true, so the impression IS queued
         $raw = $redis->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
-        $this->assertNull($raw);
+        $this->assertNotNull($raw);
+        $parsed = json_decode($raw, true);
+        $this->assertEquals('flag_string_true', $parsed['i']['f']);
     }
 
     public function testListenerDivergenceUnit()
@@ -469,45 +473,28 @@ class ImpressionsDisabledTest extends \PHPUnit\Framework\TestCase
 
     public function testCrossSdkParityCanonicalFixture()
     {
-        // Cross-SDK parity test using canonical fixture from official Split spec.
-        // Canonical spec fixture uses flag names "tracked" (impressionsDisabled: false)
-        // and "not_tracked" (impressionsDisabled: true). The spec's canonical conditions
-        // use an IN_SEGMENT matcher (segment "new_segment") with partitions putting 100% on
-        // treatment "free". Reproducing that verbatim would require seeding a segment and
-        // would make the test about segment-matching, not impression-toggling. Per the
-        // standard fixture-reconciliation rule (repo conventions win for structure; only
-        // the impressionsDisabled lines are authoritative from the spec), we substitute
-        // an ALL_KEYS matcher with partitions on:100 / off:0, defaultTreatment off,
-        // like the other tests in this file. This keeps the test deterministic without
-        // segment seeding while preserving the parity-relevant flag names and
-        // impressionsDisabled values from the spec.
+        // Two flags: "tracked" (impressionsDisabled false) and "not_tracked"
+        // (impressionsDisabled true). An ALL_KEYS matcher (on:100) is used so the
+        // treatment is deterministic without seeding segments.
         $this->seedSplitWithImpressionsDisabled('tracked', false);
         $this->seedSplitWithImpressionsDisabled('not_tracked', true);
 
-        // Redis analog surface (spec tests #2-#4 reduced to drop-silently):
-        // In the spec's other SDKs, tests #2-#4 verify mode-based POST behavior
-        // (None/Debug/Optimized). This SDK is Redis-consumer-only with no HTTP
-        // impression recorder, no mode machinery, no uniquekeys/impressionsCount.
-        // The parity analog for this SDK is: both flags evaluate correctly, only
-        // "tracked" lands in Redis SPLITIO.impressions queue, "not_tracked" is
-        // dropped silently, and the listener (if attached) receives both.
         $listener = new ImpressionsDisabledListener();
         $factory = $this->createFactory($listener);
         $client = $factory->client();
         $redis = $this->getRedisClient();
 
-        // Use eval key "CUSTOMER_ID" to echo the spec's canonical example
         $trackedTreatment = $client->getTreatment('CUSTOMER_ID', 'tracked');
         $notTrackedTreatment = $client->getTreatment('CUSTOMER_ID', 'not_tracked');
 
-        // Both treatments should be "on" (ALL_KEYS matcher with on:100 partition)
+        // Both treatments are "on" (ALL_KEYS matcher with on:100 partition)
         $this->assertEquals('on', $trackedTreatment);
         $this->assertEquals('on', $notTrackedTreatment);
 
-        // Listener should receive BOTH (drop-silently still fires listener)
+        // The listener receives both impressions (disabled flags still fire it)
         $this->assertCount(2, $listener->receivedImpressions);
 
-        // Redis queue should contain ONLY "tracked" impression
+        // The Redis queue contains only the "tracked" impression
         $raw = $redis->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $this->assertNotNull($raw);
         $parsed = json_decode($raw, true);
@@ -515,11 +502,11 @@ class ImpressionsDisabledTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('CUSTOMER_ID', $parsed['i']['k']);
         $this->assertEquals('on', $parsed['i']['t']);
 
-        // "not_tracked" impression should NOT be in queue
+        // "not_tracked" is dropped, so nothing else is queued
         $raw2 = $redis->rpop(ImpressionCache::IMPRESSIONS_QUEUE_KEY);
         $this->assertNull($raw2);
 
-        // Manager surface (spec test #1): verify impressionsDisabled property exposure
+        // The manager's SplitView exposes impressionsDisabled
         $manager = $factory->manager();
 
         $trackedSplit = $manager->split('tracked');
