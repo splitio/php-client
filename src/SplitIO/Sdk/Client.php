@@ -7,6 +7,7 @@ use SplitIO\Sdk\Events\EventDTO;
 use SplitIO\Sdk\Events\EventQueueMessage;
 use SplitIO\Sdk\QueueMetadataMessage;
 use SplitIO\Sdk\Impressions\Impression;
+use SplitIO\Sdk\Impressions\DecoratedImpression;
 use SplitIO\TreatmentImpression;
 use SplitIO\Sdk\Impressions\ImpressionLabel;
 use SplitIO\Grammar\Condition\Partition\TreatmentEnum;
@@ -134,7 +135,8 @@ class Client implements ClientInterface
                 $bucketingKey
             );
 
-            $this->registerData($impression, $attributes);
+            $disabled = isset($result['impressionsDisabled']) && $result['impressionsDisabled'];
+            $this->registerData(new DecoratedImpression($impression, $disabled), $attributes);
             return array(
                 'treatment' => $result['treatment'],
                 'config' => $result['config'],
@@ -155,7 +157,7 @@ class Client implements ClientInterface
                 ImpressionLabel::EXCEPTION,
                 $bucketingKey
             );
-            $this->registerData($impression, $attributes);
+            $this->registerData(new DecoratedImpression($impression, false), $attributes);
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
                 "An error occurred when attempting to log impression for " .
@@ -237,12 +239,33 @@ class Client implements ClientInterface
         );
     }
 
-    private function registerData($impressions, $attributes)
+    private function registerData($decoratedImpressions, $attributes)
     {
         try {
-            TreatmentImpression::log($impressions, $this->queueMetadata);
-            if (isset($this->impressionListener)) {
-                $this->impressionListener->sendDataToClient($impressions, $attributes);
+            // Normalize to array
+            if (!is_array($decoratedImpressions)) {
+                $decoratedImpressions = array($decoratedImpressions);
+            }
+
+            // Partition: all go to listener, only enabled go to log
+            $forListener = array();
+            $forLog = array();
+            foreach ($decoratedImpressions as $decorated) {
+                $impression = $decorated->getImpression();
+                $forListener[] = $impression;
+                if (!$decorated->isDisabled()) {
+                    $forLog[] = $impression;
+                }
+            }
+
+            // Log enabled impressions to Redis
+            if (!empty($forLog)) {
+                TreatmentImpression::log($forLog, $this->queueMetadata);
+            }
+
+            // Send all impressions to listener
+            if (isset($this->impressionListener) && !empty($forListener)) {
+                $this->impressionListener->sendDataToClient($forListener, $attributes);
             }
         } catch (\Exception $e) {
             SplitApp::logger()->critical(
@@ -526,11 +549,11 @@ class Client implements ClientInterface
         $evaluations
     ) {
         $result = array();
-        $impressions = array();
+        $decoratedImpressions = array();
         foreach ($evaluations as $featureFlagName => $evalResult) {
             if (InputValidator::isSplitFound($evalResult['impression']['label'], $featureFlagName, $operation)) {
                 // Creates impression
-                $impressions[] = $this->createImpression(
+                $impression = $this->createImpression(
                     $matchingKey,
                     $featureFlagName,
                     $evalResult['treatment'],
@@ -538,6 +561,8 @@ class Client implements ClientInterface
                     $evalResult['impression']['label'],
                     $bucketingKey
                 );
+                $disabled = isset($evalResult['impressionsDisabled']) && $evalResult['impressionsDisabled'];
+                $decoratedImpressions[] = new DecoratedImpression($impression, $disabled);
                 $result[$featureFlagName] = array(
                     'treatment' => $evalResult['treatment'],
                     'config' => $evalResult['config'],
@@ -546,7 +571,7 @@ class Client implements ClientInterface
                 $result[$featureFlagName] = array('treatment' => TreatmentEnum::CONTROL, 'config' => null);
             }
         }
-        $this->registerData($impressions, $attributes);
+        $this->registerData($decoratedImpressions, $attributes);
         return $result;
     }
 }

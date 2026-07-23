@@ -11,6 +11,7 @@ class SplitView
     private $configs;
     private $defaultTreatment;
     private $sets;
+    private $impressionsDisabled;
 
     /**
      * SplitView constructor.
@@ -22,6 +23,7 @@ class SplitView
      * @param $configurations
      * @param $defaultTreatment
      * @param $sets
+     * @param $impressionsDisabled
      */
     public function __construct(
         $name,
@@ -31,7 +33,8 @@ class SplitView
         $changeNumber,
         $configs,
         $defaultTreatment,
-        $sets
+        $sets,
+        $impressionsDisabled = false
     ) {
         $this->name = $name;
         $this->trafficType = $trafficType;
@@ -41,6 +44,7 @@ class SplitView
         $this->configs = $configs;
         $this->defaultTreatment = $defaultTreatment;
         $this->sets = $sets;
+        $this->impressionsDisabled = $impressionsDisabled;
     }
 
 
@@ -170,5 +174,21 @@ class SplitView
     public function getSets()
     {
         return $this->sets;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImpressionsDisabled()
+    {
+        return $this->impressionsDisabled;
+    }
+
+    /**
+     * @param mixed $impressionsDisabled
+     */
+    public function setImpressionsDisabled($impressionsDisabled)
+    {
+        $this->impressionsDisabled = $impressionsDisabled;
     }
 }

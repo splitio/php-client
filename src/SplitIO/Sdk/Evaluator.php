@@ -108,11 +108,13 @@ class Evaluator
 
         if (is_null($split)) {
             $result['impression']['label'] = ImpressionLabel::SPLIT_NOT_FOUND;
+            $result['impressionsDisabled'] = false;
             return $result;
         }
         try {
             $configs = $split->getConfigurations();
             $result['impression']['changeNumber'] = $split->getChangeNumber();
+            $result['impressionsDisabled'] = $split->impressionsDisabled();
             if ($split->killed()) {
                 $defaultTreatment = $split->getDefaultTratment();
                 $result['treatment'] = $defaultTreatment;

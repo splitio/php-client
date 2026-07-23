@@ -68,7 +68,8 @@ class SplitManager implements SplitManagerInterface
             $split->getChangeNumber(),
             $configs,
             $split->getDefaultTratment(),
-            $split->getSets()
+            $split->getSets(),
+            $split->impressionsDisabled()
         );
     }
 }
