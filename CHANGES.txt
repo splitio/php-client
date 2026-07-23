@@ -1,4 +1,4 @@
-x.x.x (Unreleased)
+7.5.0 (Jul 23, 2026)
   - Added support for the new impressions tracking toggle available on feature flags.
 
 7.4.0 (Apr 15, 2026)
