@@ -12,7 +12,7 @@ pipeline:
         build:
           type: branch
           spec:
-            branch: master
+            branch: <+input>
   stages:
     - stage:
         name: Build and Test
