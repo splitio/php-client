@@ -68,7 +68,7 @@ class Condition
      * @param array|null $attributes
      * @return bool
      */
-    public function match($key, array $attributes = null, $bucketingKey = null)
+    public function match($key, ?array $attributes = null, $bucketingKey = null)
     {
         $eval = array();
         foreach ($this->matcherGroup as $matcher) {

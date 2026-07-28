@@ -8,11 +8,11 @@
 This SDK is designed to work with Split, the platform for controlled rollouts, which serves features to your users via feature flags to manage your complete customer experience.
 
 ## Compatibility
-This SDK is compatible with PHP 7.3 and above.
+This SDK is compatible with PHP 7.3 and above, including PHP 8.4 and 8.5.
 
 ## Getting started
 Below is a simple example that describes the instantiation and most basic usage of our SDK.
-Keep in mind that since PHP does not have the ability to share memory between processes the use of the [split-synchronizer](https://help.split.io/hc/en-us/articles/360019686092-Split-Synchronizer) is mandatory for this SDK.
+Keep in mind that since PHP does not have the ability to share memory between processes the use of the [split-synchronizer](https://developer.harness.io/docs/feature-management-experimentation/sdks-and-infrastructure/optional-infra/split-synchronizer/) is mandatory for this SDK.
 
 ```php
 <?php
@@ -31,7 +31,7 @@ if ($treatment === 'on') {
 }
 ```
 
-Please refer to [our official docs](https://help.split.io/hc/en-us/articles/360020350372-PHP-SDK) to learn about all the functionality provided by our SDK and the configuration options available for tailoring it to your current application setup.
+Please refer to [our official docs](https://developer.harness.io/docs/feature-management-experimentation/sdks-and-infrastructure/server-side-sdks/php-sdk) to learn about all the functionality provided by our SDK and the configuration options available for tailoring it to your current application setup.
 
 ## Submitting issues
  
