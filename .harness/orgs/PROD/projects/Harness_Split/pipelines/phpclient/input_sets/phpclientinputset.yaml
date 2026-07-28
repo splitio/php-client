@@ -1,0 +1,14 @@
+inputSet:
+  identifier: phpclientinputset
+  name: php-client Input Set
+  orgIdentifier: PROD
+  projectIdentifier: Harness_Split
+  pipeline:
+    identifier: phpclient
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>
