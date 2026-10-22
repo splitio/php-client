@@ -21,6 +21,8 @@ pipeline:
         type: CI
         spec:
           cloneCodebase: true
+          envVariables:
+            CI_ENABLE_HCLI_FOR_TESTS: "true"
           caching:
             enabled: true
             override: true
@@ -42,7 +44,7 @@ pipeline:
                     command: |-
                       add-apt-repository -y ppa:ondrej/php
                       apt-get update -qq
-                      apt-get install -y php<+matrix.phpVersion> php<+matrix.phpVersion>-cli php<+matrix.phpVersion>-xml php<+matrix.phpVersion>-mbstring php<+matrix.phpVersion>-redis php<+matrix.phpVersion>-curl php<+matrix.phpVersion>-zip unzip -qq
+                      apt-get install -y php<+matrix.phpVersion> php<+matrix.phpVersion>-cli php<+matrix.phpVersion>-xml php<+matrix.phpVersion>-mbstring php<+matrix.phpVersion>-redis php<+matrix.phpVersion>-curl php<+matrix.phpVersion>-zip php<+matrix.phpVersion>-pcov unzip -qq
                       update-alternatives --set php /usr/bin/php<+matrix.phpVersion>
                       php --version
               - step:
@@ -84,8 +86,7 @@ pipeline:
                   identifier: Install_Dependencies
                   spec:
                     shell: Bash
-                    command: |-
-                      composer install --no-interaction --prefer-dist --optimize-autoloader
+                    command: composer install --no-interaction --prefer-dist --optimize-autoloader
               - step:
                   type: Run
                   name: Run Tests
@@ -93,75 +94,50 @@ pipeline:
                   spec:
                     shell: Bash
                     command: |-
-                      vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/ && vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration --coverage-clover coverage.xml
+                      vendor/bin/phpcs --ignore=functions.php --standard=PSR2 src/ && XDEBUG_MODE=coverage vendor/bin/phpunit -c phpunit.xml.dist -v --testsuite integration --coverage-clover coverage.xml
+                      python3 -c 'import textwrap; exec(textwrap.dedent("""
+                      import xml.etree.ElementTree as ET
+                      from pathlib import Path
+                      root = ET.parse("coverage.xml").getroot()
+                      cwd = Path(".").resolve()
+                      out = []
+                      for f in root.iter("file"):
+                          name = f.get("name") or ""
+                          try:
+                              rel = Path(name).resolve().relative_to(cwd).as_posix()
+                          except Exception:
+                              rel = name
+                          das = []
+                          for line in f.findall("line"):
+                              num, count = line.get("num"), line.get("count")
+                              if num is None or count is None:
+                                  continue
+                              das.append("DA:%s,%s" % (num, count))
+                          if not das:
+                              continue
+                          out.append("SF:" + rel)
+                          out.extend(das)
+                          out.append("end_of_record")
+                      Path("coverage").mkdir(exist_ok=True)
+                      Path("coverage/lcov.info").write_text(chr(10).join(out) + chr(10))
+                      print("lcov records=%s lines=%s" % (out.count("end_of_record"), sum(1 for row in out if row.startswith("DA:"))))
+                      """))'
+                      test -s coverage/lcov.info
               - step:
-                  type: Run
-                  name: SonarQube Scan
-                  identifier: SonarQube_Scan
-                  when:
-                    stageStatus: Success
-                    condition: <+matrix.phpVersion> == "8.3"
-                  spec:
-                    shell: Sh
-                    command: |-
-                      export SONAR_SCANNER_VERSION=5.0.1.3006
-                      curl -sSLo sonar-scanner.zip \
-                        "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux.zip"
-                      unzip -q sonar-scanner.zip
-                      export PATH="$PWD/sonar-scanner-${SONAR_SCANNER_VERSION}-linux/bin:$PATH"
-                      apt-get install -y openjdk-17-jdk -qq
-                      sonar-scanner \
-                        -Dsonar.projectKey=php-client \
-                        -Dsonar.sources=src \
-                        -Dsonar.tests=tests \
-                        -Dsonar.host.url=https://sonar.harness.io \
-                        -Dsonar.token=<+secrets.getValue("sonarqube-token")> \
-                        -Dsonar.php.coverage.reportPaths=coverage.xml \
-                        -Dsonar.coverage.exclusions="tests/**,**/vendor/**" \
-                        -Dsonar.exclusions="**/vendor/**,**/.git/**"
-              - step:
-                  type: Run
-                  name: Post Quality Gate
-                  identifier: Post_Quality_Gate
-                  when:
-                    stageStatus: Success
-                    condition: <+matrix.phpVersion> == "8.3"
-                  spec:
-                    shell: Bash
-                    command: |-
-                      #!/bin/bash
-                      set -e
-
-                      SONAR_TOKEN="<+secrets.getValue("sonarqube-token")>"
-                      SONAR_URL="https://sonar.harness.io"
-                      SONAR_PROJECT_KEY="php-client"
-                      GITHUB_TOKEN="<+secrets.getValue("github-devops-token")>"
-                      GITHUB_REPO="php-client"
-                      COMMIT_SHA="<+codebase.commitSha>"
-
-                      STATUS_JSON=$(curl -sf \
-                        -H "Authorization: Bearer ${SONAR_TOKEN}" \
-                        "${SONAR_URL}/api/qualitygates/project_status?projectKey=${SONAR_PROJECT_KEY}")
-
-                      QG_STATUS=$(echo "$STATUS_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['projectStatus']['status'])")
-
-                      case "$QG_STATUS" in
-                        OK)    GH_STATE="success"; DESCRIPTION="Quality gate passed" ;;
-                        ERROR) GH_STATE="failure"; DESCRIPTION="Quality gate failed" ;;
-                        WARN)  GH_STATE="success"; DESCRIPTION="Quality gate passed with warnings" ;;
-                        *)     GH_STATE="pending"; DESCRIPTION="Quality gate status unknown" ;;
-                      esac
-
-                      TARGET_URL="${SONAR_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
-
-                      curl -sf -X POST \
-                        -H "Authorization: token ${GITHUB_TOKEN}" \
-                        -H "Accept: application/vnd.github.v3+json" \
-                        -H "Content-Type: application/json" \
-                        -d "{\"state\":\"${GH_STATE}\",\"description\":\"${DESCRIPTION}\",\"context\":\"sonarqube/quality-gate\",\"target_url\":\"${TARGET_URL}\"}" \
-                        "https://api.github.com/repos/splitio/${GITHUB_REPO}/statuses/${COMMIT_SHA}"
-
-                      echo "Posted SonarQube quality gate status: ${GH_STATE}"
+                  name: harnessCoverage
+                  identifier: harnessCoverage
+                  template:
+                    templateRef: account.codeCoverage
+                    versionLabel: v1
+                    templateInputs:
+                      type: Run
+                      spec:
+                        envVariables:
+                          patch_coverage_percent: "80"
+                          file_path: coverage/lcov.info
+                          overall_coverage_percent: ""
+                          ignore_failure: "true"
+                          exclude: "**/vendor/**,**/tests/**,**/test/**"
         strategy:
           matrix:
             phpVersion:
